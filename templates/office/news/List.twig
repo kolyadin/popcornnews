@@ -1,0 +1,150 @@
+{% extends '/Generic.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% block HeadEnd %}
+
+	<style type="text/css">
+		.table-items a {
+			font-size: 13px;
+		}
+
+		.table-items .stat .progress {
+			margin-bottom: 5px;
+		}
+
+		.table-items .stat .progress-bar strong {
+			padding-left: 5px;
+		}
+
+		.table-items .stat .label {
+			margin-right: 5px;
+		}
+	</style>
+
+{% endblock %}
+
+{% block BodyEnd %}
+
+	<script type="text/javascript">
+		$(function () {
+
+			var removePostCandidateId = null;
+
+			$('button[data-action=confirm-remove]').on('click', function () {
+
+				var params = {
+					postId: removePostCandidateId
+				};
+
+				var handler = function(response){
+					if (response.status == 'success'){
+
+						var $tr = $('tr[data-post-id='+removePostCandidateId+']');
+
+						$('#modal-remove').modal('hide');
+					}
+				};
+
+				$.post('/office/ajax/post/remove',params,handler,'json');
+
+			});
+
+			$('a[data-action=remove-post]').on('click', function () {
+				removePostCandidateId = $(this).closest('tr').attr('data-post-id');
+			});
+		});
+	</script>
+
+{% endblock %}
+
+{% block PageTop %}
+
+	<h3 class="page-title">
+		Список новостей
+		<small>просмотр сводной информации</small>
+	</h3>
+
+	<ul class="page-breadcrumb breadcrumb">
+		<li>
+			<i class="fa fa-home"></i>
+			<a href="/office">Консоль</a>
+			<i class="fa fa-angle-right"></i>
+		</li>
+		<li>
+			<a href="/office/news">Новости</a>
+			<i class="fa"></i>
+		</li>
+	</ul>
+
+{% endblock %}
+
+{% block PageContent %}
+
+	<div id="modal-remove" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1"
+	     aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+					<h4 class="modal-title">Вы ТОЧНО хотите удалить новость?</h4>
+				</div>
+				<div class="modal-body">
+					<p><strong>Удаление новости приведет к</strong>:</p>
+					<ul>
+						<li>удалению комментариев</li>
+						<li>удалению фотографий</li>
+					</ul>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Отмена</button>
+					<button class="btn btn-danger" data-dismiss="modal" data-action="confirm-remove">Подтверждаю
+						удаление
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{% if posts|length %}
+
+		<div class="table-responsive">
+			<table class="table table-hover table-items">
+				<thead>
+				<tr>
+					<th></th>
+					<th>Дата и время создания</th>
+					<th>Название</th>
+				</tr>
+				</thead>
+				<tbody>
+				{% for post in posts %}
+					<tr data-post-id="{{ post.id }}">
+						<td style="white-space: nowrap;">
+							<a class="btn btn-default btn-xs tooltips" data-original-title="Редактировать новость"
+							   data-placement="top" href="/office/news{{ post.id }}"><i class="fa fa-edit"></i></a>
+							<a class="btn btn-danger btn-xs tooltips" data-original-title="Удалить новость"
+							   data-placement="top" role="button" data-toggle="modal" data-action="remove-post"
+							   href="#modal-remove"><i class="fa fa-trash-o"></i></a>
+						</td>
+						<td>{{ post.createDate|date('d.m.Y H:i') }}</td>
+						<td style=""><a href="/office/news{{ post.id }}">{{ post.name|e }}</a></td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+
+		{{ html.paginator(paginator.pages,paginator.active,'/office/news/page%u') }}
+
+	{% else %}
+
+		<div class="note note-info">
+			<h4 class="note-heading">Пока не создано ни одной новости</h4>
+			<p>
+				<a class="btn btn-success" href="/office/post_create">Создать новость</a>
+			</p>
+		</div>
+
+	{% endif %}
+
+{% endblock %}

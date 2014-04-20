@@ -1,0 +1,86 @@
+{% macro paginator(overallPages,activePage,hrefMask) %}
+	{% if overallPages > 1 %}
+
+		<div class="b-pagination">
+			<span>Страницы:</span>
+
+			{% if overallPages <= 14 %}
+
+				{% for page in 1..overallPages %}
+					<a href="{{ hrefMask|format(page) }}"{% if page == activePage %} class="active"{% endif %}>{{ page }}</a>
+				{% endfor %}
+
+			{% else %}
+
+				{% if activePage <= 9 and overallPages >= 10 %}
+					{% for page in 1..10 %}
+						<a href="{{ hrefMask|format(page) }}"{% if page == activePage %} class="active"{% endif %}>{{ page }}</a>
+					{% endfor %}
+
+					<span><strong>...</strong></span>
+
+					<a href="{{ hrefMask|format(overallPages-1) }}">{{ overallPages-1 }}</a>
+					<a href="{{ hrefMask|format(overallPages) }}">{{ overallPages }}</a>
+
+				{% elseif (overallPages-activePage) <= 5 %}
+
+					<a href="{{ hrefMask|format(1) }}">1</a>
+					<a href="{{ hrefMask|format(2) }}">2</a>
+
+					<span><strong>...</strong></span>
+
+					{% for page in overallPages-6..overallPages %}
+						<a href="{{ hrefMask|format(page) }}"{% if page == activePage %} class="active"{% endif %}>{{ page }}</a>
+					{% endfor %}
+				{% else %}
+					{% if overallPages > 9 %}
+						<a href="{{ hrefMask|format(1) }}">1</a>
+						<a href="{{ hrefMask|format(2) }}">2</a>
+
+						<span>...</span>
+					{% endif %}
+
+					{% set pStart = activePage > 2 ? 2 : activePage %}
+					{% set pEnd = (overallPages-activePage) > 2 ? 2 : overallPages-activePage %}
+
+					{% for page in activePage-pStart..activePage+pEnd %}
+						<a href="{{ hrefMask|format(page) }}"{% if page == activePage %} class="active"{% endif %}>{{ page }}</a>
+					{% endfor %}
+
+					{% if overallPages > 9 and (overallPages-activePage) >= 3 %}
+						<span>...</span>
+
+						<a href="{{ hrefMask|format(overallPages-1) }}">{{ overallPages-1 }}</a>
+						<a href="{{ hrefMask|format(overallPages) }}">{{ overallPages }}</a>
+					{% endif %}
+				{% endif %}
+
+			{% endif %}
+
+		</div>
+	{% endif %}
+{% endmacro %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

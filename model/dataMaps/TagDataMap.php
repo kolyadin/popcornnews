@@ -53,6 +53,16 @@ class TagDataMap extends DataMap {
 					}
 				}
 				break;
+			case Tag::FILM:
+				if ($modifier & self::WITH_ENTITY) {
+
+					$person = PersonFactory::getPerson($item->getName());
+
+					if ($person){
+						$item->setEntity($person);
+					}
+				}
+				break;
 		}
 
 	}

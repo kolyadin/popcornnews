@@ -3,6 +3,7 @@ namespace popcorn\app\controllers\office;
 
 use popcorn\app\controllers\ControllerInterface;
 use popcorn\app\controllers\GenericController;
+use popcorn\model\dataMaps\DataMapHelper;
 use popcorn\model\dataMaps\NewsPostDataMap;
 use popcorn\model\dataMaps\TagDataMap;
 use popcorn\model\posts\NewsPost;
@@ -15,13 +16,13 @@ class NewsController extends GenericController implements ControllerInterface {
 	public function getRoutes() {
 		$this
 			->getSlim()
-			->map('/news_create', function () {
+			->map('/post_create', function () {
 				switch ($this->getSlim()->request->getMethod()) {
 					case 'GET':
-						$this->newsEditGet();
+						$this->postEditGet();
 						break;
 					case 'POST':
-						$this->newsEditPost();
+						$this->postEditPost();
 						break;
 				}
 			})
@@ -29,8 +30,8 @@ class NewsController extends GenericController implements ControllerInterface {
 
 		$this
 			->getSlim()
-			->get('/news(/page:pageId)', function ($page = null) {
-				$this->news($page);
+			->get('/posts(/page:pageId)', function ($page = null) {
+				$this->posts($page);
 			})
 			->conditions([
 				':pageId' => '[1-9][0-9]*'
@@ -38,18 +39,18 @@ class NewsController extends GenericController implements ControllerInterface {
 
 		$this
 			->getSlim()
-			->map('/news:newsId', function ($newsId) {
+			->map('/post:postId', function ($postId) {
 				switch ($this->getSlim()->request->getMethod()) {
 					case 'GET':
-						$this->newsEditGet($newsId);
+						$this->postEditGet($postId);
 						break;
 					case 'POST':
-						$this->newsEditPost();
+						$this->postEditPost();
 						break;
 				}
 			})
 			->conditions([
-				':newsId' => '[1-9][0-9]*'
+				':postId' => '[1-9][0-9]*'
 			])
 			->via('GET', 'POST');
 	}
@@ -59,23 +60,40 @@ class NewsController extends GenericController implements ControllerInterface {
 		$this->tagDataMap = new TagDataMap();
 	}
 
-	public function news($page = null) {
+	public function posts($page = null) {
 
 		if ($page === null) {
 			$page = 1;
 		}
 
-		$news = $this->newsDataMap->find();
+		$dataMapHelper = new DataMapHelper();
+		$dataMapHelper->setRelationship([
+			'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE
+		]);
+
+		$newsDataMap = new NewsPostDataMap($dataMapHelper);
+
+		$onPage = 50;
+		$paginator = [];
+
+		$posts = $newsDataMap->find([],
+			[($page - 1) * $onPage, $onPage],
+			$paginator
+		);
 
 		$this
 			->getTwig()
 			->display('news/List.twig', [
-				'news' => $news
+				'posts' => $posts,
+				'paginator' => [
+					'pages' => $paginator['pages'],
+					'active' => $page
+				]
 			]);
 
 	}
 
-	public function newsEditGet($newsId = null) {
+	public function postEditGet($newsId = null) {
 
 		$twigData = [];
 
@@ -100,7 +118,7 @@ class NewsController extends GenericController implements ControllerInterface {
 		}
 	}
 
-	public function newsEditPost() {
+	public function postEditPost() {
 
 		$request = $this->getSlim()->request;
 
