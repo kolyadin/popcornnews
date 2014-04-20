@@ -9,7 +9,7 @@ use popcorn\model\dataMaps\TagDataMap;
 use popcorn\model\posts\NewsPost;
 use popcorn\model\tags\Tag;
 
-class NewsController extends GenericController implements ControllerInterface {
+class PostController extends GenericController implements ControllerInterface {
 
 	private $newsDataMap, $tagDataMap;
 
@@ -93,21 +93,44 @@ class NewsController extends GenericController implements ControllerInterface {
 
 	}
 
-	public function postEditGet($newsId = null) {
+	public function postEditGet($postId = null) {
 
 		$twigData = [];
 
-		if ($newsId > 0) {
-			$news = $this->newsDataMap->findById($newsId);
+		if ($postId > 0) {
+			/** @var NewsPost $post */
+			$post = $this->newsDataMap->findById($postId);
 
-			if (!$news) {
+			if (!$post) {
 				$this->getSlim()->notFound();
 			}
 
-			$twigData['news'] = $news;
+			$twigData['post'] = $post;
+
+			$events = $post->getTags(Tag::EVENT);
+			$articles = $post->getTags(Tag::ARTICLE);
+
+			if ($events){
+				foreach ($events as $tagEvent){
+					$twigData['tags']['events'][] = $tagEvent->getId();
+				}
+			}
+
+			if ($articles){
+				foreach ($articles as $tagEvent){
+					$twigData['tags']['articles'][] = $tagEvent->getId();
+				}
+			}
+
+
+//			print '<pre>'.print_r($post->getTags(0),true).'</pre>';
+
+//			print '<pre>'.print_r($post,true).'</pre>';
+
 		}
 
-		if ($newsId > 0 && $this->getSlim()->request->get('action') == 'remove') {
+
+		if ($postId > 0 && $this->getSlim()->request->get('action') == 'remove') {
 			$this
 				->getTwig()
 				->display('news/NewsRemove.twig', $twigData);
