@@ -1,0 +1,16 @@
+.b-news_vertical-margin_30 {
+  margin-bottom: 30px;
+}
+.b-news__title-cont {
+  padding-bottom: 10px;
+}
+.b-news__title {
+  display: inline-block;
+}
+.ie7 .b-news__title {
+  display: block;
+  zoom: 1;
+}
+.b-news__vertical-margin_30 {
+  margin-bottom: 30px;
+}

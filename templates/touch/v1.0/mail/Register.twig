@@ -1,0 +1,13 @@
+{% extends '/mail/Generic.twig' %}
+
+{% block content %}
+
+<h2 style="font: 24px 'Trebuchet MS', Tahoma, Verdana, Arial; margin-top: 15px; margin-bottom: 10px;">Регистрация</h2>
+<div style="background: #e5e5e5; padding: 12px 15px;">
+    <span style="font: bold 13px Tahoma, Verdana, Arial; display: block;">Вы были зарегистрированы на сайте {{ slim.request.host }}</span>
+    <span style="font: 13px Tahoma, Verdana, Arial; display: block; margin-bottom: 12px;">Для продолжения регистрации вам необходимо активизировать свой аккаунт, для это перейдите по этой ссылке: </span>
+    <a style="font: 13px Tahoma, Verdana, Arial; color: #f70080;" href="http://{{ slim.request.host }}/register/{{ user.id }}/{{ user.hash }}">http://{{ slim.request.host }}/register/{{ user.id }}/{{ user.hash }}</a>
+    <span style="font: 13px Tahoma, Verdana, Arial; display: block; margin-top: 15px;">С уважением, редакция Popcornnews <a style="color: #f70080" href="http://{{ slim.request.host }}/">http://{{ slim.request.host }}/</a></span>
+</div>
+
+{% endblock %}

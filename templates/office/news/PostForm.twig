@@ -1,0 +1,469 @@
+{% extends '/Generic.twig' %}
+
+{% block BodyEnd %}
+
+	<script type="text/javascript">
+
+		$(function(){
+
+			var $newForm =
+			'<div class="form-group">'+
+				'<input type="hidden" name="image[]" value="%u"/>'+
+				'<label class="control-label col-md-2"></label>'+
+				'<div class="col-md-9">'+
+					'<div>'+
+						'<img class="thumbnail" src="%s" style="float:left;margin-right: 20px;" alt=""/>'+
+						'<p><input class="form-control input-xlarge" name="title[%u]" type="text" placeholder="Название фото" value="%s"/></p>'+
+						'<p><input class="form-control input-xlarge" name="caption[%u]" type="text" placeholder="Подпись к фото" value="%s"/></p>'+
+						'<p><input class="btn btn-danger" type="button" value="убрать" data-action="remove-image"/></p>'+
+					'</div>'+
+				'</div>'+
+			'</div>';
+
+			$('body').on('click','input[data-action=remove-image]',function(){
+				var $formGroup = $(this).closest('.form-group');
+				$formGroup.fadeOut('fast',function(){
+					$(this).remove();
+				});
+			});
+
+			$('#postDate').datetimepicker({
+				language: 'ru',
+				format: 'dd.mm.yyyy hh:ii',
+				autoclose: true,
+				minuteStep: 1
+			});
+
+			$('input[name=articles]').select2({
+				data: [
+					{id:1,text:'звезды'},
+					{id:2,text:'мода'},
+					{id:3,text:'красота'},
+					{id:4,text:'кино'},
+					{id:5,text:'тв и сериалы'},
+					{id:6,text:'музыка'},
+					{id:7,text:'гаджеты'}
+				],
+				width: '480px',
+				multiple: true,
+				placeholder: "Начните вводить название рубрики...",
+				initSelection: function (element, callback) {
+					/*
+					var data = [];
+
+					data.push({'id': 69, 'text': 'Россия'});
+
+					$(element.val().split(';')).each(function () {
+						data.push({id: this, text: this});
+					});
+
+					callback(data);
+					*/
+				}
+			});
+
+			$('input[name=tags]').select2({
+				width: '480px',
+				multiple: true,
+				placeholder: "Начните вводить название тега...",
+				initSelection: function (element, callback) {
+
+					var data = [];
+
+					data.push({'id': 69, 'text': 'Россия'});
+
+					$(element.val().split(';')).each(function () {
+						data.push({id: this, text: this});
+					});
+
+					callback(data);
+				},
+				ajax: {
+					url: '/office/ajax/post/tags',
+					dataType: 'json',
+					data: function (term) {
+						return {
+							term: term
+						};
+					},
+					results: function (data) {
+						return {
+							results: data.tags
+						};
+					}
+				}
+			});
+
+			$('input[name=persons]').select2({
+				width: '480px',
+				multiple: true,
+				placeholder: "Начни вводить имя персоны...",
+				initSelection: function (element, callback) {
+
+				},
+				ajax: {
+					url: '/office/ajax/post/persons',
+					dataType: 'json',
+					data: function (term) {
+						return {
+							term: term
+						};
+					},
+					results: function (data) {
+						return {
+							results: data.persons
+						};
+					}
+				}
+			});
+
+			$('input[name=movies]').select2({
+				width: '480px',
+				multiple: true,
+				placeholder: "Начни вводить имя персоны...",
+				initSelection: function (element, callback) {
+
+				},
+				ajax: {
+					url: 'http://api.kinoafisha.info/p/moviesSuggest.php?callback=?',
+					dataType: 'jsonp',
+					data: function (term,page) {
+						return {
+							q: term
+						};
+					},
+					results: function (data) {
+
+						var results = [];
+						$.each(data, function (index, film) {
+							results.push({
+								id: film.id,
+								text: sprintf('%s / %u',film.name,film.year)
+							});
+						});
+						return {
+							results: results
+						};
+					}
+				}
+			});
+
+			var uploaderMainImage = new plupload.Uploader({
+				runtimes: 'html5,flash,silverlight,html4',
+				browse_button: 'main-image-uploader',
+				max_file_size: '10mb',
+				unique_names: true,
+				max_file_count: 1,
+				multi: false,
+
+				multipart_params : {
+					'resize' : '200x'
+				},
+
+				url: "/ajax/user-upload",
+
+				flash_swf_url: '/office/assets/plugins/plupload-2.1.1/js/Moxie.swf',
+				silverlight_xap_url: '/office/assets/plugins/plupload-2.1.1/js/Moxie.xap',
+
+				filters: [
+					{title: "Фотографии", extensions: "jpg,jpeg,gif,png"}
+				],
+
+				init: {
+					PostInit: function () {
+
+					},
+					UploadComplete: function (up, files) {
+
+					},
+					BeforeUpload: function (up, file) {
+						var $parent = $('#main-image-uploader').closest('.col-md-9').find('.help-block');
+						$parent.html('');
+					},
+
+					FilesAdded: function (up, files) {
+						up.start();
+					},
+					FileUploaded: function (upldir, file, object) {
+
+						var data = $.parseJSON(object.response);
+
+						var $parent = $('#main-image-uploader').closest('.col-md-9').find('.help-block');
+						$parent
+							  .append('<input type="hidden" name="mainImageId" value="'+ data.id +'" />')
+							  .append('<img src="'+ data.result.url +'"/>');
+
+					},
+
+					UploadProgress: function (up, file) {
+
+					},
+
+					Error: function (up, err) {
+
+					}
+				}
+
+			});
+			uploaderMainImage.init();
+
+			var uploaderImages = new plupload.Uploader({
+				runtimes: 'html5,flash,silverlight,html4',
+				browse_button: 'add-images',
+				max_file_size: '10mb',
+				unique_names: true,
+				max_file_count: 1,
+				multi: false,
+
+				multipart_params : {
+					'resize' : '200x'
+				},
+
+				url: "/ajax/user-upload",
+
+				flash_swf_url: '/office/assets/plugins/plupload-2.1.1/js/Moxie.swf',
+				silverlight_xap_url: '/office/assets/plugins/plupload-2.1.1/js/Moxie.xap',
+
+				filters: [
+					{title: "Фотографии", extensions: "jpg,jpeg,gif,png"}
+				],
+
+				init: {
+					PostInit: function () {
+
+					},
+					UploadComplete: function (up, files) {
+
+					},
+					BeforeUpload: function (up, file) {
+						var $parent = $('#main-image-uploader').closest('.col-md-9').find('.help-block');
+						$parent.html('');
+					},
+
+					FilesAdded: function (up, files) {
+						up.start();
+					},
+					FileUploaded: function (upldir, file, object) {
+
+						var data = $.parseJSON(object.response);
+
+						$('#add-images')
+						.closest('.form-group')
+						.before(sprintf($newForm
+					      ,data.id,data.result.url,data.id,'',data.id,''
+					    ));
+
+					},
+
+					UploadProgress: function (up, file) {
+
+					},
+
+					Error: function (up, err) {
+
+					}
+				}
+
+			});
+			uploaderImages.init();
+		});
+
+	</script>
+
+{% endblock %}
+
+{% block PageContent %}
+
+	{% if poll %}
+		<h3 class="page-title">
+			Новость
+			<small>&quot;{{ post.name|e }}&quot;</small>
+		</h3>
+	{% else %}
+		<h3 class="page-title">
+			Создание новости
+		</h3>
+	{% endif %}
+
+
+	<form class="form-horizontal form-row-seperated" method="post" enctype="multipart/form-data" name="form-edit">
+		{% if post %}
+			<input type="hidden" name="postId" value="{{ post.id }}"/>
+		{% endif %}
+
+		<div class="form-body">
+
+			{% if app.request.get('status') == 'updated' %}
+				<div class="alert alert-success">
+					<i class="fa fa-check"></i>
+					<strong>Новость обновлена</strong>
+				</div>
+			{% endif %}
+
+			{% if app.request.get('status') == 'created' %}
+				<div class="alert alert-success">
+					<i class="fa fa-check"></i>
+					<strong>Новость создана</strong>
+				</div>
+			{% endif %}
+
+			<div class="portlet">
+				<div class="portlet-title">
+					<div class="caption">
+						<i class="fa fa-reorder"></i>Главное
+					</div>
+					<div class="tools">
+						<a href="javascript:;" class="collapse"></a>
+					</div>
+				</div>
+				<div class="portlet-body">
+					<div class="form-group last">
+						<label class="control-label col-md-3">Заголовок новости: <span class="required">*</span></label>
+
+						<div class="col-md-9">
+							<input class="form-control input-xlarge" name="name" required="true" type="text" value="{{ post.name|e }}"/>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Дата публикации: <span class="required">*</span></label>
+
+						<div class="col-md-9">
+							<input class="form-control input-medium" id="postDate" name="createDate" required="true" type="text" value="{{ post.name|e|default('now'|date('d.m.Y H:i')) }}"/>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Основное фото: <span class="required">*</span></label>
+
+						<div class="col-md-9">
+							<input type="button" class="btn btn-info" id="main-image-uploader" value="выбрать фото"/>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Источник новости:</label>
+
+						<div class="col-md-9">
+							<input class="form-control input-xlarge" name="source" required="true" type="text" value="{{ post.source|e }}"/>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Анонс (для списков или, если, новость короткая):</label>
+
+						<div class="col-md-9">
+							<input class="form-control input-xlarge" name="anons" required="true" type="text" value="{{ post.anons|e }}"/>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Подробное описание новости:</label>
+
+						<div class="col-md-9">
+							<input class="form-control input-xlarge" name="content" required="true" type="text" value="{{ post.content|e }}"/>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="portlet">
+				<div class="portlet-title">
+					<div class="caption">
+						<i class="fa fa-reorder"></i>Теги
+					</div>
+					<div class="tools">
+						<a href="javascript:;" class="collapse"></a>
+					</div>
+				</div>
+				<div class="portlet-body">
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Рубрики: <span class="required">*</span></label>
+
+						<div class="col-md-9">
+							<input type="hidden" name="articles"/>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Теги:</label>
+
+						<div class="col-md-9">
+							<input type="hidden" name="tags"/>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Персоны:</label>
+
+						<div class="col-md-9">
+							<input type="hidden" name="persons"/>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Фильмы:</label>
+
+						<div class="col-md-9">
+							<input type="hidden" name="movies"/>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="portlet">
+				<div class="portlet-title">
+					<div class="caption">
+						<i class="fa fa-reorder"></i>Фотографии
+					</div>
+					<div class="tools">
+						<a href="javascript:;" class="collapse"></a>
+					</div>
+				</div>
+				<div class="portlet-body">
+
+
+						<div class="form-group last">
+							<label class="control-label col-md-2">&nbsp;</label>
+							<div class="col-md-9 right">
+								<input type="button" class="btn btn-info btn-s" id="add-images" value="добавить фотографии"/>
+							</div>
+						</div>
+
+					<div class="clearfix"></div>
+
+				</div>
+			</div>
+
+		</div>
+
+		<div class="form-actions right">
+
+			{% if poll %}
+
+				<button class="btn btn-m btn-danger" type="button" data-action="poll-remove">Удалить опрос</button>
+				<button class="btn btn-m btn-success" type="submit">Обновить новость&nbsp;<i class="fa fa-check"></i></button>
+
+			{% else %}
+
+				{#<button class="btn btn-m btn-info" type="button" data-action="submit-just-save">Создать опрос</button>#}
+				<button class="btn btn-m btn-success" type="submit">Создать новость&nbsp;<i class="fa fa-check"></i></button>
+
+			{% endif %}
+		</div>
+	</form>
+
+{% endblock %}

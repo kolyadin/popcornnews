@@ -1,0 +1,98 @@
+/* Plain text section */
+.b-text h1 {
+  font-size: 36px;
+  line-height: 36px;
+  margin-bottom: 17px;
+}
+.b-text h2 {
+  font-size: 30px;
+  line-height: 30px;
+  margin-bottom: 12px;
+}
+.b-text h3 {
+  font-size: 26px;
+  line-height: 30px;
+  margin-bottom: 10px;
+}
+.b-text h4 {
+  font-size: 22px;
+  line-height: 25px;
+  margin-bottom: 8px;
+}
+.b-text h5 {
+  font-size: 20px;
+  line-height: 23px;
+  margin-bottom: 5px;
+}
+.b-text h6 {
+  font-size: 18px;
+  line-height: 22px;
+  margin-bottom: 5px;
+}
+.b-text a {
+  text-decoration: none;
+}
+.b-text p {
+  font-size: 13px;
+  line-height: 16px;
+  margin-bottom: 5px;
+}
+.b-text ol,
+.b-text ul {
+  margin: 15px 0;
+  color: #f70080;
+}
+.b-text ol span,
+.b-text ul span {
+  color: #000;
+}
+.b-text ol {
+  list-style-type: decimal;
+  list-style-position: inside;
+}
+.b-text ul {
+  list-style-position: inside;
+  list-style-type: square;
+}
+.b-text li {
+  font-size: 13px;
+  line-height: 16px;
+  margin-bottom: 10px;
+}
+.b-text table {
+  width: 100%;
+  margin-bottom: 20px;
+}
+.b-text table th,
+.b-text table td {
+  border-bottom: 1px solid #e5e5e5;
+  text-align: left;
+  padding: 3px 10px 4px;
+  font-size: 11px;
+  line-height: 13px;
+  font-family: 'PT Sans', Arial, Helvetica, sans-serif;
+}
+.b-text table th:first-child,
+.b-text table td:first-child {
+  padding-left: 0;
+}
+.b-text table td {
+  color: #7f7f7f;
+}
+.b-text table th {
+  color: #000;
+}
+.b-text hr {
+  color: #7f7f7f;
+}
+.b-text img {
+  max-width: 500px;
+  margin: 7px 0;
+}
+q {
+  background-color: #FAFCFE;
+  color: #999;
+  font-family: Verdana, Arial;
+  font-size: 11px;
+  padding: 2px 2px 2px 2px;
+}

@@ -1,0 +1,154 @@
+{% extends '/Generic.twig' %}
+
+{% block HeadEnd %}
+
+	<style type="text/css">
+		.table-items a {
+			font-size: 13px;
+		}
+
+		.table-items .stat .progress {
+			margin-bottom: 5px;
+		}
+
+		.table-items .stat .progress-bar strong {
+			padding-left: 5px;
+		}
+
+		.table-items .stat .label {
+			margin-right: 5px;
+		}
+	</style>
+
+{% endblock %}
+
+{% block BodyEnd %}
+
+	<script type="text/javascript">
+		$(function () {
+
+			var removePollCandidateId = null;
+
+			$('button[data-action=confirm-remove]').on('click', function () {
+
+				var params = {
+					pollId: removePollCandidateId
+				};
+
+				var handler = function(response){
+					if (response.status == 'success'){
+
+						var $tr = $('tr[data-poll-id='+removePollCandidateId+']');
+
+						$('#modal-remove').modal('hide');
+					}
+				};
+
+				$.post('/office/ajax/poll/remove',params,handler,'json');
+
+			});
+
+			$('a[data-action=remove-poll]').on('click', function () {
+				removePollCandidateId = $(this).closest('tr').attr('data-poll-id');
+			});
+		});
+	</script>
+
+{% endblock %}
+
+{% block PageTop %}
+
+	<h3 class="page-title">
+		Список опросов
+		<small>просмотр сводной информации</small>
+	</h3>
+
+	<ul class="page-breadcrumb breadcrumb">
+		<li>
+			<i class="fa fa-home"></i>
+			<a href="/office">Консоль</a>
+			<i class="fa fa-angle-right"></i>
+		</li>
+		<li>
+			<a href="/office/polls">Опросы</a>
+			<i class="fa"></i>
+		</li>
+	</ul>
+
+{% endblock %}
+
+{% block PageContent %}
+
+	<div id="modal-remove" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1"
+	     aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+					<h4 class="modal-title">Вы ТОЧНО хотите удалить опрос?</h4>
+				</div>
+				<div class="modal-body">
+					<p><strong>Удаление опроса приведет к</strong>:</p>
+					<ul>
+						<li>удалению вариантов ответов</li>
+						<li>если удаляется активный опрос, то он будет снят с сайта и вместо него автоматически "встанет" последний созданный опрос</li>
+					</ul>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Отмена</button>
+					<button class="btn btn-danger" data-dismiss="modal" data-action="confirm-remove">Подтверждаю
+						удаление
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{% if polls|length %}
+
+		<div class="table-responsive">
+			<table class="table table-hover table-items">
+				<thead>
+				<tr>
+					<th></th>
+					<th>Дата и время создания</th>
+					<th>Название</th>
+					<th>Количество вариантов</th>
+				</tr>
+				</thead>
+				<tbody>
+				{% for poll in polls %}
+					<tr data-poll-id="{{ poll.id }}">
+						<td style="white-space: nowrap;">
+							{% if poll.status == 1 %}
+								<i class="fa fa-check tooltips" data-original-title="Сейчас стоит на сайте" data-placement="top"></i>
+							{% endif %}
+							<a class="btn btn-default btn-xs tooltips" data-original-title="Редактировать опрос"
+							   data-placement="top" href="/office/poll{{ poll.id }}"><i class="fa fa-edit"></i></a>
+							<a class="btn btn-danger btn-xs tooltips" data-original-title="Удалить опрос"
+							   data-placement="top" role="button" data-toggle="modal" data-action="remove-poll"
+							   href="#modal-remove"><i class="fa fa-trash-o"></i></a>
+						</td>
+						<td>{{ poll.createdAt|date('d.m.Y H:i') }}</td>
+						<td style=""><a href="/office/poll{{ poll.id }}">{{ poll.question|e }}</a></td>
+						<td>
+							<span class="badge badge-info tooltips">{{ poll.opinions|length }}</span>
+						</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+
+	{% else %}
+
+		<div class="note note-info">
+			<h4 class="note-heading">Пока не создано ни одного опроса</h4>
+			<p>
+				<a class="btn btn-success" href="/office/poll_create">Создать опрос</a>
+			</p>
+		</div>
+
+	{% endif %}
+
+{% endblock %}

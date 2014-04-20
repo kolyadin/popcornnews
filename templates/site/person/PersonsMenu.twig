@@ -1,0 +1,8 @@
+<ul class="b-inside__menu-firstlist">
+	<li{% if slim.path[2] is not defined %} class="active"{% endif %}>
+		<a href="/persons" title="Персоны">персоны</a>
+	</li>
+	<li{% if slim.path[2] == 'all' %} class="active"{% endif %}>
+		<a href="/persons/all" title="Все персоны">все</a>
+	</li>
+</ul>

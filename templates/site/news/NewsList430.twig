@@ -1,0 +1,49 @@
+<section class="b-large-news">
+	<ul class="b-large-news__list">
+		{% for post in posts %}
+			{% set photo = post.mainImageId.thumb('430x') %}
+			<li class="b-large-news__item">
+				<h2 class="b-large-news__title">
+					<a href="/news/{{ post.id }}">{{ post.name|e }}</a>
+				</h2>
+				<a href="/news/{{ post.id }}" class="b-large-news__img">
+					<img alt="" src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}">
+				</a>
+
+				<p class="b-large-news__text">
+					{{ post.announceFriendly }}
+				</p>
+				<div class="b-large-news__info">
+					<a href="/news/{{ post.id }}#comments" class="b-large-news__comments b-comments-status">
+						{% if post.comments == 0 %}
+							<span class="b-comments-status__title">нет комментариев</span>
+						{% else %}
+							<span class="b-comments-status__num">{{ post.comments }}</span>
+							<span class="b-comments-status__title">{{ post.comments|ruNumber('%s',['комментарий','комментария','комментариев','нет комментариев']) }}</span>
+						{% endif %}
+					</a>
+
+					<span class="b-single-article__views-title">Просмотров: {{ post.views|number_format(0,'',' ') }}</span>
+
+					{% if post.tagsOnly %}
+						<div>
+							<span class="b-single-article__tags-title">Теги: </span>
+							<ul class="b-large-news__tags-list">
+								<li class="b-single-article__gray">
+									{% for tag in post.tagsOnly %}
+										{% if tag.isPerson %}
+											{% set person = tag.entity %}
+											<a title="Показать новости с тегом &quot;{{ person.name|e }}&quot;" href="/persons/{{ person.urlName }}">{{ person.name|e }}</a>&nbsp;{% if loop.last == false %},{% endif %}
+										{% else %}
+											<a title="Показать новости с тегом &quot;{{ tag.name|e }}&quot;" href="/tag/{{ tag.id }}">{{ tag.name|e }}</a>&nbsp;{% if loop.last == false %},{% endif %}
+										{% endif %}
+									{% endfor %}
+								</li>
+							</ul>
+						</div>
+					{% endif %}
+				</div>
+			</li>
+		{% endfor %}
+	</ul>
+</section>

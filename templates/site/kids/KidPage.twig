@@ -1,0 +1,151 @@
+{% extends '/GenericInner.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% block head %}
+
+	<title>Звездный ребенок {{ kid.name|e }} - popcornnews</title>
+
+	<script type="text/javascript">
+		var commentSetup = {
+			entity: 'kids',
+			entityId: {{ kid.id }}
+		};
+	</script>
+
+	<script type="text/javascript" src="/st/js/popcorn.comments.js"></script>
+
+	<script type="text/javascript">
+		  $(function(){
+			  $('a[data-action=vote-up],a[data-action=vote-down]').on('click',function(){
+
+				  var kidParent = $(this).closest('.kid');
+				  var textDefault = kidParent.find('.text').attr('data-default-text');
+
+				  var action = $(this).attr('data-action');
+				  var kidId  = kidParent.attr('data-kid-id');
+
+
+				  var params = {
+					  'kidId' : kidId,
+					  'vote'  : action
+				  };
+
+				  var handler = function(response){
+
+					  if (response.status == 'success'){
+
+						  kidParent.find('.stats .col, .stats .text').animate({ opacity: 0 },'fast',function(){
+
+							  kidParent.find('.col').text(response.points);
+
+							  if (action == 'vote-up'){
+								  kidParent.find('.btn_minus').addClass('btn_disable');
+							  }else if (action == 'vote-down'){
+								  kidParent.find('.btn_plus').addClass('btn_disable');
+							  }
+
+							  kidParent
+									.find('.text')
+									.text('Спасибо, ваш голос принят!')
+									.animate({ opacity: 1 },'fast',function(){
+										$this = $(this);
+										setTimeout(function(){
+											$this.text(response.pointsOverall);
+										},2000);
+									})
+							  ;
+
+							  $(this).animate({ opacity: 1 },'fast');
+						  });
+
+					  }else{
+
+						  kidParent.find('.stats .text').animate({ opacity: 0 },'fast',function(){
+
+							  kidParent.find('.text').html(response.exception.message);
+
+							  $(this).animate({ opacity: 1 },'fast',function(){
+
+								  setTimeout(function(){
+									  kidParent.find('.text').animate({ opacity: 0 },'fast',function(){
+										  $(this).html(textDefault);
+
+										  $(this).animate({ opacity: 1 },'fast');
+									  });
+								  },2000);
+
+
+							  });
+						  });
+					  }
+
+				  };
+
+				  $.post('/ajax/kids/vote',params,handler,'json');
+
+				  return false;
+
+			  });
+		  });
+	</script>
+
+{% endblock %}
+
+{% block bodyStart %}
+
+	{% include '/comments/SmilesBar.twig' %}
+
+{% endblock %}
+
+{% block content %}
+
+	<div class="b-grid__g8 b-kids">
+
+		<h1>Звездные дети<span>Кто самый милый звездный ребенок?</span></h1>
+
+		{% spaceless %}
+
+			{% set textDefault = kid.votesOverall|ruNumber(['голос','голоса','голосов']) %}
+			{% set photo = kid.photo.thumb('393x') %}
+
+			<div class="kid" data-kid-id="{{ kid.id }}">
+				<h2><a href="/kid/{{ kid.id }}">{{ kid.name|e }}</a></h2>
+
+				<div class="pics">
+					<a href="/kid/{{ kid.id }}"><img src="{{ photo.url }}" alt="{{ kid.name|e }}" width="{{ photo.width }}" height="{{ photo.height }}"/></a>
+				</div>
+				<div class="stats">
+					<div class="vote">
+						<div class="col b-firm-grad">{{ kid.votes }}</div>
+						<div class="btn-wrap">
+							<a href="#" data-action="vote-up" class="b-firm-grad btn btn_plus">+</a>
+							<a href="#" data-action="vote-down" class="b-firm-grad btn btn_minus">&ndash;</a>
+						</div>
+						<p class="text" data-default-text="Всего {{ textDefault }}">Всего {{ textDefault }}</p>
+					</div>
+					{% if kid.commentsCount > 0 %}
+						{% set comments = kid.commentsCount|ruNumber(['комментарий','комментария','комментариев']) %}
+					{% else %}
+						{% set comments = 'Нет комментариев' %}
+					{% endif %}
+					<div class="under">
+						<p><a href="/kid/{{ kid.id }}#comments"><strong>{{ comments }}</strong></a></p>
+
+						<p><a href="/kid/{{ kid.id }}#new-comment">Написать комментарий</a></p>
+					</div>
+				</div>
+				<div class="desc">
+					<p class="db">Родился(ась) {{ kid.birthDate|ruDate('j f2 Y') }}, сейчас {{ kid.birthDate|ruAge }}</p>
+
+					<div class="description">{{ kid.description }}</div>
+				</div>
+			</div>
+
+		{% endspaceless %}
+
+		{% include '/comments/CommentsBlock.twig' with { 'commentsTree': commentsTree } %}
+
+
+	</div>
+
+{% endblock %}

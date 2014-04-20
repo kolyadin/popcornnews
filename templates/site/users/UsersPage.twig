@@ -1,0 +1,143 @@
+{% extends '/GenericInner.twig' %}
+{% import '/users/UserRows.twig' as htmlUser %}
+
+{% block head %}
+
+    <title>Пользователи сайта - popcornnews</title>
+
+	<script type="text/javascript">
+		$(function(){
+			$('#search-by-city').on('click',function(){
+				location.href = '/users/city' + $(this).parent().find('select[name=city] option:selected').val();
+			});
+
+			$('input[name=nickName]').focus(function(){
+				$(this).autocomplete("search");
+			})
+
+			$('input[name=nickName]')
+				  .autocomplete({
+					  minLength: 1,
+					  delay: 0,
+					  source: function (request, response) {
+						  $.post('/ajax/users/find-by-nick', { 'nick': request.term }, function (res) {
+							  response(res.users);
+						  }, 'json');
+					  },
+					  select: function (event, ui) {
+						  event.preventDefault();
+
+						  location.href = '/profile/'+ ui.item.id;
+
+
+//						  $('input[name=recipient]').replaceWith('<div class="user-selected"><input type="hidden" name="recipient" value="' + ui.item.id + '" />' + ui.item.nick + '<span title="Написать другому">x</span></div>');
+
+//                        $(this).val(sprintf('%s / %s', ui.item.name, ui.item.year)).attr('disabled',true);
+
+						  //$('<input type="hidden" name="'+inputObj.attr('name')+'" value="'+ ui.item.id +' ~~~ '+ ui.item.name +' / '+ ui.item.year +'" />').insertBefore(inputObj);
+					  },
+					  focus: function (event, ui) {
+						  event.preventDefault();
+
+						  //$(this).val(ui.item.nick);
+
+						  //alert(ui.item.pic);
+					  },
+					  context: this
+				  })
+				  .data('ui-autocomplete')._renderItem = function (ul, item) {
+						var html = '<a href="/profile/'+ item.id +'">' + item.nick + '</a>';
+
+						return $('<li class="ui-menu-item">')
+							  .append(html)
+							  .appendTo(ul);
+					};
+		});
+	</script>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="b-grid__g8 b-users">
+
+        <h1>Пользователи</h1>
+
+        {% include '/users/UsersMenu.twig' %}
+
+        <form action="/users/search" class="b-one-search-form" method="post">
+            <input type="text" name="nickName" placeholder="поиск по нику" autocomplete="off"/>
+            <input type="submit" class="b-firm-grad" value="найти"/>
+        </form>
+
+        <h3>активисты месяца</h3>
+
+	    <ul class="month-borders">
+		    <li class="one">
+			    <a rel="nofollow" href="/profile/13509"><img src="http://v1.popcorn-news.ru/avatars/EPvXeK.jpg" alt=""></a>
+		    </li>
+		    <li class="two">
+			    <a rel="nofollow" href="/profile/96498"><img src="http://v1.popcorn-news.ru/avatars/qRXTCd.jpg" alt=""></a>
+		    </li>
+		    <li class="three">
+			    <a rel="nofollow" href="/profile/125127"><img src="http://v1.popcorn-news.ru/avatars/rE5BeZ.jpg" alt=""></a>
+		    </li>
+		    <li class="four">
+			    <a rel="nofollow" href="/profile/125898"><img src="http://v1.popcorn-news.ru/avatars/OAtMn9.png" alt=""></a>
+		    </li>
+	    </ul>
+
+        <h3>топ пользователей</h3>
+
+	    <table class="b-users-table__full">
+            {% include '/users/UserRows.twig' with {profiles:top30Users} only %}
+        </table>
+
+        <div class="left-col">
+	 	    <h3>новички</h3>
+
+	        <div class="new-users">
+		        {% for profile in newUsers %}
+			        {% if profile.userInfo.cityName %}
+				        {% set hrefText = profile.nick|e ~ ', <span>' ~ profile.userInfo.cityName|e ~ '</span>' %}
+			        {% else %}
+				        {% set hrefText = profile.nick|e %}
+			        {% endif %}
+
+			        <div><a href="/profile/{{ profile.id }}">{{ hrefText }}</a></div>
+		        {% endfor %}
+	        </div>
+        </div>
+        <div class="right-col">
+            <h3>кто где</h3>
+
+            <select name="city">
+	            {% for country in countriesCities.countries %}
+		            <optgroup label="{{ country.name|e }}">
+			            {% for city in countriesCities.cities[country.id] %}
+				            <option value="{{ city.id }}">{{ city.name|e }}</option>
+			            {% endfor %}
+		            </optgroup>
+	            {% endfor %}
+            </select>
+
+            <input type="button" id="search-by-city" class="b-firm-grad" value="найти"/>
+
+            <h3>сейчас на сайте <span class="counter">{{ onlineUsersCount }}</span></h3>
+
+            <ul class="users">
+	            {% for profile in onlineUsers %}
+
+		            {% if profile.avatar.id %}
+			            {% set src = profile.avatar.url('profileSmall') %}
+		            {% else %}
+			            {% set src = '/st/img/no-photo/small.png' %}
+		            {% endif %}
+
+		            <li><a href="/profile/{{ profile.id }}"><img src="{{ src }}" alt=""/></a></li>
+	            {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+{% endblock %}

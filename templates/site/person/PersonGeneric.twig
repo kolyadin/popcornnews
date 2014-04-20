@@ -1,0 +1,61 @@
+{% extends '/GenericInner.twig' %}
+{% set personLink = '/persons/' ~ person.urlName %}
+
+{% block head %}
+
+<title>{{ person.name|e }} ({{ person.englishName|e }}) - новости, фото, биография, обои - popcornnews</title>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="b-grid__g8">
+    <article class="b-person">
+        <div class="b-person__header">
+            <h1 class="b-person__name">
+                {{ person.name|e }}
+                <span class="b-person__name_eng">{{ person.englishName|e }}</span>
+            </h1>
+        </div>
+
+        <section class="b-person__menu b-inside__menu ">
+            <ul class="b-inside__menu-firstlist">
+                <li{% if slim.path[3] is null %} class="active"{% endif %}>
+                    <a href="{{ personLink }}" title="{{ person.name|e }}">персона</a>
+                </li>
+                <li{% if slim.path[3] == 'news' %} class="active"{% endif %}>
+                    <a href="{{ personLink }}/news" title="Новости {{ person.genitiveName|e }}">новости</a>
+                </li>
+                <li{% if slim.path[3] == 'photo' %} class="active"{% endif %}>
+                    <a href="{{ personLink }}/photo" title="Фото {{ person.genitiveName|e }}">фото</a>
+                </li>
+                <li{% if slim.path[3] == 'fans' %} class="active"{% endif %}>
+                    <a href="{{ personLink }}/fans" title="Поклонники {{ person.genitiveName|e }}">поклонники</a>
+                </li>
+                <li{% if slim.path[3] == 'fanfics' %} class="active"{% endif %}>
+                    <a href="{{ personLink }}/fanfics" title="Фанфики {{ person.genitiveName|e }}">фанфики</a>
+                </li>
+                <li{% if slim.path[3] == 'facts' %} class="active"{% endif %}>
+                    <a href="{{ personLink }}/facts" title="Факты о {{ person.prepositionalName|e }}">факты</a>
+                </li>
+                <li{% if slim.path[3] == 'talks' %} class="active"{% endif %}>
+                    <a href="{{ personLink }}/talks" title="Обсуждения {{ person.genitiveName|e }}">обсуждения</a>
+                </li>
+                <li{% if slim.path[3] == 'video' %} class="active"{% endif %}>
+                    <a href="{{ personLink }}/video" title="Видео с {{ person.name|e }}">видео</a>
+                </li>
+                <li{% if slim.path[3] == 'sets' %} class="active"{% endif %}>
+                    <a href="{{ personLink }}/sets" title="Сеты your.style с {{ person.name|e }}">сеты</a>
+                </li>
+            </ul>
+
+            {% block submenu %}{% endblock %}
+
+        </section>
+
+        {% block personContent %}{% endblock %}
+
+    </article>
+</div>
+
+{% endblock %}

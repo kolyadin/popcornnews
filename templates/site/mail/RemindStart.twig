@@ -1,0 +1,21 @@
+{% extends '/mail/Generic.twig' %}
+
+{% block content %}
+
+    {% set baseUrl = 'http://' ~ slim.request.host %}
+    {% set changeUrl = baseUrl ~ '/remind/' ~ user.id ~ '/' ~ user.changePasswordHash %}
+
+    <h2 style="font: 24px 'Trebuchet MS', Tahoma, Verdana, Arial; margin-top: 15px; margin-bottom: 10px;">Забыли пароль?</h2>
+    <div style="background: #e5e5e5; padding: 12px 15px;">
+        <span style="font: bold 13px Tahoma, Verdana, Arial; display: block;">Подтвердите восстановление пароля</span>
+        <span style="font: 13px Tahoma, Verdana, Arial; display: block; margin-bottom: 12px;">
+            Поступил запрос на восстановление пароля к вашей учетной записи.<br/>
+            Если вы не запрашивали восстановление пароля просто проигнорируйте это письмо.<br/><br/>
+
+            Для восстановления пароля вам необходимо перейти по этой ссылке:<br/><br/>
+            <a style="font: 13px Tahoma, Verdana, Arial; color: #f70080;" href="{{ changeUrl }}">{{ changeUrl }}</a>
+        </span>
+
+    </div>
+
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends '/GenericInner.twig' %}
+
+{% block head %}
+
+    <script type="text/javascript">
+        $(function(){
+            $('.system-message a:last').on('click',function(){
+                history.back();
+                return false;
+            });
+        });
+    </script>
+
+{% endblock %}
+
+{% block content %}
+
+	<div class="form-top-mistake">
+	        <h1>Вы не зарегистрированы</h1>
+
+        	<p class="system-message">
+	            Для доступа к данной странице, вы должны быть авторизованы. Если вы еще не зарегистрированы на нашем сайте, вы можете сделать это перейдя по ссылке "<a href="/register" title="Зарегистрироваться на сайте">регистрация</a>".<br/>
+        	    <a href="#back" title="">вернуться на предыдущую страницу</a>
+	        </p>
+
+	</div>
+
+{% endblock %}

@@ -1,0 +1,130 @@
+<li class="start">
+	<a href="/dashboard">
+		<i class="fa fa-home"></i>
+		<span class="title">Консоль</span>
+	</a>
+</li>
+
+<li class="{% if app.request.path starts with '/office/news' %}active{% endif %}">
+	<a href="javascript:;">
+		<i class="fa fa-cogs"></i>
+		<span class="title">Новости</span>
+		<span class="arrow open"></span>
+	</a>
+	<ul class="sub-menu">
+		<li class="{% if app.request.path == '/office/news_create' %}active{% endif %}">
+			<a href="/office/news_create">
+				Создать новую
+			</a>
+		</li>
+		<li class="{% if app.request.path == '/office/news' %}active{% endif %}">
+			<a href="/office/news">
+				Просмотреть все
+			</a>
+		</li>
+	</ul>
+</li>
+
+<li class="{% if app.request.path starts with '/office/poll' %}active{% endif %}">
+	<a href="javascript:;">
+		<i class="fa fa-cogs"></i>
+		<span class="title">Опросы</span>
+		<span class="arrow open"></span>
+	</a>
+	<ul class="sub-menu">
+		<li class="{% if app.request.path == '/office/poll_create' %}active{% endif %}">
+			<a href="/office/poll_create">
+				Создать новый
+			</a>
+		</li>
+		<li class="{% if app.request.path == '/office/polls' %}active{% endif %}">
+			<a href="/office/polls">
+				Просмотреть все
+			</a>
+		</li>
+	</ul>
+</li>
+
+
+<li class="{% if app.path starts with '/section' %}active{% endif %}">
+	<a href="javascript:;">
+		<i class="fa fa-bookmark"></i>
+		<span class="title">Секции</span>
+		<span class="arrow"></span>
+	</a>
+	<ul class="sub-menu">
+		<li class="{% if app.path == '/section_create' %}active{% endif %}">
+			<a href="/section_create?new">
+				Создать новую
+			</a>
+		</li>
+		<li class="{% if app.path == '/sections' %}active{% endif %}">
+			<a href="/sections">
+				Просмотреть все
+			</a>
+		</li>
+		<li>
+			<a href="/sections/search">
+				Поиск секций
+			</a>
+		</li>
+	</ul>
+</li>
+
+
+<li class="{% if app.path starts with '/creative' %}active{% endif %}">
+	<a href="javascript:;">
+		<i class="fa fa-bookmark"></i>
+		<span class="title">Креативы</span>
+		<span class="selected"></span>
+		<span class="arrow open"></span>
+	</a>
+	<ul class="sub-menu">
+		<li class="{% if app.path == '/creative_create' %}active{% endif %}">
+			<a href="/creative_create?new">
+				Создать креатив
+			</a>
+		</li>
+		<li class="{% if app.path == '/dummy_create' %}active{% endif %}">
+			<a href="/creative_create?new">
+				Создать заглушку
+			</a>
+		</li>
+		<li class="{% if app.path == '/creatives' %}active{% endif %}">
+			<a href="/section/list">
+				Просмотреть все
+			</a>
+		</li>
+	</ul>
+</li>
+
+
+<li class="last">
+	<a href="javascript:;">
+		<i class="fa fa-bookmark"></i>
+		<span class="title">Статистика</span>
+		<span class="arrow"></span>
+	</a>
+	<ul class="sub-menu">
+		<li>
+			<a href="/section/create">
+				Площадок
+			</a>
+		</li>
+		<li>
+			<a href="/section/create">
+				Секций
+			</a>
+		</li>
+		<li>
+			<a href="/section/create">
+				Креативов
+			</a>
+		</li>
+		<li>
+			<a href="/section/create">
+				Подробная
+			</a>
+		</li>
+	</ul>
+</li>

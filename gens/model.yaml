@@ -1,0 +1,4 @@
+name: Model
+class: \popcorn\model\Model
+fields:
+    id: {type: int, sqlType: INT, flags: [AI, NN, PK, RO]}

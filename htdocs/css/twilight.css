@@ -1,0 +1,251 @@
+body.twilight{
+	background:#000000 url(/i/twilight.jpg) no-repeat fixed 0 0;
+}
+body.twilight #header{
+	background:none;
+	padding-top:0;
+	margin-bottom:0;
+}
+body.twilight #header div.hhFeatures{
+	padding:43px 0 25px 0;
+}
+body.twilight #header div.hhFeatures div.fon{
+	background:#000;
+	opacity:0.51;
+	#filter:alpha(opacity=51);
+	width:100%;
+	height:113px;
+	position:absolute;
+	z-index:1;
+	top:0;
+	left:0;
+}
+body.twilight div#header div.hbFeatures{
+	margin-top:2px;
+}
+body.twilight div#header div.logoHeader {
+	position:relative;
+	z-index:2;
+}
+body.twilight div#header div.sideBar {
+	position:relative;
+	z-index:2;
+}
+body.twilight div#contentWrapper{
+	background:none;
+}
+body.twilight div#header div.tlContainer {
+	border:0;
+	background:#1a2b3b;
+	height:85px;
+	width:100px;
+}
+body.twilight div#header div.topHeadline {
+	background:none;
+	position:relative;
+	height:130px;
+	margin-top:10px;
+	#padding-left:0px;
+	_padding-left:0;
+	zoom:1;
+}
+body.twilight div#header div.topHeadline h1{
+	background:url(/i/h1-twilight.png) no-repeat 0 0;
+	position:absolute;
+	left:0;
+	#left:2px;
+	_left:0;
+	width:409px;
+	top:-40px;
+	height:170px;
+	
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="/i/h1-twilight.png",sizingMethod='crop');
+	_background: none;
+}
+body.twilight div#header div.topHeadline p{
+	color:#5f677f;
+	font:2.4em "Times New Roman", Times, serif;
+}
+body.twilight div#header div.logoHeader a{
+	background:url(/i/logo-twilight.png) no-repeat 0 0;
+	
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="/i/logo-twilight.png",sizingMethod='crop');
+	_background: none;
+	width:384px;
+	height:43px;
+	display:block;
+}
+body.twilight div#header form.search {
+	background:#000;
+	position:relative;
+	z-index:2;
+}
+body.twilight div#content h1.twilight{
+	margin-bottom:15px;
+	font-size:2.4em;
+	color:#fff;
+	background:#000;
+	display:-moz-inline-stack;
+	display:inline-block;
+	#display:inline; zoom:1;
+}
+body.twilight div.desc{
+	overflow:hidden;
+	zoom:1;
+	padding-bottom:10px;
+	border-bottom:4px solid #e5e5e5;
+	margin-bottom:20px;
+}
+
+body.twilight div.desc p:first-letter { 
+	font: 2.8em Tahoma, Verdana, Arial;
+	line-height: 28px;
+	color: #f70080;
+	float: left;
+	padding-top: 4px;
+	margin-right: 6px;
+	}
+body.twilight div.desc img{
+	float:left;
+	margin-right:10px;
+}
+body.twilight div.desc p{
+	color:#fff;
+	font-size:1.4em;
+	overflow:hidden;
+}
+body.twilight div.desc a{
+	float:right;
+	font:1.4em Tahoma;
+	color:#f70080;
+}
+body.twilight img.poster{
+	display:block;
+	margin-bottom:35px;
+}
+body.twilight div.comm{
+	overflow:hidden;
+	zoom:1;
+}
+body.twilight div.comm img{
+	float:left;
+}
+body.twilight div.comm div{
+	margin-left:20px;
+}
+body.twilight div.comm div span{
+	margin-right:3px;
+}
+body.twilight div.comm div span,
+body.twilight div.comm div a{
+	color:#f70080;
+}
+body.twilight div.comm div a{
+	margin-left:3px;
+}
+body.twilight div.comm div p{
+	color:#fff;
+}
+body.twilight div#content,
+body.twilight div.hbFeatures{
+	overflow:hidden;
+	zoom:1;
+}
+body.twilight div.hbFeatures{
+	padding-bottom:15px;
+	overflow:hidden;
+	position:relative;
+}
+body.twilight div#content div.cont-no-shadow,
+body.twilight div.hbFeatures div.cont-no-shadow{
+	position:relative;
+	z-index:2;
+}
+body.twilight div#content div.cont-no-shadow{
+	margin-bottom:60px;
+}
+body.twilight div#content div.fon,
+body.twilight div.hbFeatures div.fon{
+	position:absolute;
+	z-index:1;
+	width:710px;
+	height:100%;
+	_height:1000px;
+	background:#000;
+	opacity:0.24;
+	top:0;
+	left:0;
+	filter:alpha(opacity=24);
+}
+body.twilight div.hbFeatures div.fon-dark,
+body.twilight div.sideBar-col div.fon-dark{
+	position:absolute;
+	z-index:1;
+	width:270px;
+	height:100%;
+	_height:1000px;
+	background:#000;
+	opacity:0.5;
+	top:0;
+	right:0;
+	filter:alpha(opacity=50);
+}
+body.twilight div.sideBar-col div.fon-dark{
+	zoom:1;
+	overflow:hidden;
+	_width:300px;
+}
+body.twilight div.sideBar-col{
+	position:relative;
+	overflow:hidden;
+	zoom:1;
+}
+body.twilight div.sideBar{
+	z-index:2;
+	position:relative;
+	overflow:hidden;
+	zoom:1;
+}
+body.twilight div#content {
+	position:relative;
+	width:600px;
+	_margin-right:-3px;
+}
+body.twilight h3.twilight-top span.replacer{
+	background:url(/i/h1-twilight-topcorn.png) no-repeat 0 0;
+
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="/i/h1-twilight-topcorn.png",sizingMethod='crop');
+	_background: none;
+}
+body.twilight h3.twilight-quiz span.replacer{
+	background:url(/i/h1-twilight-quiz.png) no-repeat 0 0;
+
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="/i/h1-twilight-topcorn.png",sizingMethod='crop');
+	_background: none;
+}
+body.twilight div#contentWrapper div.sideBar ul.simpleList{
+	width:230px;
+}
+body.twilight div.common-content{
+	overflow:hidden;
+	zoom:1;
+}
+body.twilight div.paginator h4{
+	color:#fff;
+}
+body.twilight div.paginator ul li{
+	color:#fff;
+}
+body.twilight div#footer span.logoFooter{
+	background:url(/i/popcorn-small-footer.gif) no-repeat 0 0;
+}
+body.twilight div.irhPersons h3 span.replacer,
+body.twilight div.irhPersons h3 a.replacer{
+	background:url(/i/persons.png) no-repeat 0 0;
+	_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="/i/persons.png",sizingMethod='crop');
+	_background: none;
+}
+body.twilight div.irhPersons h3 a.replacer{
+	cursor:pointer;
+	_cursor:hand;
+}

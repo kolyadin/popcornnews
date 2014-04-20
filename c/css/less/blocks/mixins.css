@@ -1,0 +1,20 @@
+.clearfix:before {
+  content: "";
+  display: table;
+}
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.ie7 .clearfix {
+  zoom: 1;
+}
+.ib {
+  display: inline-block;
+  vertical-align: top;
+}
+.ie7 .ib {
+  display: inline;
+  zoom: 1;
+}

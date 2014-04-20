@@ -1,0 +1,561 @@
+/* ====== Title: Person Page ====== */
+
+.b-person {
+
+}
+
+.b-person__header {
+    margin-bottom: 30px;
+}
+
+.b-person__content {
+    .clearfix;
+    margin-bottom: 22px;
+}
+
+.b-person__name {
+     color: #F70080;
+}
+
+.b-person__name_eng {
+     color: #b2b2b2;
+    font-size: 18px;
+    line-height: 22px;
+    display: block;
+}
+
+.b-person__picture {
+    position: relative;
+
+    img {
+        display: block;
+    }
+}
+.b-person__be-fan {
+    color: #fff;
+    font-weight: bold;
+    font-size: 12px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: url('../img/background/be-fan-bg.gif') no-repeat 0 0;
+    height: 33px;
+    padding: 5px 10px 0 40px;
+    text-decoration: none;
+}
+
+.b-person__statistic {
+    margin-bottom: 10px;
+}
+
+.b-person__statistic__list {
+    list-style: none outside;
+    background: #f2f2f2;
+
+    & > li{
+        overflow: hidden;
+        margin-bottom: 1px;
+        padding-left: 15px;
+    }
+}
+
+.b-person__statistic__item-first {
+    background: #e5e5e5;
+
+    .b-person__statistic__title {
+        padding-top: 13px;
+    }
+
+    .b-person__statistic__title-text {
+        margin-bottom: 2px;
+    }
+
+    .b-person__statistic__val {
+        background: url("../img/rating/battle-rate-left-bg.gif") repeat-x left center;
+        padding: 13px 0;
+        font-size: 30px;
+        line-height: 30px;
+    }
+}
+
+.b-person__statistic__item {
+    .b-person__statistic__title {
+        padding: 1px 0 2px;
+    }
+
+    .b-person__statistic__val {
+        background: #999;
+        padding: 3px 0;
+        font-size: 15px;
+        line-height: 15px;
+    }
+
+    .b-person__statistic__title-text {
+        width: 90px;
+    }
+}
+
+.b-person__statistic__title {
+    float: left;
+}
+
+.b-person__statistic__val {
+    width: 60px;
+    font-weight: bold;
+    float: right;
+    text-align: center;
+    color: #fff;
+}
+
+.b-person__statistic__title-text {
+    font-weight: bold;
+    color: #000;
+    font-size: 15px;
+    line-height: 17px;
+    display: inline-block;
+    vertical-align: top;
+
+    .ie7 & {
+        display: inline;
+        zoom: 1;
+    }
+}
+
+.b-person__statistic__vote-count {
+    color: #727272;
+    font-size: 11px;
+    line-height: 13px;
+}
+
+.b-person__statistic__star-rating {
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 4px;
+    background: url('../img/rating/stats-stars.gif') no-repeat 0 0;
+    width: 120px;
+    overflow: hidden;
+    height: 12px;
+    position: relative;
+    list-style-type: none;
+
+    .ie7 & {
+        display: inline;
+        zoom: 1;
+    }
+
+    & > li {
+          float: left;
+    }
+    
+    .current {
+        a {
+            background: url("../img/rating/stats-stars.gif") no-repeat 0 -12px;
+        }
+    }
+
+    a {
+        position: absolute;
+        height: 11px;
+        left: 0;
+        top: 0;
+        display: block;
+        text-indent: -9999px;
+
+        &:hover {
+            background: url("../img/rating/stats-stars.gif") no-repeat 0 -12px;
+
+        }
+    }
+
+    .one {
+         a {
+             width: 12px;
+             z-index: 11;
+         }
+    }
+
+    .two {
+        a {
+            width: 24px;
+            z-index: 10;
+        }
+    }
+
+    .three {
+        a {
+            width: 36px;
+            z-index: 9;
+        }
+    }
+
+    .four {
+        a {
+            width: 48px;
+            z-index: 8;
+        }
+    }
+
+    .five {
+        a {
+            width: 60px;
+            z-index: 7;
+        }
+    }
+
+    .six {
+        a {
+            width: 72px;
+            z-index: 6;
+        }
+    }
+
+    .seven {
+        a {
+            width: 84px;
+            z-index: 5;
+        }
+    }
+
+    .eight {
+        a {
+            width: 96px;
+            z-index: 4;
+        }
+    }
+
+    .nine {
+        a {
+            width: 108px;
+            z-index: 3;
+        }
+    }
+
+    .ten {
+        a {
+            width: 120px;
+            z-index: 2;
+        }
+    }
+
+    &:hover {
+        li.current a {
+            background: none !important;
+        }
+    }
+}
+
+.b-person__intro {
+    height: 250px;
+    display: table-cell;
+    vertical-align: middle;
+
+    p {
+        font-size: 14px;
+        line-height: 17px;
+    }
+}
+
+.b-person__intro-title {
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 24px;
+    margin-bottom: 10px;
+}
+
+.b-person__info-blocks {
+    padding: 0 0 20px;
+    border-bottom: 1px solid #e5e5e5;
+    margin-bottom: 25px;
+}
+
+.b-person__connection {
+
+}
+
+.b-person__connection__title-cont,
+.b-person__films__title-cont,
+.b-person__photos__title-cont,
+.b-person__fans__title-cont,
+.b-person__fanfik__title-cont,
+.b-person__sets__title-cont{
+     margin-bottom: 10px;
+}
+
+.b-person__connection__title,
+.b-person__films__title,
+.b-person__photos__title,
+.b-person__fans__title,
+.b-person__facts__title,
+.b-person__fanfik__title,
+.b-person__sets__title{
+     display: inline-block;
+
+    .ie7 & {
+        display: inline;
+        zoom: 1;
+    }
+}
+
+.b-person__connection__block {
+
+}
+
+.b-person__connection__list {
+    margin-left: -10px;
+}
+
+.b-person__connection__item {
+    width: 90px;
+    float: left;
+    margin-left: 10px;
+    margin-bottom: 7px;
+}
+
+.b-person__connection__img {
+    padding: 4px;
+    height: 102px;
+    overflow: hidden;
+    margin-bottom: 4px;
+
+    a {
+
+    }
+
+    img {
+        max-width: 100%;
+        display: block;
+    }
+}
+
+.b-person__connection__name {
+    padding: 0 4px;
+
+    a {
+        font-size: 11px;
+        font-weight: bold;
+        text-decoration: none;
+    }
+}
+
+.b-person__films {
+
+}
+
+.b-person__films__block {
+
+}
+
+.b-person__films__list {
+    & > li{
+        overflow: hidden;
+        border-top: 1px solid #e5e5e5;
+        font-size: 11px;
+        color: #999;
+        padding: 4px 0;
+
+        &:first-child {
+            border: 0 none;
+        }
+
+        span {
+            display: block;
+        }
+    }
+}
+
+.b-person__films__item-name {
+    width: 80%;
+    float: left;
+
+    a {
+        font-weight: bold;
+        font-size: 13px;
+        line-height: 17px;
+        text-decoration: none;
+    }
+}
+
+.b-person__films__item-year {
+    width: 18%;
+    float: right;
+    text-align: right;
+}
+
+.b-person__films__item-year-val {
+    font-weight: bold;
+    color: #000;
+    font-size: 13px;
+    line-height: 17px;
+}
+
+.b-person__photos {
+    margin-bottom: 30px;
+
+    li {
+        height: 150px;
+    }
+
+    img {
+        max-height: 150px;
+    }
+}
+
+.b-person__simple-gallery__list {
+
+    li {
+        float: left;
+        overflow: hidden;
+        margin-right: 1px;
+    }
+
+    a {
+        display: block;
+    }
+}
+
+.b-person__fans-cont {
+    border-bottom: 1px solid #e5e5e5;
+    margin-bottom: 7px;
+}
+
+.b-person__fans__list {
+
+}
+
+.b-person__fans__item {
+    width: 90px;
+    .ib;
+    margin-right: 7px;
+    padding-bottom: 10px;
+    overflow: hidden;
+}
+
+.b-person__fans__item-img {
+    height: 90px;
+    position: relative;
+    margin-bottom: 2px;
+    width: 91px;
+    overflow: hidden;
+
+    a {
+        position: absolute;
+        bottom: 0;
+        text-align: center;
+        width: 91px;
+        left: 0;
+        display: block;
+        max-height: 100%;
+    }
+
+    img {
+        max-height: 100%;
+        max-width: 100%;
+    }
+}
+
+.b-person__fans__item-name {
+    text-align: center;
+    font-size: 11px;
+    line-height: 13px;
+
+    a {
+        text-decoration: none;
+    }
+}
+
+.b-person__more-link {
+    font-weight: bold;
+    color: #000;
+    font-size: 13px;
+    line-height: 16px;
+
+    a {
+        text-decoration: none;
+    }
+}
+
+.b-person__fans-my-city {
+
+}
+
+.b-person__fanfik {
+    margin-bottom: 20px;
+}
+
+.b-person__fanfik__list {
+    font-size: 16px;
+}
+
+.b-person__fanfik__autor {
+   color: #999;
+   font-size: 10px;
+}
+
+.b-person__fanfik__autor-name {
+    font-weight: bold;
+}
+
+.b-person__facts__list {
+    border-bottom: 1px solid #e5e5e5;
+    margin-bottom: 7px;
+}
+
+.b-person__facts__item {
+    display: block;
+    position: relative;
+    margin-bottom: 8px;
+
+    &:before, &:after {
+        display: block;
+        font-size: 30px;
+        position: absolute;
+        font-family: serif;
+        color: #ee2c90;
+    }
+
+    &:before {
+        content: "«";
+        top: 0px;
+        left: 0;
+    }
+
+    &:after {
+        content: "»";
+        bottom: 12px;
+        right: 10px;
+    }
+    .ie7 & {
+        background: url('../img/icons/simple-fact-left-quote.gif') no-repeat left 13px;
+
+        .b-person__facts__text {
+            background: url('../img/icons/simple-fact-right-quote.gif') no-repeat right bottom;
+        }
+    }
+}
+
+.b-person__facts__text {
+    padding: 7px 26px 0 19px;
+}
+
+.b-person__facts__likes {
+    font-weight: normal;
+    font-size: 11px;
+    padding-top: 7px;
+    padding-left: 19px;
+}
+
+.b-person__photo-articles {
+    border-bottom: 1px #e5e5e5 solid;
+}
+
+.b-person__sets {
+    border-bottom: 1px #e5e5e5 solid;
+}
+
+.b-person__biography {
+    padding-top: 20px;
+
+    p {
+        text-align: justify;
+    }
+}

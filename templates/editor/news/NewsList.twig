@@ -1,0 +1,94 @@
+{% extends '/Generic.twig' %}
+
+{% block head %}
+    <title>Новости, сделай что-нибудь со мной</title>
+
+    <link rel="stylesheet" type="text/css" href="/editor/st/css/news.css" />
+    <style>
+        .admin-panel {width: 1100px !important;}
+        .content-panel {width: 860px !important;}
+    </style>
+
+    <script id="newsResultItems" type="text/x-jquery-tmpl">
+        <tr>
+            <td><a data-id="${id}" href="#" class="delete" title="Удалить новость"></a><a href="/editor/news/${id}">${name}</a></td>
+            <td class="center">${datetime}</td>
+            <td class="center">${comments}</td>
+        </tr>
+    </script>
+
+    <script>
+        $(function(){
+
+            //Удаление новостей в списке
+            $(document).on('click','.news-list td a.delete',function(){
+
+                var obj = this;
+
+                if (prompt('Наберите слово "delete" (без кавычек) для удаления') == 'delete')
+                {
+                    $.get('/editor/news/quickRemove', {'newsId': $(obj).attr('data-id')}, function (response) {
+
+                        if (response['status'] == 'success') {
+                            $(obj).parents('tr').hide('highlight', { 'color': '#c56e6e' });
+                        }
+
+                    }, 'json');
+                }else{
+                    alert('Удаление отменено');
+                }
+
+                return false;
+            });
+
+            //Поиск новостей в списке при нажатии на enter
+            $('#news-search').on('keypress',function(e){
+                if (e.keyCode == 13) {
+                    $.get('/editor/news/quickSearch', { 'q' : $('#news-search').val() }, function(news){
+                        $('.news-list tr:gt(0)').remove();
+
+                        $('#newsResultItems').tmpl(news).appendTo('.news-list');
+                    }, 'json');
+                }
+            });
+
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+
+<div class="content-panel" id="content-tabs">
+    <ul>
+        <li><a href="/news/">Новости</a></li>
+        <li><a href="/editor/news/new" onclick="document.location.href = '/editor/news/new';">Создать новость</a></li>
+    </ul>
+
+    <div id="tabs-1" class="news-list">
+        <p class="search-bar"><span>Поиск:</span>&nbsp;<input type="text" id="news-search" style="width:500px;" data-default-value="Введите что-нибудь" /></p>
+
+        <table class="items-list">
+            <tr>
+                <th style="text-align:left;padding-left:25px;">Заголовок</th>
+                <th style="width:120px;">Дата / время</th>
+                <th style="width:90px;">Кол-во<br/>комментов</th>
+            </tr>
+            {% for post in posts %}
+
+                <tr>
+                    <td><a data-id="{{ post.id }}" href="#" class="delete" title="Удалить новость"></a><a href="/editor/news/{{ post.id }}">{{ post.name|e }}</a></td>
+                    <td class="center">{{ post.createDate|date('d.m.Y H:i') }}</td>
+                    <td class="center">{{ post.comments }}</td>
+                </tr>
+
+            {% endfor %}
+        </table>
+
+        <div class="pager">
+            <a href="/editor/news">&larr;&nbsp;сюда</a>
+            <a href="/editor/news">туда&nbsp;&rarr;</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,46 @@
+<a href="#" id="comments"></a>
+
+{% spaceless %}
+	<section class="b-comments">
+		<ul>
+			{% include '/comments/Comments.twig' with {'comments':commentsTree} %}
+		</ul>
+	</section>
+{% endspaceless %}
+
+<script type="text/javascript">
+	$(function(){
+		if (location.hash == '#new-comment'){
+			$('.b-new-message-box__message').focus();
+		}
+	});
+</script>
+
+<a id="new-comment" href="#"></a>
+
+<div class="b-new-message-box" data-reply-to="0" data-level-id="0">
+	<div class="b-new-message-box__ava"><img src="/st/img/no-photo/small.png" alt=""/></div>
+
+	<div class="b-new-message-box__message-container">
+		<div class="b-new-message-box__smile-toogle"></div>
+		<div class="b-new-message-box__message" contenteditable="true" spellcheck="false"></div>
+
+		<div class="b-new-message-box__attach"></div>
+	</div>
+	<div class="clearfix"></div>
+
+	<input class="b-new-message-box__add-attach" id="new-message-add-photo" value="добавить фотографии" type="button"/>
+	<input type="button" class="b-new-message-box__send-button" value="отправить"/>
+
+	<div class="clearfix"></div>
+</div>
+
+<div class="b-comments__new-comment">
+	<a href="#">Написать комментарий</a>
+</div>
+
+<label><input name="subscribe" type="checkbox" value="1">Присылать мне уведомления о новых
+	комментариях</label>
+
+<hr/>
+<strong>где-то тут должна быть подписка на новые комменты</strong>

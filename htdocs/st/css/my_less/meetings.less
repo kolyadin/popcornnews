@@ -1,0 +1,157 @@
+@pinkColor: #EE2C90;
+@grayColor: #f0f0f0;
+@grayTextColor: #acacac;
+
+.b-grid__g13 {
+    display: inline;
+    float: left;
+    position: relative;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.b-grid__g13 {
+    width: 180px;
+}
+
+.b-meets {
+	.meet {
+		margin-top: 20px;
+		clear: both;
+		border-bottom: 1px solid @grayColor;
+		h2 {
+			font:
+				size: 24px;
+				weight: bold;
+			line-height: 27px;
+			margin-bottom: 15px;
+			a {
+				color: #000;
+				text-decoration: none;
+			}
+		}		
+		.pics {
+			float: left;
+			width: 402px;
+		}	
+		.stats {
+			float: left;
+			width: 180px;
+			margin-left: 20px;
+			.up,.down {
+				float: left;
+				width: 50px;
+				span {
+					text-align: center;
+					display: block;
+				}	
+				div {
+					width: 51px;
+					height: 51px;
+					margin-top: 5px;
+					cursor: pointer;
+				}
+			}
+			.up {
+				span {
+					color: @pinkColor;
+				}
+				div {
+					background: url(/st/img/kids-vote.gif) top left no-repeat;
+				}
+			}
+			.down {
+				margin-left: 15px;
+				span {
+					color: @grayTextColor;
+				}
+				div {
+					background: url(/st/img/kids-vote.gif) bottom left no-repeat;
+				}
+			}	
+			.under {
+				clear: both;
+				padding-top: 15px;
+				p {
+					line-height: 20px;
+				}
+				a {
+					text-decoration: none;
+					border-bottom: 1px solid @pinkColor;
+					font-size: 13px;
+					&:hover {
+					    border-bottom: none;
+					}
+					text-decoration: none;
+					border: 0;
+				}
+			}
+			.vote {
+				display: inline-block;
+				vertical-align: top;
+				height: 46px;
+				line-height: 48px;
+				border-radius: 4px;
+				color: #fff;
+				font-size: 22px;
+				margin-bottom: 30px;
+				.col {
+					display: inline-block;
+					vertical-align: top;
+					width: 79px;
+					height: 46px;
+					line-height: 48px;
+					text-align: center;
+					border-radius: 4px;
+					color: #fff;
+					font-size: 22px;
+					margin-bottom: 7px;
+				}
+				.btn-wrap {
+					display: inline-block;
+					vertical-align: top;
+					margin-left: 6px;
+					.btn {
+						cursor: pointer;
+						display: block;
+						color: #fff;
+						text-decoration: none;
+						line-height: 18px;
+						height: 20px;
+						font-size: 18px;
+						font-weight: bold;
+						text-align: center;
+						width: 20px;
+						border-radius: 50%;
+					}
+					.btn_disable {
+						background: #ccc;
+						cursor: default;
+						filter: none;
+					}
+					.btn_plus {
+						margin-bottom: 6px;
+					}
+				}
+				.text {
+					font-size: 12px;
+					line-height: 14px;
+					color: #000;
+				}
+			}
+		}
+		.desc {
+			clear: both;
+			padding: 20px 0 20px 0;
+			.db {
+				color: #797979;
+				font-size: 13px;
+				font-weight: bold;
+			}
+			.description {
+				margin-top: 10px;
+				font-size: 13px;
+				}
+		}
+	}
+}

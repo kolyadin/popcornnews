@@ -1,0 +1,59 @@
+{% extends '/profile/ProfileGeneric.twig' %}
+{% import '/UserRows.twig' as html %}
+
+{% block head %}
+
+    <title>Подписка на новости персон - popcornnews</title>
+
+    <script type="text/javascript">
+        $(function(){
+            var personsChecked = 0;
+
+            $('.b-profile-persons input[type=checkbox]').on('change',function(){
+
+                var pChecked = $('.b-profile-persons input[type=checkbox]:checked').length;
+
+                if (pChecked > 0){
+                    $('.persons-counter').text('Выбрано персон: ' + pChecked).show();
+                }else{
+                    $('.persons-counter').hide();
+                }
+            });
+        });
+    </script>
+
+    {{ parent() }}
+
+    <style type="text/css">
+
+    </style>
+
+{% endblock %}
+
+{% block profile %}
+
+    <h1>Подпишись на персону</h1>
+
+    {% include '/profile/ProfileMenu.twig' %}
+
+    <form method="post" class="b-profile-persons">
+        <table class="persons">
+            {% for row in persons|batch(2) %}
+                <tr>
+                    {% for person in row %}
+                        <td><input {% if person.id in fans %}checked {% endif %} type="checkbox" name="persons[]" value="{{ person.id }}" id="person-checkbox-{{ person.id }}"></td>
+                        <td><label for="person-checkbox-{{ person.id }}">{{ person.name|e }}<div>{{ person.englishName }}</div></label></td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+
+        <div class="b-text">
+            <p class="persons-counter"></p>
+        </div>
+
+        <input type="submit" class="b-firm-grad b-button-save" value="сохранить">
+    </form>
+
+
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends '/community/group/GroupGeneric.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% block head %}
+
+	<title>Альбом - {{ album.title|e }} - popcornnews</title>
+
+	<script type="text/javascript">
+		$(function(){
+
+		});
+	</script>
+
+{% endblock %}
+
+{% block communityContent %}
+
+	{% for photo in photos %}
+
+	{% else %}
+		<strong>В этом альбоме еще нет ни одной фотографии</strong>
+	{% endfor %}
+
+{% endblock %}

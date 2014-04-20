@@ -1,0 +1,340 @@
+{% extends '/Generic.twig' %}
+
+{% block head %}
+    <title>Персоны</title>
+
+    <link rel="stylesheet" type="text/css" href="/editor/st/css/editor.css" />
+
+    <script>
+        $(function(){
+
+            if ($('textarea[name=info]').length)
+            {
+                CKEDITOR.replace( 'info', {
+                    filebrowserBrowseUrl: '/browser/browse.php?type=Images',
+                    filebrowserUploadUrl: '/uploader/upload.php?type=Files',
+                    toolbar : 'toolbarLight'
+                });
+            }
+
+            //Подключаем редактор для подробного описания новости
+            if ($('textarea[name=description]').length)
+            {
+                CKEDITOR.replace( 'description', {
+                    filebrowserBrowseUrl: '/browser/browse.php?type=Images',
+                    filebrowserUploadUrl: '/uploader/upload.php?type=Files'
+                });
+            }
+
+            $('input[name=birthDate]')
+                .mask('99.99.9999')
+                .datepicker({
+                    changeYear : true
+                });
+
+            //Выбор типа новости
+            $('#news-type-radio').buttonset();
+
+            $('#news-type-radio1').click(function(){
+                $('*[data-news-type=1]').show();
+            });
+
+            $('#news-type-radio2').click(function(){
+                $('*[data-news-type=1]').hide();
+            });
+
+            $('#content-tabs').tabs('option','active',1);
+
+            //Автодополнение для фильмов киноафиши
+            $('body .content-panel .element').on('keydown.autocomplete','input[name*=ka_movies]',function(){
+
+                var inputObj = $(this);
+
+                inputObj
+                .autocomplete({
+                    minLength : 1,
+                    source : sprintf('http://api.kinoafisha.info/p/moviesSuggest.php?callback=?&q=%s',$(this).val()),
+                    select : function(event,ui)
+                    {
+                        event.preventDefault();
+
+                        $(this).val(sprintf('%s / %s', ui.item.name, ui.item.year)).attr('disabled',true);
+
+                        $('<input type="hidden" name="'+inputObj.attr('name')+'" value="'+ui.item.id+'" />').insertBefore(inputObj);
+                    },
+                    focus : function(event,ui)
+                    {
+
+                        //alert(ui.item.pic);
+                    }
+                })
+                .data('ui-autocomplete')._renderItem = function( ul, item ) {
+                    return $('<li>')
+                    .append(sprintf('<a style="cursor:pointer;" data-tooltip="Щелкни, чтобы выбрать этот фильм"><div style="vertical-align:top;"><img src="%s" class="fl" /><div style="padding:5px 0 0 7px;" class="fl">%s / %u</div></div><div class="clear"></div></a>'
+                            ,item.poster
+                            ,item.name
+                            ,item.year
+                    ))
+                    .appendTo(ul);
+                };
+            });
+
+            //Автодополнение к рубрикам
+            $('body .content-panel .element').on('keydown.autocomplete','input[name*=article]',function(){
+                $(this)
+                .autocomplete({
+                    minLength : 1,
+                    source : '/editor/getList/pn_dictionary_news_article',
+                    select : function(event,ui)
+                    {
+                        event.preventDefault();
+
+                        $(this).val(sprintf('%s / %s', ui.item.name, ui.item.year)).attr('disabled',true);
+                        $('<input type="hidden" name="'+inputObj.attr('name')+'" value="'+ui.item.id+'" />').insertBefore(inputObj);
+                    },
+                    focus : function(event,ui)
+                    {
+                        //alert(ui.item.pic);
+                    }
+                })
+                .data('ui-autocomplete')._renderItem = function( ul, item ) {
+                    return $('<li>')
+                    .append(sprintf('<a href="#" style="cursor:pointer;">%s</a>',item.name))
+                    .appendTo(ul);
+                };
+            });
+
+
+            /*
+             $('#ava').imgAreaSelect({
+             'minHeight': 100,
+             'minWidth' : 100,
+             'x1'       : 0,
+             'y1'       : 100,
+             'x2'       : 200,
+             'y2'       : 200,
+             'show'     : true,
+             'enable'   : true
+             });
+             */
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+
+    <div class="content-panel" id="content-tabs">
+    <ul>
+        <li><a href="#tabs-1" onclick="document.location.href = '/editor/persons';">Персоны</a></li>
+        <li><a href="#tabs-2">{% if form.edit %}Редактирование{% else %}Новая персона{% endif %}</a></li>
+    </ul>
+
+    <div id="tabs-1"></div>
+    <div id="tabs-2" class="form-news">
+
+    <script>
+        $(function(){
+            var form = $('#content-form');
+
+            var makeInvalid = function(obj,errorText){
+
+                var object = obj.parents('.element');
+
+                if (object.find('p.error').length)
+                {
+                    object.find('p.error').html(errorText);
+                }
+                else
+                {
+                    object.prepend('<p class="error">'+ errorText +'</p>');
+                }
+
+                object.css('border-left','3px solid red');
+            };
+
+            var makeValid = function(obj){
+                var object = obj.parents('.element');
+
+                object.css('border-left','none');
+                object.find('p.error').remove();
+            };
+
+            form.submit(function(){
+
+                var form_title = $('textarea[name=title]');
+                var form_anons = $('textarea[name=anons]');
+                var form_desc  = $('textarea[name=description]');
+
+                var form_main_photo = $('fieldset[data-alias=main_photo]');
+
+                var form_vote = $('fieldset[data-alias=vote]');
+
+                var cke_anons  = CKEDITOR.instances['anons'];
+                var cke_desc   = CKEDITOR.instances['description'];
+
+                var errorIndex = 0;
+
+                if (form_title.val().length <= 3)
+                {
+                    makeInvalid(form_title,'Поле "заголовок" должно быть заполнено!');
+                    errorIndex++;
+                } else {
+                    makeValid(form_title);
+                }
+
+                if (cke_anons.getData().length < 10)
+                {
+                    makeInvalid(form_anons,'Это поле должно быть заполнено!');
+                    errorIndex++;
+                } else {
+                    makeValid(form_anons);
+                }
+
+                if (cke_desc.getData().length < 10)
+                {
+                    makeInvalid(form_desc,'Это поле должно быть заполнено!');
+                    errorIndex++;
+                } else {
+                    makeValid(form_desc);
+                }
+
+                if (form_main_photo.find('.file-area table .file').length < 1)
+                {
+                    makeInvalid(form_main_photo,'Необходимо выбрать основное фото!');
+                    errorIndex++;
+                } else {
+                    makeValid(form_main_photo);
+                }
+
+                if (form_vote.find('input[type=text]:eq(0)').val() != 'Введите название опроса' && form_vote.find('input[type=text]').length < 3)
+                {
+                    makeInvalid(form_vote,'Должно быть несколько вариантов ответов!');
+                    errorIndex++;
+                } else {
+                    makeValid(form_vote);
+                }
+
+                if (errorIndex>0)
+                {
+                    return false;
+                }
+                else
+                {
+                    alert('Все ништяк!');
+                }
+            });
+        });
+    </script>
+
+    <form method="post" enctype="multipart/form-data" action="/editor/persons/new/save" id="content-form">
+
+        {% if form.edit %}
+            <input type="hidden" name="edit" value="{{ form.edit }}" />
+        {% endif %}
+
+        <div class="element">
+            <p class="title">Имя персоны (на русском):</p>
+            <p><input name="name" class="simple-text" value="{{ form.person.name|e }}" />
+        </div>
+
+        <div class="element">
+            <p class="title">Имя персоны в родительном падеже (кого/чего):</p>
+            <p><input name="genitiveName" class="simple-text" value="{{ form.person.genitiveName|e }}" />
+        </div>
+
+        <div class="element">
+            <p class="title">Имя персоны в предложном падеже (о ком/о чем):</p>
+            <p><input name="prepositionalName" class="simple-text" value="{{ form.person.prepositionalName|e }}" />
+        </div>
+
+        <div class="element">
+            <p class="title">Имя персоны (<strong>на английском</strong>):</p>
+            <p><input name="englishName" class="simple-text" value="{{ form.person.englishName|e }}" />
+        </div>
+
+        <div class="element">
+            <p class="title">Информация о человеке:</p>
+            <p><textarea name="info" class="simple-textarea">{{ form.person.info|e }}</textarea>
+        </div>
+
+        <div class="element">
+            <p class="title">Ссылка на источник:</p>
+            <p><input name="source" class="simple-text" value="{{ form.person.source|e }}" />
+        </div>
+
+        <div class="element">
+            <fieldset data-alias="mainPhoto"><legend>Основное фото персоны:</legend>
+                <!--<div class="file-area-bg" data-element-type="files" data-element-name="shot"></div>-->
+
+                <script>
+                    KaElement.OneImage({
+                        'name'         : 'mainPhoto',
+                        'buttonValue'  : 'Выбрать основное изображение',
+                        'buttonLength' : 220,
+                        'crop'         : [300,382],
+                        'thumbWidth'   : 300
+                    });
+
+                    {% if form.edit and form.person.photo.id %}
+
+                        KaElement.InsertOneImage({
+                            'id'   : {{ form.person.photo.id }},
+                            'name' : 'mainPhoto',
+                            'file' : {
+                                'source' : '{{ form.person.photo.name }}',
+                                'thumb'  : '{{ form.person.photo.name }}'
+                            },
+                            'thumbWidth' : 300
+                        });
+
+                    {% endif %}
+                </script>
+
+            </fieldset>
+        </div>
+
+        <div class="element">
+            <p class="title">Источник, откуда взялось фото:</p>
+            <p><input name="photoSource" class="simple-text" value="{{ form.person.photo.source|e }}" />
+        </div>
+
+        <div class="element">
+            <p class="title">Дата рождения</p>
+            <p><input name="birthDate" style="width:100px;" class="small-text" value="{{ form.person.birthDateFriendly|e|default("now"|date("d.m.Y")) }}" />
+        </div>
+
+        <div class="element">
+            <fieldset><legend>Опции:</legend>
+                <div class="fl">
+                    <p><input type="checkbox" {% if form.person.showInCloud %}checked{% endif %} name="showInCloud" id="showInCloud" /><label for="showInCloud">Показывать в облаке</label>
+                    <p><input type="checkbox" {% if form.person.sex == 1 %}checked{% endif %} name="sex" id="sex" /><label for="sex">Пол женский</label>
+                    <p><input type="checkbox" {% if form.person.isSinger %}checked{% endif %} name="isSinger" id="isSinger" /><label for="isSinger">Певица</label>
+                    <p><input type="checkbox" {% if form.person.isWidgetAvailable %}checked{% endif %} name="isWidgetAvailable" id="isWidgetAvailable" /><label for="isWidgetAvailable">Выгружать в виджет</label>
+                    <p><input type="checkbox" {% if form.person.allowFacts %}checked{% endif %} name="allowFacts" id="allowFacts" /><label for="allowFacts">Можно писать факты</label>
+                </div>
+                <div class="clear"></div>
+            </fieldset>
+        </div>
+
+        <div class="element">
+            <p class="title">Имя персоны в твиттере:</p>
+            <p><input name="twitterLogin" class="simple-text" value="{{ form.person.twitterLogin|e }}" />
+        </div>
+
+        <div class="element">
+            <p class="title">Ссылка на группу вконтакте:</p>
+            <p><input name="vkPage" class="simple-text" value="{{ form.person.vkPage|e }}" />
+        </div>
+
+        <div class="element">
+            <p class="title">Имя бля биографии:</p>
+            <p><input name="nameForBio" class="simple-text" value="{{ form.person.nameForBio|e }}" />
+        </div>
+
+
+        <input type="submit" value="Сохранить" />
+    </form>
+    </div>
+    </div>
+
+{% endblock %}

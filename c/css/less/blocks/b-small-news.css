@@ -1,0 +1,28 @@
+.b-small-news {
+  padding-top: 9px;
+}
+.b-small-news__list > li {
+  margin-bottom: 38px;
+}
+.b-small-news__list img {
+  max-width: 100%;
+}
+.b-small-news__head {
+  display: block;
+  margin-bottom: 14px;
+}
+.b-small-news__title {
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 17px;
+  margin-bottom: 4px;
+}
+.b-small-news__title a {
+  text-decoration: none;
+  color: #000;
+}
+.b-small-news__text {
+  font-size: 12px;
+  line-height: 15px;
+  margin-bottom: 5px;
+}

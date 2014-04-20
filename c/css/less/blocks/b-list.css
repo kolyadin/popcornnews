@@ -1,0 +1,19 @@
+.b-list {
+  font-size: 14px;
+  font-weight: bold;
+}
+.b-list li {
+  border-top: 1px #e5e5e5 solid;
+  padding: 3px 0;
+}
+.b-list li:first-child {
+  border-top: 0 none;
+}
+.b-list a {
+  color: #ee2c90;
+  text-decoration: none;
+}
+.b-list__counter {
+  color: #999999;
+  margin-left: 3px;
+}

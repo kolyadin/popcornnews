@@ -1,0 +1,57 @@
+{% extends '/community/group/GroupGeneric.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% block head %}
+
+    <title>Обсуждения группы - {{ group.title|e }} - popcornnews</title>
+
+	<style type="text/css">
+		.b-community h3 {
+
+		}
+	</style>
+
+{% endblock %}
+
+
+
+{% block communityContent %}
+
+	<div class="b-grid__g8 no-mg">
+        <table class="b-talks"><tbody>
+            <tr>
+                <th class="theme">Тема, автор и дата создания</th>
+                <th class="rating">рейтинг</th>
+                <th class="comments">комментарии</th>
+                <th class="last">последнее сообщение</th>
+            </tr>
+            {% for topic in topics %}
+                <tr>
+                    <td class="theme">
+                        <a class="ava"><img alt="" src="http://v1.popcorn-news.ru/avatars_small/wOVO2y.jpg"></a>
+                        <div class="details">
+                            <h3><a href="/community/group/{{ group.id }}/topic/{{ topic.id }}">{{ topic.name|e }}</a></h3>
+                            <noindex>Автор: <a href="/profile/{{ topic.owner.id }}" rel="nofollow" class="pc-user">{{ topic.owner.nick|e }}</a>, <span class="date">{{ topic.createTime|ruDateFriendly }}</span></noindex>
+                        </div>
+                    </td>
+                    <td class="rating"><span class="high">1</span></td>
+                    <td class="comments"><span class="new">{{ topic.commentsCount }}</span></td>
+	                <td class="last">
+	                    {% if topic.lastComment %}
+		                    <span class="date">{{ topic.lastComment.getDate|ruDateFriendly }}</span><a class="pc-user" href="/profile/{{ topic.lastComment.owner.id }}" rel="nofollow">{{ topic.lastComment.owner.nick|e }}</a>
+	                    {% else %}
+		                    нет
+	                    {% endif %}
+	                </td>
+                </tr>
+            {% endfor %}
+        </tbody></table>
+
+		{{ html.paginator(
+			 paginator.pages
+			,paginator.active
+			,'/community/group/' ~ group.id ~ '/topics/page%u'
+		) }}
+    </div>
+
+{% endblock %}

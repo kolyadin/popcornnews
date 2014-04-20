@@ -1,0 +1,59 @@
+{% extends '/GenericInner.twig' %}
+
+{% block content %}
+
+	<div class="b-grid__g8 b-community">
+		<h1>{{ group.title|e }}</h1>
+
+		<section class="b-inside__menu mg-top-xl">
+			<ul class="b-inside__menu-firstlist">
+				<li{% if slim.path[4] is null %} class="active"{% endif %}>
+					<a href="/community/group/{{ group.id }}">группа</a>
+				</li>
+				<li{% if slim.path[4] starts with 'topic'  %} class="active"{% endif %}>
+					<a href="/community/group/{{ group.id }}/topics">обсуждения</a>
+				</li>
+				<li{% if slim.path[4] == 'albums' or (slim.path[4] == 'album' and slim.path[5] == 'add') %} class="active"{% endif %}>
+					<a href="/community/group/{{ group.id }}/albums">фото</a>
+				</li>
+				<li{% if slim.path[4] == 'members' %} class="active"{% endif %}>
+					<a href="/community/group/{{ group.id }}/members">участники</a>
+				</li>
+				<li{% if slim.path[4] == 'newsfeed' %} class="active"{% endif %}>
+					<a href="/community/group/{{ group.id }}/newsfeed">обновления</a>
+				</li>
+			</ul>
+
+			{% if slim.path[4] starts with 'topic' or slim.path[4] == 'topic_create' or slim.path[4] == 'poll_create' %}
+
+				<ul class="b-sub-menu clearfix mg-top-s">
+					<li class="b-sub-menu__item {% if slim.path[4] != 'topic_create' and slim.path[4] != 'poll_create' %}b-sub-menu__item_active{% endif %}">
+						<a class="b-sub-menu__link" href="/community/group/{{ group.id }}/topics">все темы</a>
+					</li>
+					<li class="b-sub-menu__item {% if slim.path[4] == 'topic_create' %}b-sub-menu__item_active{% endif %}">
+						<a class="b-sub-menu__link" href="/community/group/{{ group.id }}/topic_create">создать тему</a>
+					</li>
+					<li class="b-sub-menu__item {% if slim.path[5] == 'poll_create' %}b-sub-menu__item_active{% endif %}">
+						<a class="b-sub-menu__link" href="/community/group/{{ group.id }}/poll_create">создать опрос</a>
+					</li>
+				</ul>
+
+			{% elseif slim.path[4] is null %}
+
+				<ul class="b-sub-menu clearfix mg-top-s">
+					<li class="b-sub-menu__item {% if slim.path[4] is null %}b-sub-menu__item_active{% endif %}">
+						<a class="b-sub-menu__link" href="/community/group/{{ group.id }}">информация</a>
+					</li>
+				</ul>
+
+			{% endif %}
+
+
+			{% block submenu %}{% endblock %}
+
+		</section>
+
+		{% block communityContent %}{% endblock %}
+	</div>
+
+{% endblock %}

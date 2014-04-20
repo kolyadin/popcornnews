@@ -1,0 +1,195 @@
+{% extends '/Generic.twig' %}
+
+{% block BodyEnd %}
+
+	<script type="text/javascript">
+
+		$(function () {
+			var $newForm =
+			'<div class="form-group last">' +
+				'<label class="control-label col-md-3">Ответ: <span class="required">*</span></label>' +
+				'<div class="col-md-9">' +
+					'<div class="input-group input-xlarge">' +
+						'<input name="opinion[]" class="form-control" type="text" required="true"/>' +
+						'<span class="input-group-btn">' +
+							'<button class="btn btn-info" type="button" data-action="remove-answer">убрать</button>' +
+						'</span>' +
+					'</div>' +
+				'</div>' +
+			'</div>';
+
+			$('#poll-add-answer').on('click', function () {
+				var $formGroup = $(this).closest('.portlet-body').find('.form-group:eq(-2)');
+
+				$formGroup.after($newForm);
+
+				$('#poll-answers').find('input[type=text]:last').focus();
+
+				return false;
+			});
+
+			$('#poll-answers').on('click','button',function(){
+				$(this).closest('.form-group').remove();
+				return false;
+			});
+
+			$('button[data-action=submit-just-save]').on('click',function(){
+
+				$('form[name=form-edit]').append('<input type="hidden" name="options[]" value="just-save" />').submit();
+				return false;
+
+			});
+
+			{% if poll %}
+				$('button[data-action=poll-remove]').on('click',function(){
+
+					location.href = '/office/poll{{ poll.id }}?action=remove';
+					return false;
+
+				});
+		    {% endif %}
+		});
+
+
+	</script>
+
+{% endblock %}
+
+{% block PageContent %}
+
+	{% if poll %}
+		<h3 class="page-title">
+			Опрос
+			<small>&quot;{{ poll.question|e }}&quot;</small>
+		</h3>
+	{% else %}
+		<h3 class="page-title">
+			Создание опроса
+		</h3>
+	{% endif %}
+
+
+	<form class="form-horizontal form-row-seperated" method="post" enctype="multipart/form-data" name="form-edit">
+		{% if poll %}
+			<input type="hidden" name="pollId" value="{{ poll.id }}"/>
+		{% endif %}
+
+		<div class="form-body">
+
+			{% if app.request.get('status') == 'updated' %}
+				<div class="alert alert-success">
+					<i class="fa fa-check"></i>
+					<strong>Опрос обновлен</strong>
+				</div>
+			{% endif %}
+
+			{% if app.request.get('status') == 'created' %}
+				<div class="alert alert-success">
+					<i class="fa fa-check"></i>
+					<strong>Опрос создан</strong>
+				</div>
+			{% endif %}
+
+			<div class="portlet">
+				<div class="portlet-title">
+					<div class="caption">
+						<i class="fa fa-reorder"></i>Главное
+					</div>
+					<div class="tools">
+						<a href="javascript:;" class="collapse"></a>
+					</div>
+				</div>
+				<div class="portlet-body">
+					<div class="form-group last">
+						<label class="control-label col-md-3">Вопрос: <span class="required">*</span></label>
+
+						<div class="col-md-9">
+							<input class="form-control input-xlarge" name="question" required="true" type="text" value="{{ poll.question|e }}"/>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+					<div class="form-group last">
+						<label class="control-label col-md-3" style="position: relative;bottom:7px;">Поставить на сайт:</label>
+
+						<div class="col-md-9">
+							{% if poll.status == 1 %}
+								<input name="status" value="1" checked type="checkbox"/>
+							{% else %}
+								<input name="status" value="1" type="checkbox"/>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="portlet">
+				<div class="portlet-title">
+					<div class="caption">
+						<i class="fa fa-reorder"></i>Варианты ответов
+					</div>
+					<div class="tools">
+						<a href="javascript:;" class="collapse"></a>
+					</div>
+				</div>
+				<div class="portlet-body" id="poll-answers">
+
+					<div class="note note-warning">
+						Варианты ответов нельзя изменять после создания. Только вручную через программиста
+					</div>
+
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Ответ: <span class="required">*</span></label>
+						<div class="col-md-9">
+							<div class="input-group input-xlarge">
+								<input class="form-control" name="opinion[]" type="text" required="true" value="{{ poll.opinions[0].title|e }}" {% if poll %}disabled{% endif %} />
+							</div>
+						</div>
+					</div>
+
+					{% for opinion in poll.opinions[1:] %}
+						<div class="form-group last">
+							<label class="control-label col-md-3">Ответ:</label>
+							<div class="col-md-9">
+								<div class="input-group input-xlarge">
+									<input class="form-control" type="text" required="true" disabled value="{{ opinion.title|e }}"/>
+								</div>
+							</div>
+						</div>
+					{% endfor %}
+
+					{% if not poll %}
+
+						<div class="form-group last">
+							<label class="control-label col-md-3">&nbsp;</label>
+							<div class="col-md-9 right">
+								<a class="btn btn-info btn-s" href="#" id="poll-add-answer">добавить ответ</a>
+							</div>
+						</div>
+					{% endif %}
+
+					<div class="clearfix"></div>
+
+				</div>
+			</div>
+
+		</div>
+
+		<div class="form-actions right">
+
+			{% if poll %}
+
+				<button class="btn btn-m btn-danger" type="button" data-action="poll-remove">Удалить опрос</button>
+				<button class="btn btn-m btn-success" type="submit">Обновить опрос&nbsp;<i class="fa fa-check"></i></button>
+
+			{% else %}
+
+				{#<button class="btn btn-m btn-info" type="button" data-action="submit-just-save">Создать опрос</button>#}
+				<button class="btn btn-m btn-success" type="submit">Создать опрос&nbsp;<i class="fa fa-check"></i></button>
+
+			{% endif %}
+		</div>
+	</form>
+
+{% endblock %}

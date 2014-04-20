@@ -1,0 +1,30 @@
+{% import '/Mixins.twig' as html %}
+
+{% spaceless %}
+{% for profile in profiles %}
+
+
+    {% if num is not null %}
+        {% set currentNum = num+loop.index0 %}
+    {% elseif customNum is not null %}
+	    {% set currentNum = profile.extra('row') %}
+    {% else %}
+        {% set currentNum = loop.index %}
+    {% endif %}
+
+	{% if profile.userInfo.countryName %}
+		{% set cityCountry = profile.userInfo.countryName|e %}
+
+		{% if profile.userInfo.cityName %}
+			{% set cityCountry = cityCountry ~ ', ' ~ profile.userInfo.cityName|e %}
+		{% endif %}
+	{% endif %}
+
+    <tr data-loop-id="{{ currentNum }}" data-user-id="{{ profile.id }}">
+        <td class="num">{{ currentNum }}</td>
+        <td class="profile">{{ html.profileInfo(profile,{'hidePoints' : true}) }}</td>
+        <td class="city">{{ cityCountry }}</td>
+        <td><span class="rating rating-{{ profile.rating.rank }}">{{ profile.rating.points|number_format(0,'',' ') }}</span></td>
+    </tr>
+{% endfor %}
+{% endspaceless %}

@@ -1,0 +1,190 @@
+table.contentUsersTable tr {
+	scrollbar-face-color: expression( runtimeStyle.scrollbarFaceColor = "#fff", (this == parentNode.lastChild ? className += " lastChild" : "") );
+	}
+	
+/*gallery vertical-align tricks*/
+div.gallery div.largeContainer div.imgContainer {
+	position: relative; top: 50%;
+	zoom: 1;
+	height: auto;
+	width: auto;
+	}
+div.gallery div.largeContainer img {
+	position: relative;
+	top: -50%;
+	}
+/*\\*/
+div.questionnaire dl.questionnaire {
+	scrollbar-face-color: expression( runtimeStyle.scrollbarFaceColor = "#fff", className += (this == parentNode.lastChild) ? " lastChild" : "" );
+	}
+div.questionnaire dl.lastChild {
+	border-bottom: 0;
+	padding-bottom: 0;
+	}
+	
+div.intro {
+	scrollbar-face-color: expression( 
+		runtimeStyle.scrollbarFaceColor = "#fff",
+		runtimeStyle.marginTop = ((parentNode.offsetHeight-offsetHeight)/2 > 0) ? (parentNode.offsetHeight-offsetHeight)/2+"px" : "0px" );
+	}
+
+div.commentsTrack form.newComment label {
+	top: 0;
+	}
+	
+div#content div.content div.commentsTrack form.newComment label input[type=checkbox] {
+	left: -4px;
+	margin-top: -10px;
+}
+
+div.mailTrack form.answer {
+	margin-bottom: -15px;
+	}
+
+div.mailTrack form.answer input[type=text] {
+	width: 544px;
+	}
+	
+div.mailTrack form.answer div.smiles span.header,
+div.mailTrack form.answer div.smiles div.smilesContainer ul img,
+div.gallery div.previewsContainer ul li,
+div.gonnaExit dl.hovered dt div.strike,
+div.gonnaExit dl:hover dt div.strike {
+	cursor: hand;
+}
+
+div.factsTrack form.newFact label {
+	top: 0;
+}
+
+form.questionnaireForm label span.cont input,
+form.questionnaireForm fieldset span.cont input {
+	top: 0;
+}
+
+div.gallery div.scrollLeft,
+div.gallery div.scrollRight {
+	cursor: hand;
+}
+
+div.gallery div.scrollRight {
+	float: right;
+	position: static;
+}
+
+div.userRating span {
+	float: left;
+}
+
+div#content ul.imagesList li {
+	margin-bottom: 5px;
+}
+
+div#content div.contentSidebar ul.friends {
+	margin-bottom: 5px;
+	}
+
+div.newsTrack div.entry:first-letter {
+	line-height: 35px;
+	}
+	
+div.newsTrack div.newsMeta span.comments {
+	background-position: left 3px;
+	zoom: 1;
+	}
+	
+form.partInGroups ul input[type=checkbox] {
+	margin-right: 0;
+	}
+
+div.introWrapper {
+	min-height: 215px;
+	height: auto;
+	}
+	
+div.puzWP ul.wpListAtPerson li a {
+	display: block;
+	}
+
+div.puzWP ul.wpListAtPerson li a img {
+	position: relative;
+	scrollbar-face-color: expression(runtimeStyle.scrollbarFaceColor = "#fff", runtimeStyle.top = (75-offsetHeight)/2+"px" );
+	}
+
+table.personTalks td.rating span {
+	margin-left: 7px;
+	}
+
+table.personTalks td.comments span {
+	margin-left: 16px;
+	}
+
+div#footer {	
+	padding-bottom: 50px;
+	}
+	
+ul.personStats li.stat {
+	position: relative;
+	margin-bottom: -1px;
+	}
+	
+div.mailTrack form.answer div.meta {
+	margin-bottom: 5px;
+	}	
+	
+	
+	
+/***hasLayout*/
+
+.divider,
+div.irhContainer,
+div.irh h2 a,
+div.irh h3 a,
+ul.tagCloud li,
+div.trackContainer,
+div.trackItem,
+div.commentsTrack div.post,
+div.commentsTrack form.newComment div.trackItem,
+div.commentsTrack form.newComment div.formActions,
+div.commentsTrack form.newComment fieldset.loggedOut,
+div#content div.content div.commentsTrack form.newComment label,
+div.mailTrack form.answer,
+div.factsTrack form.newFact div.trackItem,
+div.factsTrack form.newFact div.formActions,
+div.datesTrack ul li,
+form.questionnaireForm,
+dl.questionnaire,
+div.paginator,
+div.paginator ul li.active,
+ul.menu,
+div#header,
+div#header div.enterSite form,
+div#header div.logged,
+div#contentWrapper,
+div#content ul.headlinesList,
+div#content ul.imagesList,
+div.topic div.topicHeadline,
+div.topic div.markTopic,
+div#content div.contentSidebar div.edit,
+div#rightprime div.block,
+div#content div.contentSidebar ul.groups li,
+div#content div.contentSidebar ul.friends,
+div.newsTrack h3,
+div.newsTrack div.entry dl,
+div.groupsContainer,
+div.personTop,
+ul.personStats li.stat,
+div.conFilms div.filmsAtPerson,
+div.conFilms div.filmsAtPerson dl,
+ul.simpleGallery,
+div.fansContainer,
+div.discussTrack div.meta,
+div.puzWP ul,
+div.systemMessage,
+div.userDetails,
+div#contentWrapper div.sideBar ul.simpleList,
+div#contentWrapper div.sideBar ul.simpleList li {
+	zoom: 1;
+	}
+
+/*\\hasLayout*/

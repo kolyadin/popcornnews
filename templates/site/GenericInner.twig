@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js ie6"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js ie7"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js ie8"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js">     <!--<![endif]-->
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width">
+
+    <link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+
+	{#<style type="text/css">#}
+		{#@font-face {#}
+			{#font-family: 'PT Sans';#}
+			{#font-style: normal;#}
+			{#font-weight: 400;#}
+			{#src: local('PT Sans'), local('PTSans-Regular'), url(/st/res/fonts/pt-sans/regular.woff) format('woff');#}
+		{#}#}
+		{#@font-face {#}
+			{#font-family: 'PT Sans';#}
+			{#font-style: normal;#}
+			{#font-weight: 700;#}
+			{#src: local('PT Sans Bold'), local('PTSans-Bold'), url(/st/res/fonts/pt-sans/bold.woff) format('woff');#}
+		{#}#}
+	{#</style>#}
+
+	<link rel="stylesheet" href="/st/res/tooltipster/css/tooltipster.css" media="screen, projection, print"/>
+	<link rel="stylesheet" href="/st/res/jquery-ui-1.10.3/css/no-theme/jquery-ui-1.10.3.min.css"/>
+    <link  href="http://fotorama.s3.amazonaws.com/4.4.9/fotorama.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="/st/css/my_less/meetings.css" media="screen, projection, print">
+
+    <script type="text/javascript" src="/st/js/modernizr-2.6.2.min.js"></script>
+    <script type="text/javascript" src="/st/js/jquery-1.10.2.min.js"></script>
+	<script type="text/javascript" src="/st/res/tooltipster/js/jquery.tooltipster.min.js"></script>
+	<script type="text/javascript" src="/st/js/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="/st/js/jquery.stickyMojo.js"></script>
+	<script type="text/javascript" src="/st/res/jquery-ui-1.10.3/js/jquery-ui-1.10.3.min.js"></script>
+	<script type="text/javascript" src="/st/res/plupload-2.1.1/js/plupload.full.min.js"></script>
+	<script type="text/javascript" src="/st/js/jquery.lazyload.min.js"></script>
+    <script type="text/javascript" src="/st/js/jquery.caret.js"></script>
+    <script type="text/javascript" src="/st/js/jquery-gp-gallery.js"></script>
+    <script type="text/javascript" src="/st/js/jsHtmlToText.js"></script>
+    <script type="text/javascript" src="/st/res/emojify.js/emojify.js"></script>
+    <script type="text/javascript" src="http://masonry.desandro.com/masonry.pkgd.min.js"></script>
+
+    <script src="http://fotorama.s3.amazonaws.com/4.4.9/fotorama.js"></script>
+
+
+    <script src="/st/res/rangy-1.2.3/rangy-core.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        if((/Opera Mini/.test(navigator.userAgent))) {
+            $('html').addClass('operamini');
+            window.operamini = true;
+        }
+    </script>
+
+    <!--<LINK rel="icon" href="/favicon.ico" type="image/x-icon">
+    <LINK rel="shortcut icon" href="/favicon.ico" type="image/x-icon">-->
+
+    {% block head %}{% endblock %}
+
+    <script type="text/javascript">
+
+	    emojify.setConfig({
+		    emojify_tag_type: '.b-comments',
+		    only_crawl_id: null,
+		    img_dir: '/st/res/emojify.js/images/emoji',
+		    ignored_tags: {
+			    'SCRIPT': 1,
+			    'TEXTAREA': 1,
+			    'A': 1,
+			    'PRE': 1,
+			    'CODE': 1
+		    }
+	    });
+
+        $(function(){
+
+	        $('#poll').on('submit',function(){
+
+		        var params = {
+			        opinionId: $(this).find('input[type=radio]:checked').val(),
+			        pollId: $(this).find('input[name=pollId]').val()
+		        };
+
+		        var handler = function(response){
+
+			        if (response.status == 'success'){
+
+				        for (opinionId in response.opinions){
+					        var $box = $('#poll').find('li[data-opinion-id='+ opinionId +']');
+
+					        $box
+						          .find('.b-main-poll__answers-radio-cont')
+						          .remove();
+
+					        $box
+						          .find('.b-main-poll__answers-text-cont')
+						          .animate({'margin-left':0},200)
+						          .append('<div class="b-main-poll__answers-result" style="width: '+ response.opinions[opinionId] +'%"></div>');
+				        }
+			        }
+		        };
+
+		        $.post('/ajax/poll', params, handler, 'json');
+
+		        return false;
+	        });
+
+            //Значение поля по умолчанию
+            $(this).find('input[data-default-value]').each(function(){
+
+	            if ($(this).val().length > 0) return;
+
+                var defVal = $(this).data('default-value');
+
+                $(this)
+                    .css('color','#999')
+                    .val(defVal)
+                    .focusin(function(){
+                        if (!$(this).val() || $(this).val() == defVal){
+                            $(this).val('').css('color','#000');
+                        }
+                    })
+                    .focusout(function(){
+                        if (!$(this).val()){
+                            $(this).val(defVal).css('color','#999');
+                        }
+                    });
+            });
+
+	        $('.need-auth a:first').on('click',function(){
+
+		        var email = $('#form-authorization input[name=email]');
+
+		        $('body,html').animate({scrollTop:email.offset().top-20},'fast').promise().done(function(){
+			        email.focus();
+
+			        email.effect('highlight',{},500);
+			        email.effect('pulsate',{},500);
+		        });
+
+
+	        });
+
+	        $('#global-search')
+	            .focus(function(){
+		            $(this).autocomplete("search");
+		        })
+		        .keyup(function(){
+                    if ($(this).val().length < 3){
+	                    $('#global-search-results').fadeOut('fast');
+                    }
+		        })
+		        .focusout(function(event){
+		            $('#global-search-results').delay(200).fadeOut('fast');
+		        })
+				.autocomplete({
+			        minLength: 3,
+			        delay: 150,
+			        source: function (request, response) {
+				        $.post('/ajax/global-search', { 'searchString': request.term }, function (res) {
+					        if (res.status == 'success'){
+
+						        var showResultsCallback = function(){
+							        var selP = $('.b-global-search__persons');
+							        var selN = $('.b-global-search__news');
+							        var selU = $('.b-global-search__users');
+
+							        if (res.counters.persons > 0){
+
+								        if (selP.css('display') == 'none'){
+									        selP.show();
+								        }
+
+								        selP.find('ul').html('');
+								        selP.find('h3').html(res.headers.persons);
+
+								        for (x in res.data.persons){
+									        var person = res.data.persons[x];
+
+									        selP.find('ul').append('<li>'+ person +'</li>');
+								        }
+							        }else{
+								        selP.hide();
+							        }
+
+							        if (res.counters.users > 0){
+
+								        if (selU.css('display') == 'none'){
+									        selU.show();
+								        }
+
+								        selU.find('ul').html('');
+								        selU.find('h3 a').attr('href','/users/search/'+encodeURIComponent(request.term)).html(res.headers.users+'&nbsp;&gt;');
+
+								        for (x in res.data.users){
+									        var user = res.data.users[x];
+
+									        selU.find('ul').append('<li>'+ user +'</li>');
+								        }
+							        }else{
+								        selU.hide();
+							        }
+
+
+							        if (res.counters.news > 0){
+
+								        if (selN.css('display') == 'none'){
+									        selN.show();
+								        }
+
+								        selN.find('ul').html('');
+								        selN.find('h3 a').html(res.headers.news+'&nbsp;&gt;');
+
+								        for (x in res.data.news){
+									        var post = res.data.news[x];
+
+									        selN.find('ul').append('<li>'+ post +'</li>');
+								        }
+							        }else{
+								        selN.hide();
+							        }
+						        }
+
+						        if (res.counters.persons == 0 && res.counters.news == 0 && res.counters.users == 0){
+							        if ($('#global-search-results').css('display') != 'none'){
+								        $('#global-search-results').fadeOut('fast');
+							        }
+						        }else{
+							        $('#global-search-results').fadeIn('fast');
+							        showResultsCallback();
+							        globalSearchPositioning();
+						        }
+
+//						        response(res.data);
+						        $('ul.ui-autocomplete').hide();
+					        }
+				        }, 'json');
+			        },
+			        search: function (event, ui){
+				        //$('#global-search-results').fadeIn('fast');
+			        }
+	            })
+
+
+	        var globalSearchPositioning = function(){
+		        var globalSearchInput = $('#global-search');
+		        var globalSearch = $('#global-search-results');
+		        var globalSearchArrow = globalSearch.children('.b-global-search__arrow');
+
+		        globalSearch.css({
+			        top: globalSearchInput.offset().top + 25 + 'px',
+			        left: (globalSearchInput.offset().left - (globalSearch.width()/2) + 20 + globalSearchInput.width()/2) + 'px'
+		        });
+
+		        globalSearchArrow.css('margin-left',globalSearch.width()/2 - 41 + 'px');
+	        };
+
+	        window.onresize = function(){
+		        globalSearchPositioning();
+	        };
+
+	        globalSearchPositioning();
+
+
+
+
+
+
+
+        });
+
+    </script>
+
+    <link rel="stylesheet" href="/st/css/popcorn.css?{{ "now"|date('YmdHis') }}" media="screen, projection, print"/>
+</head>
+<body>
+
+{% block bodyStart %}{% endblock %}
+
+<div id="global-search-results">
+	<div class="b-global-search__arrow"></div>
+	<div class="b-global-search__box">
+		<div class="b-global-search__persons">
+			<h3><a href=""></a></h3>
+			<ul></ul>
+		</div>
+		<div class="b-global-search__users">
+			<h3><a href="#"></a></h3>
+			<ul></ul>
+		</div>
+		<div class="b-global-search__news">
+			<h3><a href="#"></a></h3>
+			<ul></ul>
+		</div>
+	</div>
+</div>
+
+<div class="i-wrapper">
+<div class="i-maincontent">
+<div class="i-container b-grid">
+<div role="main">
+<header class="b-header clearfix" role = "banner">
+    <div class="b-header__top b-grid__g12 clearfix">
+        <div class="b-grid__g3 b-grid__p6 b-grid__a">
+            <div class="b-search-stroke">
+                <form>
+                    <input type="search" id="global-search" class="b-search-stroke__input" placeholder="поиск по новостям" tabindex="89" />
+                    <input type="submit" value="" class="b-search-stroke__submit" />
+                </form>
+            </div>
+        </div>
+        <div class="b-grid__g3 b-grid__z">
+            <div class="b-share-small"></div>
+        </div>
+    </div>
+    <div class="b-header__main b-grid__g12 clearfix">
+        <a href="/" class="b-header__logo b-logo">
+            <span class="b-logo__black">поп</span><span class="b-logo__black">корн</span><span class="b-logo__gray">news</span>
+        </a>
+
+        {% if currentUser.id %}
+            <div class="b-header__user-panel b-user-panel b-user-panel_islogin clearfix">
+                <div class="b-user-panel__user-info">
+                    <a href="/profile/{{ currentUser.id }}" title="Перейти на страницу профиля" class="b-user-panel__user-name">{{ currentUser.nick|e }}</a>
+                    <div class="b-user-panel__user-status">
+                        <a href="#" class="b-user-panel__user-messages">
+                            <span class="b-user-panel__user-messages-title">сообщения</span>
+                            <span class="b-user-panel__user-messages-count">4</span>
+                        </a>
+                        <a href="#" class="b-user-panel__user-guestroom">
+                            <span class="b-user-panel__user-guestroom-title">гостевая</span>
+                            <span class="b-user-panel__user-guestroom-count">1</span>
+                        </a>
+                    </div>
+                </div>
+                <a href="#" class="b-user-panel__user-avatar">
+                    <img src="./img/content/phs5.jpg" alt="" />
+                </a>
+                <div class="clearfix"></div>
+
+                <div class="b-text">
+                    <form action="/profile/exit" method="post" id="form-logout">
+                        <input type="hidden" name="returnTo" value="{{ backLink }}"/>
+                    </form>
+                    <a class="b-user-panel__user-logout" href="#logout" onclick="$('#form-logout').submit();return false;">выход</a>
+                </div>
+            </div>
+        {% else %}
+            <div class="b-header__user-panel b-user-panel b-user-panel_register_form clearfix">
+                <form action="/performLogin?back={{ backLink }}" method="post" id="form-authorization">
+                    <div class="block b-text">
+                        <span>E-mail:</span>
+                        <div><input type="text" name="email" tabindex="90" /></div>
+                        <div><a href="/remind" title="Напомнить пароль">Забыли пароль?</a></div>
+                    </div>
+                    <div class="block b-text">
+                        <span>Пароль:</span>
+                        <div><input type="password" name="pass" tabindex="91" /></div>
+                        <div><a href="/register">Регистрация</a></div>
+                        <input class="b-search-block__input-submit b-firm-grad" tabindex="92" type="submit" value="&#9658;">
+                    </div>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+</header>
+
+<nav role="navigation" class="b-grid__g12 b-navigation clearfix">
+    <ul class="b-main-menu clearfix">
+        <li class="b-main-menu__item"><a class="b-main-menu__link" href="/news">новости</a></li>
+        <li class="b-main-menu__item"><a class="b-main-menu__link" href="/persons">персоны</a></li>
+        <li class="b-main-menu__item"><a class="b-main-menu__link" href="/meet">пары</a></li>
+        <li class="b-main-menu__item"><a class="b-main-menu__link" href="/kids">дети</a></li>
+        <li class="b-main-menu__item"><a class="b-main-menu__link" href="/community/groups">сообщество</a></li>
+        <li class="b-main-menu__item"><a class="b-main-menu__link" href="/yourstyle">your.style</a></li>
+        <li class="b-main-menu__item">
+            <a class="b-main-menu__link" href="/users">пользователи</a>
+            <span class="b-main-menu__counter b-counter">{{ onlineUsersCount }}</span>
+        </li>
+        <li class="b-main-menu__item"><a class="b-main-menu__link" href="/rules">правила</a></li>
+        <li class="b-main-menu__item"><a class="b-main-menu__link" href="/faq">FAQ</a></li>
+    </ul>
+
+    <ul class="b-sub-menu clearfix">
+        <li class="b-sub-menu__item {% if slim.path[1] is null %}b-sub-menu__item_active{% endif %}"><a class="b-sub-menu__link" href="/">главная</a></li>
+        <li class="b-sub-menu__item {% if slim.path[1] == 'category' and slim.path[2] == 'stars' %}b-sub-menu__item_active{% endif %}"><a class="b-sub-menu__link" href="/category/stars" title="Перейти в категорию новостей &quot;звезды&quot;">звезды</a></li>
+        <li class="b-sub-menu__item {% if slim.path[1] == 'category' and slim.path[2] == 'fashion' %}b-sub-menu__item_active{% endif %}"><a class="b-sub-menu__link" href="/category/fashion" title="Перейти в категорию новостей &quot;мода&quot;">мода</a></li>
+        <li class="b-sub-menu__item {% if slim.path[1] == 'category' and slim.path[2] == 'beauty' %}b-sub-menu__item_active{% endif %}"><a class="b-sub-menu__link" href="/category/beauty" title="Перейти в категорию новостей &quot;красота&quot;">красота</a></li>
+        <li class="b-sub-menu__item {% if slim.path[1] == 'category' and slim.path[2] == 'movie' %}b-sub-menu__item_active{% endif %}"><a class="b-sub-menu__link" href="/category/movie" title="Перейти в категорию новостей &quot;кино&quot;">кино</a></li>
+        <li class="b-sub-menu__item {% if slim.path[1] == 'category' and slim.path[2] == 'tvshow' %}b-sub-menu__item_active{% endif %}"><a class="b-sub-menu__link" href="/category/tvshow" title="Перейти в категорию новостей &quot;тв и сериалы&quot;">тв и сериалы</a></li>
+        <li class="b-sub-menu__item {% if slim.path[1] == 'category' and slim.path[2] == 'music' %}b-sub-menu__item_active{% endif %}"><a class="b-sub-menu__link" href="/category/music" title="Перейти в категорию новостей &quot;музыка&quot;">музыка</a></li>
+        <li class="b-sub-menu__item {% if slim.path[1] == 'category' and slim.path[2] == 'gadget' %}b-sub-menu__item_active{% endif %}"><a class="b-sub-menu__link" href="/category/gadget" title="Перейти в категорию новостей &quot;гаджеты&quot;">гаджеты</a></li>
+        <!--<li class="b-sub-menu__item"><a class="b-sub-menu__link" href="#">фитнес</a></li>-->
+        <li class="b-sub-menu__item"><a class="b-sub-menu__link" href="#">киноафиша</a></li>
+    </ul>
+</nav>
+
+<div class="b-inside clearfix">
+
+{% block content %}{% endblock %}
+
+{% if showSidebar %}
+    {% include '/Sidebar.twig' %}
+{% endif %}
+
+</div>
+</div>
+</div>
+</div>
+<div class = "i-footer-empty"></div>
+</div>
+
+<!-- FOOTER HERE -->
+<footer class="b-footer" role="contentinfo">
+    <div class="i-container clearfix">
+        <div class="b-grid__g12 b-footer__body">
+            <div class="b-footer__top">
+                <a href="/" class="b-footer__logo b-logo b-logo_small">
+                    <span class="b-logo__black">поп</span><span class="b-logo__black">корн</span><span class="b-logo__gray">news</span>
+                </a>
+                <a href="/contacts" class="b-footer__contacts">
+                    Контакты &gt;
+                </a>
+                <a href="/stat" class="b-footer__contacts">
+                    Статистика сайта &gt;
+                </a>
+            </div>
+            <div class="b-footer__copyright">
+                &copy; 2007-{{ "now"|date('Y') }} Все права и материалы принадлежат «POPCORNNEWS»<br />
+                При копировании информации ставить активную ссылку на сайт www.popcornnews.ru
+            </div>
+        </div>
+    </div>
+</footer>
+<!-- THANKS FOR YOU ATTENTION -->
+
+{% block bodyEnd %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,92 @@
+{% extends '/profile/ProfileGeneric.twig' %}
+
+{% block subContent %}
+
+	<div class="column-title column-title_highlighted">
+		<div class="column-title__cell">
+			<span class="xx-large">{{ wallMessages|length|ruNumber(['запись','записи','записей']) }}</span>
+		</div>
+		<div class="column-title__cell right">
+			<a class="icon-text xx-large" href="/profile/{{ profile.id }}/newWallMessage">
+				<span class="icon-text__text">Написать</span>
+				<img class="icon-text__icon"  src="i/write-red.svg" alt="сообщение" />
+			</a>				
+		</div>
+	</div>
+
+
+	<div class="users users_messages">
+
+	{% for message in wallMessages %}
+
+		{% set color = 'color-' ~ message.author.rating.rank %}
+
+		{% if message.author.isOnline %}
+			{% set online = 'users__name_online' %}
+		{% else %}
+			{% set online = '' %}
+		{% endif %}
+
+		{% if message.author.avatar.id %}
+			{% set src = message.author.avatar.url('256x') %}
+		{% else %}
+			{% set src = 'st/img/no-photo/large.png' %}
+		{% endif %}
+
+		<div data-uid="{{ message.id }}" user-data-uid="{{ message.author.id }}" class="users__item eitem Eitem">
+			<a class="users__content Eitem__content" href="/profile/{{ message.author.id }}">
+				<div class="users__photo" style="background-image:url({{ src }});"></div>
+				<div class="users__info">
+					<div class="users__row">
+						<span class="users__date xx-small">{{ message.sentTime|ruDateFriendly }}</span>
+						<div class="users__name {{ online }} {{ color }}">{{ message.author.nick }}</div>
+					</div>
+					<div class="users__phrase">
+						{{ message.content|truncate(50)|e|nl2br }}
+					</div>
+				</div>
+			</a>
+        		<div class="eitem__extra Eitem__extra">
+				<div class="eitem__extra-control">
+
+					{% if profileHelper.isMyProfile %}
+
+						<a data-type="deleteUser2" class="eitem__extra-item" href="#">
+							<img class="eitem__extra-icon" src="i/close-white.svg" alt="Удалить" />
+						</a>
+
+						{% if message.author.id != profile.id %}
+
+							<a data-type="complainUser" class="eitem__extra-item" href="#">
+								<img class="eitem__extra-icon" src="i/complain-white.svg" alt="Пожаловаться" />
+							</a>
+							<a class="eitem__extra-item" href="/im/companion{{ message.author.id }}">
+								<img class="eitem__extra-icon" src="i/reply-white.svg" alt="Ответить" />
+							</a>
+
+						{% endif %}
+
+					{% elseif currentUserId != message.author.id %}
+
+						<a data-type="complainUser" class="eitem__extra-item" href="#">
+							<img class="eitem__extra-icon" src="i/complain-white.svg" alt="Пожаловаться" />
+						</a>
+						<a class="eitem__extra-item" href="/im/companion{{ message.author.id }}">
+							<img class="eitem__extra-icon" src="i/reply-white.svg" alt="Ответить" />
+						</a>
+
+					{% endif %}
+				</div>
+			</div>
+		</div>
+
+	{% endfor %}
+
+	</div>
+	<script>
+		$(function(){
+			eitems.init();
+		});
+	</script>
+
+{% endblock %}

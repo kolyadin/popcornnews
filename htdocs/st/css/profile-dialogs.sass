@@ -1,0 +1,33 @@
+.b-private-dialogs
+	margin-top: 20px
+	border-bottom: 1px solid #ccc
+	.dialog-not-read
+		background-color: #{$grayColor}
+	.dialog
+		border-top: 1px solid #ccc
+		padding: 10px 0
+		&:hover
+			background-color: #{$grayColor}
+			cursor: pointer
+		.user-ava
+			float: left
+			margin-left: 5px
+		.message-box
+			float: left
+			width: 400px
+			margin-left: 10px
+			.box-header
+				.user-nick
+					float: left
+					a
+						font-size: 13px
+						text-decoration: none
+						border-bottom: 1px solid
+						&:hover
+							border-bottom: none
+				.timestamp
+					float: right
+			.message
+				padding-top: 7px
+				font-size: 13px
+				clear: both

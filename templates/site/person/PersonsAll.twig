@@ -1,0 +1,43 @@
+{% extends '/GenericInner.twig' %}
+
+{% block head %}
+
+	<title>Все звезды - popcornnews</title>
+
+{% endblock %}
+
+{% block content %}
+
+	<div class="b-grid__g8">
+		<article class="b-person-all">
+			<h1 class="b-single-article__title">
+				Персоны
+				<span class="b-single-article__date">Все звезды</span>
+			</h1>
+
+			<section class="b-person__menu b-inside__menu">
+
+				{% include '/person/PersonsMenu.twig' %}
+
+				<div class="b-search-block">
+					<form method="post">
+						<label for="b-search-block__input-text" class="b-search-block__label">поиск по имени</label>
+						<input type="search" id="b-search-block__input-text" class="b-search-block__input-text">
+						<input type="submit" value="найти" class="b-search-block__input-submit b-firm-grad">
+					</form>
+				</div>
+			</section>
+
+			<section class="b-person-all__wrapper b-person-all__cloud">
+
+				{% for person in persons %}
+
+					<a href="/persons/{{ person.urlName }}" class="b-person-all__cloud-size_{{ person.size }}" style="border-bottom: 0;">{{ person.name|e }}</a>
+
+				{% endfor %}
+
+			</section>
+		</article>
+	</div>
+
+{% endblock %}

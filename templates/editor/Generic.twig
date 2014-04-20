@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="/editor/st/jquery-ui-themes/pepper-grinder/jquery-ui.min.css" type="text/css" />
+    <link rel="stylesheet" href="/editor/st/fancybox-2.1.5/jquery.fancybox.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="/editor/st/jcrop/css/jquery.Jcrop.min.css" />
+
+
+
+    <script type="text/javascript" src="/editor/js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="/editor/js/jquery-ui-1.10.3.custom.min.js"></script>
+    <script type="text/javascript" src="/editor/js/jquery.ui.datepicker-ru.js"></script>
+
+    <script type="text/javascript" src="/editor/js/jquery.maskedinput.min.js"></script>
+    <script type="text/javascript" src="/editor/js/jquery.tmpl.min.js"></script>
+
+    <script type="text/javascript" src="/editor/js/jquery.simplemodal.1.4.4.min.js"></script>
+
+    <script type="text/javascript" src="/editor/st/jcrop/js/jquery.color.js"></script>
+    <script type="text/javascript" src="/editor/st/jcrop/js/jquery.Jcrop.min.js"></script>
+
+
+    <script type="text/javascript" src="/editor/js/jquery.mousewheel.js"></script>
+    <script type="text/javascript" src="/editor/st/fancybox-2.1.5/jquery.fancybox.pack.js"></script>
+
+    <script type="text/javascript" src="/editor/js/jquery.uploadify.min.js"></script>
+
+    <script type="text/javascript" src="/editor/js/ckeditor/ckeditor.js"></script>
+
+    <script type="text/javascript">
+        var uploadifyTimestamp = Math.random();
+        var uploadifyToken = Math.random();
+    </script>
+    <script type="text/javascript" src="/editor/js/sprintf.js"></script>
+    <script type="text/javascript" src="/editor/js/admin.js"></script>
+    <script type="text/javascript" src="/editor/js/kaelement.js"></script>
+
+    <script type="text/javascript">
+        $(function(){
+            $('#content-tabs').tabs();
+            $('.nav-panel').accordion({heightStyle: "content"});
+
+            $('#content-form').submit(function(){
+                //alert(123);
+                //return false;
+            });
+
+            $('input.new-one').each(function(){
+
+                $(this).click(function(){
+                    var elButton = $(this);
+                    var elType = $(this).attr('data-type');
+
+                    if (elType == 'textarea')
+                    {
+                        KaElement.newTextElement({
+                            name : $(this).attr('data-new-name'),
+                            type : 'textarea',
+                            obj : $(this).parents('fieldset'),
+                            success : function()
+                            {
+
+                            }
+                        });
+                    }
+                    else if (elType == 'text')
+                    {
+                        var lastEl = elButton.parents('fieldset').find('input[data-element-type=text]:last');
+
+
+                        /*if (lastEl.val() == '')
+                         {
+                         $('#dialog-confirm')
+                         .html('<p>Понимаешь, нельзя создать новое поле, раз это еще пустое :)')
+                         .dialog({
+                         resizable: false,
+                         draggable: false,
+                         height:270,
+                         width:450,
+                         modal: true,
+                         position : {my:'left top', at:'left bottom', of:this},
+                         buttons: {
+                         'Нет, не понимаю' : function() {
+                         document.location.href = 'http://youtu.be/Yf2TG0eshvY';
+                         },
+                         'Оке, понимаю :)': function() {
+                         $(this).dialog( "close" );
+                         lastEl.focus();
+                         }
+                         }
+                         });
+                         }
+                         else
+                         {*/
+                        KaElement.InsertText({
+                            'attr' : {
+                                'name' : $(this).attr('data-new-name'),
+                                'autocomplete' : 'off'
+                            },
+                            'parentObj' : $(this).parents('fieldset')
+
+                        });
+
+                        /*
+                         KaElement.newTextElement({
+
+                         type : 'text',
+                         success : function()
+                         {
+                         doBind();
+
+                         elButton.parent().parent().find('input[type=text]:last').focus();
+                         }
+                         });
+                         */
+                        //}
+                    }
+                    else if (elType == 'select')
+                    {
+                        KaElement.SelectElement({
+                            'parentContainer' : $(this).parents('fieldset'),
+                            'name'            : $(this).attr('data-new-name'),
+                            'jsonUrl'         : $(this).attr('data-json-url'),
+                            'firstBlank'      : $(this).attr('data-first-blank'),
+                            'onAfterInsert'   : function(){
+                                elButton.parents('fieldset').find('select:last').focus();
+                            }
+                        });
+
+                        /*
+                         KaElement.newTextElement({
+                         'name'        : $(this).attr('data-new-name'),
+                         'obj'         : $(this).parents('fieldset'),
+                         'json_url'    : $(this).attr('data-options-json-url'),
+                         'first_blank' : $(this).attr('data-options-first-blank'),
+                         'type'        : 'select',
+                         'success'     : function()
+                         {
+                         doBind();
+
+                         elButton.parent().parent().find('input[type=text]:last').focus();
+                         }
+                         });
+                         */
+                    }
+                });
+            });
+
+            doBind();
+        });
+
+        function doBind()
+        {
+            $(document).tooltip({
+                track : true,
+                tooltipClass : 'admin-tooltip',
+                content : function(){ return $(this).attr('data-tooltip'); },
+                items : '*[data-tooltip]'
+            });
+
+            $(document).on('DOMNodeInserted','body',function(){
+
+                $(this).find('input[type=button]').button();
+                $(this).find('input[type=submit]').button();
+                $(this).find('fieldset p').sortable();
+
+                $(this).find('input.del-one').click(function(){
+                    $(this).parent().remove();
+                });
+
+                //Значение поля по умолчанию
+                $(this).find('input[data-default-value]').each(function(){
+
+                    var defVal = $(this).attr('data-default-value');
+
+                    $(this)
+                    .css('color','#999')
+                    .val(defVal)
+                    .focusin(function(){
+                        if (!$(this).val() || $(this).val() == defVal)
+                        {
+                            $(this).val('').css('color','#000');
+                        }
+                    })
+                    .focusout(function(){
+                        if (!$(this).val())
+                        {
+                            $(this).val(defVal).css('color','#999');
+                        }
+                    });
+                });
+
+
+            });
+
+
+
+            /*
+            $('input[data-autocomplete]').each(function(){
+                $(this)
+                .autocomplete({
+                    source : '/admin/remote/?filter='+$(this).attr('data-autocomplete'),
+                    select : function(event,ui)
+                    {
+                        $('<input type="hidden" name="'+$(this).attr('name')+'" value="'+ui.item.id+'" />').insertBefore($(this));
+                        $(this).attr('disabled',true);
+
+                    },
+                    focus : function(event,ui)
+                    {
+                        //alert(ui.item.pic);
+                    }
+                })
+                .data('autocomplete')._renderItem = function( ul, item ) {
+                    return $('<li>')
+                        .data('item.autocomplete',item)
+                        .append(sprintf('<a style="cursor:pointer;" title="%s"><div style="vertical-align:top;"><img src="%s" class="fl" /><div style="padding:5px 0 0 7px;" class="fl">%s</div></div><div class="clear"></div></a>'
+                                ,item.value
+                                ,item.pic
+                                ,item.value
+                        ))
+                        .appendTo(ul);
+                };
+            });
+            */
+        }
+    </script>
+
+    {% block head %}{% endblock %}
+</head>
+<body>
+
+<div id="file-queue"></div>
+
+<div id="dialog-confirm" style="display:none;" title="Подтверждение">
+    <p>Точно удалить?
+</div>
+
+<p>Привет, %admin-name%</p>
+<p>Вы вошли через небезопасную зону.</p>
+
+<div class="admin-panel">
+    <div class="nav-panel">
+
+        <h3>Основное</h3>
+        <div>
+            <p><a href="/editor/news">Новости</a>
+            <p><a href="/editor/persons">Персоны</a>
+            <p><a href="/admin/reviews">Рецензии</a>
+            <p><a href="/admin/trailers">Трейлеры</a>
+        </div>
+
+        <h3>Справочники</h3>
+        <div>
+            <p><a href="/editor/dict/article">Рубрики новостей</a></p>
+            <p><a href="/editor/dict/tag">Теги новостей</a></p>
+        </div>
+
+        <h3>Администраторы</h3>
+        <div>
+            <p><a href="/admin/administrator/new">Создать нового</a>
+            <p><a href="/admin/administrator">Список</a>
+        </div>
+
+    </div>
+
+    {% block content %}{% endblock %}
+
+    <div class="clear"></div>
+</div>
+
+
+</body>
+</html>

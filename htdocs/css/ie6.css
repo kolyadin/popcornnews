@@ -1,0 +1,280 @@
+/***core*/
+/*html { filter: expression(runtimeStyle.filter = '',document.execCommand('BackgroundImageCache', false, true));}*/
+
+label {
+	scrollbar-face-color: expression( runtimeStyle.scrollbarFaceColor = '#fff', (this['for'] == null && firstChild && runtimeStyle.behavior == '') ?
+		onclick = function () {
+			var input = this.getElementsByTagName('input')[0]
+			if (this.getElementsByTagName('input')[0])
+			{
+				try { input.click() || input.focus() }
+				catch (ex) {}
+			}
+			else if (this.getElementsByTagName('textarea')[0])
+			{
+				this.getElementsByTagName('textarea')[0].focus()			
+			}
+			blur()
+		} : '' );								
+}
+input {
+	scrollbar-face-color: expression( runtimeStyle.scrollbarFaceColor = "#fff", className = (className) ? className+=" type-"+type : "type-"+type );
+	}
+	
+/*\\core*/
+/***inner styles*/
+div#content {
+	width: 580px;
+	overflow: hidden;
+	}
+form.partInGroups ul input.type-checkbox {
+	vertical-align: baseline;
+	position: relative; top: 2px;
+	margin-right: 0;
+	}
+form.partInGroups input.type-submit {
+	background: url(../img/part-in-groups-submit.gif) no-repeat left top;
+	border: 0;
+	width: 92px;
+	height: 22px;
+	text-indent: -9999px;
+	display: block;
+	}
+div.mailTrack form.answer input.type-submit {
+	float: right;
+	background: url(../img/form-send-submit.gif) no-repeat left top;
+	width: 105px;
+	height: 22px;
+	border: 0;
+	text-indent: -9999px;
+	}
+form.questionnaireForm input.type-submit {
+	float: left; display: inline;
+	margin-left: 46%;
+	width: 105px; height: 22px;
+	background: url(../img/form-save-submit.gif) no-repeat left top;
+	border: 0;
+	text-indent: -9999px;
+	cursor: hand;
+	}
+form.newPhotos input.type-submit {
+	margin-left: 31%;
+	background: url(../img/form-send-submit.gif) no-repeat left top;
+	}
+div.factsTrack ul.mark,
+ul.personStats ul.mark {
+	scrollbar-face-color: expression( runtimeStyle.scrollbarFaceColor = "#fff", onmouseenter = function() {className+=" hovered"}, onmouseleave = function() {className = className.replace(" hovered","")} );
+	}
+div.factsTrack form.newFact input.type-submit,
+div.commentsTrack form.newComment input.type-submit {
+	background: url(../img/form-send-submit.gif) no-repeat left top;
+	width: 105px; height: 22px;
+	text-indent: -9999px;
+	border: 0;
+	margin-right: 15px;
+	display: block; float: left;
+	cursor: hand;
+	}
+	
+div#header div.enterSite form input.type-text,
+div#header div.enterSite form input.type-password {
+	display: block;
+	width: 84px;
+	margin-top: 2px;
+	padding: 1px;
+	}
+div#header div.enterSite form input.type-submit {
+	width: 22px; height: 22px;
+	display: block;
+	background: url(../img/enter-site-submit.gif) no-repeat left top;
+	text-indent: -9999px;
+	border: 0;
+	margin-top: 15px;
+	}
+body.potter div#header div.enterSite form input.type-text,
+body.potter div#header div.enterSite form input.type-password {
+	display: block;
+	width: 84px;
+	margin-top: 2px;
+	padding: 1px;
+	}
+body.potter div#header div.enterSite form input.type-submit {
+	width: 22px; height: 22px;
+	display: block;
+	background: url(../img/enter-site-submit.gif) no-repeat left top;
+	text-indent: -9999px;
+	border: 0;
+	margin-top: 15px;
+	}
+div.commentsTrack form.newComment fieldset.loggedOut input.type-text {
+	display: block;
+	width: 255px;
+	margin-top: 2px;
+	}
+	
+div#content div.content div.commentsTrack form.newComment label input.type-checkbox {
+	position: absolute;
+	left: 0;
+	#left: -4px;
+	top: 50%;
+	margin-top: -10px;
+	}
+div.mailTrack form.answer input.type-text {
+	width: 544px;
+	padding: 1px;
+	margin-bottom: 8px;
+	font: bold 1.2em Tahoma, Verdana, Arial;
+	display: block;
+	}
+	
+	
+div.gonnaExit input.type-checkbox {
+	position: absolute;
+	left: -9999px;
+	top: -9999px;
+	}	
+div.undecorated input.type-checkbox {
+	position: static;
+	}
+form.gonnaExit input.type-submit {
+	background: url(../img/save-button-bg.gif) no-repeat left top;
+	width: 104px; height: 22px;
+	text-indent: -9999px;
+	display: block;
+	border: 0;
+	cursor: hand;
+	}
+
+
+div#header div.topHeadline {
+	height: 62px;
+}
+
+div.newsTrack div.entry:first-letter {
+	padding-top: 6px;
+	border-right: 0px solid #fff;
+	}
+	
+div.introWrapper {
+	height: 215px;
+	}
+	
+table.users td.counter span {
+	width: 28px;
+	}
+
+div.personPhoto {
+	height: 39px;
+	}
+	
+ul.personStats {
+	zoom: 1;
+	overflow: hidden;
+	margin-right: -3px;
+	position: relative;
+	left: -3px;
+	}
+	
+	
+/*gallery vertical-align tricks*/
+div.gallery {
+	width: 580px;
+	overflow: hidden;
+	position: relative;
+	}
+div.gallery div.largeContainer {
+	height: 490px;
+	overflow: hidden;
+	text-align: center;
+	position: relative;
+	width: 600px;
+	margin-left: -10px;
+	}
+div.gallery div.largeContainer div.scrollLeft {
+	position: relative;
+	left: 10px;
+	}
+div.gallery div.largeContainer div.scrollRight {
+	position: relative;
+	left: -10px;
+	}
+div.gallery div.largeContainer div.imgContainer {
+	position: relative; top: 50%;
+	zoom: 1;
+	height: auto;
+	width: 540px;
+	}
+div.gallery div.largeContainer img {
+	position: relative;
+	top: -50%;
+	z-index: 5;
+	}
+/*\\*/
+
+ul.awards li {
+	scrollbar-face-color: expression( runtimeStyle.scrollbarFaceColor = "#fff", runtimeStyle.borderBottom = (this == this.parentNode.lastChild) ? "none" : "1px solid #e5e5e5" );
+	}
+
+form.searchbox input.type-submit {
+	width: 71px;
+	height: 22px;
+	background: url(/img/form-search-submit.gif) no-repeat 0 0;
+	text-indent: -9999px;
+	border: 0;
+	margin-left: 10px;
+	}	
+div.irhWhoWhere form input.type-submit {
+	width: 71px;
+	height: 22px;
+	background: url(/img/form-search-submit.gif) no-repeat 0 0;
+	text-indent: -9999px;
+	border: 0;
+	float: right;
+	}
+/*\\inner styles*/
+
+/*-------------------\\vidjet\\-------------------*/
+* html a.bookMark{
+	scrollbar-face-color:expression(
+		runtimeStyle.scrollbarFaceColor = "#fff",
+		onmouseenter = function() {className += " hover"},
+		onmouseleave = function() {className = className.replace(" hover","")}
+	);
+}
+* html a.hover{
+	background:#f70080 url(/i/bookmark-bg-r-hover.gif) no-repeat right 0;
+	cursor:hand;
+}
+/*-------------------\\vidjet\\------------------- */
+
+* div.popup div.fon {height:10000px;}
+
+
+/*-------------------\\groups\\-------------------*/
+
+form.group_new div.help div.cont ul {height:90px;}
+.group_new_type_radio {margin:0px 10px 0px 0px !important;}
+* form.group_new input {
+        	z-index: expression(
+            	runtimeStyle.zIndex = 1,
+                type && "radio" == type.toLowerCase() ? (className = "group_new_type_radio") : (type && ("text" == type.toLowerCase() || "file" == type.toLowerCase()) ? (className = "group_new_type_text") : (type && "image" == type.toLowerCase() ? (className = "group_new_type_image") : 0))
+            );
+        }
+
+.group_new_type_text {width:541px; padding:2px 3px; border:2px inset #fff;}
+
+		
+.group_new_type_image {position:relative; left:-15px; top:35px; margin:0px !important;}		
+
+* div#videoplayer_cont {background:none !important; filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/i/banners/close.png', sizingMethod='scale');}
+* div.hhFeatures div.cable_1 {background:none !important; filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/i/banners/cable_1.png', sizingMethod='scale');}
+* div.hhFeatures div.people_1 {background:none !important; filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/i/banners/people_1.png', sizingMethod='scale');}
+* div.hhFeatures div.people_2 {background:none !important; filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/i/banners/people_2.png', sizingMethod='scale');}
+
+
+/*------------------- Gulliver ------------------- */
+* img#gulliver_fon {position:absolute !important;}
+* div#cable_main {position:absolute !important;}
+* img#cable_main {position:absolute !important; filter:expression(this.src='http://v0.popcorn-news.ru/i/banners/cable_main.gif');}
+
+

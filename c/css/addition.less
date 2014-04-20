@@ -1,0 +1,637 @@
+/* --------- colors --------- */
+
+.pinky_color {
+    color: #EE2C90;
+}
+
+@border-color: #e5e5e5;
+
+/* --------- mixins --------- */
+
+/* MIXINS */
+
+.inlineblock {
+    display: inline-block;
+    vertical-align: top;
+    zoom: 1 !ie;
+    display: inline !ie;
+}
+
+.clearfix {
+    *zoom: ~"expression(this.runtimeStyle.zoom='1', this.appendChild(document.createElement('br')).style.cssText='clear:both;font:0/0 serif')";
+    zoom: 1 !ie;
+
+    &:before,
+    &:after {
+        content: "";
+        display: table;
+    }
+
+    &:after {
+        clear: both;
+    }
+}
+
+.border-radius (@radius: 5px) {
+    -webkit-border-radius: @radius;
+    -moz-border-radius:    @radius;
+    border-radius:         @radius;
+
+    -moz-background-clip:    padding;
+    -webkit-background-clip: padding-box;
+    background-clip:         padding-box;
+}
+
+.box-shadow (@string) {
+    -webkit-box-shadow: @string;
+    -moz-box-shadow:    @string;
+    box-shadow:         @string;
+}
+
+.transition (@transition) {
+    -webkit-transition: @transition;
+    -moz-transition:    @transition;
+    -ms-transition:     @transition;
+    -o-transition:      @transition;
+    transition:      @transition;
+}
+
+.opacity(@opacity: 1) {
+    @ieOpacity: @opacity * 100;
+    filter: ~"alpha(opacity=@{ieOpacity})";
+    -ms-filter: ~"progid:DXImageTransform.Microsoft.Alpha(Opacity=@{ieOpacity})";
+    opacity: @opacity;
+}
+
+.placecolor(@color: #000000) {
+    &::-webkit-input-placeholder {
+        color: @color;
+    }
+    &:-moz-placeholder {
+        color: @color;
+    }
+    &::-moz-placeholder {
+        color: @color;
+    }
+    &:-ms-input-placeholder {
+        color: @color;
+    }
+}
+
+.vertical-gradient (@bottom-color: #000000, @top-color: #ffffff) {
+    background: @top-color; /* Old browsers */
+    background: -moz-linear-gradient(top,  @top-color 0%, @bottom-color 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,@top-color), color-stop(100%,@bottom-color)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  @top-color 0%,@bottom-color 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  @top-color 0%,@bottom-color 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  @top-color 0%,@bottom-color 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  @top-color 0%,@bottom-color 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='@top-color', endColorstr='@bottom-color',GradientType=0 ); /* IE6-9 */
+}
+
+
+/* --------- addition.less --------- */
+
+.article-cols {
+    .clearfix;
+    padding-bottom: 20px;
+    border-bottom: 1px solid @border-color;
+    margin-bottom: 20px;
+}
+
+.article-cols__left {
+    float: left;
+    width: 275px;
+}
+
+.article-cols__right {
+    width: 275px;
+    margin-left: 51px;
+    float: left;
+}
+
+.article-title {
+    font-size: 24px;
+//    font-weight: bold;
+    margin-bottom: 10px;
+    line-height: 26px;
+}
+
+.popular-sets__big-wrapper {
+    display: block;
+    border: 1px solid #E5E5E5;
+    margin-bottom: 10px;
+}
+
+.popular-sets {
+    margin-bottom: 30px;
+}
+
+.popular-sets__big-image {
+    display: block;
+    max-width: 274px;
+    max-height: 274px;
+}
+
+.popular-sets__big-title-link {
+    .pinky_color;
+    font-size: 13px;
+    line-height: 15px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.popular-sets__big-voices {
+    font-size: 12px;
+    line-height: 14px;
+    color: #000000;
+}
+
+.popular-sets__big-comments, .popular-sets__comments-counter, .popular-sets__comments-username {
+    .pinky_color;
+    font-size: 12px;
+    line-height: 14px;
+    text-decoration: none;
+}
+
+.rating-count {
+    color: #000000;
+    font-size: 12px;
+    line-height: 14px;
+    .inlineblock;
+
+    &:before {
+        content: '';
+        margin-top: 3px;
+        background: url("../img/rating/comment-mark-stars-fanfics.png") 0 0 no-repeat;
+        .inlineblock;
+        width: 9px;
+        height: 9px;
+        margin-right: 4px;
+    }   
+}
+
+.popular-sets__item {
+    .clearfix;
+    margin-bottom: 10px;
+    position: relative;
+
+    &:hover {
+        .popular-sets__item-image {
+//            border-right: 1px solid transparent;
+        }
+
+        .popular-sets__item-data {
+//            border: 1px solid #E5E5E5;
+//            border-left: 1px solid transparent;
+        }
+
+        .popular-sets__hover {
+            right: 0px;
+        }
+    }
+}
+
+.popular-sets__item-image {
+    float: left;
+    width: 110px;
+//    border: 1px solid #E5E5E5;
+    display: block;
+    height: 110px;
+}
+
+.popular-sets__item-pic {
+    display: block;
+    max-width: 110px;
+    max-height: 110px;
+}
+
+.popular-sets__item-data {
+    float: left;
+    width: 152px;
+    margin-left: 10px;
+    height: 110px;
+
+    .popular-sets__big-title {
+        padding-top: 7px;
+    }
+}
+
+.popular-sets__big-title {
+    margin-bottom: 5px;
+}
+
+.popular-sets__hover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 164px;
+    bottom: 0;
+    border: 1px solid #E5E5E5;
+    .transition(.2s);
+}
+
+.pupular-sets__item-wrapper {
+    position: relative;
+}
+
+.create-your-set {
+    padding-top: 38px;
+}
+
+.celebrities-sets {
+    border-bottom: 1px solid @border-color;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+.celebrities-sets__item {
+    .inlineblock;
+    width: 130px;
+    margin-left: 7px;
+    margin-bottom: 5px;
+}
+
+.celebrities-sets__link {
+    font-size: 14px;
+    line-height: 16px;
+    .pinky_color;
+    text-decoration: none;
+}
+
+.celebrities-sets__list {
+    margin-left: -7px;
+}
+
+.celebrities-sets__expand-link {
+    font-size: 12px;
+    line-height: 14px;
+    .pinky_color;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.celebrities__stuff-list {
+    .clearfix;
+    margin-left: -7px;
+}
+
+.celebrities__stuff-item {
+    width: 110px;
+    border: 1px solid transparent;
+    margin-left: 7px;
+    float: left;
+    padding: 2px;
+    .transition(.2s);
+    margin-bottom: 10px;
+
+    &:hover {
+        border-color: #e5e5e5;
+    }
+}
+
+.celebrities__stuff-link {
+    display: block;
+    width: 110px;
+    height: 110px;
+    text-align: center;
+}
+
+.celebrities__stuff-image {
+    max-height: 110px;
+    max-width: 110px;
+}
+
+.new-sets {
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid @border-color;
+
+    .celebrities__stuff-list {
+        margin-left: -5px;
+    }
+
+    .celebrities__stuff-item {
+        margin-left: 5px;
+        margin-bottom: 5px;
+    }
+}
+
+.active-users__list {
+    .clearfix;
+    margin-left: -10px;
+}
+
+.active-users__item {
+    margin-left: 10px;
+    margin-bottom: 15px;
+    float: left;
+}
+
+.active-users__avatar {
+    width: 40px;
+    height: 40px;
+    display: block;
+    float: left;
+}
+
+.active-users__avatar-pic {
+    max-width: 40px;
+    max-height: 40px;
+    display: block;
+}
+
+.active-users__data {
+    width: 100px;
+    float: left;
+    margin-left: 5px;
+}
+
+/* --------- popular sets --------- */
+
+.popular-sets__list {
+    margin-left: -43px;
+}
+
+.popular-sets__item {
+    width: 274px;
+    .inlineblock;
+    margin-left: 43px;
+    margin-bottom: 30px;
+}
+
+.select-bar {
+    background: #E5E5E5;
+}
+
+.select-bar__inner {
+    padding: 10px 0 16px;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.select-bar__item {
+    .inlineblock;
+    width: 111px;
+    margin: 0 8px;
+
+    &.disabled {
+        .select-bar__title {
+            color: #aca899;
+        }
+    }
+}
+
+.select-bar__title {
+    font-size: 10px;
+    line-height: 12px;
+    color: #000;
+    margin-bottom: 2px;
+    text-align: left;
+}
+
+.select-bar__select {
+    width: 111px;
+}
+
+.select-bar__submit {
+    margin-top: 14px;
+}
+
+/* --------- stuff-items --------- */
+
+.stuff-items__item {
+    .inlineblock;
+    width: 110px;
+    margin: 0 5px 10px;
+}
+
+.stuff-items__link {
+    display: block;
+    text-decoration: none;
+
+    &:hover {
+        .stuff-items__image {
+            border-color: #e5e5e5;
+        }
+    }
+}
+
+.stuff-items__image {
+    width: 110px;
+    height: 110px;
+    padding-bottom: 10px;
+    text-align: center;
+    display: block;
+    border: 1px solid transparent;
+
+    img {
+        max-width: 110px;
+        max-height: 110px;
+        .inlineblock;
+    }
+}
+
+.stuff-items__text {
+    font-size: 12px;
+    line-height: 14px;
+    color: #f70080;
+    text-align: center;
+    display: block;
+    font-weight: bold;
+    text-transform: lowercase;
+}
+
+/* --------- search-bar --------- */
+
+.select-bar__title {
+    .inlineblock;
+}
+
+.search-bar__input {
+    .inlineblock;
+}
+
+.select-bar__submit_grey {
+    border: 0 none;
+    background: #999999;
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+/* --------- celebrities stuff --------- */
+
+.with-celebrities {
+    .article-title {
+        font-weight: bold;
+        .inlineblock;
+        color: #000000;
+        text-decoration: none;
+    }
+}
+
+.with-celebrities__counter {
+    .inlineblock;
+    font-size: 16px;
+    line-height: 28px;
+    font-weight: bold;
+    text-decoration: none;
+    margin-left: 2px;
+}
+
+.popular-sets {
+    .b-search-block {
+        margin-bottom: 20px;
+    }
+}
+
+.popular-sets__title {
+    margin-bottom: 20px;
+}
+
+/* --------- alphabet --------- */
+
+.celebrities-alphabet__item {
+    padding-left: 15px;
+    position: relative;
+}
+
+.celebrities-alphabet__letter {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-weight: bold;
+    font-size: 13px;
+    line-height: 15px;
+    text-transform: uppercase;
+}
+
+.celebrities-alphabet__link {
+    text-decoration: none;
+    .pinky_color;
+    font-size: 13px;
+    line-height: 15px;
+}
+
+.celebrities-alphabet__list-item {
+    margin-bottom: 4px;
+}
+
+.rules__item {
+    list-style-type: square;
+    margin-bottom: 15px;
+    font-size: 14px;
+    line-height: 18px;
+}
+
+.rules__list {
+    padding-left: 17px;
+}
+
+/* --------- paginator --------- */
+
+.paginator__title {
+    .inlineblock;
+    color: #000000;
+    font-size: 16px;
+    line-height: 18px;
+    font-weight: bold;
+}
+
+.paginator__list {
+    .inlineblock;
+}
+
+.paginator__item {
+    .inlineblock;
+    padding: 1px 8px 0;
+
+    &.active {
+        .paginator__link {
+            color: #000000;
+        }
+    }
+}
+
+.paginator__dots, .paginator__next {
+    padding: 0 8px;
+}
+
+.paginator__link, .paginator__dots, .paginator__next {
+    .pinky_color;
+    font-size: 16px;
+    line-height: 18px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.paginator {
+    border-top: 1px solid #E5E5E5;
+    padding-top: 20px;
+}
+
+/* --------- stuff-items --------- */
+
+.all-stuff__list {
+    margin-left: -50px;
+}
+
+.all-stuff__item {
+    width: 152px;
+    .inlineblock;
+    margin-bottom: 30px;
+    margin-left: 50px;
+}
+
+.all-stuff__image {
+    display: block;
+    height: 150px;
+    border: 1px solid #E5E5E5;
+    margin-bottom: 10px;
+}
+
+.all-stuff__inner {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    width: 150px;
+    height: 150px;
+}
+
+.all-stuff__data-title {
+    margin-bottom: 5px;
+}
+
+.all-stuff__data-link {
+    .pinky_color;
+    font-size: 13px;
+    line-height: 15px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.all-stuff__add-title {
+    .inlineblock;
+    font-size: 11px;
+    line-height: 13px;
+    color: #000000;
+}
+
+.all-stuff__data-inset {
+    .pinky_color;
+    font-size: 11px;
+    line-height: 13px;
+    .inlineblock;
+    text-decoration: none;
+    margin-left: 5px;
+}
+
+.all-stuff__data-instuff {
+    padding-left: 3px;
+    .inlineblock;
+    border-left: 1px solid #B6B6B6;
+    .pinky_color;
+    font-size: 11px;
+    line-height: 13px;
+    text-decoration: none;
+}

@@ -1,0 +1,43 @@
+{% extends '/profile/ProfileGeneric.twig' %}
+{% import '/UserRows.twig' as html %}
+
+{% if profileHelper.isMyProfile %}
+    {% set title = 'Мои подписки на персоны' %}
+{% else %}
+    {% set title = 'Подписки пользователя' ~ profile.nick|e ~ ' на персоны '  %}
+{% endif %}
+
+{% block head %}
+
+    <title>{{ title }} - popcornnews</title>
+
+    <script type="text/javascript">
+
+        $(function(){
+
+
+
+        });
+    </script>
+
+    {{ parent() }}
+
+    <style type="text/css">
+
+    </style>
+
+{% endblock %}
+
+{% block profile %}
+
+    <h1>Подписки на персоны</h1>
+
+    {% include '/profile/ProfileMenu.twig' %}
+
+    {% for person in persons %}
+
+        <p>{{ person.name }}</p>
+
+    {% endfor %}
+
+{% endblock %}

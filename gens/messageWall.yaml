@@ -1,0 +1,49 @@
+name: MessageWall
+class: \popcron\model\im\MessageWall
+table: pn_messages_wall
+parent: \popcorn\model\Message
+parentDescription: message
+
+fields:
+    sentTime:
+        type: \DateTime
+        sqlType: DATETIME
+        flags: [NN, RO]
+        ref: format
+        set:
+            change: false
+    author:
+        type: \popcorn\model\system\users\User
+        sqlType: int
+        flags: [NN, RO]
+        ref: getId
+        set:
+            change: false
+    recipient:
+            type: \popcorn\model\system\users\User
+            sqlType: int
+            flags: [NN, RO]
+            ref: getId
+            set:
+                change: false
+    content:
+            type: string
+            sqlType: text
+            flags: []
+    read:
+        type: int
+        sqlType: tinyint(1)
+        flags: [NN]
+    removedAuthor:
+        type: int
+        sqlType: tinyint(1)
+        flags: [NN]
+    removedRecipient:
+        type: int
+        sqlType: tinyint(1)
+        flags: [NN]
+paths:
+    base: im
+    dataMap: dataMaps
+    builder: '%same%'
+    factory: '%same%'

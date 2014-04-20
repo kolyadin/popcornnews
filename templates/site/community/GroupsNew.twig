@@ -1,0 +1,35 @@
+{% extends '/community/CommunityGeneric.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% block head %}
+
+	<title>Сообщество - новые группы - popcornnews</title>
+
+{% endblock %}
+
+
+{% block communityContent %}
+	<div class="b-grid__g8">
+		<h3 class="b-community-header">новые группы</h3>
+
+		<ul class="b-community-groups">
+			{% for group in groups %}
+				<li class="b-community-item">
+					<div class="b-community-item__image">
+						<img src="http://v1.popcorn-news.ru/k/community/130/upload/community/groups/avatars/i92xh52d8q.jpg" alt="">
+					</div>
+					<div class="b-community-item__content">
+						<h4><a href="/community/group/{{ group.id }}">{{ group.title|e }}</a></h4>
+						<p>{{ group.description }}</p>
+						<div class="b-community-item__tags"></div>
+						<div class="b-community-item__stat">
+							<span class="b-community-item__stat-members">3203 участника</span>
+							<span class="b-community-item__stat-date">Создано 5 февраля 2014</span>
+						</div>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+			{% endfor %}
+		</ul>
+	</div>
+{% endblock %}

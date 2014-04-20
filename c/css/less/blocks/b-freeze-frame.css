@@ -1,0 +1,148 @@
+/* ====== Title: Freeze frame ====== */
+.b-freeze-frame {
+  margin-bottom: 12px;
+  position: relative;
+}
+.b-freeze-frame__top {
+  margin-bottom: 42px;
+}
+.b-freeze-frame__rubrics-title {
+  display: inline;
+}
+.b-freeze-frame__news-title {
+  font-size: 30px;
+  line-height: 1.2;
+  font-weight: bold;
+}
+.b-freeze-frame__rubrics-title-cont {
+  margin-bottom: 13px;
+}
+.b-freeze-frame__persons-rubrics-title {
+  display: inline-block;
+}
+.ie7 .b-freeze-frame__persons-rubrics-title {
+  display: inline;
+  zoom: 1;
+}
+.b-freeze-frame__rubrics-counter {
+  font-size: 14px;
+  font-weight: bold;
+  color: #de0073;
+  padding-left: 2px;
+}
+.b-freeze-frame__item {
+  margin-bottom: 5px;
+}
+.b-freeze-frame__link {
+  font-size: 12px;
+  text-decoration: none;
+  line-height: 1.08;
+  color: #434343;
+}
+.b-freeze-frame__link_color1 {
+  color: #000;
+}
+.b-freeze-frame__link_color2 {
+  color: #2d2d2d;
+}
+.b-freeze-frame__link_color3 {
+  color: #4a4a4a;
+}
+.b-freeze-frame__link_color4 {
+  color: #757575;
+}
+.b-freeze-frame__link_color5 {
+  color: #afafaf;
+}
+.b-freeze-frame__link_color6 {
+  color: #bbb;
+}
+.b-freeze-frame__link_color7 {
+  color: #bababa;
+}
+.b-freeze-frame__groups-rubrics-title {
+  display: inline-block;
+}
+.ie7 .b-freeze-frame__groups-rubrics-title {
+  display: inline;
+  zoom: 1;
+}
+.b-freeze-frame__gallery {
+  /*.hide {
+        opacity: 0;
+    } */
+}
+.b-freeze-frame__gallery ul {
+  overflow: hidden;
+  height: 200px;
+  width: 550px;
+  -webkit-column-count: 7;
+  -webkit-column-width: 70px;
+  -webkit-column-gap: 10px;
+  -moz-column-count: 7;
+  -moz-column-width: 70px;
+  -moz-column-gap: 10px;
+  column-count: 7;
+  column-width: 70px;
+  column-gap: 10px;
+}
+.b-freeze-frame__gallery li {
+  opacity: 0;
+  display: inline-block !important;
+}
+.b-freeze-frame__gallery li {
+  margin-bottom: 10px;
+  overflow: hidden;
+  max-height: 130px;
+}
+.b-freeze-frame__gallery li a {
+  display: block;
+}
+.b-freeze-frame__gallery li img {
+  display: block;
+  width: 70px;
+}
+.no-csscolumns .b-freeze-frame__gallery ul {
+  width: 560px;
+  overflow: visible;
+  height: auto;
+}
+.no-csscolumns .b-freeze-frame__gallery li {
+  margin-right: 10px;
+  display: inline-block;
+  vertical-align: bottom;
+}
+.ie7.no-csscolumns .b-freeze-frame__gallery li {
+  display: inline !important;
+  zoom: 1;
+}
+.no-csscolumns .b-freeze-frame__gallery li + li + li + li + li + li + li + li {
+  vertical-align: top;
+}
+.no-csscolumns .b-freeze-frame__gallery li + li + li + li + li + li + li + li + li + li + li + li + li + li + li {
+  display: none;
+}
+.b-freeze-frame__gallery-link {
+  position: absolute;
+  top: 4px;
+  right: 15px;
+  text-indent: -9999px;
+  display: block;
+  font-weight: bold;
+  font-size: 14px;
+  text-decoration: none;
+  height: 34px;
+  width: 29px;
+  background-image: url('../img/controls/more-news-button.png');
+  background-repeat: no-repeat;
+  background-position: 100% 50%;
+  color: black;
+}
+@media only screen and (-webkit-min-device-pixel-ratio: 2) {
+  .b-freeze-frame__gallery-link {
+    text-indent: 0;
+    background-image: none;
+    color: #e82492;
+    font-size: 62px;
+  }
+}

@@ -1,0 +1,58 @@
+{% extends '/GenericInner.twig' %}
+
+{% block head %}
+
+    <title>Ошибка авторизации</title>
+    <meta name="robots" content="noindex, nofollow" />
+
+    <style type="text/css">
+        .system-message {
+            background-color: #f0f0f0;
+            padding: 20px 30px;
+        }
+
+        .system-message a {
+            border-bottom-style: dotted;
+        }
+    </style>
+
+    <script type="text/javascript">
+        $(function(){
+            $('#focusLink').on('click',function(){
+                var tt=0;
+                var em = $('#form-authorization input[name=email]');
+
+                var interval = setInterval(function(){
+                    if (tt%2 == 0){
+                        em.focus().select();
+                    }else{
+                        em.blur();
+                    }
+
+                    if (tt > 6){
+                        clearInterval(interval);
+                        em.focus().select();
+                    }
+
+                    tt++;
+                },80);
+
+                return false;
+            });
+        });
+    </script>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="b-grid__g8 b-text">
+        <h1>Ошибка авторизации</h1>
+
+        <p class="system-message">
+            Пароль или адрес электронной почты неверны, проверьте раскладку клавиатуры и не нажата ли клавиша Caps Lock<br/>
+            <a href="#" id="focusLink">попытайтесь еще раз</a>
+        </p>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends '/person/PersonGeneric.twig' %}
+
+{% block head %}
+
+    <title>Все обсуждения {{ person.genitiveName|e }} ({{ person.englishName|e }}) - popcornnews</title>
+
+{% endblock %}
+
+
+{% block submenu %}
+    {% include '/person/talks/Submenu.twig'  %}
+{% endblock %}
+
+
+{% block personContent %}
+
+    <section class="b-news b-news_vertical-margin_30">
+        <div class="b-news__title-cont">
+            <h1 class="b-news__title b-rubrics-title b-rubrics-title_s20">
+                <a rel="nofollow" href="{{ personLink }}/talks">Все обсуждения {{ person.genitiveName|e }}</a>
+            </h1>
+        </div>
+
+        <table class="b-person-talks">
+            <tbody>
+                <tr>
+                    <th class="theme">Тема, автор и <a rel="nofollow" href="/persons/Jessica-Alba/talks/page/1/order/cdate">дата создания</a></th>
+                    <th class="rating"><a rel="nofollow" href="/persons/Jessica-Alba/talks/page/1/order/rating_desc">рейтинг</a></th>
+                    <th class="comments"><a rel="nofollow" href="/persons/Jessica-Alba/talks/page/1/order/comment_desc">комментарии</a></th>
+                    <th class="last"><a rel="nofollow" href="/persons/Jessica-Alba/talks/page/1/order/ldate_desc">последнее сообщение</a></th>
+                </tr>
+                {% for talk in talks %}
+	                <tr>
+	                    <td class="theme">
+	                        <a class="ava"><img alt="" src="http://v1.popcorn-news.ru/avatars_small/wOVO2y.jpg"></a>
+	                        <div class="details">
+	                            <h3><a href="{{ personLink }}/talks/topic/{{ talk.id }}">{{ talk.title|e }}</a></h3>
+	                            <noindex>Автор: <a href="/profile/{{ talk.owner.id }}" rel="nofollow" class="pc-user">{{ talk.owner.nick|e }}</a>, <span class="date">{{ talk.createTime.date|date("d.m.Y, H:s") }}</span></noindex>
+	                        </div>
+	                    </td>
+	                    <td class="rating"><span class="high">1</span></td>
+	                    <td class="comments"><span class="new">3</span></td>
+	                    <td class="last">
+	                        <noindex>
+	                            <span class="date">29 апреля 2012, 09:27</span><a class="pc-user" href="/profile/48991" rel="nofollow">Silver</a>
+	                        </noindex>
+	                    </td>
+	                </tr>
+                {% endfor %}
+        </tbody></table>
+    </section>
+
+{% endblock %}

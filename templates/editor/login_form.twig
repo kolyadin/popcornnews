@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Автризация</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        form {
+            display: block;
+            width: 400px;
+            height: 200px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-left: -200px;
+            margin-top: -100px;
+        }
+        label {
+            display: block;
+            width: 200px;
+            margin-left: 100px;
+        }
+        input[type=submit] {
+            margin-left: 200px;
+            margin-top: 20px;
+        }
+        .error {
+            margin-bottom: 20px;
+            color: #f00;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <form action="/editor/login/" method="POST">
+        {% if error %}
+            <div class="error">Ошибка входа, проверьте имя пользователя и пароль</div>
+        {% endif %}
+        <label>
+            Имя пользователя
+            <input type="text" name="login"/>
+        </label>
+        <label>
+            Пароль
+            <input type="password" name="pass"/>
+        </label>
+        <input type="submit" value="вход"/>
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,56 @@
+{% extends '/person/PersonGeneric.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% block head %}
+
+	<title>Фотографии {{ person.genitiveName|e }} ({{ person.englishName|e }}) - popcornnews</title>
+
+{% endblock %}
+
+
+{% block personContent %}
+
+	<div class="b-grid__g8">
+
+		<div style="width:580px;">
+
+			<div class="fotorama"
+			     data-auto="false"
+			     data-nav="thumbs"
+			     data-loop="true"
+			     data-hash="true"
+			     data-width="100%"
+			     data-minwidth="580"
+			     data-minheight="500"
+			     data-maxheight="550"
+			     data-keyboard="true"
+			     data-allowfullscreen="true"
+			     data-thumbheight="50"
+			     data-fit="scaledown">
+
+				<script type="text/javascript">
+					$(function(){
+						$('.fotorama').fotorama({
+							data: [
+								{% for image in person.images %}
+								{% set photo = image.thumb('600x500') %}
+
+								{img: '{{ photo.url }}', full: '{{ image.url }}'},
+								{% endfor %}
+							]
+						});
+					});
+				</script>
+
+
+
+
+
+
+			</div>
+
+		</div>
+
+	</div>
+
+{% endblock %}

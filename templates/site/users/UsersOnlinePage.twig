@@ -1,0 +1,77 @@
+{% extends '/GenericInner.twig' %}
+
+
+{% block head %}
+
+    <title>Онлайн пользователи сайта - popcornnews</title>
+
+	<style type="text/css">
+		#loading{
+			display: none;
+			margin-top: 20px;
+			text-align: center;
+		}
+	</style>
+
+	<script type="text/javascript">
+		$(function(){
+
+			var usersTable = $('#users');
+
+			usersTable.waypoint({
+				offset: 'bottom-in-view',
+				handler: function(direction){
+					var $this;
+
+					if (direction === 'down'){
+						$this = $(this);
+
+						$this.waypoint('disable');
+						$('#loading').show();
+
+						var offset = [
+							usersTable.find('tr:last').attr('data-loop-id'),
+							20
+						];
+
+						$.post('/ajax/users/online',{offset:offset},function(response){
+
+							if (response.count > 0){
+								$('#users').append(response.html);
+								$this.waypoint('enable');
+							}
+
+							$('#loading').hide();
+
+						},'json');
+					}
+				}
+			});
+			$('html,body').animate({scrollTop:0},200);
+		});
+	</script>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="b-grid__g8 b-users b-users-online">
+
+        <h1>Пользователи</h1>
+
+	    {% include '/users/UsersMenu.twig' %}
+
+
+	    {% if onlineUsers|length %}
+		    <table class="b-users-table__full" id="users">
+			    {% include '/users/UserRows.twig' with {'profiles' : onlineUsers} %}
+		    </table>
+
+		    <div id="loading"><img src="/st/img/loaders/pink-loader-small.gif" alt=""/></div>
+	    {% else %}
+		    <br/><p><strong>Нет активных пользователей, похоже все спят :)</strong></p>
+	    {% endif %}
+
+    </div>
+
+{% endblock %}

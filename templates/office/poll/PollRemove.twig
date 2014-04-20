@@ -1,0 +1,45 @@
+{% extends '/Generic.twig' %}
+
+{% block BodyEnd %}
+
+	<script type="text/javascript">
+
+		$(function () {
+
+			$('a[data-action=confirm-remove]').on('click',function(){
+				var params = {
+					pollId: {{ poll.id }}
+				};
+
+				var handler = function(response){
+					if (response.status == 'success'){
+						location.href = '/office/polls';
+					}
+				};
+
+				$.post('/office/ajax/poll/remove',params,handler,'json');
+			});
+
+		});
+
+
+	</script>
+
+{% endblock %}
+
+{% block PageContent %}
+
+	<h3 class="page-title">
+		Опрос
+		<small>&quot;{{ poll.question|e }}&quot;</small>
+	</h3>
+
+	<div class="note note-danger">
+		<h4 class="block">Удаление опроса</h4>
+		<p>
+			<a class="btn btn-info" href="/office/polls">Вернуться к списку опросов</a>
+			<a class="btn btn-danger" href="#" data-action="confirm-remove">Подтверждаю удаление</a>
+		</p>
+	</div>
+
+{% endblock %}

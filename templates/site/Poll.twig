@@ -1,0 +1,28 @@
+<section class="b-main-poll">
+	<div class="b-main-poll__title b-rubrics-title b-rubrics-title_s18">{{ sidebar.poll.question|e }}</div>
+	<div class="b-main-poll__body">
+		<form id="poll">
+			<input type="hidden" name="pollId" value="{{ sidebar.poll.id }}"/>
+			<ul class="b-main-poll__answers-list">
+
+				{% for opinion in sidebar.poll.opinions %}
+
+					<li class="b-main-poll__answers-item" data-opinion-id="{{ opinion.id }}">
+						<div class="b-main-poll__answers-radio-cont"><input type="radio" name="main-poll" id="main-poll{{ opinion.id }}" value="{{ opinion.id }}"></div>
+						<div class="b-main-poll__answers-text-cont">
+							<label style="cursor: pointer;" for="main-poll{{ opinion.id }}" class="b-main-poll__answers-text">{{ opinion.title|e }}</label>
+						</div>
+					</li>
+
+				{% endfor %}
+
+			</ul>
+
+			<div class="b-main-poll__bottom">
+				<input type="submit" value="ответить" class="b-main-poll__submit b-firm-grad" style="cursor: pointer;">
+				{#<a href="/voting" class="b-main-poll__previous">предыдущие опросы &gt;</a>#}
+			</div>
+
+		</form>
+	</div>
+</section>

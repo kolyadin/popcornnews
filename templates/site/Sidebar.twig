@@ -1,0 +1,134 @@
+<aside class="b-grid__g4 b-side">
+    <section class="b-side-large-banner b-side__vertical-margin"></section>
+
+    <section class="b-freeze-frame__persons clearfix b-side__vertical-margin">
+        <div class="b-freeze-frame__rubrics-title-cont">
+            <div class="b-freeze-frame__persons-rubrics-title b-rubrics-title b-rubrics-title_s18">персоны</div>
+            <span class="b-freeze-frame__rubrics-counter b-counter">{{ sidebar.personsCount }}</span>
+        </div>
+        <div class="b-grid__g2 b-grid__a">
+            <ul class="b-freeze-frame__list">
+	            {% for person in sidebar.persons[:25] %}
+		            <li class="b-freeze-frame__item"><a href="/persons/{{ person.urlName }}" class="b-freeze-frame__link b-freeze-frame__link_color{{ person.color }}">{{ person.name|e }}</a></li>
+	            {% endfor %}
+            </ul>
+        </div>
+        <div class="b-grid__g2 b-grid__z">
+            <ul class="b-freeze-frame__list">
+	            {% for person in sidebar.persons[25:] %}
+		            <li class="b-freeze-frame__item"><a href="/persons/{{ person.urlName }}" class="b-freeze-frame__link b-freeze-frame__link_color{{ person.color }}">{{ person.name|e }}</a></li>
+	            {% endfor %}
+            </ul>
+        </div>
+    </section>
+
+    <section class="b-freeze-frame__tags clearfix b-side__vertical-margin">
+        <div class="b-freeze-frame__rubrics-title-cont">
+            <div class="b-freeze-frame__tags-rubrics-title b-rubrics-title b-rubrics-title_s18">теги</div>
+        </div>
+        <div class="b-grid__g2 b-grid__a">
+            <ul class="b-freeze-frame__list">
+	            {% for tag in sidebar.tags[:15] %}
+		            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;{{ tag.name|e }}&quot;" href="/tag/{{ tag.tagId }}" class="b-freeze-frame__link b-freeze-frame__link_color{{ tag.color }}">{{ tag.name|e }}</a></li>
+	            {% endfor %}
+            </ul>
+        </div>
+        <div class="b-grid__g2 b-grid__z">
+            <ul class="b-freeze-frame__list">
+	            {% for tag in sidebar.tags[15:] %}
+		            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;{{ tag.name|e }}&quot;" href="/tag/{{ tag.tagId }}" class="b-freeze-frame__link b-freeze-frame__link_color{{ tag.color }}">{{ tag.name|e }}</a></li>
+	            {% endfor %}
+            </ul>
+        </div>
+    </section>
+
+    <section class="b-freeze-frame__groups clearfix b-side__vertical-margin b-side__vertical-margin_60 ">
+        <div class="b-freeze-frame__rubrics-title-cont">
+            <div class="b-freeze-frame__groups-rubrics-title b-rubrics-title b-rubrics-title_s18">группы</div>
+            <span class="b-freeze-frame__rubrics-counter b-counter">889</span>
+            <a href="#" class="b-freeze-frame__rubrics-create-button b-create-button"><b>+</b>создать</a>
+        </div>
+        <div class="b-grid__g2 b-grid__a">
+            <ul class="b-freeze-frame__list">
+                <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color2">Harry Potter</a></li>
+                <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color1">Jared Leto</a></li>
+                <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color4">Kristen Stewart</a></li>
+                <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color1">Nina Dobrev</a></li>
+                <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color5">Taylor Lautner</a></li>
+                <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color1">The Best Vampire and Jared Leto</a></li>
+            </ul>
+        </div>
+        <div class="b-grid__g2 b-grid__z">
+            <ul class="b-freeze-frame__list">
+                <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color1">The Vampire Diaries</a></li>
+                <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color7">Twilight</a></li>
+                <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color1">СЕРИАЛЫ 2000-х ГОДОВ</a></li>
+                <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color8">Самые красивые актеры и певцы</a></li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="b-photo-articles clearfix b-side__vertical-margin b-side__vertical-margin_35">
+        <div class="b-photo-articles__title-cont b-grid__g4 b-grid__a b-grid__z">
+            <h1 class="b-photo-articles__title b-rubrics-title b-rubrics-title_s18">фото-статьи</h1>
+            <span class="b-photo-articles__counter b-counter">5941</span>
+        </div>
+
+        <div class="b-grid__g4 b-grid__a b-grid__z">
+            <a href="#" class="b-photo-articles__photo-cont"><img src="./img/content/large_front.jpg" alt=""></a>
+            <div class="b-photo-articles__photo-count">3 фотографии</div>
+            <h2 class="b-photo-articles__news-title"><a href="#">Голлисвудский роман Николь Кидман и Тома Круза</a></h2>
+        </div>
+
+    </section>
+
+    <div class="b-grid__g4 b-grid__a b-grid__z clearfix b-side__vertical-margin b-side__vertical-margin_30">
+        <section class="b-create-your-style">
+            <div class="b-create-your-style__rubrics-title b-rubrics-title b-rubrics-title_s18">cоздай свой стиль</div>
+            <div class="b-create-your-style__body clearfix">
+                <div class="b-create-your-style__text">Смешивай и комбинируй различные вещи, чтобы создать свой собственный и неповторимый стиль</div>
+                <a href="#" class="b-create-your-style__link b-firm-grad">&gt;</a>
+            </div>
+        </section>
+    </div>
+    <div class="b-grid__g4 b-grid__a b-grid__z clearfix b-side__vertical-margin b-side__vertical-margin_30">
+        <section class="b-star-childrens">
+            <a href="#" class="b-star-childrens__link">
+                <img src="./img/content/large_front.jpg" alt="" class="b-star-childrens__img">
+                <div class="b-star-childrens__news-title">звёздные дети: Лилли Роуз Мэлоди Депп</div>
+            </a>
+        </section>
+    </div>
+
+    <div class="b-grid__g4 b-grid__a b-grid__z clearfix b-side__gray-line b-side__vertical-margin_30"></div>
+
+    <section class="b-grid__g4 b-grid__a b-grid__z clearfix b-side__vertical-margin b-side__vertical-margin_35">
+	    {% include '/Poll.twig' %}
+    </section>
+
+    <section class="b-grid__g4 b-grid__a b-grid__z clearfix b-side__vertical-margin">
+        <div class="b-conversation__about-rubrics-title b-rubrics-title b-rubrics-title_s18">обсуждения звёзд</div>
+        <ul class="b-conversation__about-list">
+            <li class="b-conversation__about-item">
+                <div class="b-conversation__about-hero">Брэд Питт:</div>
+                <a href="#" class="b-conversation__about-hero-room">Посиделки у Брэда <span class="b-conversation__about-hero-counter b-counter">204957</span></a>
+            </li>
+            <li class="b-conversation__about-item">
+                <div class="b-conversation__about-hero">Роберт Паттинсон:</div>
+                <a href="#" class="b-conversation__about-hero-room">"Мой личный сорт героина" <span class="b-conversation__about-hero-counter b-counter">5941</span></a>
+            </li>
+            <li class="b-conversation__about-item">
+                <div class="b-conversation__about-hero">Роберт Паттинсон:</div>
+                <a href="#" class="b-conversation__about-hero-room">Интерактивная фото-развлекуха <span class="b-conversation__about-hero-counter b-counter">292</span></a>
+            </li>
+            <li class="b-conversation__about-item">
+                <div class="b-conversation__about-hero">Джеймс МакЭвой:</div>
+                <a href="#" class="b-conversation__about-hero-room">Фильм "Пенелопа" <span class="b-conversation__about-hero-counter b-counter">224792</span></a>
+            </li>
+            <li class="b-conversation__about-item">
+                <div class="b-conversation__about-hero">Йен Сомерхалдер:</div>
+                <a href="#" class="b-conversation__about-hero-room">Самые свежие новости "ДВ" <span class="b-conversation__about-hero-counter b-counter">4114</span></a>
+            </li>
+        </ul>
+    </section>
+</aside>

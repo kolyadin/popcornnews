@@ -1,0 +1,39 @@
+{% extends '/GenericInner.twig' %}
+
+{% block topmenu %}
+
+	<div class="nav__left">
+		<a href="/profile/{{ profile.id }}/statuses" class="icon-text x-large">
+			<img alt="Назад" src="i/arrow-left-red.svg" class="icon-text__icon">
+			<span class="icon-text__text">Назад</span>
+		</a>				
+	</div>
+	<div class="nav__center">
+		<div class="nav__frame nav__title">
+			Статус
+		</div>
+	</div>
+	<div class="nav__right">
+		<a id="send-form-page" class="nav__large" href="#">Готово</a>
+	</div>
+
+{% endblock %}
+
+{% block page_classes %}page_fixed{% endblock %}
+
+{% block content %}
+
+	<form method="post" id="form-page" class="form-page" action="/profile/{{ profile.id }}/addStatusMessage" autocomplete="off">
+		<textarea name="statusMessage" class="form-page__area" placeholder="Новый статус здесь.."></textarea>
+	</form>
+	<script>
+		$(function(){
+			var $form=$('#form-page');
+			$('#send-form-page').click(function(){
+				$form.submit();
+				return false;
+			});
+		});
+	</script>
+
+{% endblock %}
