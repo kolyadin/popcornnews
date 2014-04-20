@@ -236,10 +236,28 @@ class NewsPost extends Model {
         return $this->images;
     }
 
-    /**
-     * @return \popcorn\model\tags\Tag[]
-     */
-    public function getTags() {
+	/**
+	 * @param null $type
+	 * @return \popcorn\model\tags\Tag[]
+	 */
+    public function getTags($type = null) {
+
+		if ($type !== null){
+			foreach ([Tag::ARTICLE,Tag::EVENT,Tag::FILM,Tag::PERSON] as $tagType){
+				if ($type === $tagType){
+					$tags = [];
+					foreach ($this->tags as $tag){
+						if ($tag->getType() == $tagType){
+							$tags[] = $tag;
+						}
+					}
+
+					return $tags;
+					break;
+				}
+			}
+		}
+
         return $this->tags;
     }
 

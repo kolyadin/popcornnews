@@ -127,7 +127,7 @@
 							   href="#modal-remove"><i class="fa fa-trash-o"></i></a>
 						</td>
 						<td>{{ post.createDate|date('d.m.Y H:i') }}</td>
-						<td style=""><a href="/office/news{{ post.id }}">{{ post.name|e }}</a></td>
+						<td style=""><a href="/office/post{{ post.id }}">{{ post.name|e }}</a></td>
 					</tr>
 				{% endfor %}
 				</tbody>

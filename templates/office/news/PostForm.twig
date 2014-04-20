@@ -48,17 +48,25 @@
 				multiple: true,
 				placeholder: "Начните вводить название рубрики...",
 				initSelection: function (element, callback) {
-					/*
-					var data = [];
 
-					data.push({'id': 69, 'text': 'Россия'});
+					{% if post.tags(3)|length %}
 
-					$(element.val().split(';')).each(function () {
-						data.push({id: this, text: this});
-					});
+						  var data = [];
 
-					callback(data);
-					*/
+						{% for tag in post.tags(3) %}
+							  data.push({'id': {{ tag.id }}, 'text': '{{ tag.name|e }}'});
+						{% endfor %}
+
+
+						  $(element.val().split(';')).each(function () {
+							  data.push({id: this, text: this});
+						  });
+
+						  callback(data);
+				    {% endif %}
+
+
+
 				}
 			});
 
@@ -68,15 +76,21 @@
 				placeholder: "Начните вводить название тега...",
 				initSelection: function (element, callback) {
 
-					var data = [];
+					{% if post.tags(0)|length %}
 
-					data.push({'id': 69, 'text': 'Россия'});
+						var data = [];
 
-					$(element.val().split(';')).each(function () {
-						data.push({id: this, text: this});
-					});
+						{% for tag in post.tags(0) %}
+							data.push({'id': {{ tag.id }}, 'text': '{{ tag.name|e }}'});
+						{% endfor %}
 
-					callback(data);
+
+						$(element.val().split(';')).each(function () {
+							data.push({id: this, text: this});
+						});
+
+						callback(data);
+					{% endif %}
 				},
 				ajax: {
 					url: '/office/ajax/post/tags',
@@ -274,7 +288,7 @@
 
 {% block PageContent %}
 
-	{% if poll %}
+	{% if post %}
 		<h3 class="page-title">
 			Новость
 			<small>&quot;{{ post.name|e }}&quot;</small>
@@ -330,7 +344,7 @@
 						<label class="control-label col-md-3">Дата публикации: <span class="required">*</span></label>
 
 						<div class="col-md-9">
-							<input class="form-control input-medium" id="postDate" name="createDate" required="true" type="text" value="{{ post.name|e|default('now'|date('d.m.Y H:i')) }}"/>
+							<input class="form-control input-medium" id="postDate" name="createDate" required="true" type="text" value="{{ post.createDate|date('d.m.Y H:i')|default('now'|date('d.m.Y H:i')) }}"/>
 							<span class="help-block"></span>
 						</div>
 					</div>
@@ -389,7 +403,7 @@
 						<label class="control-label col-md-3">Рубрики: <span class="required">*</span></label>
 
 						<div class="col-md-9">
-							<input type="hidden" name="articles"/>
+							<input type="hidden" name="articles" value="{{ tags.articles|join(';') }}"/>
 							<span class="help-block"></span>
 						</div>
 					</div>
@@ -398,7 +412,7 @@
 						<label class="control-label col-md-3">Теги:</label>
 
 						<div class="col-md-9">
-							<input type="hidden" name="tags"/>
+							<input type="hidden" name="tags" value="{{ tags.events|join(';') }}"/>
 							<span class="help-block"></span>
 						</div>
 					</div>
