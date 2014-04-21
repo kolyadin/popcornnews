@@ -9,6 +9,10 @@
 
 {% block subYourStyle %}
 
+	<script type="text/javascript">
+		ys = new YourStyle();
+	</script>
+
 	<div class="popular-sets">
 		<div class="article-title">Все вещи</div>
 
@@ -37,7 +41,7 @@
 								Добавить:
 							</div>
 							<a target="_blank" href="/yourstyle/editor/withTile/{{ item.id }}" class="all-stuff__data-inset">в сет</a>
-							<a href="#" class="all-stuff__data-instuff">в мои вещи</a>
+							<a onclick="ys.tilesToFromMy(event);" href="/yourstyle/tile/{{ item.id }}/toMy" class="all-stuff__data-instuff">в мои вещи</a>
 						</div>
 					</div>
 				</li>

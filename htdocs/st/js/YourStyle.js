@@ -16,10 +16,10 @@ YourStyle.prototype.tilesToFromMy = function(e) {
 	var isDelete = (/toMy$/.test(ob.href) ? false : true);
 	as.ajax(ob.href, function(response) {
 		if (isDelete) {
-			ob.innerHTML = 'в мои вещи';
+			ob.innerHTML = 'РІ РјРѕРё РІРµС‰Рё';
 			ob.href = ob.href.replace('fromMy', 'toMy');
 		} else {
-			ob.innerHTML = 'убрать из моих вещей';
+			ob.innerHTML = 'СѓР±СЂР°С‚СЊ РёР· РјРѕРёС… РІРµС‰РµР№';
 			ob.href = ob.href.replace('toMy', 'fromMy');
 		}
 	});
@@ -39,12 +39,12 @@ YourStyle.prototype.tileToFromMy = function(e) {
 		var textOb = as.$$('h3', as.parent(ob, 'div'));
 		
 		if (isDelete) {
-			ob.innerHTML = 'добавить';
-			textOb.innerHTML = textOb.innerHTML.replace(' и вы', '');
+			ob.innerHTML = 'РґРѕР±Р°РІРёС‚СЊ';
+			textOb.innerHTML = textOb.innerHTML.replace(' Рё РІС‹', '');
 			ob.href = ob.href.replace('fromMy', 'toMy');
 		} else {
-			ob.innerHTML = 'убрать';
-			textOb.innerHTML += ' и вы';
+			ob.innerHTML = 'СѓР±СЂР°С‚СЊ';
+			textOb.innerHTML += ' Рё РІС‹';
 			ob.href = ob.href.replace('toMy', 'fromMy');
 		}
 	});
@@ -62,7 +62,7 @@ YourStyle.prototype.setVote = function(e) {
 		if (!response) return;
 		
 		var before = prev(ob);
-		before.innerHTML += '<p>и мне</p>';
+		before.innerHTML += '<p>Рё РјРЅРµ</p>';
 		
 		var after = as.after('p', ob);
 		after.innerHTML = ob.innerHTML;
