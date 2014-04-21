@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="utf-8">
+
+<title>Страница</title>
+
+<meta name="Keywords" content="Страница" /> 
+<meta name="Description" content="Страница" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<base href="/1.0/">
+
+<link rel="stylesheet" type="text/css" href="fonts/ptsans/stylesheet.css" media="all" />
+<link rel="stylesheet" type="text/css" href="css/decor.css" media="all" />
+<link rel="stylesheet" type="text/css" href="css/page.css" media="all" />
+
+<script src="js/jquery-1.10.2.min.js"></script>
+<script src="js/ajax.js"></script>
+<script src="js/eitems.js"></script>
+<script src="js/pager.js"></script>
+<script src="js/sample.js"></script>
+
+	{% block head %}{% endblock %}
+
+</head>
+<body>
+	<div class="page">
+		<header class="page__header nav">
+
+			{% block topmenu %}{% endblock %}
+
+		</header>
+
+		<section class="page__content">
+
+			{% block content %}{% endblock %}
+
+		</section>
+
+		<footer class="page__footer">
+			<div class="fmenu">
+				<a class="fmenu__item {% if slim.path[1] == 'news' or slim.path[1] == '' %}active{% endif %}" href="/">
+					<div class="fmenu__item-frame">
+						<img class="fmenu__item-icon" src="i/news-grey.svg" alt="" />
+						<img class="fmenu__item-icon" src="i/news-red.svg" alt="" />
+					</div>
+					<span class="fmenu__item-title">Новости</span>
+				</a>
+				<a class="fmenu__item {% if slim.path[1] == 'profile' or slim.path[1] == 'register' or slim.path[1] == 'authorization' %}active{% endif %}" href="/authorization">
+					<div class="fmenu__item-frame">
+						<img class="fmenu__item-icon" src="i/avatar-grey.svg" alt="" />
+						<img class="fmenu__item-icon" src="i/avatar-red.svg" alt="" />
+					</div>
+					<span class="fmenu__item-title">Я</span>
+				</a>
+				<a class="fmenu__item {% if slim.path[1] == 'im' %}active{% endif %}" href="/im">
+					<div class="fmenu__item-frame">
+						<img class="fmenu__item-icon" src="i/message-grey.svg" alt="" />
+						<img class="fmenu__item-icon" src="i/message-red.svg" alt="" />
+					</div>
+					<span class="fmenu__item-title">Сообщения</span>
+				</a>
+			</div>
+		</footer>
+	</div>
+</body>
+</html>

@@ -1,0 +1,39 @@
+{% extends '/GenericInner.twig' %}
+
+{% block head %}
+
+    <title>Требуется авторизация на сайте</title>
+
+    <meta name="robots" content="noindex, nofollow" />
+
+    <style type="text/css">
+        .system-message {
+            background-color: #f0f0f0;
+            padding: 20px 30px;
+        }
+    </style>
+
+    <script type="text/javascript">
+        $(function(){
+            $('.system-message a:last').on('click',function(){
+                history.back();
+                return false;
+            });
+        });
+    </script>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="b-grid__g8 b-text">
+
+        <h1>Вы не зарегистрированы</h1>
+
+        <p class="system-message">
+            Для доступа к данной странице, вы должны быть авторизованы. Если вы еще не зарегистрированы на нашем сайте, вы можете сделать это перейдя по ссылке "<a href="/register" title="Зарегистрироваться на сайте">регистрация</a>".<br/>
+            <a href="#back" title="">вернуться на предыдущую страницу</a>
+        </p>
+    </div>
+
+{% endblock %}

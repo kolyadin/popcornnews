@@ -1,0 +1,43 @@
+{% extends '/profile/ProfileGeneric.twig' %}
+
+{% block subContent %}
+
+		<div class="column-title column-title_highlighted">
+			<div class="column-title__cell xx-large">
+				<span class="xx-large">{{ statusList|length|ruNumber(['статус','статуса','статусов']) }}</span>
+			</div>
+			<div class="column-title__cell right">
+				<a class="icon-text xx-large" href="#">
+					<span class="icon-text__text">Написать</span>
+					<img class="icon-text__icon"  src="i/write-red.svg" alt="сообщение" />
+				</a>				
+			</div>
+		</div>
+		<div class="statuses">
+
+			{% for key, status in statusList %}
+
+				<div data-uid="{{ status.id }}" class="statuses__item eitem Eitem">
+					<div class="statuses__content Eitem__content">
+						<div class="statuses__text">{{ key + 1 }} {{ status.statusMessage }}</div>
+						<span class="statuses__date">{{ status.createdAt|ruDateFriendly }}</span>
+					</div>
+					<div class="eitem__extra Eitem__extra">
+						<div class="eitem__extra-control">
+							<a data-type="deleteStatus" class="eitem__extra-item" href="111">
+								<img class="eitem__extra-icon" src="i/close-white.svg" alt="Удалить" />
+							</a>
+						</div>
+					</div>
+				</div>	
+
+			{% endfor %}
+
+		</div>
+		<script>
+			$(function(){
+				eitems.init();
+			});
+		</script>			
+
+{% endblock %}

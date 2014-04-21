@@ -1,0 +1,21 @@
+{% extends '/mail/Generic.twig' %}
+
+
+{% block content %}
+
+    {% set baseUrl = 'http://' ~ slim.request.host %}
+
+    <h2 style="font: 24px 'Trebuchet MS', Tahoma, Verdana, Arial; margin-top: 15px; margin-bottom: 10px;">Восстановление пароля</h2>
+    <div style="background: #e5e5e5; padding: 12px 15px;">
+        <span style="font: bold 13px Tahoma, Verdana, Arial; display: block;">Для вас был создан новый пароль</span>
+        <span style="font: 13px Tahoma, Verdana, Arial; display: block; margin-bottom: 12px;">Ваш новый пароль: {{ user.newPassword }}</span>
+        <span style="font: 13px Tahoma, Verdana, Arial; display: block; margin-bottom: 12px;">
+            Вы можете его поменять в своем
+            <a style="font: 13px Tahoma, Verdana, Arial; color: #f70080;" href="{{ baseUrl ~ '/profile/' ~ user.id ~ '/form' }}">личном кабинете</a>
+        </span>
+
+
+        <span style="font: 13px Tahoma, Verdana, Arial; display: block; margin-top: 15px;">С уважением, редакция Popcornnews <a style="color: #f70080" href="{{ baseUrl }}/">{{ baseUrl }}/</a></span>
+    </div>
+
+{% endblock %}

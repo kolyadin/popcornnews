@@ -1,0 +1,58 @@
+{% extends '/person/PersonGeneric.twig' %}
+
+{% block head %}
+
+	<title>Все обсуждения {{ person.genitiveName|e }} ({{ person.englishName|e }}) - popcornnews</title>
+
+{% endblock %}
+
+
+{% block submenu %}
+	{% include '/person/talks/Submenu.twig'  %}
+{% endblock %}
+
+
+{% block personContent %}
+
+	<section class="b-news b-news_vertical-margin_30 b-talk-topic">
+
+		<div class="clearfix">
+			<a class="b-single-article__comments-ava b-ava" href="/profile/95385" rel="nofollow">
+				<img src="http://v1.popcorn-news.ru/avatars_small/YxyBoU.jpg" alt="">
+			</a>
+			<h1 class="b-news__title b-rubrics-title b-rubrics-title_s20">{{ topic.title|e }}</h1>
+			<div class="b-single-article__comments-details">
+
+				<a href="/profile/95385" rel="nofollow" class="b-single-article__comments-user">{{ topic.owner.nick|e }}</a>
+				<noindex><span class="b-single-article__comments-date">25 февраля 2013, 20:24</span></noindex>
+				{#<span class="b-single-article__comments-manage">
+                    <span class="b-single-article__comments-reply">ответить</span>
+                    <span class="b-single-article__comments-complain">! пожаловаться</span>
+				</span>#}
+				<div class="b-single-article__comments-rating b-single-article__comments-rating_pink">
+					<div class="b-single-article__comments-rating-val b-single-article__comments-rating_seven"></div>
+					<span>3456</span>
+				</div>
+				{#<div class="b-single-article__comments-mark">
+					<div class="b-single-article__comments-mark__up">
+						<span class="b-single-article__comments-mark__summ">42</span>
+					</div>
+					<div class="b-single-article__comments-mark__down">
+						<span class="b-single-article__comments-mark__summ">-27</span>
+					</div>
+				</div>#}
+			</div>
+
+			<div class="clearfix"></div>
+
+			<div class="topic-content">
+				<p>{{ topic.content|e }}</p>
+			</div>
+
+		</div>
+
+
+
+	</section>
+
+{% endblock %}

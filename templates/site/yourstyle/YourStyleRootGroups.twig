@@ -1,0 +1,36 @@
+{% extends '/yourstyle/YourStyleGeneric.twig' %}
+
+{% block subMenu %}
+
+	{% include '/yourstyle/YourStyleSubMenuGroups.twig' %}
+
+{% endblock %}
+
+{% block subYourStyle %}
+
+	<div class="popular-sets">
+		<div class="article-title">Все вещи</div>
+
+		{% include '/yourstyle/YourStyleChanger.twig' %}
+
+	</div>
+	<div class="stuff-items">
+		<ul class="stuff-items__list">
+
+			{% for rootGroup in rootGroups %}
+
+				<li class="stuff-items__item">
+					<a class="stuff-items__link" href="/yourstyle/rootGroup/{{ rootGroup.id }}">
+						<span class="stuff-items__image">
+							<img src="{{ rootGroup.tId.image }}" alt=""/>
+						</span>
+						<span class="stuff-items__text">{{ rootGroup.title }}</span>
+					</a>
+				</li>
+
+			{% endfor %}
+
+		</ul>
+	</div>
+
+{% endblock %}

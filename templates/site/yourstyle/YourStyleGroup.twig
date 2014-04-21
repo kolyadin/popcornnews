@@ -1,0 +1,57 @@
+{% extends '/yourstyle/YourStyleGeneric.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% block subMenu %}
+
+	{% include '/yourstyle/YourStyleSubMenuGroups.twig' %}
+
+{% endblock %}
+
+{% block subYourStyle %}
+
+	<div class="popular-sets">
+		<div class="article-title">Все вещи</div>
+
+		{% include '/yourstyle/YourStyleChanger.twig' %}
+
+	</div>
+	<div class="stuff-items">
+		<ul class="all-stuff__list">
+
+			{% for item in items %}
+
+				<li class="all-stuff__item">
+					<a class="all-stuff__image" href="/yourstyle/tile/{{ item.id }}">
+						<span class="all-stuff__inner">
+							<img src="{{ item.image }}" alt="" />
+						</span>
+					</a>
+					<div class="all-stuff__data">
+						<div class="all-stuff__data-title">
+							<a class="all-stuff__data-link" href="/yourstyle/tile/{{ item.id }}">
+								{{ item.bId }}
+							</a>
+						</div>
+						<div class="all-stuff__data-add">
+							<div class="all-stuff__add-title">
+								Добавить:
+							</div>
+							<a href="#" class="all-stuff__data-inset">в сет</a>
+							<a href="#" class="all-stuff__data-instuff">в мои вещи</a>
+						</div>
+					</div>
+				</li>
+
+			{% endfor %}
+
+		</ul>
+
+		{% if slim.path[2] == 'group' %}
+			{{ html.paginator(pages, page, '/yourstyle/group/' ~ slim.path[3] ~ '/page/%u') }}
+		{% else %}
+			{{ html.paginator(pages, page, '/yourstyle/tiles/page/%u/?' ~ searchParams) }}
+		{% endif %}
+
+	</div>
+
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends '/profile/ProfileGeneric.twig' %}
+
+{% block subContent %}
+
+	<div class="column-title column-title_highlighted">
+		<div class="column-title__cell">
+			<span class="xx-large">{{ wallMessages|length|ruNumber(['запись','записи','записей']) }}</span>
+		</div>
+		<div class="column-title__cell right">
+			<a class="icon-text xx-large" href="#">
+				<span class="icon-text__text">Написать</span>
+				<img class="icon-text__icon"  src="i/write-red.svg" alt="сообщение" />
+			</a>				
+		</div>
+	</div>
+
+
+	<div class="users users_messages">
+
+	{% for message in wallMessages %}
+
+		{% set color = 'color-' ~ message.author.rating.rank %}
+
+		{% if message.author.isOnline %}
+			{% set online = 'users__name_online' %}
+		{% else %}
+			{% set online = '' %}
+		{% endif %}
+
+		<div data-uid="{{ message.id }}" user-data-uid="{{ message.author.id }}" class="users__item eitem Eitem">
+			<a class="users__content Eitem__content" href="/profile/{{ message.author.id }}">
+				<div class="users__photo" style="background-image:url(i/tmp/_1.jpg{# Сделать аву #});"></div>
+				<div class="users__info">
+					<div class="users__row">
+						<span class="users__date xx-small">{{ message.sentTime|ruDateFriendly }}</span>
+						<div class="users__name {{ online }} {{ color }}">{{ message.author.nick }}</div>
+					</div>
+					<div class="users__phrase">
+						{{ message.content|truncate(50)|e|nl2br }}
+					</div>
+				</div>
+			</a>
+        		<div class="eitem__extra Eitem__extra">
+				<div class="eitem__extra-control">
+					{% if message.author.id != profile.id %}
+						<a data-type="deleteUser2" class="eitem__extra-item" href="#">
+							<img class="eitem__extra-icon" src="i/close-white.svg" alt="Удалить" />
+						</a>
+						<a data-type="complainUser" class="eitem__extra-item" href="#">
+							<img class="eitem__extra-icon" src="i/complain-white.svg" alt="Пожаловаться" />
+						</a>
+					{% endif %}
+					<a class="eitem__extra-item" href="/html/dialogue.html">
+						<img class="eitem__extra-icon" src="i/reply-white.svg" alt="Ответить" />
+					</a>
+				</div>
+			</div>
+		</div>
+
+	{% endfor %}
+
+	</div>
+	<script>
+		$(function(){
+			eitems.init();
+		});
+	</script>
+
+{% endblock %}

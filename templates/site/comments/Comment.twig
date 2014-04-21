@@ -1,0 +1,64 @@
+{% if comment.owner.avatar.id %}
+	{% set avaSrc = comment.owner.avatar.url('profileSmall') %}
+{% endif %}
+
+{% if comment.deleted %}
+	{% spaceless %}
+		<li class="b-comment b-comment-level-{{ comment.level }} b-comment-deleted"
+		    data-comment-id="{{ comment.id }}"
+		    data-level="{{ comment.level }}"
+		    data-reply-to="{{ comment.parent }}" >
+			X&nbsp;<strong>{{ comment.owner.nick|e }}</strong>&mdash;комментарий удален
+		</li>
+	{% endspaceless %}
+{% else %}
+	{% spaceless %}
+		<li class="b-comment b-comment-level-{{ comment.level }}"
+		    data-comment-id="{{ comment.id }}"
+		    data-level="{{ comment.level }}"
+		    data-reply-to="{{ comment.parent }}" >
+			<div class="ava">
+				<a href="/profile/{{ comment.owner.id }}"><img src="{{ avaSrc|default('/st/img/no-photo/small.png') }}" alt=""/></a>
+			</div>
+			<div class="comment">
+				<div class="rating-{{ comment.owner.rating.rank }}" {% if comment.imagesCount == 0 %} style="float:left;line-height: normal;" {% endif %}>
+					<a class="nick-name" href="/profile/{{ comment.owner.id }}">{{ comment.owner.nick|e }}</a>
+				</div>
+
+				{#Если у коммента есть прикрепленные фотки, покажем их#}
+				{% if comment.imagesCount > 0 %}
+					<div class="images">
+						{% for image in comment.images %}
+							{% set thumb = image.thumb('x100') %}
+
+							{% if forceImageLoad %}
+								<a href="{{ image.url }}"><img src="{{ thumb.url }}" alt="" width="{{ thumb.width }}" height="{{ thumb.height }}"/></a>
+							{% else %}
+								<a href="{{ image.url }}"><img data-lazy="true" data-original="{{ thumb.url }}" alt="" width="{{ thumb.width }}" height="{{ thumb.height }}"/></a>
+							{% endif %}
+						{% endfor %}
+					</div>
+					<div class="clearfix"></div>
+				{% endif %}
+
+				<p>{{ comment.contentFriendly }}</p>
+
+				<div class="caption">
+					{#<div class="comment-timestamp">{{ comment.date|dateRU }}</div>#}
+					{% if currentUser.id %}
+						<div class="comment-reply"><a href="#">Ответить</a></div>
+						<div class="comment-like">
+							<a class="like" href="#">Нравится<span></span></a><em></em>
+							<a class="dislike" href="#"></a><em></em>
+						</div>
+						<div class="comment-report"><a href="#">пожаловаться</a></div>
+						{% if comment.owner.id == currentUser.id %}
+							<div class="comment-delete"><a href="#">удалить</a></div>
+						{% endif %}
+					{% endif %}
+				</div>
+			</div>
+			<div class="clearfix"></div>
+		</li>
+	{% endspaceless %}
+{% endif %}

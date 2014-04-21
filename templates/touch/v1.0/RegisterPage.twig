@@ -1,0 +1,37 @@
+{% extends '/GenericInner.twig' %}
+
+{% block content %}
+
+	<div class="logo">Попкорн<span class="logo__news">news</span></div>
+
+	{% if success %}
+
+		<div class="form-top-mistake">
+                    <strong>Вы успешно зарегистрировались</strong>.<br/>
+                    Для окончания регистрации Вы должны подтвердить свой почтовый ящик, поэтому на указанный вами e-mail было выслано письмо с кодом подтверждения.
+		</div>
+
+	{% else %}
+
+		<div class="form-top">
+			Пожалуйста, зарегистрируйтесь
+			на&nbsp;<a href="#">popcornnews.ru</a>		
+		</div>
+		<form class="form" method="post" action="/register">
+			<span class="form__title">Регистрация</span>
+			<input class="form__field" type="text" required="required" placeholder="Ник" name="nick" /><br />
+			<input class="form__field" type="password" required="required" placeholder="Пароль" name="pass1" /><br />
+			<input class="form__field" type="email" required="required" placeholder="E-Mail" name="email" /><br />
+			<input class="form__btn btn" type="submit" value="Войти" /><br />
+		</form>
+		<div class="form-bottom">
+			Уже есть аккаунт?
+			<a class="icon-text" href="/authorization">
+				<span class="icon-text__text">Войдите</span>
+				<img class="icon-text__icon"  src="i/arrow-right-grey.svg" alt="Вперед">
+			</a>
+		</div>
+
+	{% endif %}
+
+{% endblock %}

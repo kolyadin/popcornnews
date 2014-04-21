@@ -1,0 +1,38 @@
+{% extends '/GenericInner.twig' %}
+
+{% block content %}
+
+	<div class="logo">Попкорн<span class="logo__news">news</span></div>
+
+	{% if errors %}
+
+		<div class="form-top-mistake">
+			Неверный пароль :( Попробуйте&nbsp;еще&nbsp;раз
+		</div>
+
+	{% else %}
+
+		<div class="form-top">
+			Пожалуйста, авторизуйтесь
+			для&nbsp;доступа вашему профилю
+			и&nbsp;сообщениям на&nbsp;<a href="#">popcornnews.ru</a>		
+		</div>
+
+	{% endif %}
+
+		<form class="form" method="post" action="/authorization">
+			<span class="form__title">Вход для пользователей</span>
+			<input class="form__field" type="email" required="required" placeholder="E-Mail" name="email" /><br />
+			<input class="form__field" type="password" required="required" placeholder="Пароль" name="pass" /><br />
+			<input class="form__btn btn" type="submit" value="Войти" /><br />
+			<a class="form__link" href="/remind">Восстановление пароля</a>
+		</form>
+		<div class="form-bottom">
+			Нет аккаунта?
+			<a class="icon-text" href="/register">
+				<span class="icon-text__text">Зарегистрируйтесь</span>
+				<img class="icon-text__icon"  src="i/arrow-right-grey.svg" alt="Вперед">
+			</a>
+		</div>
+
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends '/profile/ProfileGeneric.twig' %}
+
+{% block subContent %}
+
+	{% set friendCountStr = friends|length|ruNumber(['друг','друга','друзей']) %}
+
+	<div class="column-title column-title_highlighted">
+		<div class="column-title__cell">
+			<span class="xx-large">{{ friendCountStr }}</span>
+		</div>
+		<div class="column-title__cell">
+			<input id="select-users" class="field-icon field-icon_search entire" autocomplete="off" type="text" placeholder="Search" />
+			<script src="js/search.js"></script>
+			<script>
+				$(function(){
+					new Search({uid:'select-users', boxUid:'users-box', type:'getUsers'});
+					eitems.init();
+				});
+			</script>
+		</div>
+	</div>
+
+
+	<div id="users-box" class="users users_messages">
+
+	{% for friend in friends %}
+
+		{% set color = 'color-' ~ friend.rating.rank %}
+
+		{% if friend.isOnline %}
+			{% set online = 'users__name_online' %}
+		{% else %}
+			{% set online = '' %}
+		{% endif %}
+
+		{% if profileHelper.isMyProfile %}
+			{% if friend.extra('confirmed') == 'n' %}
+				{% if profile.extra('userId') == currentUser.id %}
+					{% set needAdd = 'users__item_query eitem' %}	
+				{% else %}
+					{% set needAdd = 'users__item_add eitem Eitem' %}
+				{% endif %}
+			{% else %}
+				{% set needAdd = 'eitem Eitem' %}
+			{% endif %}
+		{% else %}
+			{% set needAdd = '' %}
+		{% endif %}
+
+		<div data-uid="{{ friend.id }}" class="users__item {{ needAdd }}">
+			<a class="users__content Eitem__content" href="/profile/{{ friend.id }}">
+				<div class="users__photo" style="background-image:url(i/tmp/_1.jpg);"></div>
+				<div class="users__info">
+					<div class="users__name {{ online }} {{ color }}">{{ friend.nick }}</div>
+					<div class="users__row">
+						<span class="users__city">{{ friend.userInfo.cityName|e }}</span>
+						<span class="stars {{ color }}"><span style="width:{{ friend.rating.persents }}%;" class="stars__inner"></span></span>							
+					</div>
+				</div>
+			</a>
+			<div class="eitem__extra Eitem__extra">
+				<div class="eitem__extra-control">
+					<a data-type="deleteUser" class="eitem__extra-item" href="#">
+						<img class="eitem__extra-icon" src="i/close-white.svg" alt="Удалить" />
+					</a>
+					{% if needAdd == 'eitem Eitem' %}
+					<a data-type="writeMessage" class="eitem__extra-item" href="/im/companion{{ friend.id }}">
+						<img class="eitem__extra-icon" src="i/message-white.svg" alt="Написать сообщение" />
+					</a>
+					{% else %}
+					<a data-type="confirmUser" class="eitem__extra-item" href="#">
+						<img class="eitem__extra-icon" src="i/plus-white.svg" alt="Добавить пользователя" />
+					</a>
+					{% endif %}
+				</div>
+			</div>					
+		</div>
+
+	{% endfor %}
+
+	</div>
+	<script>
+		$(function(){
+			eitems.init();
+		});
+	</script>
+
+{% endblock %}

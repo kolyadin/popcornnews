@@ -1,0 +1,50 @@
+{% extends '/person/fans/PersonFansGeneric.twig' %}
+
+{% block head %}
+
+	<title>Выйти из группы {{ person.name|e }}</title>
+
+	<script type="text/javascript">
+		$(function(){
+			$('input[data-action=yes]','.b-text').on('click',function(){
+
+				var params = {
+					securityCode: '{{ currentUser.getSecurityCode }}',
+					personId: {{ person.id }}
+				};
+
+				var handler = function(response){
+					if (response.status == 'success'){
+						$('.b-fan-box').hide('drop',function(){
+							$(this).html('<p class="system-message"><strong>Вы покинули группу</strong></p>').show('slide',function(){
+								setTimeout(function(){
+									location.href = '/persons/{{ person.urlName }}';
+								},1000);
+							});
+						});
+					}
+				};
+
+				$.post('/ajax/fans/unsubscribe',params,handler,'json');
+			});
+
+			$('input[data-action=no]','.b-text').on('click',function(){
+				location.href = '/persons/{{ person.urlName }}';
+			});
+		});
+	</script>
+
+{% endblock %}
+
+{% block personContent %}
+
+	<div class="b-text b-fan-box">
+		<p class="system-message">
+			<strong>Вы хотите покинуть группу &quot;{{ person.name|e }}&quot;?</strong>
+		</p>
+
+		<input class="b-firm-grad b-button-save" data-action="yes" type="button" value="Да" style="margin-left: 0;"/>
+		<input class="b-button-save" data-action="no" type="button" value="Нет" style="margin-left: 0;"/>
+	</div>
+
+{% endblock %}

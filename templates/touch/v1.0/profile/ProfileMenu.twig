@@ -1,0 +1,17 @@
+{% if slim.path[3] == 'guests' %}
+	{% set mode = 1 %}
+{% elseif slim.path[3] == 'statuses' %}
+	{% set mode = 2 %}
+{% elseif slim.path[3] == 'friends' %}
+	{% set mode = 3 %}
+{% else %}
+	{% set mode = 1 %}
+{% endif %}
+
+	<nav class="private-menu line-menu small">
+		<div class="line-menu__wrapper">
+			<a class="line-menu__item {% if mode == 1 %}line-menu__item_active{% endif %}" href="/profile/{{ profile.id }}">Гостевая</a>
+			<a class="line-menu__item {% if mode == 2 %}line-menu__item_active{% endif %}" href="/profile/{{ profile.id }}/statuses">Статусы</a>
+			<a class="line-menu__item {% if mode == 3 %}line-menu__item_active{% endif %}" href="/profile/{{ profile.id }}/friends">Друзья</a>
+		</div>
+	</nav>

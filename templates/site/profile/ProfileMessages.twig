@@ -1,0 +1,93 @@
+{% extends '/profile/ProfileGeneric.twig' %}
+{% import '/UserRows.twig' as html %}
+
+{% block head %}
+
+    <title>Мои сообщения - popcornnews</title>
+
+    <script type="text/javascript">
+
+        $(function(){
+
+
+	        $('.b-private-dialogs .dialog').on('click',function(){
+		        location.href = '/im/companion' + $(this).data('companion-id');
+	        });
+
+
+        });
+    </script>
+
+    {{ parent() }}
+
+    <style type="text/css">
+
+    </style>
+
+{% endblock %}
+
+{% block profile %}
+
+    <h1>Мои сообщения</h1>
+
+    {% include '/profile/ProfileMenu.twig' %}
+
+    {#<div class="b-private-messages">
+        {% for message in messages %}
+            <div class="message">
+                <div class="content">{{ message.content|e|nl2br }}</div>
+                <div class="caption">
+
+                    <div>
+                        <div style="float:left;">
+                            {{ html.profileInfo(message.recipient,{'hidePoints' : true}) }}
+                        </div>
+                        <div style="float:right;">
+                            <div class="manage">
+                                <a href="#">открыть</a>
+                                <a href="#">ответить</a>
+                                <a href="#">удалить</a>
+                            </div>
+                        </div>
+                        <div style="clear:both;"></div>
+                    </div>
+
+
+
+                </div>
+            </div>
+        {% endfor %}
+    </div>#}
+
+	{% if dialogs %}
+	
+		<div class="b-private-dialogs">
+
+			{% for dialog in dialogs %}
+
+				<div class="dialog{% if dialog.read == 0 %} dialog-not-read{% endif %}" data-companion-id="{{ dialog.companion.id }}">
+					<div class="user-ava"><img src="/st/img/no-photo/small.png" alt=""/></div>
+					<div class="message-box">
+						<div class="box-header">
+							<div class="user-nick rating-emerald"><a href="#">{{ dialog.companion.nick }}</a></div>
+							<div class="timestamp">{{ dialog.sentTime|dateRU }}</div>
+						</div>
+						<div class="message">{{ dialog.content|truncate(50)|e|nl2br }}</div>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+
+			{% endfor %}
+
+		</div>
+
+	{% elseif messages %}
+
+
+
+	{% endif %}
+
+
+
+
+{% endblock %}

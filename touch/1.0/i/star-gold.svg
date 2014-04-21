@@ -1,0 +1,10 @@
+<svg width="25" height="25" viewBox="0 0 25 25"  version="1.1" xmlns="http://www.w3.org/2000/svg">
+
+    <linearGradient id="gold" x1="0%" y1="0%" x2="0%" y2="100%">
+       <stop offset="0" style="stop-color:#ffea96"/>
+       <stop offset="100%" style="stop-color:#b35400" />
+    </linearGradient>
+	
+    <path d="M 4,25 12,0 21,25 -0,9 l 25,0 z" fill="url(#gold)"  />
+
+</svg>

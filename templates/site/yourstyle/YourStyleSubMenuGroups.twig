@@ -1,0 +1,8 @@
+	<ul class="b-inside__menu-secondlist">
+		<li {% if slim.path[3] is null or slim.path[3] > 0 %}class="active"{% endif %}>
+			<a href="/yourstyle/groups">все вещи</a>
+		</li>
+		<li {% if slim.path[3] == 'new' %}class="active"{% endif %}>
+			<a href="/yourstyle/tiles/top">популярые</a>
+		</li>
+	</ul>

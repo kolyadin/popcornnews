@@ -1,0 +1,11 @@
+	<ul class="b-inside__menu-secondlist">
+		<li {% if slim.path[3] is null %}class="active"{% endif %}>
+			<a href="/yourstyle/sets">популярые</a>
+		</li>
+		<li {% if slim.path[3] == 'new' %}class="active"{% endif %}>
+			<a href="/yourstyle/sets/new">новые</a>
+		</li>
+		<li>
+			<a href="/profile/{% if currentUser.id %}{{ currentUser.id }}{% endif %}/sets">мои сеты</a>
+		</li>
+	</ul>

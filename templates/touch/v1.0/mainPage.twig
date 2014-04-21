@@ -1,0 +1,64 @@
+{% extends '/GenericInner.twig' %}
+
+{% block topmenu %}
+
+	{% include '/TopMenu.twig' %}
+
+{% endblock %}
+
+{% block content %}
+
+			<div id="news-box" class="news-list">
+
+			{% for post in posts %}
+
+				{% if post.mainImageId.id %}
+					{% set photo = post.mainImageId.thumb('393x') %}
+				{% else %}
+					{% set photo = post.mainImageId %}
+				{% endif %}
+
+				<div class="news-list__item eitem Eitem">
+					<div class="news-list__content">
+						<a class="Eitem__content" href="/news/{{ post.id }}">
+							<span class="news-list__date">{{ post.createDate|ruDateFriendly }}</span>
+							<span class="news-list__title">{{ post.name|e }}</span>
+							<img class="news-list__photo" src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}" alt="{{ post.name|e }}" />
+							<div class="news-list__stat">
+								<span class="icon-text icon-text_count">
+									<img class="icon-text__icon"  src="i/camera-white.svg" alt="Фотографии" />
+									<span class="icon-text__text">{{ photo|length }}</span>
+								</span>
+								<span class="icon-text icon-text_count">
+									<img class="icon-text__icon"  src="i/message-white.svg" alt="Комментарии" />
+									<span class="icon-text__text">{{ post.comments }}</span>
+								</span>
+							</div>
+						</a>
+						<div class="news-list__desc">
+							{{ post.announceTouchFriendly }}
+						</div>
+						<div class="eitem__extra Eitem__extra">
+							<a href="#"><img class="eitem__extra-social" src="i/vk-white.svg" alt="" /></a>
+							<a href="#"><img class="eitem__extra-social" src="i/fb-white.svg" alt="" /></a>
+							<a href="#"><img class="eitem__extra-social" src="i/tw-white.svg" alt="" /></a>
+						</div>
+					</div>
+				</div>
+
+			{% endfor %}
+
+			</div>
+			<script>
+				$(function(){
+					eitems.init();
+					new Sample({
+						selectUid:'news-sample', 
+						textUid:'nav-title', 
+						boxUid:'news-box', 
+						type:'getNews', 
+						pager:new Pager({boxUid:'news-box', type:'getNews', pages:5})});
+				});
+			</script>
+
+{% endblock %}

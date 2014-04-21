@@ -1,0 +1,21 @@
+{% extends '/GenericInner.twig' %}
+
+{% block head %}
+
+    <title>Ошибка авторизации</title>
+    <meta name="robots" content="noindex, nofollow" />
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="b-grid__g8 b-text">
+        <h1>Неверный адрес электронной почты</h1>
+
+        <p class="system-message">
+            Указан неверный адрес электронный почты [<strong>{{ email|e }}</strong>] или под таким адресом не числится ни один пользователь.<br/>
+            <a href="/remind">попробовать еще раз</a>
+        </p>
+    </div>
+
+{% endblock %}

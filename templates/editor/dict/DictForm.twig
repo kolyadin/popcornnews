@@ -1,0 +1,48 @@
+{% extends '/Generic.twig' %}
+
+{% block head %}
+    <title>{{ page.title|e }}</title>
+
+    <link rel="stylesheet" type="text/css" href="/editor/st/css/dictionary.css" />
+
+    <script>
+        $(function(){
+
+            $('input[name=title]').focus();
+
+            $('.nav-panel').accordion('option', 'active', 1);
+            $('#content-tabs').tabs('option', 'active', 1);
+            $('#content-tabs > ul > li > a:first').unbind('click');
+
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+
+    <div class="content-panel" id="content-tabs">
+        <ul>
+            <li><a href="/editor/dict/{{ entity.name }}">{{ entity.nav[0]|e }}</a></li>
+            <li><a href="#tabs-2">{{ entity.nav[1]|e }}</a></li>
+        </ul>
+        <div id="tabs-2"></div>
+        <div id="tabs-1">
+
+            <form method="post" enctype="multipart/form-data" action="/editor/dict/{{ entity.name }}/save" id="content-form">
+
+                {% if form.edit %}
+                    <input name="edit" value="{{ form.edit }}" type="hidden"/>
+                {% endif %}
+
+                <div class="element">
+                    <p class="title">{{ form.entity_title }}:</p>
+                    <p><input name="title" style="width:98%;" spellcheck="false" value="{{ form.title|e }}" />
+                </div>
+
+                <input type="submit" value="Сохранить" />
+
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

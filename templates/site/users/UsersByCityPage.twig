@@ -1,0 +1,97 @@
+{% extends '/GenericInner.twig' %}
+
+
+{% block head %}
+
+    <title>Пользователи сайта с города &quot;{{ cityName|e }}&quot; - popcornnews</title>
+
+    <style type="text/css">
+        #loading{
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+
+    <script type="text/javascript">
+        $(function(){
+
+	        var usersTable = $('#users');
+
+            usersTable.waypoint({
+	            offset: 'bottom-in-view',
+	            handler: function(direction){
+		            var $this;
+
+		            if (direction === 'down'){
+			            $this = $(this);
+
+			            $this.waypoint('disable');
+			            $('#loading').show();
+
+			            var offset = [
+				            usersTable.find('tr:last').attr('data-loop-id'),
+				            20
+			            ];
+
+			            $.post('/ajax/users/city',{cityId:{{ cityId }},offset:offset},function(response){
+
+				            if (response.count > 0){
+					            $('#users').append(response.html);
+					            $this.waypoint('enable');
+				            }
+
+				            $('#loading').hide();
+
+			            },'json');
+		            }
+	            }
+            });
+
+            $('html,body').animate({scrollTop:0},200);
+
+	        $('.b-users-city form').on('submit',function(){
+		        location.href = '/users/city' + $(this).find('select[name=city] option:selected').val();
+
+		        return false;
+	        });
+        });
+    </script>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="b-grid__g8 b-users b-users-city">
+
+        <h1>Результаты поиска</h1>
+
+	    {% include '/users/UsersMenu.twig' %}
+
+	    <form class="b-form" method="post">
+		    <select name="city">
+			    {% for country in countriesCities.countries %}
+				    <optgroup label="{{ country.name|e }}">
+					    {% for city in countriesCities.cities[country.id] %}
+						    <option value="{{ city.id }}" {% if city.id == cityId %}selected="true"{% endif %}>{{ city.name|e }}</option>
+					    {% endfor %}
+				    </optgroup>
+			    {% endfor %}
+		    </select>
+		    <input type="submit" class="b-firm-grad" value="найти"/>
+	    </form>
+
+	    {% if profiles|length %}
+	        <table id="users">
+	            {% include '/users/UserRows.twig' with {'profiles' : profiles} %}
+	        </table>
+
+            <div id="loading"><img src="/st/img/loaders/pink-loader-small.gif" alt=""/></div>
+	    {% else %}
+		    <br/><p><strong>В этом городе нет ни одного пользователя</strong></p>
+	    {% endif %}
+
+
+    </div>
+
+{% endblock %}

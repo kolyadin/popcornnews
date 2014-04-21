@@ -1,0 +1,508 @@
+{% extends '/person/PersonGeneric.twig' %}
+
+{% block head %}
+
+	<title>{{ person.name|e }} ({{ person.englishName|e }}) - новости, фото, биография, обои - popcornnews</title>
+
+{% endblock %}
+
+
+{% block personContent %}
+
+	{% set lastPost = posts[0] %}
+
+	<section class="b-person__content">
+		<div class="b-grid__g4 b-grid__a">
+			<div class="b-person__picture">
+				<img src="{{ person.photo.url }}" alt="{{ person.name|e }}"/>
+
+				{% if isFan %}
+					<a href="/persons/{{ person.urlName }}/fans/unsubscribe" rel="nofollow" class="b-person__be-fan">
+						покинуть <br> группу
+					</a>
+				{% else %}
+					<a href="/persons/{{ person.urlName }}/fans/subscribe" rel="nofollow" class="b-person__be-fan">
+						стать <br> поклонником
+					</a>
+				{% endif %}
+			</div>
+		</div>
+		<div class="b-grid__g4 b-grid__z">
+			<div class="b-person__statistic">
+				<ul class="b-person__statistic__list">
+					<li class="b-person__statistic__item-first">
+						<div class="b-person__statistic__title">
+							<div class="b-person__statistic__title-text">Популярность</div>
+							<div class="b-person__statistic__vote-count">уже принято: 4558 голосов</div>
+						</div>
+						<div class="b-person__statistic__val">8.9</div>
+					</li>
+					<li class="b-person__statistic__item">
+						<div class="b-person__statistic__title">
+							<div class="b-person__statistic__title-text">
+								Внешность
+							</div>
+							<ul class="b-person__statistic__star-rating">
+								<li class="one"><a rel="1" href="#">1</a></li>
+								<li class="two"><a rel="2" href="#">2</a></li>
+								<li class="three"><a rel="3" href="#">3</a></li>
+								<li class="four current"><a rel="4" href="#">4</a></li>
+								<li class="five"><a rel="5" href="#">5</a></li>
+								<li class="six"><a rel="6" href="#">6</a></li>
+								<li class="seven"><a rel="7" href="#">7</a></li>
+								<li class="eight"><a rel="8" href="#">8</a></li>
+								<li class="nine"><a rel="9" href="#">9</a></li>
+								<li class="ten"><a rel="10" href="#">10</a></li>
+							</ul>
+						</div>
+						<div class="b-person__statistic__val">8.9</div>
+					</li>
+					<li class="b-person__statistic__item">
+						<div class="b-person__statistic__title">
+							<div class="b-person__statistic__title-text">
+								Стиль
+							</div>
+							<ul class="b-person__statistic__star-rating">
+								<li class="one"><a rel="1" href="#">1</a></li>
+								<li class="two"><a rel="2" href="#">2</a></li>
+								<li class="three"><a rel="3" href="#">3</a></li>
+								<li class="four "><a rel="4" href="#">4</a></li>
+								<li class="five"><a rel="5" href="#">5</a></li>
+								<li class="six"><a rel="6" href="#">6</a></li>
+								<li class="seven"><a rel="7" href="#">7</a></li>
+								<li class="eight"><a rel="8" href="#">8</a></li>
+								<li class="nine"><a rel="9" href="#">9</a></li>
+								<li class="ten current"><a rel="10" href="#">10</a></li>
+							</ul>
+						</div>
+						<div class="b-person__statistic__val">8.9</div>
+					</li>
+					<li class="b-person__statistic__item">
+						<div class="b-person__statistic__title">
+							<div class="b-person__statistic__title-text">
+								Талант
+							</div>
+							<ul class="b-person__statistic__star-rating">
+								<li class="one"><a rel="1" href="#">1</a></li>
+								<li class="two"><a rel="2" href="#">2</a></li>
+								<li class="three"><a rel="3" href="#">3</a></li>
+								<li class="four "><a rel="4" href="#">4</a></li>
+								<li class="five"><a rel="5" href="#">5</a></li>
+								<li class="six"><a rel="6" href="#">6</a></li>
+								<li class="seven"><a rel="7" href="#">7</a></li>
+								<li class="eight"><a rel="8" href="#">8</a></li>
+								<li class="nine"><a rel="9" href="#">9</a></li>
+								<li class="ten current"><a rel="10" href="#">10</a></li>
+							</ul>
+						</div>
+						<div class="b-person__statistic__val">8.9</div>
+					</li>
+				</ul>
+			</div>
+			<div class="b-person__intro">
+				<h2 class="b-person__intro-title">
+					<a href="/news/{{ lastPost.id }}">{{ lastPost.name|e }}</a>
+				</h2>
+
+				<p>{{ lastPost.announceFriendly }}</p>
+			</div>
+		</div>
+	</section>
+
+	<!--!! тут еще должна быть кнопка для виджета !!-->
+
+	<section class="b-news b-news_vertical-margin_30">
+		<div class="b-news__title-cont">
+			<h1 class="b-news__title b-rubrics-title b-rubrics-title_s24">
+				<a rel="nofollow" href="/persons/{{ slim.path[2] }}/news">новости</a>
+			</h1>
+			<span class="b-news__counter b-counter b-counter-section"><a rel="nofollow"
+			                                                             href="/persons/{{ person.urlName }}/news">{{ person.newsCount }}</a></span>
+		</div>
+		<ul class="b-news__entry-list b-list">
+			{% for post in posts %}
+				<li>
+					<a href="/news/{{ post.id }}">{{ post.name|e }}</a><span
+						  class="b-list__counter">({{ post.comments }})</span>
+				</li>
+			{% endfor %}
+		</ul>
+	</section>
+
+	<section class="b-group-count">
+		<div class="b-group-count__wrapper">
+			<a href="#">
+				Пользователи создали
+				<span class="b-group-count__num"> 14 групп</span>
+				о Анджелине Джоли
+			</a>
+		</div>
+	</section>
+
+	{% if person.twitterLogin %}
+
+		<!--noindex-->
+		<section class="b-person__twitter">
+			<a class="twitter-timeline" lang="ru" data-dnt="true" data-screen-name="{{ person.twitterLogin }}"
+			   rel="nofollow" href="https://twitter.com/{{ person.twitterLogin }}" rel="nofollow"
+			   data-widget-id="415101511115370497">Твиты пользователя @{{ person.twitterLogin }}</a>
+			<script>!function (d, s, id) {
+					var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
+					if (!d.getElementById(id)) {
+						js = d.createElement(s);
+						js.id = id;
+						js.src = p + "://platform.twitter.com/widgets.js";
+						fjs.parentNode.insertBefore(js, fjs);
+					}
+				}(document, "script", "twitter-wjs");</script>
+		</section>
+		<!--/noindex-->
+
+	{% endif %}
+
+	<section class="b-person__info-blocks clearfix">
+		<div class="b-grid__g4 b-grid__a">
+			<section class="b-person__connection">
+				<div class="b-person__connection__title-cont">
+					<h1 class="b-person__connection__title b-rubrics-title b-rubrics-title_s24">
+						<a rel="nofollow" href="#">связи</a>
+					</h1>
+					<span class="b-person__connection__counter b-counter b-counter-section"><a rel="nofollow" href="#">17</a></span>
+				</div>
+				<div class="b-person__connection__block">
+					<ul class="b-person__connection__list clearfix">
+						<li class="b-person__connection__item">
+							<div class="b-person__connection__img">
+								<a href="#">
+									<img alt="" src="./img/content/phs5.jpg">
+								</a>
+							</div>
+							<div class="b-person__connection__name">
+								<a href="#">Дэниел Крэйг</a>
+							</div>
+						</li>
+						<li class="b-person__connection__item">
+							<div class="b-person__connection__img">
+								<a href="#">
+									<img alt="" src="./img/content/phs5.jpg">
+								</a>
+							</div>
+							<div class="b-person__connection__name">
+								<a href="#">Джонатан Рис Майерс</a>
+							</div>
+						</li>
+						<li class="b-person__connection__item">
+							<div class="b-person__connection__img">
+								<a href="#">
+									<img alt="" src="./img/content/phs5.jpg">
+								</a>
+							</div>
+							<div class="b-person__connection__name">
+								<a href="#">Дженнифер Энистон</a>
+							</div>
+						</li>
+						<li class="b-person__connection__item">
+							<div class="b-person__connection__img">
+								<a href="#">
+									<img alt="" src="./img/content/phs5.jpg">
+								</a>
+							</div>
+							<div class="b-person__connection__name">
+								<a href="#">Джонатан Рис Майерс</a>
+							</div>
+						</li>
+						<li class="b-person__connection__item">
+							<div class="b-person__connection__img">
+								<a href="#">
+									<img alt="" src="./img/content/phs5.jpg">
+								</a>
+							</div>
+							<div class="b-person__connection__name">
+								<a href="#">Николас Кейдж</a>
+							</div>
+						</li>
+						<li class="b-person__connection__item">
+							<div class="b-person__connection__img">
+								<a href="#">
+									<img alt="" src="./img/content/phs5.jpg">
+								</a>
+							</div>
+							<div class="b-person__connection__name">
+								<a href="#">Дэниел Крэйг</a>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</section>
+		</div>
+		<div class="b-grid__g4 b-grid__z">
+			<section class="b-person__films">
+				<div class="b-person__films__title-cont">
+					<h1 class="b-person__films__title b-rubrics-title b-rubrics-title_s24">
+						<a rel="nofollow" href="#">фильмография</a>
+					</h1>
+					<span class="b-person__films__counter b-counter b-counter-section"><a rel="nofollow" href="#">35</a></span>
+				</div>
+				<div class="b-person__films__block">
+					<ul class="b-person__films__list">
+						<li>
+							<div class="b-person__films__item-name">
+								<noindex>
+									<a rel="nofollow" href="#">Малефисента</a>
+									<span>Maleficent</span>
+								</noindex>
+							</div>
+							<div class="b-person__films__item-year">
+								<span class="b-person__films__item-year-val">2014</span>
+								<span>год</span>
+							</div>
+						</li>
+						<li>
+							<div class="b-person__films__item-name">
+								<noindex>
+									<a rel="nofollow" href="#">Малефисента</a>
+									<span>Maleficent</span>
+								</noindex>
+							</div>
+							<div class="b-person__films__item-year">
+								<span class="b-person__films__item-year-val">2014</span>
+								<span>год</span>
+							</div>
+						</li>
+						<li>
+							<div class="b-person__films__item-name">
+								<noindex>
+									<a rel="nofollow" href="#">Малефисента</a>
+									<span>Maleficent</span>
+								</noindex>
+							</div>
+							<div class="b-person__films__item-year">
+								<span class="b-person__films__item-year-val">2014</span>
+								<span>год</span>
+							</div>
+						</li>
+						<li>
+							<div class="b-person__films__item-name">
+								<noindex>
+									<a rel="nofollow" href="#">Путешествие Джейн</a>
+									<span>Jane's Journey</span>
+								</noindex>
+							</div>
+							<div class="b-person__films__item-year">
+								<span class="b-person__films__item-year-val">2014</span>
+								<span>год</span>
+							</div>
+						</li>
+						<li>
+							<div class="b-person__films__item-name">
+								<noindex>
+									<a rel="nofollow" href="#">Кунг-Фу Панда 2 IMAX 3D</a>
+									<span>Kung Fu Panda 2</span>
+								</noindex>
+							</div>
+							<div class="b-person__films__item-year">
+								<span class="b-person__films__item-year-val">2014</span>
+								<span>год</span>
+							</div>
+						</li>
+						<li>
+							<div class="b-person__films__item-name">
+								<noindex>
+									<a rel="nofollow" href="#">Малефисента</a>
+									<span>Maleficent</span>
+								</noindex>
+							</div>
+							<div class="b-person__films__item-year">
+								<span class="b-person__films__item-year-val">2014</span>
+								<span>год</span>
+							</div>
+						</li>
+						<li>
+							<div class="b-person__films__item-name">
+								<noindex>
+									<a rel="nofollow" href="#">Кунг-Фу Панда 2 IMAX 3D</a>
+									<span>Kung Fu Panda 2</span>
+								</noindex>
+							</div>
+							<div class="b-person__films__item-year">
+								<span class="b-person__films__item-year-val">2014</span>
+								<span>год</span>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</section>
+		</div>
+	</section>
+
+	<section class="b-person__simple-gallery b-person__photos">
+		<div class="b-person__photos__title-cont b-grid__g8 b-grid__a">
+			<h1 class="b-person__photos__title b-rubrics-title b-rubrics-title_s24"><a rel="nofollow"
+			                                                                           href="/persons/{{ person.urlName }}/photo">фото</a>
+			</h1>
+			<span class="b-person__photos__counter b-counter b-counter-section"><a rel="nofollow"
+			                                                                       href="/persons/{{ person.urlName }}/photo">1960</a></span>
+		</div>
+		<ul class="b-person__simple-gallery__list clearfix">
+			{% for image in person.images %}
+				{% set photo = image.thumb('x150') %}
+				<li>
+					<a href="/persons/{{ person.urlName }}/photo"><img alt="" src="{{ photo.url }}"></a>
+				</li>
+			{% endfor %}
+		</ul>
+	</section>
+
+	<section class="b-person__info-blocks clearfix">
+		<div class="b-grid__g4 b-grid__a">
+			<section class="b-person__fans">
+				<div class="b-person__fans__title-cont">
+					<h1 class="b-person__fans__title b-rubrics-title b-rubrics-title_s24">
+						<a rel="nofollow" href="/persons/{{ person.urlName }}/fans">поклонники</a>
+					</h1>
+                    <span class="b-person__fans__counter b-counter b-counter-section">
+                        <a rel="nofollow" href="/persons/{{ person.urlName }}/fans/new">{{ fansTotal }}</a>
+                    </span>
+				</div>
+				<div class="b-person__fans-cont">
+					<ul class="b-person__fans__list">
+						{% for fan in fans %}
+							{% if fan.avatar.id %}
+								{% set src = fan.avatar.url('profileSmall') %}
+							{% else %}
+								{% set src = '/st/img/no-photo/small.png' %}
+							{% endif %}
+
+							<li class="b-person__fans__item">
+								<div class="b-person__fans__item-img">
+									<a href="/profile/{{ fan.id }}" rel="nofollow">
+										<img alt="{{ fan.nick|e }}" src="{{ src }}">
+									</a>
+								</div>
+								<div class="b-person__fans__item-name">
+									<a href="/profile/{{ fan.id }}" rel="nofollow">
+										{{ fan.nick|e }}
+									</a>
+								</div>
+							</li>
+						{% endfor %}
+					</ul>
+				</div>
+				<p class="b-person__fans-my-city b-person__more-link">Ищешь поклонников <a href="/persons/{{ person.urlName }}/fans/local" rel="nofollow">в своем городе?</a></p>
+			</section>
+		</div>
+
+		<div class="b-grid__g4 b-grid__z">
+			<section class="b-person__fanfik">
+				<div class="b-person__fanfik__title-cont">
+					<h1 class="b-person__fanfik__title b-rubrics-title b-rubrics-title_s24">
+						<a rel="nofollow" href="#">фанфики</a>
+					</h1>
+                                                            <span class="b-person__fanfik__counter b-counter b-counter-section">
+                                                                <a rel="nofollow" href="#">8</a>
+                                                            </span>
+				</div>
+				<ul class="b-person__fanfik__list b-list">
+					<li>
+						<p>
+							<a href="#">Пролог. Наконец я возвращаюсь домой, надеюсь, когда я приеду, домой мама с папой
+								будут дома. Ах да я не представилась, меня зовут Катарина или просто Кети и я дочь Лары
+								Крофт и Кертиса Треннта.</a>
+							<span class="b-list__counter">(38)</span>
+						</p>
+
+						<div class="b-inline-rating b-person__fanfik__rating">
+							<span class="b-inline-rating__text">Понравилось? </span>
+							<span class="b-inline-rating__yes">Да</span>
+							<span class="b-inline-rating__no">Нет</span>
+						</div>
+						<div class="b-person__fanfik__autor">
+							Автор:
+							<a href="#" rel="nofollow" class="b-person__fanfik__autor-name">[~PAINKILLER GIRL~]</a>
+							, 2010 июня 07, 00:58
+						</div>
+					</li>
+				</ul>
+			</section>
+			<section class="b-person__facts">
+				<div class="b-person__facts__title-cont">
+					<h1 class="b-person__facts__title b-rubrics-title b-rubrics-title_s24">
+						<a rel="nofollow" href="#">факт?</a>
+					</h1>
+                                                            <span class="b-person__facts__counter b-counter b-counter-section">
+                                                                <a rel="nofollow" href="#">51</a>
+                                                            </span>
+				</div>
+				<ul class="b-person__facts__list b-list">
+					<li class="b-person__facts__item">
+						<p class="b-person__facts__text"><a href="#">Джаред-вегетaрианец</a></p>
+
+						<p class="b-person__facts__likes"><b>80%</b> верят <b>100%</b> нравится</p>
+					</li>
+					<li class="b-person__facts__item">
+						<p class="b-person__facts__text"><a href="#">Первым инструментом,на котором играл Джаред -пиано
+								в его старом доме</a></p>
+
+						<p class="b-person__facts__likes"><b>80%</b> верят <b>100%</b> нравится</p>
+					</li>
+				</ul>
+				<p class="b-person__fans-my-city b-person__more-link">Есть факты? <a href="#">Присылай!</a></p>
+			</section>
+		</div>
+	</section>
+
+	<section class="b-photo-articles clearfix b-person__photo-articles">
+		<div class="b-photo-articles__title-cont b-grid__g8 b-grid__a">
+			<h1 class="b-photo-articles__title b-rubrics-title b-rubrics-title_s24">Фото-статьи</h1>
+			<span class="b-photo-articles__counter b-counter">5941</span>
+		</div>
+		<div class="b-grid__g4 b-grid__a">
+			<a class="b-photo-articles__photo-cont" href="#"><img alt="" src="./img/content/large_front.jpg"></a>
+
+			<div class="b-photo-articles__photo-count">3 фотографии</div>
+			<h2 class="b-photo-articles__news-title"><a href="#">Голлисвудский роман Николь Кидман и Тома Круза</a></h2>
+		</div>
+		<div class="b-grid__g4 b-grid__z">
+			<a class="b-photo-articles__photo-cont" href="#"><img alt="" src="./img/content/large_front.jpg"></a>
+
+			<div class="b-photo-articles__photo-count">17 фотографий</div>
+			<h2 class="b-photo-articles__news-title"><a href="#">Миллионы Тэйлор Свифт</a></h2>
+		</div>
+		<div class="clear"></div>
+		<div class="b-grid__g4 b-grid__a">
+			<a class="b-photo-articles__photo-cont" href="#"><img alt="" src="./img/content/large_front.jpg"></a>
+
+			<div class="b-photo-articles__photo-count">67 фотографий</div>
+			<h2 class="b-photo-articles__news-title"><a href="#">Эволюция тела Майкла Фелпса</a></h2>
+		</div>
+		<div class="b-grid__g4 b-grid__z">
+			<a class="b-photo-articles__photo-cont" href="#"><img alt="" src="./img/content/large_front.jpg"></a>
+
+			<div class="b-photo-articles__photo-count">3 фотографии</div>
+			<h2 class="b-photo-articles__news-title"><a href="#">Голлисвудский роман Николь Кидман и Тома Круза</a></h2>
+		</div>
+	</section>
+
+	<section class="b-person__simple-gallery b-person__sets">
+		<div class="b-person__sets__title-cont b-grid__g8 b-grid__a">
+			<h1 class="b-person__sets__title b-rubrics-title b-rubrics-title_s24">
+				<a rel="nofollow" href="#">сеты</a>
+			</h1>
+			<span class="b-person__sets__counter b-counter b-counter-section"><a rel="nofollow" href="#">1960</a></span>
+		</div>
+		<ul class="b-person__simple-gallery__list clearfix">
+			<li>
+				<a href="#"><img alt="" src="./img/content/set1.png"></a>
+			</li>
+			<li>
+				<a href="#"><img alt="" src="./img/content/set2.png"></a>
+			</li>
+		</ul>
+	</section>
+
+	<section class="b-person__biography b-text">
+		<h3>Биография {{ person.prepositionalName|e }}</h3>
+		{{ person.info }}
+	</section>
+
+{% endblock %}

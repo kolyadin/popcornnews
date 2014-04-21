@@ -1,0 +1,69 @@
+{% extends '/yourstyle/YourStyleGeneric.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% block subMenu %}
+
+	{% include '/yourstyle/YourStyleSubMenuStarSets.twig' %}
+
+{% endblock %}
+
+{% block subYourStyle %}
+
+	<div class="popular-sets">
+		<div class="article-title">Сеты со звездами</div>
+		<div class="b-search-block">
+			<form method="post">
+				<label class="b-search-block__label" for="b-search-block__input-text">поиск по имени</label>
+				<input class="b-search-block__input-text" type="search" id="b-search-block__input-text"/>
+				<input class="b-search-block__input-submit b-firm-grad" type="submit" value="найти"/>
+			</form>
+		</div>
+		<ul class="with-celebrities">
+
+			{% for star in stars %}
+
+				<li class="with-celebrities__item">
+					<div class="popular-sets__title">
+						<a href="/persons/{{ star.eng_name }}/sets" class="article-title">{{ star.name }}</a>
+						<a href="/persons/{{ star.eng_name }}/sets" class="with-celebrities__counter">
+							{{ star.setsCount }}
+						</a>
+					</div>
+					<ul class="popular-sets__list">
+        
+						{% for set in star.sets %}        
+        
+							<li class="popular-sets__item">
+								<div class="popular-sets__big">
+									<a href="/yourstyle/set/{{ set.id }}" class="popular-sets__big-wrapper">
+										<img class="popular-sets__big-image" src="{{ set.image }}" alt=""/>
+									</a>
+									<div class="popular-sets__big-data">
+										<div class="popular-sets__big-title">
+											<a class="popular-sets__big-title-link" href="/yourstyle/set/{{ set.id }}">{{ set.title }}</a>
+										</div>
+										<div class="popular-sets__big-voices">
+											{{ set.votes|ruNumber(['голос', 'голоса', 'голосов']) }}
+										</div>
+										<div class="popular-sets__big-comments">
+											<a class="popular-sets__comments-counter" href="/yourstyle/set/{{ set.id }}#comments">{{ set.comments|ruNumber(['комментарий', 'комментария', 'комментариев']) }}</a>,
+											<div class="rating-count">{{ set.urating }}</div>
+										</div>
+									</div>
+								</div>
+							</li>
+        
+						{% endfor %}        
+        
+					</ul>
+				</li>
+
+			{% endfor %}
+
+		</ul>
+		
+		{{ html.paginator(pages, page, '/yourstyle/stars/%u' ~ searchLink) }}
+
+	</div>
+
+{% endblock %}

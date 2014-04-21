@@ -1,0 +1,169 @@
+.b-community
+	.b-community-header
+		font-size: 18px
+		font-weight: bold
+		margin: 10px 0
+
+.b-community-item
+	padding: 20px 0
+	border-bottom: 1px solid #E5E5E5
+
+.b-community-item__image
+	float: left
+	padding: 0 14px 0 0
+	width: 130px
+	img
+		max-width: 130px
+
+.b-community-item__content
+	float: left
+	width: 470px
+	h4
+		font-size: 18px
+		font-weight: bold
+	p
+		margin: 7px 0
+		font-size: 13px
+
+//.b-community-item__tags
+
+
+.b-community-item__stat
+	margin-top: 10px
+
+.b-community-item__stat-members
+	font-weight: bold
+
+.b-community-item__stat-date
+	float: right
+	color: gray
+
+
+
+.b-group-create-form
+	font-size: 14px
+	background-color: #F2F2F2
+	padding: 10px 15px
+	p
+		margin: 5px 0
+	label
+		display: block
+		margin: 5px 0
+		input[type=radio]
+			position: relative
+			top: 2px
+	input[type=text],textarea
+		border: 1px solid #{$grayTextColor}
+		width: 98%
+		padding: 5px
+		font-size: 14px
+	textarea
+		height: 150px
+	input[type=submit]
+		border: 0 none
+		cursor: pointer
+		border-radius: 4px
+		color: #FFFFFF
+		font-size: 14px
+		font-weight: bold
+		height: 26px
+		line-height: 26px
+		margin: 20px 0 0 0
+		float: left
+		outline: 0 none
+		padding: 0
+		vertical-align: middle
+		width: 140px
+
+
+.b-topic-text
+	width: 470px
+	float: left
+	h2
+		margin-bottom: 10px
+	p
+		@extend .b-large-news__text
+
+
+.b-right-stats
+	float: left
+	width: 120px
+	margin-left: 20px
+	.up,.down
+		float: left
+		width: 50px
+		span
+			text-align: center
+			display: block
+		div
+			width: 51px
+			height: 51px
+			margin-top: 5px
+			cursor: pointer
+	.up
+		span
+			color: #{$pinkColor}
+		div
+			background: url(/st/img/kids-vote.gif) top left no-repeat
+	.down
+		margin-left: 15px
+		span
+			color: #{$grayTextColor}
+		div
+			background: url(/st/img/kids-vote.gif) bottom left no-repeat
+	.under
+		clear: both
+		padding-top: 15px
+		p
+			line-height: 20px
+		a
+			@extend a.pink
+			text-decoration: none
+			border: 0
+	.vote
+		display: inline-block
+		vertical-align: top
+		height: 46px
+		line-height: 48px
+		border-radius: 4px
+		color: #fff
+		font-size: 22px
+		margin-bottom: 30px
+		.col
+			display: inline-block
+			vertical-align: top
+			width: 79px
+			height: 46px
+			line-height: 48px
+			text-align: center
+			border-radius: 4px
+			color: #fff
+			font-size: 22px
+			margin-bottom: 7px
+		.btn-wrap
+			display: inline-block
+			vertical-align: top
+			margin-left: 6px
+			.btn
+				cursor: pointer
+				display: block
+				color: #fff
+				text-decoration: none
+				line-height: 18px
+				height: 20px
+				font-size: 18px
+				font-weight: bold
+				text-align: center
+				width: 20px
+				border-radius: 50%
+			.btn_disable
+				background: #ccc
+				cursor: default
+				filter: none
+			.btn_plus
+				margin-bottom: 6px
+
+		.text
+			font-size: 12px
+			line-height: 14px
+			color: #000

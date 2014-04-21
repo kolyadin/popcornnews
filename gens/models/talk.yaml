@@ -1,0 +1,41 @@
+name: Talk
+class: \popcorn\model\talks\Talk
+parent: \popcorn\model\Model
+parentDescription: model
+table: pn_talks
+fields:
+    createTime:
+        type: \DateTime
+        sqlType: DATETIME
+        flags: [NN, RO]
+        ref: format
+        set:
+            change: fasle
+    owner:
+        type: \popcorn\model\system\users\User
+        sqlType: int
+        flags: [NN, RO]
+        ref: getId
+        set:
+            change: false
+    title:
+        type: string
+        sqlType: varchar(200)
+        flags: [NN]
+    content:
+        type: string
+        sqlType: text
+        flags: []
+    rating:
+        type: \popcorn\model\voting\UpDownVoting
+        sqlType: int
+        flags: [NN, RO]
+        ref: getId
+        set:
+            change: false
+paths:
+    base: talks
+    dataMap: dataMaps
+    builder: '%same%'
+    factory: '%same%'
+    

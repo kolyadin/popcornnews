@@ -1,0 +1,116 @@
+{% extends '/community/CommunityGeneric.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% block head %}
+
+	<title>Создание новой группы - сообщество - popcornnews</title>
+
+	<link rel="stylesheet" href="/st/res/select2-3.4.5/select2.css"/>
+	<script src="/st/res/select2-3.4.5/select2.min.js" type="text/javascript"></script>
+	<script src="/st/res/select2-3.4.5/select2_locale_ru.js" type="text/javascript"></script>
+
+
+	<style type="text/css">
+		ul.tagit {
+			background-color: #fff;
+			border: 1px solid #ACACAC;
+		}
+
+		.tagit-choice {
+			background-color: #DE0073;
+			color: #fff;
+			border-radius: 3px;
+		}
+
+		ul.tagit li.tagit-choice .tagit-close {
+			right: 0.3em;
+		}
+
+		ul.tagit li.tagit-choice .tagit-close .text-icon {
+			color: #fff;
+			display: block;
+		}
+
+	</style>
+
+	<script type="text/javascript">
+		$(function () {
+
+			$('#group-create-form').on('submit',function(){
+
+
+
+			});
+
+			$('input[name=groupTags]').select2({
+				width: '100%',
+				multiple: true,
+				placeholder: "Начни вводить имя персоны",
+				initSelection : function (element, callback) {
+					var data = [];
+					$(element.val().split(';')).each(function () {
+						data.push({id: this, text: this});
+					});
+
+					callback(data);
+				},
+				ajax: {
+					url: '/ajax/community/tags',
+					dataType: 'json',
+					data: function (term) {
+						return {
+							term: term
+						};
+					},
+					results: function (data) {
+						var results = [];
+						$.each(data.tags, function(index, tag){
+							results.push({
+								id: tag.id,
+								text: tag.name
+							});
+						});
+						return {
+							results: results
+						};
+					}
+				}
+			});
+
+		});
+	</script>
+
+{% endblock %}
+
+
+{% block communityContent %}
+
+	<div class="b-grid__g8 no-mg">
+		<form method="post" class="b-group-create-form" enctype="multipart/form-data">
+			<input name="type" value="topic" type="hidden"/>
+			<input name="personId" value="{{ person.id }}" type="hidden"/>
+			<input name="tags" value="" type="hidden"/>
+
+			<p>Название группы:</p>
+			<input name="name" tabindex="1" required="true" type="text"/>
+
+			<p>Описание группы:</p>
+			<textarea name="content" tabindex="2" required="true"></textarea>
+
+			<p>Аватар:</p>
+			<input type="file" name="avatar" />
+
+			<p>Теги:</p>
+			<input type="hidden" name="groupTags" />
+
+			<p>Тип группы:</p>
+			<label><input type="radio" name="groupType" checked="true" value="public"/><strong>Открытая</strong> (вступить в группу может любой зарегистрированный пользователь)</label>
+			<label><input type="radio" name="groupType" value="private"/><strong>Закрытая</strong> (вступить в группу может только приглашенный пользователь)</label>
+
+			<div class="clearfix"></div>
+
+			<input value="Создать группу" class="b-firm-grad" type="submit" />
+		</form>
+	</div>
+
+{% endblock %}

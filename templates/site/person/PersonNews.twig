@@ -1,0 +1,36 @@
+{% extends '/person/PersonGeneric.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% block head %}
+
+	<title>Новости о {{ person.prepositionalName|e }} ({{ person.englishName|e }}) - popcornnews</title>
+	<meta name="description" content="Новости {{ person.name|e }} - все все последние события с участием {{ person.englishName|e }} и их обсуждение на сайте Popcornnews.ru"/>
+	<meta name="keywords" content="новости, {{ person.name|e }}, {{ person.englishName|e }}"/>
+
+{% endblock %}
+
+
+{% block personContent %}
+
+	<div class="b-grid__g8">
+		<div class="clearfix">
+			<div class="b-grid__g6 b-grid__a">
+
+				{% include '/news/NewsList430.twig' with {'posts':posts} %}
+
+				{{ html.paginator(
+					 paginator.pages
+					,paginator.active
+					,'/persons/' ~ slim.path[2] ~ '/news/page%u'
+				) }}
+
+			</div>
+			<div class="b-grid__g2 b-grid__z">
+
+				{% include '/news/NewsList140.twig' with {'posts':postsSmall} %}
+
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

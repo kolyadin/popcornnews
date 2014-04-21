@@ -1,0 +1,387 @@
+#status-window
+	top: 0
+	left: 0
+	width: 400px
+	max-height: 300px
+	overflow-y: auto
+	overflow-x: hidden
+	position: absolute
+	background-color: #fff
+	border: 10px solid #e5e5e5
+	display: none
+	z-index: 10
+	padding: 20px
+	input
+		width: 400px
+	table
+		width: 400px
+		td
+			width: 300px
+			padding-top: 10px
+			font-size: 13px
+		td+td
+			width: 100px
+			text-align: right
+			vertical-align: top
+			color: #b0b0b0
+		.hr
+			border-bottom: 1px solid #e5e5e5
+			padding-top: 10px
+
+.ui-autocomplete
+	background-color: #{$grayColor}
+	height: auto
+	padding-bottom: 5px
+	li
+		padding: 3px 6px
+		&:hover
+			background-color: #{$grayTextColor}
+		a
+			font-size: 13px
+
+@import "profile-dialogs.sass"
+
+.b-profile
+	.b-inside__menu-firstlist
+		margin-top: 20px
+		li
+			margin: 2px 0
+	.b-sub-menu
+		margin-top: 8px
+	.left-col
+		width: 140px
+		float: left
+		margin-right: 20px
+		.last-visit
+			div,span
+				color: #a9a9a9
+				font-size: 13px
+	.profile
+		float: left
+		width: 460px
+		h1
+			font-weight: bold
+		blockquote
+			margin: 10px 5px
+			font-size: 13px
+		.status
+			margin-top: 10px
+			a
+				color: #000
+				text-decoration: none
+				strong
+					font-weight: normal
+				span
+					color: #{$grayTextColor}
+				img
+					padding-left: 8px
+					border: 0
+		.b-inside__menu-firstlist
+			li
+				margin-right: 7px
+				margin-left: 0
+				&.active .counter
+					color: #fff
+			.counter
+				@extend .pink
+				margin-left: 2px
+		.credo
+			border-top: 1px solid #e5e5e5
+			padding-top: 23px
+			margin-top: 50px
+			clear: both
+		.info
+			clear: both
+			border-top: 1px solid #e5e5e5
+			padding-top: 23px
+			margin-top: 23px
+			.reg-data
+				float: left
+				width: 238px
+				li
+					font-size: 13px
+					line-height: 23px
+					a
+						@extend a.pink
+			.rating-awards
+				float: left
+				.awards
+					margin-top: 20px
+					ul
+						list-style: none
+					li
+						float: left
+						width: 29px
+						height: 34px
+						margin-right: 11px
+						cursor: help
+						.x
+							text-align: center
+							color: #ccc
+							font-weight: bold
+							padding-top: 30px
+						.multiple
+							text-align: center
+							color: #e8305d
+							font:
+								size: 13px
+								weight: bold
+					.activist
+						background:
+							image: url('/st/img/awards.png')
+							repeat: no-repeat
+							position: 0 0
+					.activist-active
+						background-position: 0 -34px
+					.comments
+						background:
+							image: url('/st/img/awards.png')
+							repeat: no-repeat
+							position: -40px 0
+					.comments-active
+						background-position: -40px -34px
+					.photo
+						background:
+							image: url('/st/img/awards.png')
+							repeat: no-repeat
+							position: -80px 0
+					.photo-active
+						background-position: -80px -34px
+					.facts
+						background:
+							image: url('/st/img/awards.png')
+							repeat: no-repeat
+							position: -120px 0
+					.facts-active
+						background-position: -120px -34px
+					.friends
+						background:
+							image: url('/st/img/awards.png')
+							repeat: no-repeat
+							position: -160px 0
+					.friends-active
+						background-position: -160px -34px
+		.credo
+			font-size: 16px
+
+		.table-friends
+			width: 100%
+			border-collapse: collapse
+			margin-top: 20px
+			tr
+				&:last-child td, &.lastChild td
+					border-bottom: 0
+			th
+				text-align: center
+				font-weight: normal
+				font-size: 1.1em
+				border-bottom: 1px solid #e5e5e5
+				padding-bottom: 10px
+				&.city,&.user
+					text-align: left
+				a
+					@extend a.pink
+					&.active
+						color: #000
+			td
+				border-bottom: 1px solid #e5e5e5
+				padding-top: 8px
+				padding-bottom: 8px
+				&.user
+					width: 215px
+					padding-right: 5px
+					vertical-align: middle
+				&.rating
+					text-align: center
+					span
+						font-size: 13px
+		.b-profile-persons
+			.persons
+				width: 100%
+				margin-top: 20px
+				tr
+					&:hover
+						background-color: #{$grayColor}
+				td
+					padding-left: 5px
+					label
+						cursor: pointer
+						@extend .pink
+						font-size: 13px
+						font-weight: bold
+					div
+						color: #{$grayTextColor}
+						font-weight: normal
+			.persons-counter
+				margin-top: 10px
+				font-weight: bold
+		.b-new-private-message
+			margin-top: 15px
+			.inp,textarea
+				width: 100%
+				padding: 3px
+				font-size: 13px
+			textarea
+				height: 100px
+			.recipient
+				height: 30px
+				.user-selected
+					display: inline
+					background-color: #{$pinkColor}
+					color: #fff
+					padding: 2px 6px
+					border-radius: 3px
+					span
+						margin-left: 4px
+						font-size: 13px
+						position: relative
+						top: -2px
+						cursor: pointer
+
+		.b-private-messages
+			margin-top: 15px
+			.message
+				margin-bottom: 10px
+				border: 1px solid #d8d8d8
+				background-color: #{$grayColor}
+				.content
+					font-size: 13px
+					margin-bottom: 10px
+					padding: 10px
+				.caption
+					background-color: #fff
+					padding: 10px
+				.manage
+					a
+						@extend a.pink
+						margin-left: 5px
+.b-users
+	.b-inside__menu-firstlist
+		margin-top: 20px
+	h3
+		font-size: 18px
+		font-weight: bold
+		margin: 10px 0
+	.left-col
+		float: left
+		width: 290px
+		.new-users
+			div
+				border-bottom: 1px solid #{$grayColor}
+				margin-bottom: 5px
+				padding-bottom: 9px
+				a
+					@extend a.pink
+					font-weight: bold
+					span
+						font-weight: normal
+	.month-borders
+		list-style: none
+		overflow: hidden
+		margin-top: 12px
+		padding-bottom: 20px
+		border-bottom: 1px solid #e5e5e5
+		li
+			float: left
+			display: inline
+			width: 106px
+			height: 145px
+			margin-right: 60px
+			padding-top: 15px
+			text-align: center
+			background-repeat: no-repeat
+			background-position: top left
+			&.one
+				background-image: url(/st/img/user-pedestal-1st-place.gif)
+			&.two
+				background-image: url(/st/img/user-pedestal-2st-place.gif)
+			&.three
+				background-image: url(/st/img/user-pedestal-3st-place.gif)
+			&.four
+				background-image: url(/st/img/user-pedestal-4st-place.gif)
+				margin-right: 0
+	.right-col
+		float: right
+		width: 310px
+		margin-left: 20px
+		h3
+			.counter
+				font-size: 13px
+				color: #{$pinkColor}
+		select
+			width: 220px
+			height: 24px
+		input
+			border: 0 none
+			cursor: pointer
+			border-radius: 4px
+			color: #FFFFFF
+			font-size: 14px
+			font-weight: bold
+			height: 26px
+			line-height: 26px
+			margin: 0 0 5px 5px
+			outline: 0 none
+			padding: 0
+			vertical-align: middle
+			width: 80px
+		.users
+			list-style: none
+			padding: 0
+			margin-top: 20px
+			li
+				float: left
+				display: inline
+				margin: 0 19px 20px 0
+				img
+					width: 32px
+
+
+.b-one-search-form
+	background-color: #F2F2F2
+	margin-top: 10px
+	padding: 10px 15px
+	input,select
+		padding: 3px
+		width: 490px
+	input[type=submit]
+		border: 0 none
+		cursor: pointer
+		border-radius: 4px
+		color: #fff
+		font-size: 14px
+		font-weight: bold
+		height: 26px
+		line-height: 26px
+		margin: 0 0 5px 5px
+		outline: 0 none
+		padding: 0
+		vertical-align: middle
+		width: 80px
+
+.b-users-table__full
+	width: 100%
+	tr
+		border-bottom: 1px solid #ccc
+	td
+		padding: 10px 0
+	.num
+		font-size: 26px
+		font-weight: bold
+		color: #ccc
+		padding-right: 20px
+	.profile
+		vertical-align: middle
+		.user-info__ava-nick-rating
+			display: block
+	.city
+		font-size: 13px
+	.rating
+		font-size: 15px
+		font-weight: bold
+
+.b-users-top,.b-users-online,.b-users-search,.b-users-city
+	table
+		margin:
+			top: 20px
+			bottom: 20px

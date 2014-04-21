@@ -1,0 +1,125 @@
+{% extends '/GenericInner.twig' %}
+
+{% block content %}
+
+	{% if profile.avatar.id %}
+		{% set src = profile.avatar.url('140x') %}
+	{% else %}
+		{% set src = '/st/img/no-photo/large.png' %}
+	{% endif %}
+
+
+	{% if profile.userInfo.sex == 1 %}
+		{% set sex = 'мужской, ' %}
+	{% elseif profile.userInfo.sex == 2 %}
+		{% set sex = 'женский, ' %}
+	{% endif %}
+
+
+	{% if profile.userSettings.showBirthDate == 1 %}
+		{% set birthDate = profile.userInfo.birthDate ~ ", " %}
+	{% else %}
+		{% set birthDate = '' %}
+	{% endif %}
+
+
+	{% if profile.userInfo.married == 2 %}
+		{% if profile.userInfo.sex == 1 %}
+			{% set marry = 'женат' %}
+		{% elseif profile.userInfo.sex == 2 %}
+			{% set marry = 'замужем' %}
+		{% else %}
+			{% set marry = 'замужем/женат' %}
+		{% endif %}
+	{% else %}
+			{% set marry = '' %}
+	{% endif %}
+
+	{% if profile.userInfo.meetPerson %}
+		{%  set meet = profile.userInfo.meetPerson.name|e %}
+	{% else %}
+		{%  set meet = '' %}
+	{% endif %}
+
+	{% set friendsCount = realFriendsCount %}
+	{% set friendCountStr = friendsCount|ruNumber(['друг','друга','друзей'])|replace({(friendsCount): ''}) %}
+
+	{% set notifyFriendsCount = profileHelper.notifyCounter.friends %}
+	{% set notifyFriendsCountStr = notifyFriendsCount|ruNumber(['запрос','запроса','запросов'])|replace({(notifyFriendsCount): ''}) %}
+
+	<div class="private-about">
+		<img class="private-about__photo" src="{{ src }}" alt="" />
+		<span class="private-about__nick">{{ profile.nick|e }}</span>
+		<span class="private-about__visit">Последний визит: {{ profile.lastVisit|ruDate('j f2 Y') }}</span>
+		<span class="private-about__from">{{ profile.userInfo.countryName|e }}, {{ profile.userInfo.cityName|e }}</span>
+		<span class="private-about__age">{{ birthDate }}{{ sex }}{{ marry }}</span>
+		<span class="private-about__hero">{{ meet }}</span>
+	</div>
+
+	<div class="private-activity">
+		<div class="private-activity__wrapper">
+			<div class="private-activity__cell color-{{ profile.rating.rank }}">
+				<span class="private-activity__num">{{ profile.rating.points }}</span>
+				<span class="private-activity__status">{{ profile.rating.rank }} <span class="stars"><span style="width:{{ profile.rating.persents }}%;" class="stars__inner"></span></span></span>
+			</div>
+			<div class="private-activity__cell">
+				<span class="private-activity__num">{{ friendsCount }}</span>
+				<span class="private-activity__name">{{ friendCountStr }}</span>
+			</div>
+			<div class="private-activity__cell">
+				<span class="private-activity__num">12345{# Сделать фото #}</span>
+				<span class="private-activity__name">фото</span>
+			</div>
+		</div>
+	</div>
+
+	<div class="private-communication">
+		<div class="private-communication__wrapper">
+		{% if profileHelper.isMyProfile %}
+
+			<div class="private-communication__cell">
+				<span class="icon-text large bold" href="/profile/{{ profile.id }}/friends">
+					<span class="icon-text__icon rnum">{{ notifyFriendsCount }}</span>
+					<span class="icon-text__text color-pink">{{ notifyFriendsCountStr }} на дружбу</span>
+				</span>
+			</div>
+			<div class="private-communication__cell">
+				<a class="private-communication__out" href="/profile/exit">
+					Выйти
+				</a>
+			</div>
+
+		{% else %}
+
+			<div class="private-communication__cell">
+				<a id="query-user" data-uid="{{ profile.id }}" class="icon-text large bold" href="#">
+					<img class="icon-text__icon"  src="i/avatar-red.svg" alt="Добавить пользователя" />
+					<span class="icon-text__text">В друзья</span>
+				</a>
+			</div>
+			<script>
+				var ajax=new Ajax();
+				$('#query-user').on('click', function(){
+					ajax.ajaxSend({
+						type:'queryUser',
+						value:{id:this.getAttribute('data-uid')}
+					});
+					return false;
+				});
+			</script>
+			<div class="private-communication__cell">
+				<a class="private-communication_item icon-text large bold" href="/im">
+					<img class="icon-text__icon"  src="i/message-stroke-red.svg" alt="Пол не определен" />
+					<span class="icon-text__text">Сообщения</span>
+				</a>
+			</div>
+
+		{% endif %}
+		</div>
+	</div>		
+
+	{% include '/profile/ProfileMenu.twig' %}
+
+	{% block subContent %}{% endblock %}
+
+{% endblock %}

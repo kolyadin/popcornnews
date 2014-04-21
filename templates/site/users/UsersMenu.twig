@@ -1,0 +1,8 @@
+<ul class="b-inside__menu-firstlist">
+
+	<li{% if slim.path[2] is null %} class="active"{% endif %}><a href="/users">пользователи</a></li>
+	<li{% if slim.path[2] == 'top' %} class="active"{% endif %}><a href="/users/top">топ</a></li>
+	<li{% if slim.path[2] == 'online' %} class="active"{% endif %}><a href="/users/online">on-line</a></li>
+
+
+</ul>

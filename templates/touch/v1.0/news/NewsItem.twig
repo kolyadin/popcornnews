@@ -1,0 +1,124 @@
+{% extends '/GenericInner.twig' %}
+
+{% block topmenu %}
+
+			<div class="nav__left">
+				<a class="icon-text x-large" href="/">
+					<img class="icon-text__icon"  src="i/arrow-left-red.svg" alt="Назад">
+					<span class="icon-text__text">Новости</span>
+				</a>
+			</div>
+			<div class="nav__center">
+				&nbsp;
+			</div>
+			<div class="nav__right">
+				&nbsp;
+			</div>
+
+
+{% endblock %}
+
+{% block content %}
+
+			{% if post.mainImageId.id %}
+				{% set photo = post.mainImageId.thumb('393x') %}
+			{% else %}
+				{% set photo = post.mainImageId %}
+			{% endif %}
+
+			<div class="news">
+				<div  class="page-offset">
+					<span class="news__title">{{ post.name|e }}</span>
+					<span class="news__date">{{ post.createDate|ruDateFriendly }}</span>
+				</div>
+				<img class="news__avatar" src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}" alt="{{ post.name|e }}" />
+				<div class="page-offset">
+					<p class="large">{{ post.announceTouchFriendly }}</p>
+					<p class="large">{{ post.content }}</p>
+				</div>
+			</div>
+			<div class="column-title">
+				<div class="column-title__cell">
+					<span class="xx-large bold">Фотографии</span>
+				</div>
+				<div class="column-title__cell right">
+					<ul id="photomenu" class="icon-menu">
+						<li class="icon-menu__item">
+							<a data-photo-view="mini" class="icon-menu__link active" href="#">
+								<img class="icon-menu__icon"  src="i/squares-grey.svg" alt="" />
+								<img class="icon-menu__icon"  src="i/squares-red.svg" alt="" />
+							</a>
+						</li>
+						<li class="icon-menu__item">
+							<a data-photo-view="max" class="icon-menu__link" href="#">
+								<img class="icon-menu__icon"  src="i/lines-grey.svg" alt="" />
+								<img class="icon-menu__icon"  src="i/lines-red.svg" alt="" />
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>	
+			<div id="photoblock" class="photo-block">
+			{% for image in post.images %}
+
+				{% set photo = image.thumb('105x') %}
+				<img class="photo-block__image" src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}" alt="{{ post.name|e }}" />
+
+			{% endfor %}
+			</div>	
+			<script src="js/photoblock.js"></script>
+			<script>
+				new Photoblock({'menuUid':'photomenu', 'boxUid':'photoblock'});
+			</script>
+			<div class="social-block">
+				<div class="social-block__item">
+					<a href="#"><img class="social-block__icon" src="i/vk-grey.svg" alt="" /></a>
+				</div>
+				<div class="social-block__item">
+					<a href="#"><img class="social-block__icon" src="i/fb-grey.svg" alt="" /></a>
+				</div>
+				<div class="social-block__item">
+					<a href="#"><img class="social-block__icon" src="i/tw-grey.svg" alt="" /></a>
+				</div>
+			</div>
+			<div class="column-title column-title_bottom">
+				<div class="column-title__cell">
+					<span class="bold xx-large">Комментарии</span>&nbsp;<span class="bold large color-pink">{{ post.comments }}</span>
+				</div>
+				<div class="column-title__cell right">
+					<a href="#" class="icon-text xx-large">
+						<span class="icon-text__text"></span>
+						<img alt="сообщение" src="i/write-red.svg" class="icon-text__icon">
+					</a>				
+				</div>
+			</div>	
+			<div class="users users_messages">
+
+				{% for comment in commentsTree %}
+
+					{% set color = 'color-' ~ comment.owner.rating.rank %}
+
+					{% if comment.owner.isOnline %}
+						{% set online = 'users__name_online' %}
+					{% else %}
+						{% set online = '' %}
+					{% endif %}
+
+					<a href="/profile/{{ comment.owner.id }}" class="users__item">
+						<div style="background-image:url(i/tmp/_1.jpg);" class="users__photo"></div>
+						<div class="users__content">
+							<div class="users__row">
+								<span class="users__date xx-small">{{ comment.date|ruDateFriendly }}</span>
+								<div class="users__name {{ online }} {{ color }}">{{ comment.owner.nick }}</div>
+							</div>
+							<div class="users__phrase">
+								{{ comment.content }}
+							</div>
+						</div>
+					</a>
+
+				{% endfor %}
+
+			</div>			
+			
+{% endblock %}

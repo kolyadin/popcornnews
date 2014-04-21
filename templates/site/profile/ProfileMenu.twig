@@ -1,0 +1,103 @@
+{%
+if  slim.path[1] == 'im'
+%} {% set tab4Active = 1 %} {% endif %}
+
+{%
+if  slim.path[1] == 'profile' and
+    slim.path[3] is null or
+    slim.path[3] in ['form','blacklist'] or
+   (slim.path[3] == 'photos' and slim.path[4] == 'del')
+%} {% set tab1Active = 1 %} {% endif %}
+
+{%
+if  slim.path[3] == 'persons' or
+   (slim.path[3] == 'persons' and slim.path[4] == 'manage')
+%} {% set tab3Active = 1 %} {% endif %}
+
+
+
+{% spaceless %}
+<ul class="b-inside__menu-firstlist">
+	<li{% if tab1Active == 1 %} class="active"{% endif %}>
+		<a title="Профиль пользователя {{ profile.nick|e }}" href="/profile/{{ profile.id }}">профиль</a>
+	</li>
+	<li{% if slim.path[3] == 'friends' %} class="active"{% endif %}>
+		<a title="Друзья пользователя {{ profile.nick|e }}" href="/profile/{{ profile.id }}/friends">друзья</a>
+		{% if profileHelper.isMyProfile and profileHelper.notifyCounter.friends > 0 %}
+			<span class="counter tooltip" data-title="Новых запросов в друзья: {{ profileHelper.notifyCounter.friends }}">{{ profileHelper.notifyCounter.friends }}</span>
+		{% endif %}
+	</li>
+	<li{% if tab3Active == 1 %} class="active"{% endif %}>
+		<a title="персоны" href="/profile/{{ profile.id }}/persons">персоны</a>
+	</li>
+    {% if currentUser %}
+        <li{% if tab4Active == 1 %} class="active"{% endif %}>
+            <a title="" href="/im">сообщения</a>
+        </li>
+    {% endif %}
+	<li>
+		<a title="" href="/profile/{{ profile.id }}/guestbook">гостевая</a>
+	</li>
+	<li>
+		<a title="" href="/profile/{{ profile.id }}/wrote">пишет</a>
+	</li>
+	<li>
+		<a title="" href="/profile/{{ profile.id }}/community/groups">группы</a>
+	</li>
+	<li>
+		<a title="" href="/profile/{{ profile.id }}/sets">your.style</a>
+	</li>
+</ul>
+
+{% if currentUser.id == profile.id %}
+	{% if tab1Active == 1 %}
+		<ul class="b-sub-menu clearfix">
+			<li class="b-sub-menu__item {% if slim.path[3] == null %}b-sub-menu__item_active{% endif %}">
+				<a class="b-sub-menu__link" href="/profile/{{ profile.id }}">главная</a>
+			</li>
+			<li class="b-sub-menu__item {% if slim.path[3] == 'form' %}b-sub-menu__item_active{% endif %}">
+				<a class="b-sub-menu__link" href="/profile/{{ profile.id }}/form">редактировать</a>
+			</li>
+			<li class="b-sub-menu__item">
+				<a class="b-sub-menu__link" href="/profile/{{ profile.id }}/photos">фотографии</a>
+			</li>
+			<li class="b-sub-menu__item {% if slim.path[3] == 'photos' and slim.path[4] == 'del' %}b-sub-menu__item_active{% endif %}">
+				<a class="b-sub-menu__link" href="/profile/{{ profile.id }}/photos/del">удаление фото</a>
+			</li>
+			<li class="b-sub-menu__item {% if slim.path[3] == 'blacklist' %}b-sub-menu__item_active{% endif %}">
+				<a class="b-sub-menu__link" href="/profile/{{ profile.id }}/blacklist">черный список</a>
+			</li>
+		</ul>
+	{% endif %}
+
+    {% if tab3Active == 1 %}
+        <ul class="b-sub-menu clearfix">
+            <li class="b-sub-menu__item {% if slim.path[4] is null %}b-sub-menu__item_active{% endif %}">
+                <a class="b-sub-menu__link" href="/profile/{{ profile.id }}/persons">персоны</a>
+            </li>
+            <li class="b-sub-menu__item {% if slim.path[3] == 'news' %}b-sub-menu__item_active{% endif %}">
+                <a class="b-sub-menu__link" href="/profile/{{ profile.id }}/persons/news">новости</a>
+            </li>
+            <li class="b-sub-menu__item {% if slim.path[4] == 'manage' %}b-sub-menu__item_active{% endif %}">
+                <a class="b-sub-menu__link" href="/profile/{{ profile.id }}/persons/manage">управление подписками</a>
+            </li>
+        </ul>
+    {% endif %}
+
+    {% if tab4Active == 1 %}
+        <ul class="b-sub-menu clearfix">
+            <li class="b-sub-menu__item {% if slim.path[4] is null %}b-sub-menu__item_active{% endif %}">
+                <a class="b-sub-menu__link" href="/im">диалоги</a>
+            </li>
+            <li class="b-sub-menu__item {% if slim.path[4] == 'new' %}b-sub-menu__item_active{% endif %}">
+                <a class="b-sub-menu__link" href="/im/create">написать сообщение</a>
+            </li>
+        </ul>
+    {% endif %}
+{% endif %}
+
+
+
+
+
+{% endspaceless %}

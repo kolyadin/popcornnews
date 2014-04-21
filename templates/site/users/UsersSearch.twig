@@ -1,0 +1,118 @@
+{% extends '/GenericInner.twig' %}
+
+
+{% block head %}
+
+	<title>Поиск пользователей - popcornnews</title>
+
+	<style type="text/css">
+		#loading{
+			display: none;
+			margin-top: 20px;
+			text-align: center;
+		}
+	</style>
+
+
+	<script type="text/javascript">
+		(function() {
+			(function(root, factory) {
+				if (typeof define === 'function' && define.amd) {
+					return define(['jquery', 'waypoints'], factory);
+				} else {
+					return factory(root.jQuery);
+				}
+			})(this, function($) {
+				var defaults;
+
+				defaults = {
+					container: 'auto',
+					items: '#top-users tr',
+					more: '#more',
+					offset: 'bottom-in-view',
+					loadingClass: 'infinite-loading',
+					onBeforePageLoad: $.noop,
+					onAfterPageLoad: $.noop
+				};
+				return $.waypoints('extendFn', 'infinite', function(options) {
+					var $container;
+
+					options = $.extend({}, $.fn.waypoint.defaults, defaults, options);
+					if ($(options.more).length === 0) {
+						return this;
+					}
+					$container = options.container === 'auto' ? this : $(options.container);
+					options.handler = function(direction) {
+						var $this;
+
+						if (direction === 'down') {
+							$this = $(this);
+							options.onBeforePageLoad();
+							$this.waypoint('disable');
+
+							$('#loading').show();
+
+							var offset = [
+								$('#top-users').find('tr:last').attr('data-loop-id'),
+								20
+							];
+
+							return $.post('/ajax/users/top',{offset: offset},function(response){
+								var $data, $more, $newMore;
+
+								$container.append(response.topUsers);
+
+								$this.waypoint('enable');
+								$('#loading').hide();
+								return options.onAfterPageLoad();
+							},'json');
+						}
+					};
+					return this.waypoint(options);
+				});
+			});
+
+		}).call(this);
+	</script>
+
+	<script type="text/javascript">
+		$(function(){
+			{% if slim.path[3] is null %}
+			$('#top-users').waypoint('infinite');
+			{% endif %}
+			$('html,body').animate({scrollTop:0},200);
+		});
+	</script>
+
+{% endblock %}
+
+{% block content %}
+
+	<div class="b-grid__g8 b-users b-users-search">
+
+		<h1>Результаты поиска</h1>
+
+		{% include '/users/UsersMenu.twig' %}
+
+		<form action="/users/search" class="b-form" method="post">
+			<input type="text" data-default-value="поиск по нику" name="nickName" value="{{ searchInput|e }}"/>
+			<input type="submit" class="b-firm-grad" value="найти"/>
+		</form>
+
+		{% if profiles|length %}
+			<table id="top-users">
+				{% include '/users/UserRows.twig' with {profiles:profiles} only %}
+			</table>
+
+			<div id="loading"><img src="/st/img/loaders/pink-loader-small.gif" alt=""/></div>
+
+			<a id="more" href="#"></a>
+		{% else %}
+
+			<br/><p><strong>Нет таких пользователей</strong></p>
+
+		{% endif %}
+
+	</div>
+
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends '/GenericInner.twig' %}
+
+{% block head %}
+
+	<script type="text/javascript">
+		$(function(){
+
+			var ajaxCallback = function(response){
+				if (response.status == 'success'){
+
+				}else if (response.status == 'error'){
+					alert(response.exception.message);
+				}
+			};
+
+			$('a[data-action=removeFromBlackList]').on('click',function(){
+				$.post('/ajax/blacklist/remove',{ 'profileId' : {{ profile.id }} },ajaxCallback,'json');
+				return false;
+			});
+
+			$('a[data-action=addToBlackList]').on('click',function(){
+				$.post('/ajax/blacklist/add',{ 'profileId' : {{ profile.id }} },ajaxCallback,'json');
+				return false;
+			});
+
+			$('a[data-action=addToFriend]').on('click',function(){
+				$.post('/ajax/friend/add',{ 'friendId' : {{ profile.id }} },ajaxCallback,'json');
+				return false;
+			});
+
+            $('.b-profile .left-col').stickyMojo({footerID: '.b-footer', contentID: '.b-profile .profile'});
+
+
+		});
+	</script>
+
+	<script type="text/javascript">
+		$(function(){
+
+			$('.tooltip').each(function(){
+				var theme = '.tooltipster-pink';
+
+				if ($(this).attr('data-tooltip-theme')){
+					theme = 'tooltipster-' + $(this).attr('data-tooltip-theme');
+				}
+
+				$(this).tooltipster({
+					animation: 'grow',
+					theme: theme,
+					interactive: true,
+					touchDevices: true,
+					position: $(this).attr('data-tooltip-position'),
+					content: $(this).attr('data-title')
+				});
+			});
+
+		});
+	</script>
+
+{% endblock %}
+
+
+{% block content %}
+
+	{% if profile.userInfo.sex == 1 %}
+		{% set sex = 'Парень' %}
+	{% elseif profile.userInfo.sex == 2 %}
+		{% set sex = 'Девушка' %}
+	{% endif %}
+
+    {#{{ profile.avatar.url('140x') }}#}
+
+	<div class="b-grid__g8">
+		<section class="b-profile">
+			<div class="left-col">
+
+                <div class="ava">
+                    {% if profile.avatar.id %}
+                        {% set src = profile.avatar.url('140x') %}
+                    {% else %}
+                        {% set src = '/st/img/no-photo/large.png' %}
+                    {% endif %}
+                    <a href="/profile/{{ profile.id }}"><img src="{{ src }}"/></a>
+                </div>
+				<div class="last-visit">
+					<div>Последний визит:</div>
+					<span>{{ profile.lastVisit|dateRU }}</span>
+				</div>
+
+				<ul>
+					{% if currentUser.id != slim.path[2] %}
+						<li><a href="#" data-action="addToFriend">В друзья</a></li>
+					{% endif %}
+					<li><a href="#">Сообщение</a></li>
+					<li><a href="#">В гостевую</a></li>
+
+					{% if profileHelper.inBlackList %}
+						<li>
+							<a href="#" data-action="removeFromBlackList">Разблокировать</a>
+						</li>
+					{% else %}
+						<li><a href="#" data-action="addToBlackList">Заблокировать</a></li>
+					{% endif %}
+
+
+				</ul>
+
+			</div>
+			<div class="profile">
+				{% block profile %}{% endblock %}
+			</div>
+		</section>
+	</div>
+
+{% endblock %}

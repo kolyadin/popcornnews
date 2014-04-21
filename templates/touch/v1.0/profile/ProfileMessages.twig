@@ -1,0 +1,125 @@
+{% extends '/GenericInner.twig' %}
+
+{% block topmenu %}
+
+	{% if companionProfile %}
+
+		<div class="nav__left">
+			<a class="icon-text x-large" href="/im">
+				<img class="icon-text__icon"  src="i/arrow-left-red.svg" alt="Назад">
+				<span class="icon-text__text">Назад</span>
+			</a>
+		</div>
+		<div class="nav__center">
+			<div class="nav__frame nav__title">
+				{{ companionProfile.nick }}
+			</div>
+		</div>
+		<div class="nav__right">
+			<span class="nav__user-date">22.09</span>
+			<a class="nav__user-photo" href="#" style="background-image:url(i/tmp/_1.jpg);"></a>
+		</div>
+
+	{% else %}
+
+		<div class="nav__left">
+			&nbsp;
+		</div>
+		<div class="nav__center">
+			<div class="nav__frame nav__title">
+				Сообщения
+			</div>
+		</div>
+		<div class="nav__right">
+			<a class="nav__large" href="/im/create{# Не сделан шаблон для этой ссылки #}">Написать</a>
+		</div>
+
+	{% endif %}
+
+{% endblock %}
+
+{% block content %}
+
+	{% if dialogs %}
+	
+		<div class="users users_dialogues">
+
+			{% for dialog in dialogs %}
+
+				{% if dialog.companion.isOnline %}
+					{% set online = 'users__name_online' %}
+				{% else %}
+					{% set online = '' %}
+				{% endif %}
+
+				{% set color = 'color-' ~ profile.rating.rank %}
+
+				<a class="users__item" href="/im/companion{{ dialog.companion.id }}">
+					<div class="users__photo" style="background-image:url(i/tmp/_1.jpg);"></div>
+					<div class="users__content">
+						<div class="users__row">
+							<span class="users__date">{{ dialog.sentTime|ruDateFriendly }}</span>
+							<div class="users__name {{ online }} {{ color }}">{{ dialog.companion.nick }}</div>
+						</div>
+						<div class="users__phrase">
+							{{ dialog.content|truncate(50)|e|nl2br }}
+						</div>
+					</div>
+				</a>
+
+			{% endfor %}
+
+		</div>
+
+	{% else %}
+
+		{% for message in messages %}
+
+			{% set messageDate = message.sentTime|ruDateFriendly %}
+
+			<ul id="dialogue" class="dialogue">
+			{% if message.author.id == profile.id %}
+				<li class="dialogue__item dialogue__item_my">
+					<div class="dialogue__date">
+						{{ messageDate }}
+					</div>
+					<div class="dialogue__text">
+						<div class="cloud cloud_{{ message.author.rating.rank }}">{{ message.content|e|nl2br }}</div>
+					</div>
+				</li>
+			{% else %}
+				<li class="dialogue__item">
+					<div class="dialogue__text">
+						<div class="cloud cloud_left cloud_{{ message.recepient.rating.rank }}">{{ message.content|e|nl2br }}</div>
+					</div>
+					<div class="dialogue__date">
+						{{ messageDate }}
+					</div>					
+				</li>
+			{% endif %}
+			</ul>
+
+		{% endfor %}
+
+		{% if messages.lenght == 0 %}
+			<ul id="dialogue" class="dialogue">
+			</ul>
+		{% endif %}
+
+		<form id="send-dialogue" class="col-form col-form_fixed">
+			<div class="col-form_cell">
+				<input name="message" class="entire light" type="text" placeholder="Введите сообщение" />
+			</div>
+			<div class="col-form_cell">
+				<input class="btn-text large color-wet-asphalt" type="submit" name="submit" value="Отправить" />
+			</div>
+			<input name="recepientId" type="hidden" value="{{ companionProfile.id }}" />
+		</form>
+		<script src="js/message.js"></script>
+		<script>
+			new Message({uid:'send-dialogue', boxUid:'dialogue', type:'addDialogue'});
+		</script>
+
+	{% endif %}
+
+{% endblock %}

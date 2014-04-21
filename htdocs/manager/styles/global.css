@@ -1,0 +1,124 @@
+body,td,p,div { font-family: Arial,Helvetica; font-size: 12px; color: #000000;}
+body {margin:0px; padding:0px; background-color:#FFFFFF;}
+p {margin-top:10px; margin-bottom:10px;}
+img {border:none;}
+h1 {padding:0px; margin:0px; font-size:20px; text-weight:400;}
+
+#MainBlock {padding:0px;}
+.ToolBar { padding:2px; background:#DFDFDF; margin-bottom:1px; width:100%;}
+.ToolBar input.cf {width:120px;}
+
+.TreeUl {margin:0px 0px 0px 12px; list-style-image: url(../i/f.gif);}
+.TreeUl li {padding:1px 0px 0px 7px; margin:0px 0px 0px 5px; vertical-align:top; color:#919191; font-size:10px; white-space:nowrap;}
+.TreeUl a {color:#0000FF; text-decoration:none; font-size:12px;}
+.TreeUl a:hover {color:#0000FF; text-decoration:underline;}
+
+.TreeLiActive {list-style-image: url(../i/f_.gif);}
+.TreeLiActive a,.TreeLiActive a:hover  {color:#FF0000; text-decoration:underline;}
+
+.TreeNewFolder {list-style-image: url(../i/f_new.gif); font-weight:600;}
+
+.Folders {padding:10px 10px 10px 10px; margin-bottom:20px;}
+.FolderBig {width:100px; height:80px; vertical-align:top; text-align:center; margin:0px; float:left;}
+.FolderBigImg { width:41px; height:40px; border:none; margin:3px;}
+
+.FolderBig a {color:#000000; font-size:11px; text-decoration:none;}
+.FolderBig a:hover { text-decoration:underline;}
+
+.Files {clear:left; padding:10px; width:100%;}
+
+.TableFiles {width:100%; border:1px #CCCCCC solid;}
+.TableFiles td { padding:2px 8px 2px 8px;background:#F4F4F4;}
+.TableFiles a {color:#0000FF; text-decoration:none;}
+.TableFiles a:hover {text-decoration:underline;}
+td.TF1 {background:#D7D7D7; font-weight:600; text-align:center;}
+td.TFHeader {width:25%;background:#B8D1FF;color:#000000; font-weight:100; font-size:11px; white-space:nowrap;}
+.TFHeader a {color:#000000;}
+td.TFaction {background:#E0E0E0;white-space:nowrap; text-align:center;}
+td.Selected  {background:#FFFFFF;}
+td.SelectedDark{background:#E6E6E6;}
+
+
+.FilesNavigationTable {margin-bottom:4px;}
+
+.FilesSearchForm {margin:0px 0px 0px 0px; padding:0px; width:200px; float:right;}
+
+.FilesPages {clear:left;}
+.FilePage,.FilePageActive {width:12px; height:12px; font-size:11px; float:left; background:#F3F3F3; margin:1px 1px 1px 0px; padding:0px 3px 0px 3px; border:1px #F3F3F3 solid; }
+.FilePage a {text-decoration:none; color:#0000FF;}
+.FilePageDescr {width:50px; height:15px; float:left; margin:1px 1px 1px 0px; padding:0px 3px 0px 3px;}
+
+.FilePageActive {background:#6E8ADE; border:1px #E8E8E8 solid;}
+.FilePageActive a {text-decoration:none; color:#FFFFFF; font-weight:700;}
+
+.NavBlock {margin:0px; padding:7px; width:100%; background:#6F8BDE;}
+.NavBlockDescr { padding:0px 0px 0px 0px;}
+.NavBlockImg img {margin:0px 7px 0px 5px;}
+.NavBlockAddress { background:#FFFFFF; padding:0px 5px 0px 0px; width:100%; font-size:15px; border-bottom:1px #CCCCCC solid;border-right:1px #CCCCCC solid;border-top:1px #000000 solid;border-Left:1px #000000 solid; font-size:12px;}
+.NavBlockAddress a {text-decoration:none; color:#000000;}
+.NavBlockAddress a:hover {text-decoration:underline;}
+.NavBlockDescr input.button {width:22px; height:22px; border:none;}
+.NavBlockDescr input.button {background:url(../i/c2.gif) #ffffff; border-top:1px solid #000000;border-bottom:1px solid #CCCCCC;border-right:1px solid #CCCCCC; margin:0px;}
+.Tips { font-size:11px; width:350px; margin-top:1px;}
+
+#NavFrame {display:none;z-index:9; left:39px; right:0px; top:30px; position:absolute;}
+#NFrame {border-left:1px solid #000000; border-top:1px solid #000000;border-right:1px solid #CCCCCC;border-bottom:1px solid #CCCCCC; width:100%; margin:0px 6px 0px 0px;}
+
+
+
+/*форма внизу*/
+.FileBlock  {padding:10px; }
+.FileForm {padding:0px; margin:10px 0px 0px 0px; width:100%;}
+.FileBlock h1 {margin:20px 15px 0px 15px; font-size:20px;}
+.Fname,.Ftext,.FDat,.Ftextarea,.FCheck,.FPictures {margin:0px 0px 0px 0px; background:#E2F1FC; padding:5px 15px; width:100%; border-bottom:1px solid #FFFFFF;}
+.Fname h5 {margin:10px 0px 3px 0px;}
+.Ftext h5,.Ftextarea h5,.FPictures h5,.FDat h5 {margin:8px 0px 0px 0px; font-weight:700; font-size:13px;}
+.FDat small {color:#666666;}
+.FDat a {color:#0000FF; font-size:10px; font-weight:700;}
+
+/* свойства папки */
+.FileFormInput select.cf2 {width:100px;}
+
+.FileFormName .cf3 {border:none; background:#E2F1FC; text-align:right;}
+.FileFormName .cf4 {border:none; background:#E2F1FC; text-align:left;}
+
+
+/*форма для пользователей*/
+.FileFormInput,.FileFormInput2 { padding:3px 3px 3px 3px; background:#E2F1FC; width:70%;}
+.FileFormInput2 {width:1px;}
+.FileFormName{ padding:3px 10px 3px 3px; background:#E2F1FC; width:30%; text-align:right;}
+.FileFormSubnit {padding:5px 0px 0px 3px;}
+
+.UserPhoto { padding:10px; text-align:center; width:200px; background:; height:100%;}
+.UserPhoto img,.UserPhoto input {margin:10px;}
+
+.FCheck p {margin:0px 0px;}
+.FCheck input {margin:0px 5px 0px 0px;}
+.FileForm {padding:0px; margin:10px 0px 0px 0px; width:100%; background:}
+.FSubmit {padding:10px 0px 0px 15px; width:100%;}
+.FInput {width:100%;}
+input.Fcfreadonly {border:#CCCCCC 1px solid;font-size:10px;background:#FFFFFF; width:40px; font-family:tahoma; padding:1px 5px; text-align:center;}
+.Fcf {border-top:1px solid #C1C1C1;border-left:1px solid #C1C1C1;border-right:1px solid #E7E7E7;border-bottom:1px solid #E7E7E7;font-size:12px;font-weight:100;color:#000000;background:#FFFFFF; font-family:arial;}
+
+
+
+.ContextMenu {padding:2px; width:150px; white-space:nowrap; border-top:#FFFFFF 1px solid;border-left:#FFFFFF 1px solid;border-bottom:#000000 1px solid;border-right:#000000 1px solid; background:#D4D0C8;}
+.ContextMenu a {width:100%; text-decoration:none; font-size:11px; color:#000000; padding:2 10 2 10;}
+.ContextMenu a:hover { font-size:11px; color:#FFFFFF; background:#000080;}
+
+
+a.AddUser {display:block; margin:15px 20px; padding:5px 10px 10px 40px; background:url(../i/wizard.gif) no-repeat; color:#0000ff; text-decoration:none;font-weight:700; font-size:13px;}
+a.AddUser:hover {text-decoration:underline;}
+
+.cf,.cf2,cf4 {border-width : 1px;font-size:12px;font-weight:100;color:#000000;background:#FFFFFF;border-style : outer; width:100%;}
+.cfreadonly {border-top:#CCCCCC 1px solid;border-left:#CCCCCC 1px solid;border-bottom:#CCCCCC 1px solid;border-right:#CCCCCC 1px solid;font-size:12px;font-weight:100;color:#000000;background:#FFFFFF;}
+.button { font-family: Arial,Helvetica; font-size: 11px; border-top:#E8E8E8 1px solid;border-left:#E8E8E8 1px solid;border-bottom:#000000 1px solid;border-right:#000000 1px solid;}
+
+
+.MainTable .ans {border-top:1px solid #ddd;margin:10px -10px -4px -10px;}
+.MainTable .ans td {font-size:9px;font-family:Verdana,Tahoma;padding:4px 6px;background:#fff;border-bottom:1px solid #ddd;line-height:1.1;}
+.MainTable .ans .t2 {}
+.MainTable .a0 {margin-bottom:-3px;}
+.MainTable .a1 a,.MainTable .a2 a {color:#555;text-decoration:underline;font-weight:100;font-size:11px;}
+.MainTable .a2,.MainTable .a3 {display:none;}
+.MainTable .a1,.MainTable .a2 {text-align:right;}
