@@ -975,10 +975,10 @@ class YourStyleController extends GenericController {
 		$rootGroup = $this->getSlim()->request()->get('rootGroup');
 		$group = $this->getSlim()->request()->get('group');
 		$brand = $this->getSlim()->request()->get('brand');
-		$color = $this->getSlim()->request()->get('color');
-		if ($color) {
+		$colorCurrent = $color = $this->getSlim()->request()->get('color');
+		if ($colorCurrent) {
 			$colorDataMap = new YourStyleTilesColorsDataMap();
-			$color = $colorDataMap->getColorByHuman($color);
+			$color = $colorDataMap->getColorByHuman($colorCurrent);
 		}
 
 		$dataMap = new YourStyleGroupsTilesDataMap();
@@ -997,7 +997,7 @@ class YourStyleController extends GenericController {
 			'rootCurrent' => $rootGroup,
 			'groupCurrent' => $group,
 			'brandCurrent' => $brand,
-			'colorCurrent' => $color,
+			'colorCurrent' => $colorCurrent,
 			'searchParams' => $_SERVER['REDIRECT_QUERY_STRING'],
 		];
 		self::getTwig()

@@ -249,6 +249,7 @@ SQL;
 
 	protected function getConditions($group, $brand, $color) {
 
+		$condition = array();
 		if ($group) {
 			$condition[] = '`gId` = :gId';
 		}
@@ -257,6 +258,10 @@ SQL;
 		}
 		if ($color) {
 			$condition[] = '`id` IN (SELECT `tid` FROM `pn_yourstyle_tiles_colors_new` WHERE `color` = :color)';
+		}
+
+		if (!count($condition)) {
+			return false;
 		}
 		$condition = ' AND ' . implode(' AND ', $condition);
 
