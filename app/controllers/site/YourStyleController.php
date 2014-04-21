@@ -127,6 +127,9 @@ class YourStyleController extends GenericController {
 					->get('/tiles(/page/:page)/', $profileMiddleware, [$this, 'yourStyleTiles'])
 					->conditions(array('page' => '\d+'));
 
+				$this
+					->getSlim()
+					->get('/tiles/top(/filtered/)', $profileMiddleware, [$this, 'yourStyleTilesTop']);
 
 				$this
 					->getSlim()
@@ -1007,6 +1010,36 @@ class YourStyleController extends GenericController {
 		];
 		self::getTwig()
 			->display('/yourstyle/YourStyleGroup.twig', $tpl);
+
+	}
+
+	public function yourStyleTilesTop() {
+
+		$rootGroup = $this->getSlim()->request()->get('rootGroup');
+		$group = $this->getSlim()->request()->get('group');
+		$brand = $this->getSlim()->request()->get('brand');
+		$colorCurrent = $color = $this->getSlim()->request()->get('color');
+		if ($colorCurrent) {
+			$colorDataMap = new YourStyleTilesColorsDataMap();
+			$color = $colorDataMap->getColorByHuman($colorCurrent);
+		}
+
+		$dataMap = new YourStyleGroupsTilesDataMap();
+		$items = $dataMap->getTilesTopByParams($group, $brand, $color, 0, 48, '150x150');
+
+		$tpl = [
+			'items' => $items,
+			'allGroups' => $this->getGroupsParams(),
+			'brands' => $this->getBrandsByParam($rootGroup),
+			'colors' => $this->getColorsByParams($rootGroup),
+			'rootCurrent' => $rootGroup,
+			'groupCurrent' => $group,
+			'brandCurrent' => $brand,
+			'colorCurrent' => $colorCurrent,
+			'mode' => 'top',
+		];
+		self::getTwig()
+			->display('/yourstyle/YourStyleGroupTop.twig', $tpl);
 
 	}
 

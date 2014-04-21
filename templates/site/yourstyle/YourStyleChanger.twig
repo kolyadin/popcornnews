@@ -1,6 +1,6 @@
 	<div class="select-bar">
 		<div class="select-bar__inner">
-			<form action="/yourstyle/tiles/">
+			<form action="{% if mode == 'top' %}/yourstyle/tiles/top/filtered/{% else %}/yourstyle/tiles/{% endif %}">
 				<div class="select-bar__item">
 					<div class="select-bar__title">Группа</div>
 					<select class="select-bar__select" name="rootGroup" id="rootGroup">

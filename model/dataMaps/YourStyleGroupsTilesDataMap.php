@@ -216,7 +216,7 @@ SQL;
 		parent::itemCallback($item);
 	}
 
-	public function getTop($offset = 0, $limit = 50) {
+	public function getTop($offset = 0, $limit = 50, $imageSize = '') {
 		$sql = <<<SQL
 			SELECT a.*,
 				c.title brand,
@@ -226,6 +226,7 @@ SQL;
 				LEFT JOIN pn_yourstyle_tiles_brands c ON (c.id = a.bid)
 				LEFT JOIN pn_yourstyle_groups_tiles_votes as v ON (v.tid = a.id)
 			WHERE a.gid != 0
+			GROUP BY a.id
 			ORDER BY rating DESC, a.createtime DESC
 			LIMIT ?, ?
 SQL;
@@ -240,7 +241,7 @@ SQL;
 		if($items === false) return null;
 
 		foreach($items as &$item) {
-            $this->itemCallback($item);
+            $this->itemCallback($item, $imageSize);
         }
 
 		return $items;
@@ -278,6 +279,52 @@ SQL;
 			WHERE 1 = 1
 				$condition
 			ORDER BY `id` DESC
+			LIMIT :offset, :limit
+SQL;
+
+		$stmt = $this->prepare($sql);
+		if ($group) {
+			$stmt->bindValue(":gId", $group, \PDO::PARAM_INT);
+		}
+		if ($brand) {
+			$stmt->bindValue(":bId", $brand, \PDO::PARAM_INT);
+		}
+		if ($color) {
+			$stmt->bindValue(":color", $color, \PDO::PARAM_STR);
+		}
+		$stmt->bindValue(":offset", $offset, \PDO::PARAM_INT);
+		$stmt->bindValue(":limit", $limit, \PDO::PARAM_INT);
+
+		$stmt->execute();
+
+		$items = $stmt->fetchAll(\PDO::FETCH_CLASS, $this->class);
+		if ($items === false) {
+			return null;
+		}
+
+		foreach($items as &$item) {
+            $this->itemCallback($item, $imageSize);
+        }
+
+		return $items;
+
+	}
+
+	public function getTilesTopByParams($group, $brand, $color, $offset, $limit, $imageSize = '') {
+
+		$condition = $this->getConditions($group, $brand, $color);
+		$sql = <<<SQL
+			SELECT `a`.*,
+				`c`.`title` brand,
+				COUNT(DISTINCT `v`.`uId`) AS `votes`,
+				IF(COUNT(DISTINCT `v`.`uId`) > 0, ROUND(`a`.`rate`/COUNT(DISTINCT `v`.`uId`),1), 0) AS `rating`
+			FROM `pn_yourstyle_groups_tiles` AS `a`
+				LEFT JOIN `pn_yourstyle_tiles_brands` c ON (`c`.`id` = `a`.`bId`)
+				LEFT JOIN `pn_yourstyle_groups_tiles_votes` as v ON (`v`.`tId` = `a`.`id`)
+			WHERE `a`.`gId` != 0
+				$condition
+			GROUP BY a.id
+			ORDER BY `rating` DESC, `a`.`createTime` DESC
 			LIMIT :offset, :limit
 SQL;
 
