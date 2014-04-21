@@ -1,0 +1,53 @@
+
+body.show_full_banner {position:absolute; left:0px; top:0px; width:100%; height:100%; overflow:hidden;}
+
+div#wrapper {position:relative; background:#fff;}
+
+div#header {
+overflow:visible;
+    background:none;
+    padding-top: 0px;
+}
+
+img.h_gulliver {display:block; float:left; margin:0 -113px 0 0; }
+
+div#header div.logoHeader {
+    display: inline;
+    float: left;
+    margin-left: 0px;
+    width: 250px;
+	padding-top: 53px;
+}
+div.hhFeatures {overflow:visible; height:100%;}
+div.hhFeatures:after {
+	content: ".";
+	height: 0;
+	overflow: hidden;
+	clear: both;
+	display: block;
+	visibility: hidden;
+	}
+div.hhFeatures div.cable_1 {position:absolute; right:-40px; top:0px; z-index:2; width:106px; height:62px; overflow:hidden; background:url(/i/banners/cable_1.png) 0px 0px no-repeat;}
+div.hhFeatures div.people_1 {position:absolute; left:362px; top:36px; z-index:2; width:34px; height:65px; overflow:hidden; background:url(/i/banners/people_1.png) 0px 0px no-repeat;}
+div.hhFeatures div.people_2 {position:absolute; left:632px; top:26px; z-index:2; width:75px; height:76px; overflow:hidden; background:url(/i/banners/people_2.png) 0px 0px no-repeat;}
+
+div#header div.logged {
+
+    padding-top: 59px;
+}
+div#header div.enterSite {
+   padding-top: 52px;
+}
+
+
+/* -----------------------------------------*/
+img#preload_gulliver {position:absolute; left:50%; top:200px; margin:0px 0 0 -24px;}
+img#gulliver_fon {position:fixed; left:0px; top:-9999px;}
+div#cable_main {position:fixed; left:0px; top:0px; width:100%; height:100%; visibility: hidden;}
+img#cable_main {position:fixed; left:0px; top:0px; width:100%; visibility: hidden;}
+div#full_screen {position:absolute; z-index:3; left:0px; top:0px; width:100%; height:100%;}
+div#videoplayer_cont {width:700px; height:510px; position:absolute; left:50%; top:50%; margin:-10000px 0 0 -350px; background:url(/i/banners/close.png) 0px 0px no-repeat;}
+div#hide_player {position:absolute; right:0px; top:0px; width:69px; height:85px;  cursor:pointer; background:url(/i/p.gif) 0px 0px no-repeat;}
+div#gulliverBanner {position:absolute; left:-32px; top:0px; width:284px; height:450px;}
+
+/* ---- */

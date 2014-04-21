@@ -1,0 +1,30 @@
+
+<ul class="b-inside__menu-secondlist">
+	<li{% if slim.path[4] is null or slim.path[4] starts with 'page' %} class="active" {% endif %}>
+		<a href="/persons/{{ person.urlName }}/fans">все поклонники</a>
+	</li>
+	<li{% if slim.path[4] == 'new' %} class="active" {% endif %}>
+		<a href="/persons/{{ person.urlName }}/fans/new">новые</a>
+	</li>
+
+	{% if currentUser.id %}
+		<li{% if slim.path[4] == 'local' %} class="active" {% endif %}>
+			<a href="/persons/{{ person.urlName }}/fans/local">в твоем городе</a>
+		</li>
+
+		{% if isFan %}
+
+			<li{% if slim.path[4] == 'unsubscribe' %} class="active" {% endif %}>
+				<a href="/persons/{{ person.urlName }}/fans/unsubscribe">выйти из группы</a>
+			</li>
+
+		{% else %}
+
+			<li{% if slim.path[4] == 'subscribe' %} class="active" {% endif %}>
+				<a href="/persons/{{ person.urlName }}/fans/subscribe">стать поклонником</a>
+			</li>
+
+		{% endif %}
+
+	{% endif %}
+</ul>

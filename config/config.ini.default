@@ -1,0 +1,12 @@
+[PDO]
+dsn = "mysql:dbname=popcorn;host=localhost"
+user = root
+password = 123
+encoding = utf8
+
+[Servers]
+images = "http://v1.popcorn-news.ru/"
+
+[Memcache]
+host = 127.0.0.1
+port = 11211

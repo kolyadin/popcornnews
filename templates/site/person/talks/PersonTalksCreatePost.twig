@@ -1,0 +1,39 @@
+{% extends '/person/PersonGeneric.twig' %}
+
+{% block head %}
+
+    <title>Создать тему в обсуждениях о персоне {{ person.name|e }} ({{ person.englishName|e }}) - popcornnews</title>
+
+{% endblock %}
+
+
+{% block submenu %}
+    {% include '/person/talks/Submenu.twig'  %}
+{% endblock %}
+
+
+{% block personContent %}
+
+    <section class="b-news b-news_vertical-margin_30">
+        <div class="b-news__title-cont">
+            <h1 class="b-news__title b-rubrics-title b-rubrics-title_s20">
+                <a rel="nofollow" href="{{ personLink }}/news">Обсуждение {{ person.genitiveName|e }}</a>
+            </h1>
+        </div>
+
+        <div class="b-form b-form-talks">
+            <form method="post">
+                <input name="type" value="topic" type="hidden"/>
+                <input name="personId" value="{{ person.id }}" type="hidden"/>
+
+                <input name="name" placeholder="Название темы" />
+                <textarea name="content"></textarea>
+                <p>Код видео:</p>
+                <textarea class="video" name="embed"></textarea>
+
+                <input value="Создать тему" class="b-firm-grad" type="submit"/>
+            </form>
+        </div>
+    </section>
+
+{% endblock %}

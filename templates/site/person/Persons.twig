@@ -1,0 +1,60 @@
+{% extends '/GenericInner.twig' %}
+
+{% block head %}
+
+<title>Звезды - popcornnews</title>
+
+<meta name="description" content="Новостной блог" />
+<meta name="keywords"    content="попкорнньюз, popcornnews, блог звезды, новости звезд, звездные новости" />
+
+{% endblock %}
+
+{% block content %}
+
+<div class="b-grid__g8">
+    <article class="b-person-all">
+        <h1 class="b-single-article__title">
+            Персоны
+            <span class="b-single-article__date">Все звезды</span>
+        </h1>
+
+        <section class="b-person__menu b-inside__menu">
+
+	        {% include '/person/PersonsMenu.twig' %}
+
+            <div class="b-search-block">
+                <form method="post">
+                    <label for="b-search-block__input-text" class="b-search-block__label">поиск по имени</label>
+                    <input type="search" id="b-search-block__input-text" class="b-search-block__input-text">
+                    <input type="submit" value="найти" class="b-search-block__input-submit b-firm-grad">
+                </form>
+            </div>
+        </section>
+
+        <section class="b-person-all__wrapper">
+            <div class="b-news__title-cont">
+                <h1 class="b-news__title b-rubrics-title b-rubrics-title_s24">
+                    <a rel="nofollow" href="#">топ персон</a>
+                </h1>
+            </div>
+            <ul class="b-person-all__list">
+	            {% for person in persons %}
+		            {% set photo = person.photo.thumb('206x') %}
+		            <li class="b-person-all__item">
+			            <a href="/persons/{{ person.urlName }}">
+				            <!-- Изображения должны быть в ширину не менее 206 пикс, а в высоту - 243 пикс!!-->
+				            <img alt="{{ person.name|e }}" src="{{ photo.url }}">
+				            <div class="b-person-all__item__overlay">
+					            <span class="b-person-all__item__num">{{ loop.index }}</span>
+					            <span class="b-person-all__item__name">{{ person.name|e }}</span>
+					            <span class="b-person-all__item__popularity">Популярность: 9.5</span>
+				            </div>
+			            </a>
+		            </li>
+	            {% endfor %}
+            </ul>
+        </section>
+    </article>
+</div>
+
+{% endblock %}

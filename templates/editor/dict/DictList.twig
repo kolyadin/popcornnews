@@ -1,0 +1,72 @@
+{% extends '/Generic.twig' %}
+
+{% block head %}
+    <title>{{ page.title|e }}</title>
+
+    <link rel="stylesheet" type="text/css" href="/editor/st/css/dictionary.css" />
+
+    <script>
+
+        $(function(){
+
+            //Удаление справочника в списке
+            $(document).on('click','.items-list td a.delete',function(){
+
+                var obj = this;
+
+                if (confirm('Правда удалить?'))
+                {
+                    $.get('/editor/dict/quickRemove',
+                        {
+                            'entity' : '{{ entity.name }}',
+                            'dictId' : $(obj).attr('data-id')
+                        },
+                        function (response) {
+                            if (response['status'] == 'success') {
+                                $(obj).parents('tr').hide('highlight', { 'color': '#c56e6e' });
+                            }
+                        },
+                        'json'
+                    );
+                }
+
+                return false;
+            });
+
+            $('.nav-panel').accordion('option', 'active', 1);
+
+            $('#content-tabs > ul > li:last > a').unbind('click');
+        });
+
+    </script>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="content-panel" id="content-tabs">
+        <ul>
+            <li><a href="#tabs-1">{{ entity.nav[0]|e }}</a></li>
+            <li><a href="/editor/dict/{{ entity.name }}/new">{{ entity.nav[1]|e }}</a></li>
+        </ul>
+
+        <div id="tabs-1">
+
+            <table class="items-list">
+                <tr>
+                    <th>Название</th>
+                </tr>
+                {% for item in dict_list %}
+
+                    <tr>
+                        <td><a data-id="{{ item.id }}" href="#" class="delete" title="Удалить новость"></a><a href="/editor/dict/{{ entity.name }}/{{ item.id }}">{{ item.name|e }}</a></td>
+                    </tr>
+
+                {% endfor %}
+            </table>
+
+        </div>
+        <div id="tabs-2"></div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,154 @@
+{% macro ratingLarge(rating) %}
+
+	<div class="rating-large rating-{{ rating.rank }} tooltip" data-tooltip-position="top-left" data-tooltip-theme="{{ rating.rank }}" data-title="Это твой рейтинг">
+		<div class="rating-points">{{ rating.points|number_format(0,'',' ') }}</div>
+		<div class="rating-stars">
+			<div class="rating-title">{{ rating.rank }}</div>
+			<div class="rating"><div class="{{ rating.cssClassRating }}"></div></div>
+		</div>
+	</div>
+
+{% endmacro %}
+
+
+{% macro tagsWithComma(tags) %}
+
+	{% if tags %}
+		{% for tag in tags %}
+			{% if tag.isPerson %}
+				{% set person = tag.entity %}
+				<a title="Показать новости с тегом &quot;{{ person.name|e }}&quot;" href="/persons/{{ person.urlName }}">{{ person.name|e }}</a>&nbsp;{% if loop.last == false %},{% endif %}
+			{% else %}
+				<a title="Показать новости с тегом &quot;{{ tag.name|e }}&quot;" href="/tag/{{ tag.id }}">{{ tag.name|e }}</a>&nbsp;{% if loop.last == false %},{% endif %}
+			{% endif %}
+		{% endfor %}
+	{% endif %}
+
+{% endmacro %}
+
+
+{% macro profileInfo(profile,options) %}
+
+	{% spaceless %}
+	<div class="user-info__ava-nick-rating">
+        {% if profile.avatar.id %}
+            {% set src = profile.avatar.url('profileSmall') %}
+        {% else %}
+            {% set src = '/st/img/no-photo/small.png' %}
+        {% endif %}
+        <div class="ava"><a href="/profile/{{ profile.id }}"><img src="{{ src }}" alt=""/></a></div>
+		<div class="nick-rating rating-small rating-{{ profile.rating.rank }}">
+			<div class="nick rating-{{ profile.rating.rank }}">
+				<a href="/profile/{{ profile.id }}">{{ profile.nick|e }}</a>
+			</div>
+			{% if profile.isOnline %}
+				<div class="online tooltip" data-title="Online"></div>
+			{% endif %}
+
+			{% if options.timestamp %}
+				<span style="padding-left: 5px;color:#c3c3c3;">{{ options.timestamp|dateRU }}</span>
+			{% endif %}
+
+
+            {% if options.hideRating != true %}
+                <div class="rating-stars" title="Рейтинг пользователя">
+                    <div class="rating">
+                        <div class="{{ profile.rating.cssClassRating }}"></div>
+                    </div>
+                    {% if options.hidePoints != true %}
+                        <div class="rating-points">{{ profile.rating.points|number_format(0,'',' ') }}</div>
+                    {% endif %}
+                </div>
+            {% endif %}
+		</div>
+	</div>
+	{% endspaceless %}
+
+{% endmacro %}
+
+{% macro paginator(overallPages,activePage,hrefMask) %}
+	{% if overallPages > 1 %}
+
+		<div class="b-pagination">
+			<span>Страницы:</span>
+
+			{% if overallPages <= 14 %}
+
+				{% for page in 1..overallPages %}
+					<a href="{{ hrefMask|format(page) }}"{% if page == activePage %} class="active"{% endif %}>{{ page }}</a>
+				{% endfor %}
+
+			{% else %}
+
+				{% if activePage <= 9 and overallPages >= 10 %}
+					{% for page in 1..10 %}
+						<a href="{{ hrefMask|format(page) }}"{% if page == activePage %} class="active"{% endif %}>{{ page }}</a>
+					{% endfor %}
+
+					<span><strong>...</strong></span>
+
+					<a href="{{ hrefMask|format(overallPages-1) }}">{{ overallPages-1 }}</a>
+					<a href="{{ hrefMask|format(overallPages) }}">{{ overallPages }}</a>
+
+				{% elseif (overallPages-activePage) <= 5 %}
+
+					<a href="{{ hrefMask|format(1) }}">1</a>
+					<a href="{{ hrefMask|format(2) }}">2</a>
+
+					<span><strong>...</strong></span>
+
+					{% for page in overallPages-6..overallPages %}
+						<a href="{{ hrefMask|format(page) }}"{% if page == activePage %} class="active"{% endif %}>{{ page }}</a>
+					{% endfor %}
+				{% else %}
+					{% if overallPages > 9 %}
+						<a href="{{ hrefMask|format(1) }}">1</a>
+						<a href="{{ hrefMask|format(2) }}">2</a>
+
+						<span>...</span>
+					{% endif %}
+
+					{% set pStart = activePage > 2 ? 2 : activePage %}
+					{% set pEnd = (overallPages-activePage) > 2 ? 2 : overallPages-activePage %}
+
+					{% for page in activePage-pStart..activePage+pEnd %}
+						<a href="{{ hrefMask|format(page) }}"{% if page == activePage %} class="active"{% endif %}>{{ page }}</a>
+					{% endfor %}
+
+					{% if overallPages > 9 and (overallPages-activePage) >= 3 %}
+						<span>...</span>
+
+						<a href="{{ hrefMask|format(overallPages-1) }}">{{ overallPages-1 }}</a>
+						<a href="{{ hrefMask|format(overallPages) }}">{{ overallPages }}</a>
+					{% endif %}
+				{% endif %}
+
+			{% endif %}
+
+		</div>
+	{% endif %}
+{% endmacro %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,253 @@
+{% extends '/GenericInner.twig' %}
+
+{% block head %}
+
+	<title>{{ post.name|e }} - popcornnews</title>
+
+	<script type="text/javascript">
+		$(function(){
+			$('.b-single-article__attach-images').masonry({
+				itemSelector: 'img',
+				columnWidth: 60,
+				gutter: 10
+			});
+		});
+
+		var commentSetup = {
+			entity: 'news',
+			entityId: {{ post.id }}
+		};
+	</script>
+	<script type="text/javascript" src="/st/js/popcorn.comments.js"></script>
+
+
+{% endblock %}
+
+{% block bodyStart %}
+
+	{#Подключаем плашку со смайлами#}
+	{% include '/comments/SmilesBar.twig' %}
+
+{% endblock %}
+
+
+{% block content %}
+
+	<!--noindex-->
+	<div class="b-socials" style="top: 249px;">
+		<div class="b-socials__fixed">
+			<div class="b-socials__wrapper">
+				<div class="b-socials__title">share</div>
+				<ul class="b-socials__list">
+					<li class="b-socials__item">
+						<a href="#" rel="nofollow" class="fb" title="Опубликовать в Фейсбуке"></a>
+					</li>
+					<li class="b-socials__item">
+						<a href="#" rel="nofollow" class="vk" title="Опубликовать в ВКонтакте"></a>
+					</li>
+					<li class="b-socials__item">
+						<a href="#" rel="nofollow" class="tw" title="Опубликовать в Твиттер"></a>
+					</li>
+					<li class="b-socials__item">
+						<a href="#" rel="nofollow" class="po" title="Опубликовать в Google Plus"></a>
+					</li>
+					<li class="b-socials__item">
+						<a href="#" rel="nofollow" class="ma" title="Опубликовать на Mail.ru"></a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<!--/noindex-->
+	<div class="b-grid__g8">
+		<article data-entity-id="{{ post.id }}" class="b-single-article" style="overflow: hidden;">
+			<section class="b-single-article__content clearfix">
+				<h1 class="b-single-article__title">
+					{{ post.name|e }}
+					<span class="b-single-article__date">{{ post.createDateFriendly }}</span>
+				</h1>
+
+				<div class="b-text">
+
+					{% if post.announceFriendly %}
+						<p>{{ post.announceFriendly }}</p>
+					{% endif %}
+
+					{% set mainPhoto = post.mainImageId.thumb('500x') %}
+
+					<img src="{{ mainPhoto.url }}" width="{{ mainPhoto.width }}" height="{{ mainPhoto.height }}" alt="">
+
+					{% if post.contentFriendly %}
+						<p>{{ post.contentFriendly }}</p>
+					{% endif %}
+
+				</div>
+			</section>
+
+			{# Фотки, приложенные к новости #}
+			{% if post.images|length > 0 %}
+				<section class="b-single-article__attach-images" style="margin-bottom: 22px;" >
+					{% for image in post.images %}
+						{% set photo = image.thumb('x100') %}
+						<img src="{{ photo.url }}" height="{{ photo.height }}" width="{{ photo.width }}"  alt="" />
+					{% endfor %}
+				</section>
+			{% endif %}
+
+			<div class="clearfix"></div>
+
+			<section class="b-large-news__info">
+				<a href="/news/{{ post.id }}#comments" class="b-large-news__comments b-comments-status">
+					<span class="b-comments-status__title">Комментариев:</span>
+					<span class="b-comments-status__num">{{ post.comments }}</span>
+				</a>
+
+				<span class="b-single-article__views-title">Просмотров: {{ post.views|number_format(0,'',' ') }}</span>
+
+				{% if post.tagsOnly %}
+					<div>
+						<span class="b-single-article__tags-title">Теги: </span>
+						<ul class="b-large-news__tags-list">
+							<li class="b-single-article__gray">
+								{% for tag in post.tagsOnly %}
+									{% if tag.isPerson %}
+										{% set person = tag.entity %}
+										<a href="/persons/{{ person.urlName }}">{{ person.name|e }}</a>&nbsp;{% if loop.last == false %},{% endif %}
+									{% else %}
+										<a href="/event/{{ tag.id }}">{{ tag.name|e }}</a>&nbsp;{% if loop.last == false %},{% endif %}
+									{% endif %}
+								{% endfor %}
+							</li>
+						</ul>
+					</div>
+				{% endif %}
+			</section>
+		</article>
+
+		{% include '/comments/CommentsBlock.twig' with { 'commentsTree': commentsTree } %}
+
+		<!--
+		<section class="b-photo-articles b-inside__photo-articles clearfix">
+			<div class="b-photo-articles__title-cont b-grid__g8 b-grid__a">
+				<h1 class="b-photo-articles__title b-rubrics-title b-rubrics-title_s24">Фото-статьи</h1>
+				<span class="b-photo-articles__counter b-counter">5941</span>
+			</div>
+			<div class="b-grid__g4 b-grid__a">
+				<a href="#" class="b-photo-articles__photo-cont"><img src="./img/content/large_front.jpg" alt=""></a>
+
+				<div class="b-photo-articles__photo-count">3 фотографии</div>
+				<h2 class="b-photo-articles__news-title"><a href="#">Голлисвудский роман Николь Кидман и Тома Круза</a>
+				</h2>
+			</div>
+			<div class="b-grid__g4 b-grid__z">
+				<a href="#" class="b-photo-articles__photo-cont"><img src="./img/content/large_front.jpg" alt=""></a>
+
+				<div class="b-photo-articles__photo-count">17 фотографий</div>
+				<h2 class="b-photo-articles__news-title"><a href="#">Миллионы Тэйлор Свифт</a></h2>
+			</div>
+			<div class="clear"></div>
+			<div class="b-grid__g4 b-grid__a">
+				<a href="#" class="b-photo-articles__photo-cont"><img src="./img/content/large_front.jpg" alt=""></a>
+
+				<div class="b-photo-articles__photo-count">67 фотографий</div>
+				<h2 class="b-photo-articles__news-title"><a href="#">Эволюция тела Майкла Фелпса</a></h2>
+			</div>
+			<div class="b-grid__g4 b-grid__z">
+				<a href="#" class="b-photo-articles__photo-cont"><img src="./img/content/large_front.jpg" alt=""></a>
+
+				<div class="b-photo-articles__photo-count">3 фотографии</div>
+				<h2 class="b-photo-articles__news-title"><a href="#">Голлисвудский роман Николь Кидман и Тома Круза</a>
+				</h2>
+			</div>
+		</section>
+		-->
+
+		<section class="b-archive clearfix">
+			<div class="b-grid__g7 b-grid__a">
+				<h1 class="b-archive__rubrics-title b-rubrics-title b-rubrics-title_s30">ранее</h1>
+				<ul class="b-archive__month-list">
+					<li class="b-archive__month-item">
+						<h2 class="b-archive__month-title">декабрь 2012</h2>
+						<ul class="b-archive__entry-list b-list">
+							<li>
+								<a href="#">Fashion battle: Гвинет Пэлтроу и Карли Клосс </a><span
+									  class="b-list__counter">(38)</span>
+							</li>
+							<li>
+								<a href="#">Fashion battle: Гвинет Пэлтроу и Карли Клосс </a><span
+									  class="b-list__counter">(38)</span>
+							</li>
+							<li>
+								<a href="#">Fashion battle: Гвинет Пэлтроу и Карли Клосс </a><span
+									  class="b-list__counter">(38)</span>
+							</li>
+							<li>
+								<a href="#">Fashion battle: Гвинет Пэлтроу и Карли Клосс </a><span
+									  class="b-list__counter">(38)</span>
+							</li>
+							<li>
+								<a href="#">Fashion battle: Гвинет Пэлтроу и Карли Клосс </a><span
+									  class="b-list__counter">(38)</span>
+							</li>
+						</ul>
+					</li>
+
+					<li class="b-archive__month-item">
+						<h2 class="b-archive__month-title">ноябрь 2012</h2>
+						<ul class="b-archive__entry-list b-list">
+							<li>
+								<a href="#">Fashion battle: Гвинет Пэлтроу и Карли Клосс </a><span
+									  class="b-list__counter">(38)</span>
+							</li>
+							<li>
+								<a href="#">Fashion battle: Гвинет Пэлтроу и Карли Клосс </a><span
+									  class="b-list__counter">(38)</span>
+							</li>
+							<li>
+								<a href="#">Бейонсе Ноулз, Сальма Хайек возглавили кампанию Gucci по продвижению
+									интересов женщин</a><span class="b-list__counter">(38)</span>
+							</li>
+							<li>
+								<a href="#">Бейонсе Ноулз, Сальма Хайек возглавили кампанию Gucci по продвижению
+									интересов женщин</a><span class="b-list__counter">(38)</span>
+							</li>
+							<li>
+								<a href="#">Бейонсе Ноулз, Сальма Хайек возглавили кампанию Gucci по продвижению
+									интересов женщин</a><span class="b-list__counter">(38)</span>
+							</li>
+						</ul>
+					</li>
+
+					<li class="b-archive__month-item">
+						<h2 class="b-archive__month-title">октябрь 2012</h2>
+						<ul class="b-archive__entry-list b-list">
+							<li>
+								<a href="#">Бейонсе Ноулз, Сальма Хайек возглавили кампанию Gucci по продвижению
+									интересов женщин</a><span class="b-list__counter">(38)</span>
+							</li>
+							<li>
+								<a href="#">Бейонсе Ноулз, Сальма Хайек возглавили кампанию Gucci по продвижению
+									интересов женщин</a><span class="b-list__counter">(38)</span>
+							</li>
+							<li>
+								<a href="#">Бейонсе Ноулз, Сальма Хайек возглавили кампанию Gucci по продвижению
+									интересов женщин</a><span class="b-list__counter">(38)</span>
+							</li>
+							<li>
+								<a href="#">Бейонсе Ноулз, Сальма Хайек возглавили кампанию Gucci по продвижению
+									интересов женщин</a><span class="b-list__counter">(38)</span>
+							</li>
+							<li>
+								<a href="#">Бейонсе Ноулз, Сальма Хайек возглавили кампанию Gucci по продвижению
+									интересов женщин</a><span class="b-list__counter">(38)</span>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</section>
+
+
+	</div>
+
+{% endblock %}

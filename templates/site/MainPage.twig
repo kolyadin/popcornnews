@@ -1,0 +1,725 @@
+{% extends '/GenericInner.twig' %}
+
+{% block head %}
+    <title>Новостной блог о звездах кино - popcornnews</title>
+
+    <meta name="description" content="Новостной блог" />
+    <meta name="keywords"    content="попкорнньюз, popcornnews, блог звезды, новости звезд, звездные новости" />
+
+    {# Эти js нужны только для главной страницы #}
+    <script type="text/javascript" src="/st/js/news_gallery.js"></script>
+    <script type="text/javascript" src="/st/js/freeze_gallery.js"></script>
+    <script type="text/javascript" src="/st/js/main.js"></script>
+
+    <script>
+        $.fn.HasScrollBar = function() {
+            //note: clientHeight= height of holder
+            //scrollHeight= we have content till this height
+            var _elm = $(this)[0];
+            var _hasScrollBar = false;
+            if ((_elm.clientHeight < _elm.scrollHeight) || (_elm.clientWidth < _elm.scrollWidth)) {
+                _hasScrollBar = true;
+            }
+            return _hasScrollBar;
+        }
+
+        $(function(){
+
+            // -- Динамически уменьшает блок
+
+            var tcBlock   = $('.b-top-corn__large-right-block');
+            var tcBlockH2 = tcBlock.find('h2:eq(0)');
+            var tcBlockA  = tcBlockH2.find('a');
+
+            var fSize    = 48;
+            var lHeight = 1.08;
+            var iter    = 0;
+
+            while (tcBlock.HasScrollBar()){
+
+                if (iter%2 == 0){
+                    fSize-=2;
+                } else {
+                    lHeight-=0.04;
+                }
+
+                tcBlockH2.css('line-height',lHeight);
+                tcBlockA.css('font-size',fSize+'px');
+
+                iter++;
+            }
+
+            // --
+
+        })
+    </script>
+{% endblock %}
+
+{% block content %}
+
+{% set topPost = topCornNews[0] %}
+
+<section class="b-top-corn clearfix b-grid__c12">
+    <div class="b-top-corn__large">
+        <div class="b-top-corn__large-news b-top-corn__large-news_active clearfix" id="b-top-corn__large-news_0">
+            <div class="b-grid__g8">
+                <a href="/news/{{ topPost.id }}" title="{{ topPost.name|e }}" class="b-top-corn__large-photo">
+                    <img src="/st/img/content/large_front.jpg" alt="" />
+                </a>
+            </div>
+
+            {# Ограничиваем размер анонса (высота блока довольно маленькая и фиксированная) #}
+            {% set topPostAnnounce = topPost.announce|length > 100 ? topPost.announce|slice(0,100) ~ '...' : topPost.announce %}
+
+            <div class="b-grid__g4 b-top-corn__large-right-block">
+                <h1 class="b-top-corn__rubrics-title b-rubrics-title b-rubrics-title_s30">топ-корн</h1>
+                <h2 class="b-top-corn__large-news-title"><a href="/news/{{ topPost.id }}">{{ topPost.name|e }}</a></h2>
+                <h3 class="b-top-corn__large-news-lead">{{ topPostAnnounce }}</h3>
+                <div class="b-top-corn__large-news-comments b-comments-status b-comments-status_large">
+                    <a href="/news/{{ topPost.id }}#comments" class="b-comments-status__num">{{ topPost.comments }}</a>
+                    <div class="b-comments-status__title">ком-<br />мента-<br />риев</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <ul class="b-top-corn__short-news clearfix">
+
+        {% for post in topCornNews|slice(1) %}
+
+            <li class="b-grid__g2" data-url="./ajax/gallery2.html">
+                <div class="b-top-corn__short-news-container {% if loop.first %} b-top-corn__short-news-container_first {% endif %}" >
+                    <h2 class="b-top-corn__short-news-title"><a href="/news/{{ post.id }}" title="{{ post.name|e }}">{{ post.name|e }}</a></h2>
+                    <a href="#" class="b-top-corn__short-news-comments b-comments-status">
+                        <span class="b-comments-status__num">{{ post.comments }}</span>
+                        <span class="b-comments-status__title">комменария</span>
+                    </a>
+                </div>
+            </li>
+
+        {% endfor %}
+
+    </ul>
+</section>
+
+<section class="b-full-width-advert b-grid__g12 clearfix">
+    <a href="#"><img src="/st/img/content/large_advert.jpg" alt="" /></a>
+</section>
+
+<section class="b-center-column clearfix">
+    <ul class="b-column-news">
+        <li class="b-grid__g2">
+            <a href="#" class="b-column-news__head">
+                <img src="/st/img/content/phs1.jpg" alt="" />
+            </a>
+            <div class="b-column-news__body">
+                <h2 class="b-column-news__title"><a href="#">Рианна подала в суд на своих бухгалтеров</a></h2>
+                <p class="b-column-news__text">Рианна вчера подала иск на своих бухгалтеров в суд города Нью-Йорк, обвиняя их в том, что певица потеряла миллионы долларов по их вине.</p>
+                <a href="#" class="b-column-news__comments b-comments-status">
+                    <span class="b-comments-status__num">734</span>
+                    <span class="b-comments-status__title">комменария</span>
+                </a>
+            </div>
+        </li>
+        <li class="b-grid__g2">
+            <a href="#" class="b-column-news__head">
+                <img src="/st/img/content/phs2.jpg" alt="" />
+            </a>
+            <div class="b-column-news__body">
+                <h2 class="b-column-news__title"><a href="#">Линдсей Лохан отметила День независимости с Джемсом Дином</a></h2>
+                <p class="b-column-news__text">Кажется, звезда фильмов для взрослых Джемс Дин и скандальная актриса Линдсей Лохан действительно подружились: их видели вместе покидающими вечеринку на День независимости.</p>
+                <a href="#" class="b-column-news__comments b-comments-status">
+                    <span class="b-comments-status__num">734</span>
+                    <span class="b-comments-status__title">комменария</span>
+                </a>
+            </div>
+        </li>
+        <li class="b-grid__g2">
+            <a href="#" class="b-column-news__head">
+                <img src="/st/img/content/phs3.jpg" alt="" />
+            </a>
+            <div class="b-column-news__body">
+                <h2 class="b-column-news__title"><a href="#">«Новый Человек-паук» станет трилогией</a></h2>
+                <p class="b-column-news__text">Студия Columbia Pictures анонсировала, что на экраны выйдет еще 2 части фантастического экшна «Новый Человек-паук», тем самым подтвердив создание полноценной трилогии.</p>
+                <a href="#" class="b-column-news__comments b-comments-status">
+                    <span class="b-comments-status__num">734</span>
+                    <span class="b-comments-status__title">комменария</span>
+                </a>
+            </div>
+        </li>
+        <li class="b-grid__g2">
+            <a href="#" class="b-column-news__head">
+                <img src="/st/img/content/phs4.jpg" alt="" />
+            </a>
+            <div class="b-column-news__body">
+                <h2 class="b-column-news__title"><a href="#">Близнецы Уизли будут покорять Голливуд</a></h2>
+                <p class="b-column-news__text">Оливер и Джеймс Фелпсы, известные по фильмам о Гарри Поттере, где они играли близнецов Уизли, наконец вернули свой естественный цвет волос и теперь собираются покорять Голливуд.</p>
+                <a href="#" class="b-column-news__comments b-comments-status">
+                    <span class="b-comments-status__num">734</span>
+                    <span class="b-comments-status__title">комменария</span>
+                </a>
+            </div>
+        </li>
+        <li class="b-grid__g2">
+            <a href="#" class="b-column-news__head">
+                <img src="/st/img/content/phs5.jpg" alt="" />
+            </a>
+            <div class="b-column-news__body">
+                <h2 class="b-column-news__title"><a href="#">Стильный питомец Алессандры Амбросио</a></h2>
+                <p class="b-column-news__text">Алессандра Амбросио внимательно относится не только к собственной внешности, но и к тому, как выглядит ее домашний питомец. Вчера модель отправилась на ужин с мужем, прихватив с собой любимого щенка. Собачка была выкрашена в розовый и фиолетовый цвета.</p>
+                <a href="#" class="b-column-news__comments b-comments-status">
+                    <span class="b-comments-status__num">734</span>
+                    <span class="b-comments-status__title">комменария</span>
+                </a>
+            </div>
+        </li>
+        <li class="b-grid__g2">
+            <a href="#" class="b-column-news__head">
+                <img src="/st/img/content/phs6.jpg" alt="" />
+            </a>
+            <div class="b-column-news__body">
+                <h2 class="b-column-news__title"><a href="#">Бритни Спирс на Мауи демонстрирует свою фигуру</a></h2>
+                <p class="b-column-news__text">Бритни Спирс постепенно возвращает себе былую форму. На фотографии, которую певица выложила в Твиттер, можно заметить, что ее фигура снова становится весьма привлекательной.</p>
+                <a href="#" class="b-column-news__comments b-comments-status">
+                    <span class="b-comments-status__num">734</span>
+                    <span class="b-comments-status__title">комменария</span>
+                </a>
+            </div>
+        </li>
+    </ul>
+</section>
+
+<section class="b-freeze-frame">
+    <script type="text/javascript">
+        var freezeList = [{"header":"Зак Эфрон, Кайли Миноуг, Крис Хемсворт, Кэти Перри и другие","photos":[{"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t1.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t2.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t3.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t4.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t5.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t6.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t7.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t8.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t9.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t10.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t11.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t12.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t1.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t2.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t3.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t4.jpg","link":"#"}]}, {"header":"Знаменитости, изменившие свое имя","photos":[{"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t1.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t2.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t3.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t4.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t5.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t6.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t7.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t8.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t9.jpg","link":"#"}]}, {"header":"Эволюция волос Майли Сайрус","photos":[{"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t1.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t2.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t3.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t4.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t5.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t6.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t7.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t8.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t9.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t10.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t11.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t12.jpg","link":"#"}]}, {"header":"Фото знаменитостей из полицейских участков","photos":[{"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t12.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t7.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t8.jpg","link":"#"}]}],
+                currentFreezeInList = 0;
+    </script>
+    <div class="b-freeze-frame__top clearfix loaded">
+        <div class="b-grid__g4">
+            <div class="b-freeze-frame__title-cont">
+                <h1 class="b-freeze-frame__rubrics-title b-rubrics-title b-rubrics-title_s24">Стоп-кадр</h1>
+                <div class="b-freeze-frame__title-arrows-cont b-title-arrows">
+                    <div class="b-title-arrows__arrow b-title-arrows__arrow_left"></div>
+                    <div class="b-title-arrows__arrow b-title-arrows__arrow_right"></div>
+                </div>
+            </div>
+            <h2 class="b-freeze-frame__news-title"></h2>
+        </div>
+        <div class="b-grid__g8">
+            <section class="b-freeze-frame__gallery">
+                <ul>
+                    <!--<li><a href="#"><img src="/st/img/tmp/t1.jpg" alt="" /></a></li>
+                    <li><a href="#"><img src="/st/img/tmp/t2.jpg" alt="" /></a></li>
+                    <li><a href="#"><img src="/st/img/tmp/t3.jpg" alt="" /></a></li>
+                    <li><a href="#"><img src="/st/img/tmp/t4.jpg" alt="" /></a></li>
+                    <li><a href="#"><img src="/st/img/tmp/t5.jpg" alt="" /></a></li>
+                    <li><a href="#"><img src="/st/img/tmp/t6.jpg" alt="" /></a></li>
+                    <li><a href="#"><img src="/st/img/tmp/t7.jpg" alt="" /></a></li>
+                    <li><a href="#"><img src="/st/img/tmp/t8.jpg" alt="" /></a></li>
+                    <li><a href="#"><img src="/st/img/tmp/t9.jpg" alt="" /></a></li>
+                    <li><a href="#"><img src="/st/img/tmp/t10.jpg" alt="" /></a></li>
+                    <li><a href="#"><img src="/st/img/tmp/t11.jpg" alt="" /></a></li>
+                    <li><a href="#"><img src="/st/img/tmp/t12.jpg" alt="" /></a></li>
+                    <li><a href="#"><img src="/st/img/tmp/t1.jpg" alt="" /></a></li>
+                    <li><a href="#"><img src="/st/img/tmp/t2.jpg" alt="" /></a></li>
+                    <li><a href="#"><img src="/st/img/tmp/t3.jpg" alt="" /></a></li>
+                    <li><a href="#"><img src="/st/img/tmp/t4.jpg" alt="" /></a></li>
+                    <li><a href="#"><img src="/st/img/tmp/t5.jpg" alt="" /></a></li>
+                    <li><a href="#"><img src="/st/img/tmp/t6.jpg" alt="" /></a></li>
+                    <li><a href="#"><img src="/st/img/tmp/t7.jpg" alt="" /></a></li>
+                    <li><a href="#"><img src="/st/img/tmp/t8.jpg" alt="" /></a></li>
+                    <li><a href="#"><img src="/st/img/tmp/t9.jpg" alt="" /></a></li>
+                    <li><a href="#"><img src="/st/img/tmp/t10.jpg" alt="" /></a></li>
+                    <li><a href="#"><img src="/st/img/tmp/t11.jpg" alt="" /></a></li>
+                    <li><a href="#"><img src="/st/img/tmp/t12.jpg" alt="" /></a></li>  -->
+                </ul>
+
+                <a href="#" class="b-freeze-frame__gallery-link">&gt;</a>
+            </section>
+        </div>
+    </div>
+    <div class="b-freeze-frame__body clearfix">
+        <div class="b-grid__g4">
+            <section class="b-freeze-frame__persons clearfix">
+                <div class="b-freeze-frame__rubrics-title-cont">
+                    <div class="b-freeze-frame__persons-rubrics-title b-rubrics-title b-rubrics-title_s18">персоны</div>
+                    <span class="b-freeze-frame__rubrics-counter b-counter">275</span>
+                </div>
+                <div class="b-grid__g2 b-grid__a">
+                    <ul class="b-freeze-frame__list">
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color1">Lady GaGa</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Анджелина Джоли</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color2">Бейонсе Ноулз</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Бритни Спирс</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color4">Брэд Питт</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Виктория Бэкхем</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color5">Дженнифер Лопес</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Дженнифер Энистон</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color6">Джессика Альба</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Джонни Депп</a></li>
+                    </ul>
+                </div>
+                <div class="b-grid__g2 b-grid__z">
+                    <ul class="b-freeze-frame__list">
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color7">Ким Кардашиан</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Кристен Стюарт</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color8">Кэти Перри</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Линдсей Лохан</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color1">Мадонна</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Майли Сайрус</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color2">Пэрис Хилтон</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Рианна</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color4">Роберт Паттинсон</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Тэйлор Лотнер</a></li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+        <div class="b-grid__g4">
+            <section class="b-freeze-frame__tags">
+                <div class="b-freeze-frame__rubrics-title-cont">
+                    <div class="b-freeze-frame__tags-rubrics-title b-rubrics-title b-rubrics-title_s18">теги</div>
+                </div>
+                <div class="b-grid__g2 b-grid__a">
+                    <ul class="b-freeze-frame__list">
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color1">Благотворительность</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color2">Болезнь</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Видео</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color4">Дети</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color8">Дни Рождения</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color7">Другие светские мероприятия</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color5">Животные</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color4">Записки Мидды Пипплтон</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Интервью</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color2">Интересные штучки</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color1">Книги / комиксы</a></li>
+                    </ul>
+                </div>
+                <div class="b-grid__g2 b-grid__z">
+                    <ul class="b-freeze-frame__list">
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color1">Монархи</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">О сайте попкорнnews</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color4">Развод, разрыв, измены</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Рекламная кампания</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color8">Самые-самые</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color5">Свадьба, помолвка</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color2">Скандалы и события</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color7">Смерть</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color6">Спорт</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color4">Фестивали и премии</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color1">Фотосессии</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Юмор</a></li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+        <div class="b-grid__g4">
+            <section class="b-freeze-frame__groups">
+                <div class="b-freeze-frame__rubrics-title-cont">
+                    <div class="b-freeze-frame__groups-rubrics-title b-rubrics-title b-rubrics-title_s18">группы</div>
+                    <span class="b-freeze-frame__rubrics-counter b-counter">889</span>
+                    <a href="#" class="b-freeze-frame__rubrics-create-button b-create-button"><b>+</b>создать</a>
+                </div>
+                <div class="b-grid__g2 b-grid__a">
+                    <ul class="b-freeze-frame__list">
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color1">Harry Potter</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Jared Leto</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color6">Kristen Stewart</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color8">Nina Dobrev</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Taylor Lautner</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color2">The Best Vampire and Jared Leto</a></li>
+                    </ul>
+                </div>
+                <div class="b-grid__g2 b-grid__z">
+                    <ul class="b-freeze-frame__list">
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color1">The Vampire Diaries</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Twilight</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color5">СЕРИАЛЫ 2000-х ГОДОВ</a></li>
+                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Самые красивые актеры и певцы</a></li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </div>
+
+</section>
+
+<section class="b-photo-articles clearfix">
+    <div class="b-photo-articles__title-cont b-grid__g12">
+        <h1 class="b-photo-articles__title b-rubrics-title b-rubrics-title_s24">Фото-статьи</h1>
+        <span class="b-photo-articles__counter b-counter">5941</span>
+    </div>
+
+    <div class="b-grid__g4">
+        <a href="#" class="b-photo-articles__photo-cont"><img src="/st/img/content/large_front.jpg" alt="" /></a>
+        <div class="b-photo-articles__photo-count">3 фотографии</div>
+        <h2 class="b-photo-articles__news-title"><a href="#">Голлисвудский роман Николь Кидман и Тома Круза</a></h2>
+    </div>
+    <div class="b-grid__g4">
+        <a href="#" class="b-photo-articles__photo-cont"><img src="/st/img/content/large_front.jpg" alt="" /></a>
+        <div class="b-photo-articles__photo-count">17 фотографий</div>
+        <h2 class="b-photo-articles__news-title"><a href="#">Миллионы Тэйлор Свифт</a></h2>
+    </div>
+    <div class="b-grid__g4">
+        <a href="#" class="b-photo-articles__photo-cont"><img src="/st/img/content/large_front.jpg" alt="" /></a>
+        <div class="b-photo-articles__photo-count">67 фотографий</div>
+        <h2 class="b-photo-articles__news-title"><a href="#">Эволюция тела Майкла Фелпса</a></h2>
+    </div>
+
+</section>
+
+<div class="b-grid__c12 b-fashion-line clearfix">
+    <div class="b-grid__g6">
+        <ul class="b-column-news clearfix">
+            <li class="b-grid__g2 b-grid__a">
+                <a href="#" class="b-column-news__head">
+                    <img src="/st/img/content/large_front.jpg" alt="" />
+                </a>
+                <div class="b-column-news__body">
+                    <h2 class="b-column-news__title"><a href="#">Christian Louboutin создал туфли Золушки для Disney</a></h2>
+                    <p class="b-column-news__text">Легендарный дизайнер обуви Кристиан Лубутен создал оригинальные туфли для компании Disney. Он воплотил в жизнь сказочные туфельки Золушки.</p>
+                    <a href="#" class="b-column-news__comments b-comments-status">
+                        <span class="b-comments-status__num">734</span>
+                        <span class="b-comments-status__title">комменария</span>
+                    </a>
+                </div>
+            </li>
+            <li class="b-grid__g2">
+                <a href="#" class="b-column-news__head">
+                    <img src="/st/img/content/large_front.jpg" alt="" />
+                </a>
+                <div class="b-column-news__body">
+                    <h2 class="b-column-news__title"><a href="#">Кэти Холмс готовила свой "побег" от Тома Круза несколько месяцев</a></h2>
+                    <p class="b-column-news__text">Новость о том, что Кэти Холмс подала на развод застала в расплох не только поклонников пары, но и самого Тома Круза. Оказывается, актриса тайно готовилась к своему "побегу" от мужа несколько месяцев.</p>
+                    <a href="#" class="b-column-news__comments b-comments-status">
+                        <span class="b-comments-status__num">734</span>
+                        <span class="b-comments-status__title">комменария</span>
+                    </a>
+                </div>
+            </li>
+            <li class="b-grid__g2 b-grid__z">
+                <a href="#" class="b-column-news__head">
+                    <img src="/st/img/content/large_front.jpg" alt="" />
+                </a>
+                <div class="b-column-news__body">
+                    <h2 class="b-column-news__title"><a href="#">Бен Стиллер на гавайском пляже с семьей</a></h2>
+                    <p class="b-column-news__text">Бен Стиллер выкроил в плотном съемочном графике время для отдыха с семьей на Гавайях.</p>
+                    <a href="#" class="b-column-news__comments b-comments-status">
+                        <span class="b-comments-status__num">734</span>
+                        <span class="b-comments-status__title">комменария</span>
+                    </a>
+                </div>
+            </li>
+        </ul>
+
+        <ul class="b-column-news clearfix">
+            <li class="b-grid__g2 b-grid__a">
+                <a href="#" class="b-column-news__head">
+                    <img src="/st/img/content/large_front.jpg" alt="" />
+                </a>
+                <div class="b-column-news__body">
+                    <h2 class="b-column-news__title"><a href="#">Первый кадр «Элизиума» с Мэттом Дэймоном в главной роли</a></h2>
+                    <p class="b-column-news__text">В интернете появился первый официальный кадр из фантастической драмы Нила Бломкампа «Элизиум». На снимке изображен воинственный и лысый Мэтт Дэймон.</p>
+                    <a href="#" class="b-column-news__comments b-comments-status">
+                        <span class="b-comments-status__num">734</span>
+                        <span class="b-comments-status__title">комменария</span>
+                    </a>
+                </div>
+            </li>
+            <li class="b-grid__g2">
+                <a href="#" class="b-column-news__head">
+                    <img src="/st/img/content/large_front.jpg" alt="" />
+                </a>
+                <div class="b-column-news__body">
+                    <h2 class="b-column-news__title"><a href="#">Дженнифер Энистон не стремится к идеальной жизни</a></h2>
+                    <p class="b-column-news__text">Многие считают, что жизнь звезд великолепна и безупречна. Но Дженнифер Энистон в недавнем интервью заявила, что идеальная жизнь это всего лишь клише.</p>
+                    <a href="#" class="b-column-news__comments b-comments-status">
+                        <span class="b-comments-status__num">734</span>
+                        <span class="b-comments-status__title">комменария</span>
+                    </a>
+                </div>
+            </li>
+            <li class="b-grid__g2 b-grid__z">
+                <a href="#" class="b-column-news__head">
+                    <img src="/st/img/content/large_front.jpg" alt="" />
+                </a>
+                <div class="b-column-news__body">
+                    <h2 class="b-column-news__title"><a href="#">Кэтрин Зета-Джонс на пляже с семьей</a></h2>
+                    <p class="b-column-news__text">Кэтрин Зета-Джонс провела день со своими родными на пляже в Малибу. Она наблюдала за тем, как веселятся ее дети и даже сделала несколько фото на память.</p>
+                    <a href="#" class="b-column-news__comments b-comments-status">
+                        <span class="b-comments-status__num">734</span>
+                        <span class="b-comments-status__title">комменария</span>
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="b-grid__g6 clearfix">
+        <section class="b-fashion-battle">
+            <div class="b-fashion-battle__title-cont">
+                <h1 class="b-fashion-battle__rubrics-title b-rubrics-title b-rubrics-title_s30">Fashion battle <span class="b-fashion-battle__rubrics-number">№273</span></h1>
+                <div class="b-fashion-battle__title-arrows-cont b-title-arrows">
+                    <div class="b-title-arrows__arrow b-title-arrows__arrow_left"></div>
+                    <div class="b-title-arrows__arrow b-title-arrows__arrow_right"></div>
+                </div>
+            </div>
+            <h2 class="b-fashion-battle__news-title"><a href="#">Моника Беллуччи и Мадонна</a></h2>
+            <h3 class="b-fashion-battle__news-description">Кто лучше в этом платье?</h3>
+            <div class="b-fashion-battle__photo-cont clearfix">
+                <img src="/st/img/content/compare_img.jpg" alt="" class="b-fashion-battle__img" />
+            </div>
+        </section>
+    </div>
+</div>
+
+<div class="b-poll-line clearfix">
+    <div class="b-grid__g4">
+        <section class="b-create-your-style">
+            <div class="b-create-your-style__rubrics-title b-rubrics-title b-rubrics-title_s24">cоздай свой стиль</div>
+            <div class="b-create-your-style__body clearfix">
+                <div class="b-create-your-style__text">Смешивай и комбинируй различные вещи, чтобы создать свой собственный и неповторимый стиль</div>
+                <a href="#" class="b-create-your-style__link b-firm-grad">&gt;</a>
+            </div>
+        </section>
+    </div>
+    <div class="b-grid__g4">
+        <section class="b-star-childrens">
+            <a href="#" class="b-star-childrens__link">
+                <img src="/st/img/content/large_front.jpg" alt="" class="b-star-childrens__img" />
+                <div class="b-star-childrens__news-title">Звёздные дети: Лилли Роуз Мэлоди Депп</div>
+            </a>
+        </section>
+    </div>
+    <div class="b-grid__g4">
+        <section class="b-main-poll">
+            <div class="b-main-poll__title b-rubrics-title b-rubrics-title_s20">Какую пару вы бы хотели снова видеть вместе?</div>
+            <div class="b-main-poll__body">
+                <form>
+                    <ul class="b-main-poll__answers-list">
+                        <li class="b-main-poll__answers-item">
+                            <div class="b-main-poll__answers-radio-cont"><input type="radio" name="main-poll" id="main-poll1" /></div>
+                            <div class="b-main-poll__answers-text-cont">
+                                <div class="b-main-poll__answers-result" style="width: 75%"></div>
+                                <label for="main-poll1" class="b-main-poll__answers-text">Джонни Депп - Ванесса Паради</label>
+                            </div>
+                        </li>
+                        <li class="b-main-poll__answers-item">
+                            <div class="b-main-poll__answers-radio-cont"><input type="radio" name="main-poll" id="main-poll2" /></div>
+                            <div class="b-main-poll__answers-text-cont">
+                                <div class="b-main-poll__answers-result" style="width: 45%"></div>
+                                <label for="main-poll1" class="b-main-poll__answers-text">Том Круз - Кэти Холмс</label>
+                            </div>
+                        </li>
+                        <li class="b-main-poll__answers-item">
+                            <div class="b-main-poll__answers-radio-cont"><input type="radio" name="main-poll" id="main-poll3" /></div>
+                            <div class="b-main-poll__answers-text-cont">
+                                <div class="b-main-poll__answers-result" style="width: 105%"></div>
+                                <label for="main-poll1" class="b-main-poll__answers-text">Эштон Кутчер - Деми Мур</label>
+                            </div>
+                        </li>
+                        <li class="b-main-poll__answers-item">
+                            <div class="b-main-poll__answers-radio-cont"><input type="radio" name="main-poll" id="main-poll4" /></div>
+                            <div class="b-main-poll__answers-text-cont">
+                                <div class="b-main-poll__answers-result" style="width: 55%"></div>
+                                <label for="main-poll1" class="b-main-poll__answers-text">Дженнифер Лопес - Марк Энтони</label>
+                            </div>
+                        </li>
+                        <li class="b-main-poll__answers-item">
+                            <div class="b-main-poll__answers-radio-cont"><input type="radio" name="main-poll" id="main-poll5" /></div>
+                            <div class="b-main-poll__answers-text-cont">
+                                <div class="b-main-poll__answers-result" style="width: 35%"></div>
+                                <label for="main-poll1" class="b-main-poll__answers-text">Хайди Клум - Сил</label>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div class="b-main-poll__bottom">
+                        <input type="submit" value="ответить" class="b-main-poll__submit b-firm-grad" />
+                        <a href="#" class="b-main-poll__previous">предыдущие опросы &gt;</a>
+                    </div>
+
+                </form>
+            </div>
+        </section>
+    </div>
+</div>
+
+<section class="b-more-column-news clearfix">
+    <ul class="b-column-news">
+        <li class="b-grid__g2">
+            <a href="#" class="b-column-news__head">
+                <img src="/st/img/content/phs1.jpg" alt="" />
+            </a>
+            <div class="b-column-news__body">
+                <h2 class="b-column-news__title"><a href="#">Кейт Мосс и Наоми Кэмпбелл выступят на закрытии Олимпийских игр</a></h2>
+                <p class="b-column-news__text">Осталось всего десять дней до начала летних Олимпийских игр в Лондоне. Организаторы постарались, чтобы это спортивное событие запомнилось. К примеру, на закрытии Олимпиады ожидается модное шоу с участием знаменитейших британских моделей Кейт Мосс, Наоми Кэмпбелл, Роузи Хантингтон-Уайтли, Лили Коул и других.</p>
+                <a href="#" class="b-column-news__comments b-comments-status">
+                    <span class="b-comments-status__num">734</span>
+                    <span class="b-comments-status__title">комменария</span>
+                </a>
+            </div>
+        </li>
+        <li class="b-grid__g2">
+            <a href="#" class="b-column-news__head">
+                <img src="/st/img/content/phs2.jpg" alt="" />
+            </a>
+            <div class="b-column-news__body">
+                <h2 class="b-column-news__title"><a href="#">Алекса Вега подала на развод</a></h2>
+                <p class="b-column-news__text">Звезда фильмов "Дети шпионов" Алекса Вега подала на развод со своим мужем продюсером Шоном Ковелом.</p>
+                <a href="#" class="b-column-news__comments b-comments-status">
+                    <span class="b-comments-status__num">734</span>
+                    <span class="b-comments-status__title">комменария</span>
+                </a>
+            </div>
+        </li>
+        <li class="b-grid__g2">
+            <a href="#" class="b-column-news__head">
+                <img src="/st/img/content/phs3.jpg" alt="" />
+            </a>
+            <div class="b-column-news__body">
+                <h2 class="b-column-news__title"><a href="#">Лейтон Мистер в журнале Vogue Китай. Август 2012</a></h2>
+                <p class="b-column-news__text">Лейтон Мистер приняла участие в фотосессии для китайского Vogue. Она появилась на страницах августовского выпуска.</p>
+                <a href="#" class="b-column-news__comments b-comments-status">
+                    <span class="b-comments-status__num">734</span>
+                    <span class="b-comments-status__title">комменария</span>
+                </a>
+            </div>
+        </li>
+        <li class="b-grid__g2">
+            <a href="#" class="b-column-news__head">
+                <img src="/st/img/content/phs4.jpg" alt="" />
+            </a>
+            <div class="b-column-news__body">
+                <h2 class="b-column-news__title"><a href="#">Линия пижам с изображением Джастина Бибера изъята из продажи</a></h2>
+                <p class="b-column-news__text">Миллионы девушек сгорают от любви к Джастину Биберу, но, надевая пижаму с изображением любимого певца, они рискуют сгореть по-настоящему.</p>
+                <a href="#" class="b-column-news__comments b-comments-status">
+                    <span class="b-comments-status__num">734</span>
+                    <span class="b-comments-status__title">комменария</span>
+                </a>
+            </div>
+        </li>
+        <li class="b-grid__g2">
+            <a href="#" class="b-column-news__head">
+                <img src="/st/img/content/phs5.jpg" alt="" />
+            </a>
+            <div class="b-column-news__body">
+                <h2 class="b-column-news__title"><a href="#">Новый аромат Бейонсе Midnight Heat</a></h2>
+                <p class="b-column-news__text">Продолжая свою серию парфюма, Бейонсе выпустила новый аромат Midnight Heat. Он описывается как дразнящий, чувственный и таинственный, необходимый аксессуар, чтобы выделить ваше внутреннее сияние, почувствовать уверенность в себе и сексуальную привлекательность.</p>
+                <a href="#" class="b-column-news__comments b-comments-status">
+                    <span class="b-comments-status__num">734</span>
+                    <span class="b-comments-status__title">комменария</span>
+                </a>
+            </div>
+        </li>
+        <li class="b-grid__g2">
+            <div class="b-column-news__head"></div>
+            <a href="#" class="b-column-news__more-news">ещё <br />новости</a>
+        </li>
+    </ul>
+</section>
+
+<section class="b-conversation clearfix">
+    <h1 class="b-conversation__rubrics-title b-rubrics-title b-rubrics-title_s48">общение <span class="b-conversation__rubrics-title-selection">:)</span></h1>
+
+    <div class="b-grid__g4">
+        <div class="b-conversation__top">
+            <div class="b-conversation__user-counter">
+                <div class="b-conversation__user-count">462</div>
+                <div class="b-conversation__user-title">пользователя</div>
+                <a href="#" class="b-conversation__user-online b-firm-grad">online</a>
+            </div>
+        </div>
+        <div class="b-conversation__about-rubrics-title b-rubrics-title b-rubrics-title_s24">обсуждения звёзд</div>
+        <ul class="b-conversation__about-list">
+            <li class="b-conversation__about-item">
+                <div class="b-conversation__about-hero">Брэд Питт:</div>
+                <a href="#" class="b-conversation__about-hero-room">Посиделки у Брэда <span class="b-conversation__about-hero-counter b-counter">204957</span></a>
+            </li>
+            <li class="b-conversation__about-item">
+                <div class="b-conversation__about-hero">Роберт Паттинсон:</div>
+                <a href="#" class="b-conversation__about-hero-room">"Мой личный сорт героина" <span class="b-conversation__about-hero-counter b-counter">5941</span></a>
+            </li>
+            <li class="b-conversation__about-item">
+                <div class="b-conversation__about-hero">Роберт Паттинсон:</div>
+                <a href="#" class="b-conversation__about-hero-room">Интерактивная фото-развлекуха <span class="b-conversation__about-hero-counter b-counter">292</span></a>
+            </li>
+            <li class="b-conversation__about-item">
+                <div class="b-conversation__about-hero">Джеймс МакЭвой:</div>
+                <a href="#" class="b-conversation__about-hero-room">Фильм "Пенелопа" <span class="b-conversation__about-hero-counter b-counter">224792</span></a>
+            </li>
+            <li class="b-conversation__about-item">
+                <div class="b-conversation__about-hero">Йен Сомерхалдер:</div>
+                <a href="#" class="b-conversation__about-hero-room">Самые свежие новости "ДВ" <span class="b-conversation__about-hero-counter b-counter">4114</span></a>
+            </li>
+        </ul>
+    </div>
+    <div class="b-grid__g8">
+        <div class="b-conversation__top">
+            <div class="b-conversation__flood-rubrics-title b-rubrics-title b-rubrics-title_s24">болталка</div>
+        </div>
+        <ul class="b-conversation__flood-list clearfix">
+            <li class="b-conversation__flood-item b-grid__g2 b-grid__a">
+                <a href="#" class="b-conversation__flood-user-cont">
+                    <img src="/st/img/content/large_front.jpg" alt="" class="b-conversation__flood-user-avatar" />
+                    <div class="b-conversation__flood-user-name">nastem</div>
+                </a>
+                <a href="#" class="b-conversation__flood-post-link">Куда бы вы поехали..если бы знали что скоро умрёте <span class="b-conversation__flood-post-counter b-counter">56</span></a>
+            </li>
+            <li class="b-conversation__flood-item b-grid__g2">
+                <a href="#" class="b-conversation__flood-user-cont">
+                    <img src="/st/img/content/large_front.jpg" alt="" class="b-conversation__flood-user-avatar" />
+                    <div class="b-conversation__flood-user-name">smie</div>
+                </a>
+                <a href="#" class="b-conversation__flood-post-link">Что же такого сказала Перри о России??? <span class="b-conversation__flood-post-counter b-counter">3</span></a>
+            </li>
+            <li class="b-conversation__flood-item b-grid__g2">
+                <a href="#" class="b-conversation__flood-user-cont">
+                    <img src="/st/img/content/large_front.jpg" alt="" class="b-conversation__flood-user-avatar" />
+                    <div class="b-conversation__flood-user-name">Mr.GaGa</div>
+                </a>
+                <a href="#" class="b-conversation__flood-post-link">Когда деревья были большими... <span class="b-conversation__flood-post-counter b-counter">235</span></a>
+            </li>
+            <li class="b-conversation__flood-item b-grid__g2  b-grid__z">
+                <a href="#" class="b-conversation__flood-user-cont">
+                    <img src="/st/img/content/large_front.jpg" alt="" class="b-conversation__flood-user-avatar" />
+                    <div class="b-conversation__flood-user-name">Black & White</div>
+                </a>
+                <a href="#" class="b-conversation__flood-post-link">Выражения учителей <span class="b-conversation__flood-post-counter b-counter">6</span></a>
+            </li>
+        </ul>
+        <ul class="b-conversation__flood-list clearfix">
+            <li class="b-conversation__flood-item b-grid__g2  b-grid__a">
+                <a href="#" class="b-conversation__flood-user-cont">
+                    <img src="/st/img/content/large_front.jpg" alt="" class="b-conversation__flood-user-avatar" />
+                    <div class="b-conversation__flood-user-name">nastem</div>
+                </a>
+                <a href="#" class="b-conversation__flood-post-link">Куда бы вы поехали..если бы знали что скоро умрёте <span class="b-conversation__flood-post-counter b-counter">56</span></a>
+            </li>
+            <li class="b-conversation__flood-item b-grid__g2">
+                <a href="#" class="b-conversation__flood-user-cont">
+                    <img src="/st/img/content/large_front.jpg" alt="" class="b-conversation__flood-user-avatar" />
+                    <div class="b-conversation__flood-user-name">smie</div>
+                </a>
+                <a href="#" class="b-conversation__flood-post-link">Что же такого сказала Перри о России??? <span class="b-conversation__flood-post-counter b-counter">3</span></a>
+            </li>
+            <li class="b-conversation__flood-item b-grid__g2">
+                <a href="#" class="b-conversation__flood-user-cont">
+                    <img src="/st/img/content/large_front.jpg" alt="" class="b-conversation__flood-user-avatar" />
+                    <div class="b-conversation__flood-user-name">Mr.GaGa</div>
+                </a>
+                <a href="#" class="b-conversation__flood-post-link">Когда деревья были большими... <span class="b-conversation__flood-post-counter b-counter">235</span></a>
+            </li>
+            <li class="b-conversation__flood-item b-grid__g2 b-grid__z">
+                <a href="#" class="b-conversation__flood-user-cont">
+                    <img src="/st/img/content/large_front.jpg" alt="" class="b-conversation__flood-user-avatar" />
+                    <div class="b-conversation__flood-user-name">Black & White</div>
+                </a>
+                <a href="#" class="b-conversation__flood-post-link">Выражения учителей <span class="b-conversation__flood-post-counter b-counter">6</span></a>
+            </li>
+
+        </ul>
+    </div>
+</section>
+
+{% endblock %}

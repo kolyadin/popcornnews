@@ -1,0 +1,8 @@
+	<ul class="b-inside__menu-secondlist">
+		<li {% if slim.path[3] is null %}class="active"{% endif %}>
+			<a href="/yourstyle/brands">все бренды</a>
+		</li>
+		<li {% if slim.path[3] == 'top' %}class="active"{% endif %}>
+			<a href="/yourstyle/brands/top">популярные</a>
+		</li>
+	</ul>

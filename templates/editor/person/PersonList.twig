@@ -1,0 +1,108 @@
+{% extends '/Generic.twig' %}
+
+{% block head %}
+    <title>Новости, сделай что-нибудь со мной</title>
+
+    <link rel="stylesheet" type="text/css" href="/editor/st/css/editor.css" />
+
+    <style>
+        .admin-panel {width: 1100px !important;}
+        .content-panel {width: 860px !important;}
+
+        .ui-tabs .ui-tabs-panel {padding:0;}
+
+    </style>
+
+    <script id="personsResultItems" type="text/x-jquery-tmpl">
+        <tr>
+            <td>
+                <a data-id="${id}" href="#" class="delete" title="Удалить персону"></a>
+                <a target="_blank" class="small black" href="http://www.popcornnews.ru/persons/Bla-Bla" title="Ссылка на сайте">www</a>
+            </td>
+            <td style="padding-left:10px;">
+                <a href="/editor/persons/${id}">${name}</a>
+            </td>
+            <td style="padding-left:10px;">${birthDateFriendly}</td>
+        </tr>
+    </script>
+
+    <script>
+        $(function(){
+
+            //Удаление новостей в списке
+            $(document).on('click','.items-list td a.delete',function(){
+
+                var obj = this;
+
+                if (confirm('Правда удалить?'))
+                {
+                    $.get('/editor/persons/quickRemove', {'personId': $(obj).attr('data-id')}, function (response) {
+
+                        if (response['status'] == 'success') {
+                            $(obj).parents('tr').hide('highlight', { 'color': '#c56e6e' });
+                        }
+
+                    }, 'json');
+                }
+
+                return false;
+            });
+
+            //Поиск новостей в списке при нажатии на enter
+            $('#persons-search').on('keypress',function(e){
+                if (e.keyCode == 13) {
+                    $.get('/editor/persons/quickSearch', { 'q' : $('#persons-search').val() }, function(persons){
+                        $('.items-list tr:gt(0)').remove();
+
+                        $('#personsResultItems').tmpl(persons).appendTo('.items-list');
+                    }, 'json');
+                }
+            });
+
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+
+    <div class="content-panel" id="content-tabs">
+        <ul>
+            <li><a href="/persons/">Персоны</a></li>
+            <li><a href="/editor/persons/new" onclick="document.location.href = '/editor/persons/new';">Создать персону</a></li>
+        </ul>
+
+        <div id="tabs-1" class="persons-list">
+            <p class="search-bar"><span>Поиск:</span>&nbsp;<input type="text" id="persons-search" style="width:500px;" data-default-value="Введите имя персоны или его часть" /></p>
+
+            <table class="items-list">
+                <tr>
+                    <th style="width:50px;">&nbsp;</th>
+                    <th style="width:75%;padding-left:10px;">Имя персоны</th>
+                    <th style="padding-left:10px;">Дата рождения</th>
+                </tr>
+
+                {% for person in persons %}
+
+                    <tr>
+                        <td>
+                            <a data-id="{{ person.id }}" href="#" class="delete" title="Удалить персону"></a>
+                            <a target="_blank" class="small black" href="http://www.popcornnews.ru/persons/Bla-Bla" title="Ссылка на сайте">www</a>
+                        </td>
+                        <td style="padding-left:10px;">
+                            <a href="/editor/persons/{{ person.id }}">{{ person.name|e }}</a>
+                        </td>
+                        <td style="padding-left:10px;">{{ person.birthDateFriendly|e }}</td>
+                    </tr>
+
+                {% endfor %}
+
+            </table>
+
+            <div class="pager">
+                <a href="/editor/persons">&larr;&nbsp;сюда</a>
+                <a href="/editor/persons">туда&nbsp;&rarr;</a>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

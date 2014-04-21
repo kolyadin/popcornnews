@@ -1,0 +1,92 @@
+.b-talks
+	width: 100%
+	border-collapse: collapse
+
+	tr td.last a
+		@extend a.pink
+	th
+		text-align: left
+		font-weight: normal
+		padding-bottom: 13px
+		border-bottom: 1px solid #e5e5e5
+		a
+			@extend a.pink-dotted
+	td
+		vertical-align: top
+		padding:
+			top: 10px
+			bottom: 13px
+		border-bottom: 1px solid #e5e5e5
+	.theme
+		width: 320px
+		padding-right: 1%
+		.date
+			font-size: 0.9em
+	.last
+		text-align: right
+		white-space: nowrap
+		width: 115px
+	.ava
+		float: left
+	.details
+		margin-left: 55px
+		a
+			@extend a.pink
+	h3
+		width: 280px
+		line-height: 18px
+		margin: 0
+		padding-bottom: 5px
+		a
+			font-weight: bold
+	.date
+		color: #7f7f7f
+	.new
+		background-color: #ffe1e1
+	.rating
+		vertical-align: middle
+		text-align: center
+		width: 53px
+		span
+			display: block
+			padding: 3px
+			width: 24px
+			background: url(/img/topic-rating-low-bg.gif) repeat-x left center
+			font-weight: bold
+			color: #fff
+			text-align: center
+			margin: 0 auto
+		.high
+			background: #f70080
+			color: #fff
+	.comments
+		vertical-align: middle
+		text-align: center
+		width: 50px
+		padding-right: 3%
+		span
+			display: block
+			padding: 3px
+			width: 30px
+			font-weight: bold
+			text-align: center
+			margin: 0 auto
+		.new
+			background: #f70080
+			color: #fff
+	.last
+		text-align: left
+		vertical-align: middle
+		.date
+			display: block
+
+
+.b-talk-topic
+	.topic-content
+		clear: both
+		margin-top: 20px
+		p
+			padding: 5px 10px
+			background-color: #{$grayColor}
+			font-size: 13px
+			line-height: 18px

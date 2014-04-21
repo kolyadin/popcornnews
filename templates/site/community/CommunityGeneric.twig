@@ -1,0 +1,44 @@
+{% extends '/GenericInner.twig' %}
+
+{% block content %}
+
+	<div class="b-grid__g8 b-community">
+		<h1>Группы</h1>
+
+		<section class="b-inside__menu mg-top-xl">
+			<ul class="b-inside__menu-firstlist">
+				<li{% if slim.path[3] is null %} class="active"{% endif %}>
+					<a href="/community/groups">главная</a>
+				</li>
+				<li{% if slim.path[3] == 'top' %} class="active"{% endif %}>
+					<a href="/community/groups/top">популярные</a>
+				</li>
+				<li{% if slim.path[3] == 'new' %} class="active"{% endif %}>
+					<a href="/community/groups/new">новые</a>
+				</li>
+				<li{% if slim.path[3] == 'tags' %} class="active"{% endif %}>
+					<a href="/community/groups/tags">теги</a>
+				</li>
+				<li{% if slim.path[3] == 'create' %} class="active"{% endif %}>
+					<a href="/community/groups/create">создать группу</a>
+				</li>
+				<li{% if slim.path[3] == 'rules' %} class="active"{% endif %}>
+					<a href="/community/groups/rules">правила</a>
+				</li>
+			</ul>
+
+			{% if slim.path[3] != 'create' %}
+				<form action="/community/groups/search" class="b-one-search-form" method="post">
+					<input type="text" name="groupName" placeholder="поиск группы" autocomplete="off"/>
+					<input type="submit" class="b-firm-grad" value="найти"/>
+				</form>
+			{% endif %}
+
+			{% block submenu %}{% endblock %}
+
+		</section>
+
+		{% block communityContent %}{% endblock %}
+	</div>
+
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends '/yourstyle/YourStyleGeneric.twig' %}
+
+{% block subMenu %}
+
+	{% include '/yourstyle/YourStyleSubMenuBrands.twig' %}
+
+{% endblock %}
+
+{% block subYourStyle %}
+
+	<div class="popular-sets">
+		<div class="article-title">Все бренды</div>
+		<ul class="celebrities-alphabet">
+			<li class="celebrities-alphabet__item">
+				<ul class="celebrities-alphabet__list">
+
+					{% for brand in brands %}
+
+						<li class="celebrities-alphabet__list-item">
+							<a class="celebrities-alphabet__link" href="/yourstyle/brands/{{ brand.id }}"><img src="{{ brand.logo }}" /></a>
+						</li>
+
+					{% endfor %}
+
+				</ul>
+			</li>
+		</ul>
+	</div>
+
+{% endblock %}

@@ -1,0 +1,569 @@
+{% extends '/Generic.twig' %}
+
+{% block head %}
+    <title>Новости, сделай что-нибудь со мной</title>
+
+    <link rel="stylesheet" type="text/css" href="/editor/st/css/news.css" />
+
+    <script>
+        $(function(){
+
+            //Подключаем редактор для анонса
+            if ($('textarea[name=anons]').length)
+            {
+                CKEDITOR.replace( 'anons', {
+                    filebrowserBrowseUrl: '/browser/browse.php?type=Images',
+                    filebrowserUploadUrl: '/uploader/upload.php?type=Files',
+                    toolbar : 'toolbarLight'
+                });
+            }
+
+
+            //Подключаем редактор для подробного описания новости
+            if ($('textarea[name=description]').length)
+            {
+                CKEDITOR.replace( 'description', {
+                    filebrowserBrowseUrl: '/browser/browse.php?type=Images',
+                    filebrowserUploadUrl: '/uploader/upload.php?type=Files'
+                });
+            }
+
+            //Дата и время новости, подключаем календарь и через callback добавляем еще и текущее время
+            var inpDate = $('input[name=datetime]');
+
+            inpDate.datepicker({
+                changeYear : true,
+                onSelect : function()
+                {
+                    var cdate = new Date();
+
+                    var newVal = sprintf('%02u:%02u', cdate.getHours(), cdate.getMinutes());
+
+                    inpDate.val(
+                        inpDate.val() + ' ' + newVal
+                    );
+                }
+            });
+
+            //Выбор типа новости
+            $('#news-type-radio').buttonset();
+
+            $('#news-type-radio1').click(function(){
+                $('*[data-news-type=1]').show();
+            });
+
+            $('#news-type-radio2').click(function(){
+                $('*[data-news-type=1]').hide();
+            });
+
+            $('#content-tabs').tabs('option','active',1);
+
+            //Автодополнение для фильмов киноафиши
+            $('body .content-panel .element').on('keydown.autocomplete','input[name*=ka_movies]',function(){
+
+                var inputObj = $(this);
+
+                inputObj
+                .autocomplete({
+                    minLength : 1,
+                    source : sprintf('http://api.kinoafisha.info/p/moviesSuggest.php?callback=?&q=%s',$(this).val()),
+                    select : function(event,ui)
+                    {
+                        event.preventDefault();
+
+                        $(this).val(sprintf('%s / %s', ui.item.name, ui.item.year)).attr('disabled',true);
+
+                        $('<input type="hidden" name="'+inputObj.attr('name')+'" value="'+ ui.item.id +' ~~~ '+ ui.item.name +' / '+ ui.item.year +'" />').insertBefore(inputObj);
+                    },
+                    focus : function(event,ui)
+                    {
+
+                        //alert(ui.item.pic);
+                    }
+                })
+                .data('ui-autocomplete')._renderItem = function( ul, item ) {
+                    return $('<li>')
+                    .append(sprintf('<a style="cursor:pointer;" data-tooltip="Щелкни, чтобы выбрать этот фильм"><div style="vertical-align:top;"><img src="%s" class="fl" /><div style="padding:5px 0 0 7px;" class="fl">%s / %u</div></div><div class="clear"></div></a>'
+                            ,item.poster
+                            ,item.name
+                            ,item.year
+                    ))
+                    .appendTo(ul);
+                };
+            });
+
+            //Автодополнение для персон
+            $('body .content-panel .element').on('keydown.autocomplete','input[name*=person]',function(){
+
+                var inputObj = $(this);
+
+                inputObj
+                .autocomplete({
+                    minLength : 1,
+                    source : function(request,response){
+
+                        var persons = [];
+
+                        $.ajaxSetup({ async : false });
+
+                        $.getJSON('/editor/getList/pn_persons/name:asc', function(data){
+                            for (x in data){
+                                persons.push(data[x]);
+                            }
+                        });
+
+                        var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
+
+                        response( $.grep( persons, function( item, index ){
+
+                            if (matcher.test( item.name ))
+                                return item;
+
+                        }) );
+
+                    },
+                    select : function(event,ui)
+                    {
+                        event.preventDefault();
+
+                        $(this).val(sprintf('%s', ui.item.name)).attr('disabled',true);
+
+                        $(sprintf('<input type="hidden" name="%s" value="%u" />', inputObj.attr('name'), ui.item.id)).insertBefore(inputObj);
+                    },
+                    focus : function(event,ui)
+                    {
+
+                        //alert(ui.item.pic);
+                    }
+                })
+                .data('ui-autocomplete')._renderItem = function( ul, item ) {
+                    console.log(item);
+                    return $('<li>')
+                    .append(sprintf('<a style="cursor:pointer;">%s</a>'
+                        ,item['name']
+                    ))
+                    .appendTo(ul);
+                };
+            });
+
+            //Автодополнение к рубрикам
+            $('body .content-panel .element').on('keydown.autocomplete','input[name*=article]',function(){
+                $(this)
+                .autocomplete({
+                    minLength : 1,
+                    source : '/editor/getList/pn_dictionary_news_article',
+                    select : function(event,ui)
+                    {
+                        event.preventDefault();
+
+                        $(this).val(sprintf('%s / %s', ui.item.name, ui.item.year)).attr('disabled',true);
+
+                        $(sprintf('<input type="hidden" name="%s" value="%u" />', inputObj.attr('name'), ui.item.id)).insertBefore(inputObj);
+                    },
+                    focus : function(event,ui)
+                    {
+                        //alert(ui.item.pic);
+                    }
+                })
+                .data('ui-autocomplete')._renderItem = function( ul, item ) {
+                    return $('<li>')
+                    .append(sprintf('<a href="#" style="cursor:pointer;">%s</a>',item.name))
+                    .appendTo(ul);
+                };
+            });
+
+
+            /*
+            $('#ava').imgAreaSelect({
+                'minHeight': 100,
+                'minWidth' : 100,
+                'x1'       : 0,
+                'y1'       : 100,
+                'x2'       : 200,
+                'y2'       : 200,
+                'show'     : true,
+                'enable'   : true
+            });
+            */
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+
+
+<div class="content-panel" id="content-tabs">
+    <ul>
+        <li><a href="#tabs-1" onclick="document.location.href = '/editor/news';">Новости</a></li>
+        <li><a href="#tabs-2">Создать новость</a></li>
+    </ul>
+
+    <div id="tabs-1"></div>
+    <div id="tabs-2" class="form-news">
+
+        <script>
+            /*$(function(){
+                var form = $('#content-form');
+
+                var makeInvalid = function(obj,errorText){
+
+                    var object = obj.parents('.element');
+
+                    if (object.find('p.error').length)
+                    {
+                        object.find('p.error').html(errorText);
+                    }
+                    else
+                    {
+                        object.prepend('<p class="error">'+ errorText +'</p>');
+                    }
+
+                    object.css('border-left','3px solid red');
+                };
+
+                var makeValid = function(obj){
+                    var object = obj.parents('.element');
+
+                    object.css('border-left','none');
+                    object.find('p.error').remove();
+                };
+
+                form.submit(function(){
+
+                    var form_title = $('textarea[name=title]');
+                    var form_anons = $('textarea[name=anons]');
+                    var form_desc  = $('textarea[name=description]');
+
+                    var form_main_photo = $('fieldset[data-alias=main_photo]');
+
+                    var form_vote = $('fieldset[data-alias=vote]');
+
+                    var cke_anons  = CKEDITOR.instances['anons'];
+                    var cke_desc   = CKEDITOR.instances['description'];
+
+                    var errorIndex = 0;
+
+                    if (form_title.val().length <= 3)
+                    {
+                        makeInvalid(form_title,'Поле "заголовок" должно быть заполнено!');
+                        errorIndex++;
+                    } else {
+                        makeValid(form_title);
+                    }
+
+                    if (cke_anons.getData().length < 10)
+                    {
+                        makeInvalid(form_anons,'Это поле должно быть заполнено!');
+                        errorIndex++;
+                    } else {
+                        makeValid(form_anons);
+                    }
+
+                    if (cke_desc.getData().length < 10)
+                    {
+                        makeInvalid(form_desc,'Это поле должно быть заполнено!');
+                        errorIndex++;
+                    } else {
+                        makeValid(form_desc);
+                    }
+
+                    if (form_main_photo.find('.file-area table .file').length < 1)
+                    {
+                        makeInvalid(form_main_photo,'Необходимо выбрать основное фото!');
+                        errorIndex++;
+                    } else {
+                        makeValid(form_main_photo);
+                    }
+
+                    if (form_vote.find('input[type=text]:eq(0)').val() != 'Введите название опроса' && form_vote.find('input[type=text]').length < 3)
+                    {
+                        makeInvalid(form_vote,'Должно быть несколько вариантов ответов!');
+                        errorIndex++;
+                    } else {
+                        makeValid(form_vote);
+                    }
+
+                    if (errorIndex>0)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+
+                    }
+                });
+            });*/
+        </script>
+
+        <form method="post" enctype="multipart/form-data" action="/editor/news/new/save" id="content-form">
+
+            {% if form.edit %}
+                <input type="hidden" name="edit" value="{{ form.edit }}" />
+            {% endif %}
+
+            <table class="news-type" align="center"><tr>
+                <td>Это &mdash;</td>
+                <td>
+                    <div id="news-type-radio" class="fl">
+                        <input type="radio" id="news-type-radio1" name="news_type" value="news" checked /><label for="news-type-radio1">Новость</label>
+                        <input type="radio" id="news-type-radio2" name="news_type" value="battle"       /><label for="news-type-radio2">Fashion Battle</label>
+                    </div>
+                </td>
+            </tr></table>
+
+            <div class="element">
+                <p class="title">Заголовок новости:</p>
+                <p><textarea name="title" style="height:50px;" spellcheck="false">{{ form.news.name|e }}</textarea>
+            </div>
+
+            <div class="element">
+                <div class="fl" style="width:150px;">
+                    <p class="title">Дата и время новости:</p>
+                    <p><input name="datetime" style="width:150px;" class="small-text" value="{{ form.news.createDate|date('d.m.y H:i')|default("now"|date("d.m.Y H:i")) }}" />
+                </div>
+                <div class="fl" style="width:460px;margin-left:20px;">
+                    <p class="title">Источник новости:</p>
+                    <p><input name="source" style="width:100%;" class="small-text" value="{{ form.news.source|e }}" />
+                </div>
+                <div class="clear"></div>
+            </div>
+
+            <div class="element">
+                <p class="title">Анонс (для списков или, если, новость короткая):</p>
+                <p><textarea name="anons" class="simple-textarea">{{ form.news.announce|e }}</textarea>
+            </div>
+
+            <div class="element">
+                <p class="title">Подробное описание новости:</p>
+                <p><textarea name="description" class="simple-textarea">{{ form.news.content|e }}</textarea>
+            </div>
+
+            <div class="element">
+                <fieldset data-alias="main_photo"><legend>Основное фото: (<label><input type="checkbox" {% if form.news.main_photo_allow_zoom %}checked{% endif %} name="main_photo_allow_zoom" value="1"> разрешить увеличение фото)</label></legend>
+                    <p class="hint" title="Подсказка">Основное фото новости (видно в списках тоже)</p>
+                    <p class="hint" title="Подсказка">Размер фотки <strong>620x400</strong>, меньше нельзя</p>
+                    <!--<div class="file-area-bg" data-element-type="files" data-element-name="shot"></div>-->
+
+                    <script>
+                        KaElement.OneImage({
+                            'name'         : 'mainPhoto',
+                            'buttonValue'  : 'Выбрать основное изображение',
+                            'buttonLength' : 220,
+                            'crop'         : [62,40],
+                            'thumbWidth'   : 590
+                        });
+
+                        {% if form.edit and form.news.mainImageId %}
+
+                            KaElement.InsertOneImage({
+                                'id'   : {{ form.news.mainImageId.id }},
+                                'name' : 'mainPhoto',
+                                'file' : {
+                                    'source' : '{{ form.news.mainImageId.name }}',
+                                    'thumb'  : '{{ form.news.mainImageId.name }}'
+                                },
+                                'thumbWidth' : 590
+                            });
+
+                        {% endif %}
+
+                        /*
+
+                        KaElement.InsertOneImage({
+                            'id'   : {{ form.news.photo.id }},
+                            'name' : 'mainPhoto',
+                            'file' : {
+                                'source' : '{{ form.person.photo.name }}',
+                                'thumb'  : '{{ form.person.photo.name }}'
+                            },
+                            'thumbWidth' : 300
+                        });*/
+
+                        /*
+                         KaElement.insertFile({
+                         'name' : 'main_photo',
+                         'type' : 'image',
+                         'file' : { 'source' : '/upload/1354563470.7888.jpg', 'thumb' : '/k/r/100x100/upload/1354563470.7888.jpg' }
+                         });
+                         */
+                    </script>
+
+                </fieldset>
+            </div>
+
+
+            <div class="element" data-news-type="1">
+                <fieldset><legend>Фотографии:</legend>
+                    {#<div class="file-area-bg" data-element-type="files" data-element-name="poster">#}
+                        <!--
+                        <div data-id="1" data-type="image" data-file-big="/upload/1354563470.7888.jpg" data-file-thumb="/k/r/100x100/upload/1354563470.7888.jpg"></div>
+                        <div data-id="1" data-type="image" data-file-big="/upload/1354563470.7888.jpg" data-file-thumb="/k/r/100x100/upload/1354563470.7888.jpg"></div>
+                        <div data-id="1" data-type="image" data-file-big="/upload/1354563470.7888.jpg" data-file-thumb="/k/r/100x100/upload/1354563470.7888.jpg"></div>
+                        -->
+                    {#</div>#}
+
+                    <script>
+
+                        KaElement.file({
+                            'name'     : 'photos',
+                            'type'     : 'image',
+                            'multiple' : true,
+                            'title'    : 'Выбрать фотографии',
+                            'width'    : 150,
+                            'thumbMaxWidth' : 450,
+                            'extra'  : '<p><input style="width:380px;" type="text" name="alt[]" value="Название фото" data-default-value="Название фото" /></p>' +
+                                '<p><input style="width:380px;" type="text" name="caption[]" value="Подпись к фото"  data-default-value="Подпись к фото" /></p>'
+                        });
+
+
+                        /*
+                         KaElement.insertFile({
+                         'name' : 'main_photo',
+                         'type' : 'image',
+                         'file' : { 'source' : '/upload/1354563470.7888.jpg', 'thumb' : '/k/r/100x100/upload/1354563470.7888.jpg' }
+                         });
+                         */
+                    </script>
+                </fieldset>
+            </div>
+
+
+            <div class="element">
+                <fieldset><legend>Рубрики:</legend>
+                    <script>
+
+                        {# Режим редактирования - выводим сохраненные рубрики #}
+
+                        {% for article in form.news.tags.articles %}
+
+                            KaElement.SelectElement({
+                                'name'          : 'article[]',
+                                'jsonUrl'       : '/editor/getList/pn_dictionary_news_article/name:asc',
+                                'firstBlank'    : true,
+                                'selectedValue' : {{ article.name }}
+                            });
+
+                        {% endfor %}
+                    </script>
+                    <p><input type="button" value="+" class="simple-button new-one" data-json-url="/editor/getList/pn_dictionary_news_article/name:asc" data-first-blank="true" data-type="select" data-new-name="article[]" data-tooltip="Нажмите, чтобы привязать новость к рубрике" />
+                </fieldset>
+            </div>
+
+            <div class="element">
+                <fieldset><legend>Привязать новость к фильму(ам) киноафиши:</legend>
+                    <script>
+                        {% for film in form.news.tags.films %}
+
+                            //$('<input type="hidden" name="'+inputObj.attr('name')+'" value="'+ ui.item.id +' ~~~ '+ ui.item.name +' / '+ ui.item.year +'" />').insertBefore(inputObj);
+                            KaElement.InsertText({
+                                'attr'  : {
+                                    'name'     : '"_ka_movie[]"',
+                                    'value'    : '"{{ form.news.tags.filmsName[loop.index0].name }}"',
+                                    'disabled' : true
+                                },
+                                'extra' : sprintf('<input type="hidden" name="ka_movies[]" value="%u ~~~ %s" />'
+                                    ,'{{ form.news.tags.films[loop.index0].name }}'
+                                    ,'{{ form.news.tags.filmsName[loop.index0].name }}'
+                                )
+                            });
+
+                        {% endfor %}
+                    </script>
+                    <p><input type="button" value="+" class="simple-button new-one" data-type="text" data-new-name="ka_movies[]" data-tooltip="Нажмите, чтобы &quot;привязать&quot; новость к фильму киноафиши" />
+                </fieldset>
+            </div>
+
+           <div class="element">
+               <fieldset><legend>Привязать новость к тегам (событий):</legend>
+                   <script>
+                       {# Режим редактирования - выводим сохраненные теги #}
+
+                       {% for tag in form.news.tags.events %}
+
+                       KaElement.SelectElement({
+                           'name'          : 'tag[]',
+                           'jsonUrl'       : '/editor/getList/pn_dictionary_news_tag/name:asc',
+                           'firstBlank'    : true,
+                           'selectedValue' : {{ tag.name }}
+                       });
+
+                       {% endfor %}
+                   </script>
+                   <p><input type="button" value="+" class="simple-button new-one" data-json-url="/editor/getList/pn_dictionary_news_tag/name:asc" data-first-blank="true" data-type="select" data-new-name="tag[]" data-tooltip="Нажмите, чтобы добавить еще один жанр" />
+               </fieldset>
+           </div>
+
+            <div class="element">
+                <fieldset><legend>Привязать новость к персоне(ам):</legend>
+                <script>
+                    {% for person in form.news.tags.persons %}
+
+                        KaElement.InsertText({
+                            'attr'  : {
+                                'name'     : '"_person[]"',
+                                'value'    : '"{{ form.news.tags.persons[loop.index0].name }}"',
+                                'disabled' : true
+                            },
+                            'extra' : sprintf('<input type="hidden" name="person[]" value="%u" />'
+                                ,'{{ form.news.tags.persons[loop.index0].id }}'
+                            )
+                        });
+
+                    {% endfor %}
+                </script>
+                <p><input type="button" value="+" class="simple-button new-one" data-type="text" data-new-name="person[]" data-tooltip="Нажмите, чтобы привязать персону" />
+                </fieldset>
+            </div>
+
+            <div class="element" data-news-type="1">
+                <fieldset data-alias="vote"><legend>Добавить опрос к новости:</legend>
+                    <p class="hint" title="Подсказка">Опрос невозможно редактировать!</p>
+
+                    {% if form.edit and form.voting and form.voting.opinions %}
+                        <p><input type="text" name="vote_title" class="left-text" value="{{ form.voting.title|e }}" disabled="true" /></p>
+                        <script>
+                            {% for opinion in form.voting.opinions %}
+                                /*KaElement.InsertText({
+                                    'name'  : 'vote_answer[]',
+                                    'value' : '{{ opinion.title|e }}',
+                                    'attr'  : { 'disabled' : true },
+                                    'delButtonHide' : true
+                                });*/
+                            {% endfor %}
+                        </script>
+                    {# При добавлении нового #}
+                    {% else %}
+                        <p><input type="text" name="vote_title" class="left-text" data-default-value="Введите название опроса" /></p>
+                        <script>
+                            {% for opinion in form.voting.opinions %}
+                            /*KaElement.InsertText(
+                                'name'  : 'vote_answer[]',
+                                'value' : '{{ opinion.title }}',
+                                'disabled' : true,
+                                'delButtonHide' : true
+                            });*/
+                            {% endfor %}
+                        </script>
+                        <p><input type="button" value="+" class="simple-button new-one" data-type="text" data-new-name="vote_answer" data-tooltip="Нажмите, чтобы добавить вариант ответа" />
+                    {% endif %}
+
+
+                </fieldset>
+            </div>
+
+            <div class="element">
+                <fieldset><legend>Опции:</legend>
+                    <div class="fl">
+                        <p data-tooltip="Отключает старые комментарии + не позволяет писать новые"><input type="checkbox" {% if form.comments_disable %}checked{% endif %} name="comments_disable" id="comments_disable" /><label for="comments_disable">Отключить комментарии</label>
+                        <p data-tooltip="Система не добавит эту новость в RSS"><input type="checkbox" {% if form.rss_disable %}checked{% endif %} name="rss_disable" id="rss_disable" /><label for="rss_disable">Не выгружать в RSS</label>
+                    </div>
+                    <div class="clear"></div>
+                </fieldset>
+            </div>
+
+            <input type="submit" value="Сохранить" />
+        </form>
+    </div>
+</div>
+
+{% endblock %}

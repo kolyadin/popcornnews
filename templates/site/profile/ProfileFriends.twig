@@ -1,0 +1,128 @@
+{% extends '/profile/ProfileGeneric.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% if profileHelper.isMyProfile %}
+	{% set title = 'Мои друзья' %}
+{% else %}
+	{% set title = 'Друзья пользователя ' ~ profile.nick|e %}
+{% endif %}
+
+{% block head %}
+
+	<title>{{ title }} - popcornnews</title>
+
+	<script type="text/javascript">
+
+		$(function(){
+
+			var ajaxCallback = function(response){
+				if (response.status == 'success'){
+
+					$('.table-friends tr[data-friend-id='+ response.friendId +']').fadeOut('fast',function(){
+						$(this).remove();
+					});
+
+				}else if (response.status == 'error'){
+					alert(response.exception.message);
+				}
+			};
+
+			var ajaxCallbackConfirmFriendship = function(response){
+				if (response.status == 'success'){
+
+					location.reload();
+
+				}else if (response.status == 'error'){
+					alert(response.exception.message);
+				}
+			};
+
+			$('a[data-action=removeFromFriends]').on('click',function(){
+
+				var friendRow = $(this).closest('tr');
+
+				if (confirm('Вы точно хотите убрать "'+ friendRow.attr('data-friend-nick') +'" из друзей?')){
+					$.post('/ajax/friend/remove',{ 'friendId' : friendRow.attr('data-friend-id') },ajaxCallback,'json');
+				}
+
+				return false;
+			});
+
+			$('a[data-action=confirmFriendship]').on('click',function(){
+
+				var friendRow = $(this).closest('tr');
+
+				$.post('/ajax/friend/confirm',{ 'userId' : friendRow.attr('data-friend-id') },ajaxCallbackConfirmFriendship,'json');
+				return false;
+			});
+
+		});
+	</script>
+
+	{{ parent() }}
+
+	<style type="text/css">
+
+	</style>
+
+{% endblock %}
+
+{% block profile %}
+
+	<h1>{{ title }}</h1>
+
+	{% include '/profile/ProfileMenu.twig' %}
+
+	{% if friends|length %}
+		{% spaceless %}
+		<table class="table-friends">
+			<tr>
+				<th class="user">Пользователь</th>
+				<th class="city">Город</th>
+				<th class="rating">Рейтинг</th>
+				{% if profileHelper.isMyProfile %}
+					<th>&nbsp;</th>
+				{% endif %}
+			</tr>
+			{% for profile in friends %}
+				<tr data-friend-id="{{ profile.id }}" data-friend-nick="{{ profile.nick|e }}">
+					<td class="user">
+						{{ html.profileInfo(profile,{'hidePoints' : true}) }}
+					</td>
+					<td class="city">
+						<span>{{ profile.userInfo.cityName|e }}</span>
+					</td>
+					<td class="rating rating-{{ profile.rating.rank }}" title="Рейтинг пользователя">
+						<span>{{ profile.rating.points|number_format(0,'',' ') }}</span>
+					</td>
+					{% if profileHelper.isMyProfile %}
+						<td>
+							{% if profile.extra('confirmed') == 'n' %}
+								{% if profile.extra('friendId') == currentUser.id %}
+									<a class="pink-dotted" href="#" data-action="confirmFriendship">Подтвердить</a>
+								{% else %}
+									<span class="gray">ожидание подтверждения</span>
+								{% endif %}
+							{% elseif profile.extra('confirmed') == 'y' %}
+								<a class="pink-dotted" href="#" data-action="removeFromFriends">Убрать из друзей</a>
+							{% endif %}
+						</td>
+					{% endif %}
+				</tr>
+			{% endfor %}
+		</table>
+
+        {{
+            html.paginator(1
+                ,paginator.overall
+                ,paginator.active
+                ,'/profile/'~profile.id~'/friends/page%u'
+            )
+        }}
+
+		{% endspaceless %}
+	{% else %}
+		<blockquote>Друзей нет</blockquote>
+	{% endif %}
+
+{% endblock %}

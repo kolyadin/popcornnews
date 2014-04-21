@@ -1,0 +1,21 @@
+<svg width="48" height="44.987" viewBox="0 0 48 44.987"  version="1.1" xmlns="http://www.w3.org/2000/svg">
+
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+       <stop offset="0" style="stop-color:#fc408b"/>
+       <stop offset="100%" style="stop-color:#da1196" />
+    </linearGradient>
+	
+	
+  <g
+     transform="translate(-647.42857,-844.1544)">
+    <g
+       transform="translate(368.63857,836.2014)">
+      <path
+         d="m 322.79,7.953 c 2.209,0 4,1.791 4,4 v 28.001 c 0,2.209 -1.791,4 -4,4 h -6.221 v 8.986 l -8.986,-8.986 H 282.79 c -2.209,0 -4,-1.791 -4,-4 V 11.953 c 0,-2.209 1.791,-4 4,-4 h 40 m 0,2 h -40 c -1.103,0 -2,0.897 -2,2 v 28.001 c 0,1.103 0.897,2 2,2 h 24.793 0.828 l 0.586,0.586 5.572,5.572 v -4.158 -2 h 2 6.221 c 1.103,0 2,-0.897 2,-2 V 11.953 c 0,-1.103 -0.898,-2 -2,-2 l 0,0 z"
+		fill="url(#gradient)" 
+		 />
+    </g>
+  </g>
+	
+
+</svg>

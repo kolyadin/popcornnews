@@ -1,0 +1,35 @@
+{
+    "name": "traffic/popcorn",
+    "description": "popcornnews",
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Aleksey Kolyadin",
+            "email": "donflash@gmail.com"
+        },
+        {
+            "name": "Kirill Mazurik",
+            "email": "kirill.mazurik@t-agency.ru"
+        }
+    ],
+    "require": {
+        "phpunit/phpunit": "3.7.19",
+        "slim/slim": "2.4.0",
+        "twig/twig": "1.15",
+        "twig/extensions": "v1.0.1",
+        "slim/extras": "2.0.3",
+        "phpunit/dbunit": "1.2.3",
+        "symfony/console" : "2.*",
+        "ircmaxell/password-compat": "dev-master",
+        "facebook/xhprof": "dev-master",
+        "danielstjules/stringy": "dev-master",
+        "phpmailer/phpmailer": "v5.2.7",
+        "kolyadin/twig-ru-number-extension": "dev-master",
+        "mobiledetect/mobiledetectlib": "2.7.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "popcorn\\": ""
+        }
+    }
+}

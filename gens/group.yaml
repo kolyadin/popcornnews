@@ -1,0 +1,32 @@
+name: Group
+class: \popcorn\model\content\Group
+parent: \popcorn\model\Model
+parentDescription: model
+table: pn_groups
+fields:
+    title: {type: string, sqlType: VARCHAR(200), flags: [NN]}
+    owner:
+        type: \popcorn\model\system\users\User
+        sqlType: INT
+        flags: [NN]
+        ref: getId
+    createTime:
+        type: \DateTime
+        sqlType: DATETIME
+        flags: [NN, RO]
+        set:
+            change: false
+    visible:
+        type: bool
+        sqlType: INT(1)
+        flags: [NN]
+        default: true
+        get: {name: isVisible}
+    internalField:
+        type: int
+        flags: []
+paths:
+    base: content
+    dataMap: dataMaps
+    builder: '%same%'
+    factory: '%same%'

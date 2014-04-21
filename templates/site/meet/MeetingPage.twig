@@ -1,0 +1,168 @@
+{% extends '/GenericInner.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% block head %}
+
+	<title>Звездные пары {{ meet.title|e }} - popcornnews</title>
+
+	<script type="text/javascript">
+		var commentSetup = {
+			entity: 'meetings',
+			entityId: {{ meet.id }}
+		};
+	</script>
+
+	<script type="text/javascript" src="/st/js/popcorn.comments.js"></script>
+
+	<script type="text/javascript">
+		  $(function(){
+			  $('a[data-action=vote-up],a[data-action=vote-down]').on('click',function(){
+
+				  var meetParent = $(this).closest('.meet');
+				  var textDefault = meetParent.find('.text').attr('data-default-text');
+
+				  var action = $(this).attr('data-action');
+				  var meetId  = meetParent.attr('data-meet-id');
+
+
+				  var params = {
+					  'meetId' : meetId,
+					  'vote'  : action
+				  };
+
+				  var handler = function(response){
+
+					  if (response.status == 'success'){
+
+						  meetParent.find('.stats .col, .stats .text').animate({ opacity: 0 },'fast',function(){
+
+							  meetParent.find('.col').text(response.points);
+
+							  if (action == 'vote-up'){
+								  meetParent.find('.btn_minus').addClass('btn_disable');
+							  }else if (action == 'vote-down'){
+								  meetParent.find('.btn_plus').addClass('btn_disable');
+							  }
+
+							  meetParent
+									.find('.text')
+									.text('Спасибо, ваш голос принят!')
+									.animate({ opacity: 1 },'fast',function(){
+										$this = $(this);
+										setTimeout(function(){
+											$this.text(response.pointsOverall);
+										},2000);
+									})
+							  ;
+
+							  $(this).animate({ opacity: 1 },'fast');
+						  });
+
+					  }else{
+
+						  meetParent.find('.stats .text').animate({ opacity: 0 },'fast',function(){
+
+							  meetParent.find('.text').html(response.exception.message);
+
+							  $(this).animate({ opacity: 1 },'fast',function(){
+
+								  setTimeout(function(){
+									  meetParent.find('.text').animate({ opacity: 0 },'fast',function(){
+										  $(this).html(textDefault);
+
+										  $(this).animate({ opacity: 1 },'fast');
+									  });
+								  },2000);
+
+
+							  });
+						  });
+					  }
+
+				  };
+
+				  $.post('/ajax/meetings/vote',params,handler,'json');
+
+				  return false;
+
+			  });
+		  });
+	</script>
+
+{% endblock %}
+
+{% block bodyStart %}
+
+	{% include '/comments/SmilesBar.twig' %}
+
+{% endblock %}
+
+{% block content %}
+
+	<div class="b-grid__g8 b-meets">
+
+		<h1>Звездные пары<span>Голосование за пары – какая пара лучше?</span></h1>
+
+		{% spaceless %}
+
+			{% set textDefault = meet.votesOverall|ruNumber(['голос','голоса','голосов']) %}
+
+			{% if meet.firstPerson.photo.name %}
+				{% set photoFirst = meet.firstPerson.photo.thumb('192x') %}
+			{% else %}
+				{% set photoFirst = '' %}
+			{% endif %}
+
+			{% if meet.secondPerson.photo.name %}
+				{% set photoSecond = meet.secondPerson.photo.thumb('192x') %}
+			{% else %}
+				{% set photoSecond = '' %}
+			{% endif %}
+
+			<div class="meet" data-meet-id="{{ meet.id }}">
+				<h2><a href="/meet/{{ meet.id }}">{{ meet.title|e }}</a></h2>
+				<div class="pics">
+					<ul class="b-column-news">
+                	                	<li class="b-grid__g13">
+							<a href="/meet/{{ meet.id }}"><img src="{{ photoFirst.url }}" alt="{{ meet.name|e }}" width="{{ photoFirst.width }}" height="{{ photoFirst.height }}"/></a>
+                                			<div>{{ meet.firstPerson.birthDate|ruAge }}</div>
+				        	</li>
+					        <li class="b-grid__g13">
+							<a href="/meet/{{ meet.id }}"><img src="{{ photoSecond.url }}" alt="{{ meet.name|e }}" width="{{ photoSecond.width }}" height="{{ photoSecond.height }}"/></a>
+                	                		<div>{{ meet.secondPerson.birthDate|ruAge }}</div>
+						</li>
+					</ul>
+				</div>
+				<div class="stats">
+					<div class="vote">
+						<div class="col b-firm-grad">{{ meet.votes }}</div>
+						<div class="btn-wrap">
+							<a href="#" data-action="vote-up" class="b-firm-grad btn btn_plus">+</a>
+							<a href="#" data-action="vote-down" class="b-firm-grad btn btn_minus">&ndash;</a>
+						</div>
+						<p class="text" data-default-text="Всего {{ textDefault }}">Всего {{ textDefault }}</p>
+					</div>
+					{% if meet.commentsCount > 0 %}
+						{% set comments = meet.commentsCount|ruNumber(['комментарий','комментария','комментариев']) %}
+					{% else %}
+						{% set comments = 'Нет комментариев' %}
+					{% endif %}
+					<div class="under">
+						<p><a href="/meet/{{ meet.id }}#comments"><strong>{{ comments }}</strong></a></p>
+
+						<p><a href="/meet/{{ meet.id }}#new-comment">Написать комментарий</a></p>
+					</div>
+				</div>
+				<div class="desc">
+					<div class="db">{{ meet.description }}</div>
+				</div>
+			</div>
+
+		{% endspaceless %}
+
+		{% include '/comments/CommentsBlock.twig' with { 'commentsTree': commentsTree } %}
+
+
+	</div>
+
+{% endblock %}

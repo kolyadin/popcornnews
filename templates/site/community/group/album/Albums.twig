@@ -1,0 +1,28 @@
+{% extends '/community/group/GroupGeneric.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% block head %}
+
+	<title>Все альбы в группе - {{ group.title|e }} - popcornnews</title>
+
+	<script type="text/javascript">
+		$(function(){
+
+		});
+	</script>
+
+
+{% endblock %}
+
+
+{% block communityContent %}
+	{% for album in albums %}
+
+
+
+	{% else %}
+
+		<strong>В этой группе еще нет ни одного альбоа</strong>
+
+	{% endfor %}
+{% endblock %}

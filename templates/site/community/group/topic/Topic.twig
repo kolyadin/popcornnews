@@ -1,0 +1,123 @@
+{% extends '/community/group/GroupGeneric.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% block head %}
+
+	<title>Обсуждение группы - {{ group.title|e }} - popcornnews</title>
+
+	<script type="text/javascript">
+		var commentSetup = {
+			entity: 'topics',
+			entityId: {{ topic.id }}
+		};
+	</script>
+
+	<script type="text/javascript" src="/st/js/popcorn.comments.js"></script>
+
+	<script type="text/javascript">
+		$(function(){
+			$('a[data-action=vote-up],a[data-action=vote-down]').on('click',function(){
+
+				var objParent = $(this).closest('.b-right-stats');
+				var textDefault = objParent.find('.text').attr('data-default-text');
+
+				var action = $(this).attr('data-action');
+
+				var params = {
+					'topicId' : {{ topic.id }},
+					'vote'  : action
+				};
+
+				var handler = function(response){
+
+					if (response.status == 'success'){
+
+						objParent.find('.col, .text').animate({ opacity: 0 },'fast',function(){
+
+							objParent.find('.col').text(response.points);
+
+							if (action == 'vote-up'){
+								objParent.find('.btn_minus').addClass('btn_disable');
+							}else if (action == 'vote-down'){
+								objParent.find('.btn_plus').addClass('btn_disable');
+							}
+
+							objParent
+								  .find('.text')
+								  .text('Спасибо, ваш голос принят!')
+								  .animate({ opacity: 1 },'fast',function(){
+									  $this = $(this);
+									  setTimeout(function(){
+										  $this.text(response.pointsOverall);
+									  },2000);
+								  })
+							;
+
+							$(this).animate({ opacity: 1 },'fast');
+						});
+
+					}else{
+
+						objParent.find('.text').animate({ opacity: 0 },'fast',function(){
+
+							objParent.find('.text').html(response.exception.message);
+
+							$(this).animate({ opacity: 1 },'fast',function(){
+
+								setTimeout(function(){
+									objParent.find('.text').animate({ opacity: 0 },'fast',function(){
+										$(this).html(textDefault);
+
+										$(this).animate({ opacity: 1 },'fast');
+									});
+								},2000);
+
+
+							});
+						});
+					}
+
+				};
+
+				$.post('/ajax/topic/vote',params,handler,'json');
+
+				return false;
+
+			});
+		});
+	</script>
+{% endblock %}
+
+{% block communityContent %}
+
+	{% set textDefault = topic.votesOverall|ruNumber(['голос','голоса','голосов']) %}
+
+	<div class="b-grid__g8 no-mg">
+
+		<div class="clearfix" style="border-bottom: 1px solid #F0F0F0;padding-bottom: 10px;">
+			<div class="b-topic-text">
+				<h2>{{ topic.name }}</h2>
+
+				{{ topic.content('p') }}
+			</div>
+			<div class="b-right-stats">
+				<div class="vote">
+					<div class="col b-firm-grad">{{ topic.votes }}</div>
+					<div class="btn-wrap">
+						<a href="#" data-action="vote-up" class="b-firm-grad btn btn_plus">+</a>
+						<a href="#" data-action="vote-down" class="b-firm-grad btn btn_minus">&ndash;</a>
+					</div>
+
+					<p class="text" data-default-text="Всего {{ textDefault }}">Всего {{ textDefault }}</p>
+				</div>
+				<div class="under">
+					<p><a href="/kid/{{ kid.id }}#new-comment"><strong>Удалить обсуждение</strong></a></p>
+				</div>
+			</div>
+		</div>
+
+		{% include '/comments/CommentsBlock.twig' with { 'commentsTree': commentsTree } %}
+
+	</div>
+
+{% endblock %}

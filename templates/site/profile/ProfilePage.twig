@@ -1,0 +1,171 @@
+{% extends '/profile/ProfileGeneric.twig' %}
+
+{% block head %}
+
+	<title>{{ profile.nick|e }} - popcornnews</title>
+
+	<meta name="description" content="Новостной блог" />
+	<meta name="keywords"    content="попкорнньюз, popcornnews, блог звезды, новости звезд, звездные новости" />
+
+	{{ parent() }}
+
+    {% if profileHelper.isMyProfile %}
+        <script type="text/javascript">
+            $(function(){
+                $('#profile-status a').on('click',function(){
+
+                    var offset = $(this).offset();
+
+                    $('#status-window')
+                      .css({
+                        top: offset.top + 'px',
+                        left: offset.left + 'px'
+                        })
+                      .show()
+                    ;
+
+                    return false;
+                });
+
+                $('#status-window input').on('keydown',function(event){
+                    var statusText = $(this).val();
+
+                    if (event.which == 13){
+                        $.post('/ajax/status/update',{ 'statusMessage' : statusText },function(response){
+
+                            if (response.status == 'success'){
+                                $('#status-window').hide();
+                                $('#profile-status a strong').html(statusText);
+
+                            }
+
+                        },'json');
+                    }
+                });
+            });
+        </script>
+    {% endif %}
+
+{% endblock %}
+
+{% block bodyStart %}
+
+	<div id="status-window">
+		<input type="text" name="statusMessage" />
+
+		{% if statusList|length > 0 %}
+
+		<table>
+			{% for status in statusList %}
+				<tr>
+					<td>{{ status.statusMessage|e }}</td>
+					<td>{{ status.createdAt }}</td>
+				</tr>
+				<tr><td colspan="2" class="hr"></td></tr>
+			{% endfor %}
+		</table>
+
+		{% endif %}
+	</div>
+
+{% endblock %}
+
+{% block profile %}
+
+	<h1>{{ profile.nick|e }}</h1>
+
+    {% if profileHelper.isMyProfile %}
+        <div class="status" id="profile-status">
+            <a href="#">
+                {% if profile.extra('status') %}
+                    <strong>{{ profile.extra('status').statusMessage }}</strong>
+                {% else %}
+                    <span>[ изменить статус ]</span>
+                {% endif %}
+                <img src="/st/img/icons/profile-status.png" width="12" height="12" />
+            </a>
+        </div>
+    {% else %}
+        <div class="status" id="profile-status">
+            <a href="#">
+                {% if profile.extra('status') %}
+                    <strong>{{ profile.extra('status').statusMessage }}</strong>
+                {% endif %}
+            </a>
+        </div>
+    {% endif %}
+
+
+
+	{% include '/profile/ProfileMenu.twig' %}
+
+	<div class="info">
+		<ul class="reg-data">
+			<li>{{ profile.userInfo.countryName|e }}</li>
+			<li>{{ profile.userInfo.cityName|e }}</li>
+
+			{% if profile.userSettings.showBirthDate == 1 %}
+				<li>{{ profile.userInfo.birthDate }}</li>
+			{% endif %}
+
+			{% if sex %}
+				<li>{{ sex }}</li>
+			{% endif %}
+
+			{% if profile.userInfo.married == 2 %}
+				{% if profile.userInfo.sex == 1 %}
+					<li>женат</li>
+				{% elseif profile.userInfo.sex == 2 %}
+					<li>замужем</li>
+				{% else %}
+					<li>замужем/женат</li>
+				{% endif %}
+			{% endif %}
+
+			{% if profile.userInfo.meetPerson %}
+				<li><a title="{{ profile.nick|e }} хотел{% if sex == 2 %}а{% endif %} бы встретиться с {{ profile.userInfo.meetPerson.name|e }}" href="/persons/{{ profile.userInfo.meetPerson.urlName|e }}">{{ profile.userInfo.meetPerson.name|e }}</a></li>
+			{% endif %}
+		</ul>
+
+		<div class="rating-awards">
+			{{ html.ratingLarge(profile.rating) }}
+
+			<div class="awards">
+				<ul>
+					<li class="activist activist-active tooltip" data-title="Награда &quot;Активист месяца&quot;">
+						<div class="x">x</div>
+						<div class="multiple">60</div>
+					</li>
+					<li class="comments comments-active tooltip" data-title="Награда &quot;1000 комментов&quot;">
+						<div class="x">x</div>
+						<div class="multiple">60</div>
+					</li>
+					<li class="photo photo-active tooltip" data-title="Награда &quot;Добавил 100 фото&quot;">
+						<div class="x">x</div>
+						<div class="multiple">60</div>
+					</li>
+					<li class="facts facts-active tooltip" data-title="Награда &quot;Написал 20 фактов&quot;">
+						<div class="x">x</div>
+						<div class="multiple">60</div>
+					</li>
+					<li class="friends friends-active tooltip" data-title="Награда &quot;Имеет 50 друзей&quot;">
+						<div class="x">x</div>
+						<div class="multiple">60</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+
+
+	{% if profile.userInfo.credo %}
+
+		<div class="credo">
+			{{ profile.userInfo.credo|e }}
+		</div>
+
+	{% endif %}
+{% endblock %}

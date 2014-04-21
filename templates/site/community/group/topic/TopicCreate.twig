@@ -1,0 +1,32 @@
+{% extends '/community/group/GroupGeneric.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% block head %}
+
+	<title>Новое обсуждение - {{ group.title|e }} - popcornnews</title>
+
+	<script type="text/javascript">
+		$(function(){
+
+		});
+	</script>
+
+
+{% endblock %}
+
+
+{% block communityContent %}
+
+	<div class="b-form b-form-talks">
+		<form method="post">
+			<input name="type" value="topic" type="hidden"/>
+			<input name="groupId" value="{{ group.id }}" type="hidden"/>
+
+			<input name="name" placeholder="Название темы" required="true" />
+			<textarea name="content" placeholder="Описание темы" required="true"></textarea>
+
+			<input value="Создать тему" class="b-firm-grad" type="submit"/>
+		</form>
+	</div>
+
+{% endblock %}

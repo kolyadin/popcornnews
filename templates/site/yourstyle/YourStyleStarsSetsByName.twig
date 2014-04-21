@@ -1,0 +1,37 @@
+{% extends '/yourstyle/YourStyleGeneric.twig' %}
+
+{% block subMenu %}
+
+	{% include '/yourstyle/YourStyleSubMenuStarSets.twig' %}
+
+{% endblock %}
+
+{% block subYourStyle %}
+
+	<div class="popular-sets">
+		<div class="article-title">Сеты со звездами</div>
+		<ul class="celebrities-alphabet">
+
+			{% for letter,stars in starsByNames %}
+
+			<li class="celebrities-alphabet__item">
+				<div class="celebrities-alphabet__letter">{{ letter }}</div>
+				<ul class="celebrities-alphabet__list">
+
+					{% for star in stars %}
+
+						<li class="celebrities-alphabet__list-item">
+							<a class="celebrities-alphabet__link" href="/persons/{{ star.eng_name }}/sets">{{ star.name }}</a>
+						</li>
+
+					{% endfor %}
+
+				</ul>
+			</li>
+
+			{% endfor %}
+
+		</ul>
+	</div>
+
+{% endblock %}

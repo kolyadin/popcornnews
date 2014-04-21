@@ -1,0 +1,30 @@
+{% extends '/community/group/GroupGeneric.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% block head %}
+
+	<title>Новый альбом - {{ group.title|e }} - popcornnews</title>
+
+	<script type="text/javascript">
+		$(function(){
+
+		});
+	</script>
+
+
+{% endblock %}
+
+
+{% block communityContent %}
+
+	<div class="b-form b-form-albums">
+		<form method="post">
+			<input name="groupId" value="{{ group.id }}" type="hidden"/>
+
+			<input name="title" placeholder="Название альбома" required="true" />
+
+			<input value="Создать альбом" class="b-firm-grad" type="submit"/>
+		</form>
+	</div>
+
+{% endblock %}

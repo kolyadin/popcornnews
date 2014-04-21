@@ -1,0 +1,38 @@
+{% extends '/community/group/GroupGeneric.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% block head %}
+
+    <title>Участники группы - {{ group.title|e }} - popcornnews</title>
+
+	<style type="text/css">
+		.b-community h3 {
+
+		}
+	</style>
+
+{% endblock %}
+
+
+
+{% block communityContent %}
+
+	<div class="b-grid__g8 no-mg">
+
+		{% if users|length %}
+			<table class="b-users-table__full">
+				{% include '/users/UserRows.twig' with {'profiles' : users} %}
+			</table>
+
+			{{ html.paginator(
+				 paginator.pages
+				,paginator.active
+				,'/community/group/' ~ group.id ~ '/members/page%u'
+			) }}
+		{% else %}
+			<br/><p><strong>В этой группе пока нет участников</strong></p>
+		{% endif %}
+
+    </div>
+
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends '/person/fans/PersonFansGeneric.twig' %}
+
+{% block head %}
+
+	<title>Новые поклонники {{ person.genitiveName|e }}</title>
+
+	<script type="text/javascript">
+
+		$(function(){
+			if (location.hash){
+				$('.b-users-table__full tr[data-user-id='+ location.hash.substr(1) +']').effect('highlight',3000);
+			}
+		});
+
+	</script>
+
+{% endblock %}
+
+{% block personContent %}
+
+	{% if fans|length %}
+		<table class="b-users-table__full">
+			{% include '/users/UserRows.twig' with {'profiles' : fans} %}
+		</table>
+	{% else %}
+		<br/><p><strong>В этом городе нет ни одного пользователя</strong></p>
+	{% endif %}
+
+{% endblock %}

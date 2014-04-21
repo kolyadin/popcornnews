@@ -1,0 +1,59 @@
+name: Group
+class: \popcron\model\groups\Group
+parent: \popcorn\model\Model
+parentDescription: model
+table: pn_groups
+fields:
+    title:
+        type: string
+        sqlType: varchar(200)
+        flags: [NN]
+    description:
+        type: string
+        sqlType: text
+        flags: []
+    createTime:
+        type: \DateTime
+        sqlType: DATETIME
+        flags: [NN, RO]
+        ref: format
+        set:
+            change: false
+    editTime:
+        type: \DateTime
+        sqlType: DATETIME
+        flags: [NN, RO]
+        ref: format
+        set:
+            change: false
+    private:
+        type: bool
+        sqlType: int(1)
+        flags: [NN]
+        default: 0
+        get:
+            name: isPrivate
+    owner:
+        type: \popcorn\model\system\users\User
+        sqlType: int
+        flags: [NN, RO]
+        ref: getId
+        set:
+            change: false
+    modelrators:
+        type: '\popcorn\model\system\users\User[]'
+    poster:
+        type: \popcorn\model\content\Image
+        sqlType: int
+        flags: [NN]
+        ref: getId
+        default: 0
+    tags:
+        type: '\popcorn\model\tags\Tag[]'
+    talks:
+        type: '\popcorn\model\talks\Talk[]'
+paths:
+    base: groups
+    dataMap: dataMaps
+    builder: '%same%'
+    factory: '%same%'

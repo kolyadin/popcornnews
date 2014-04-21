@@ -1,0 +1,188 @@
+{% extends '/GenericInner.twig' %}
+
+{% block head %}
+    {% if errors %}
+        {% set title = 'Ошибка регистрации' %}
+    {% else %}
+        {% set title = 'Регистрация' %}
+    {% endif %}
+
+    <title>{{ title }} - popcornnews</title>
+    <meta name="description" content="Регистрация на сайте popcornnews" />
+    <meta name="keywords"    content="регистрация создать аккаунт новый профиль" />
+
+    {% if errors %}
+        <meta name=“robots” content=“noindex,nofollow” />
+    {% endif %}
+
+    <script type="text/javascript">
+        $(function(){
+            $('select[name=city]');
+
+            $('select[name=country]').on('change',function(){
+                $.getJSON('/ajax/cities/'+$(this).find('option:selected').val(),function(json){
+                    var html = '';
+                    for (city in json){
+                        html += '<option value="'+ json[city]['id'] +'">'+ json[city]['name'] +'</option>';
+                    }
+
+                    $('select[name=city]').html('<option value="">-выберите-</option>'+html);
+                });
+            })
+            .change();
+        });
+    </script>
+
+    <style type="text/css">
+        .system-message {
+            background-color: #f0f0f0;
+            padding: 20px 30px;
+        }
+    </style>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="b-grid__g8">
+        <article class="b-text b-register">
+
+            <h1>Регистрация<span>Регистрация на сайте</span></h1>
+
+            {% if success %}
+
+                <p class="system-message">
+                    <strong>Вы успешно зарегистрировались</strong>.<br/>
+                    Для окончания регистрации Вы должны подтвердить свой почтовый ящик, поэтому на указанный вами e-mail было выслано письмо с кодом подтверждения.
+                </p>
+
+            {% else %}
+
+                {% if errors %}
+                    {% if userError == 102 %}
+                        <p><strong>&lowast;&nbsp;Нужно согласиться с правилами</strong></p>
+                    {% elseif userError == 103 %}
+                        <p><strong>&lowast;&nbsp;Пароли не совпадают</strong></p>
+                    {% elseif userError == 104 %}
+                        <p><strong>&lowast;&nbsp;Заполните необходимые поля (отмечены *)</strong></p>
+                    {% elseif userError == 110 %}
+                        <p><strong>&lowast;&nbsp;Такой ник уже используется</strong></p>
+                    {% elseif userError == 111 %}
+                        <p><strong>&lowast;&nbsp;Такой адрес электронной почты уже используется</strong></p>
+                    {% endif %}
+                {% endif %}
+
+
+                <form class="b-form" action="/register" method="POST" enctype="multipart/form-data" name="fr">
+
+                    <input type="hidden" value="register" name="type">
+                    <input type="hidden" value="add" name="action">
+                    <label>
+                        <strong>Ник <sup>*</sup></strong>
+                        <input type="text" value="{{ userData.nick|e }}" name="nick">
+                    </label>
+                    <label>
+                        <strong>Имя <sup></sup></strong>
+                        <input type="text" value="{{ userData.name|e }}" name="name">
+                    </label>
+                    <label>
+                        <strong>Ваше кредо</strong>
+                        <textarea name="credo">{{ userData.credo|e }}</textarea>
+                    </label>
+                    <label>
+                        <strong>Аватара</strong>
+                        <input type="file" value="" name="avatara">
+                    </label>
+                    <label>
+                        <strong>E-mail <sup>*</sup></strong>
+                        <input type="text" value="{{ userData.email|e }}" name="email">
+                    </label>
+                    <label>
+                        <strong>Пароль <sup>*</sup></strong>
+                        <input type="password" value="{{ userData.pass1 }}" name="pass1">
+                    </label>
+                    <label>
+                        <strong>Повторите пароль <sup>*</sup></strong>
+                        <input type="password" value="{{ userData.pass2 }}" name="pass2">
+                    </label>
+                    <fieldset>
+                        <strong>Дата рождения <sup>*</sup></strong>
+                        <span class="cont">
+                            {% spaceless %}
+                            <select name="day">
+                                {% for day in 1..31 %}
+                                    <option {% if userData.day == loop.index %}selected="true"{% endif %}>{{ day }}</option>
+                                {% endfor %}
+                            </select>
+                            {% endspaceless %}
+
+                            <select name="month">
+                                {% for month in ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'] %}
+                                    <option {% if userData.month == loop.index %}selected="true"{% endif %} value="{{ loop.index }}">{{ month }}</option>
+                                {% endfor %}
+                            </select>
+
+                            {% spaceless %}
+                            <select name="year">
+                                {% for year in 1900.."now"|date("Y") %}
+                                    <option {% if userData.year == year %}selected="true"{% endif %} value="{{ year }}">{{ year }}</option>
+                                {% endfor %}
+                            </select>
+                            {% endspaceless %}
+
+                            <span>показывать в профиле</span>
+                            <input type="checkbox" {% if userData.show_bd == 1 %}checked="true" {% endif %} value="1" name="show_bd">
+                        </span>
+                    </fieldset>
+                    <label><strong>Страна</strong>
+                        <select name="country">
+                            {% for country in countries %}
+                                <option value="{{ country.id }}">{{ country.name|e }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label>
+                        <strong>Город <sup>*</sup></strong>
+                        <select name="city" class="city"></select>
+                    </label>
+                    <label>
+                        <strong>Пол</strong>
+                        <select name="sex">
+                            {% for sex in ['-','мужской','женский'] %}
+                                <option {% if userData.sex == loop.index0 %}selected="true"{% endif %} value="{{ loop.index0 }}">{{ sex }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label>
+                        <strong>Семья</strong>
+                        <select name="family">
+                            {% for family in ['-','женат/замужем','холост/холоста'] %}
+                                <option {% if userData.family == loop.index0 %}selected="true"{% endif %} value="{{ loop.index0 }}">{{ family }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label>
+                        <strong>Я хотела бы встретиться с</strong>
+                        {% spaceless %}
+                        <select name="meet_actor">
+                            <option value="0">ни с кем</option>
+                            {% for person in persons %}
+                                <option {% if userData.meet_actor == person.id %}selected="true"{% endif %} value="{{ person.id }}">{{ person.name|e }}</option>
+                            {% endfor %}
+                        </select>
+                        {% endspaceless %}
+                    </label>
+                    <span><input type="checkbox" {% if userData.daily_sub == 0 %}{% else %}checked="true"{% endif %} value="1" name="daily_sub">&nbsp;Я хочу получать ежедневную рассылку новостей с сайта </span><br><br>
+                    <span><input type="checkbox" {% if userData.rules == 1 %}checked="true" {% endif %} value="1" name="rules">&nbsp;Я прочитал <a onclick="window.open('/rules','_blank','width=800, height=600, scrollbars=yes'); return false;" href="/rules">правила</a> и принимаю их</span>
+                    <br><br>
+                    <input type="submit" class="b-firm-grad" value="сохранить">
+
+                    <div class=" loader "></div>
+                </form>
+
+            {% endif %}
+
+        </article>
+    </div>
+
+{% endblock %}

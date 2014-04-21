@@ -1,0 +1,107 @@
+{% extends '/community/group/GroupGeneric.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% block head %}
+
+	<title>Група - {{ group.title|e }} - popcornnews</title>
+
+	<script type="text/javascript">
+		$(function(){
+			$('a[data-action=group-join]').on('click',function(){
+				var params = {
+					securityCode: '{{ currentUser.getSecurityCode }}',
+					groupId: {{ group.id }}
+				};
+
+				var handler = function(response){
+					if (response.status == 'success'){
+
+						location.href = '/community/group/{{ group.id }}/members';
+
+						{#$('.b-fan-box').hide('drop',function(){#}
+							{#$(this).html('<p class="system-message"><strong>Вы фан!</strong><br/>Поздравляем вас ! Вы вступили в группу.</p>').show('slide',function(){#}
+								{#setTimeout(function(){#}
+									{#location.href = '/persons/{{ person.urlName }}/fans/new#'+response.userId;#}
+								{#},1000);#}
+							{#});#}
+						{#});#}
+					}
+				};
+
+				$.post('/ajax/group/join',params,handler,'json');
+			});
+
+			$('a[data-action=group-exit]').on('click',function(){
+
+
+
+			});
+		});
+	</script>
+
+	<style type="text/css">
+		.b-group-info {
+			background-color: #F2F2F2;
+			padding: 15px;
+		}
+
+		.b-group-poster {
+			float: left;
+			padding-right: 14px;
+			width: 130px;
+		}
+
+		.b-group-information {
+			width: 406px;
+			float: left;
+		}
+	</style>
+
+{% endblock %}
+
+
+{% block communityContent %}
+
+	<div class="b-group-info">
+		{% if group.poster.id %}
+			{% set src = group.poster.url('130x') %}
+			<div class="b-group-poster"><img src="{{ src }}" alt="" width="130"/></div>
+		{% endif %}
+		<div class="b-group-information">
+			{{ group.description|e }}
+
+			{% if group.tags %}
+				<p>Тэги: {{ html.tagsWithComma(group.tags) }}</p>
+			{% endif %}
+
+			{% if group.private %}
+				Группа закрытая
+			{% endif %}
+		</div>
+
+		<div class="clearfix"></div>
+
+		<div class="b-group-info-footer">
+
+			{% if userInGroup %}
+				<div class="b-group-button-exit">
+					<a href="#" data-action="group-exit">Покинуть группу</a>
+				</div>
+			{% else %}
+				<div class="b-group-button-join">
+					<a href="#" data-action="group-join">Вступить в группу</a>
+				</div>
+			{% endif %}
+
+			<div class="b-group-members">
+				1 участник
+			</div>
+
+			<div class="b-group-owner">
+				{{ group.createTime|ruDateFriendly }}
+				<a href="/profile/{{ group.owner.id }}">{{ group.owner.nick|e }}</a>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

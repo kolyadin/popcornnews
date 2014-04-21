@@ -1,0 +1,13 @@
+
+
+{% for comment in comments %}
+
+	{% include '/comments/Comment.twig' %}
+
+	{% if comment.childs %}
+
+		{% include '/comments/Comments.twig' with {'comments':comment.childs} %}
+
+	{% endif %}
+
+{% endfor %}

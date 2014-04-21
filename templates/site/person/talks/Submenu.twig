@@ -1,0 +1,11 @@
+<ul class="b-inside__menu-secondlist">
+	<li{% if slim.path[4] is null %} class="active" {% endif %}>
+		<a href="{{ personLink }}/talks" title="Показать все темы обсуждений {{ person.name|e }}">все темы</a>
+	</li>
+	<li{% if slim.path[4] == 'messages' %} class="active" {% endif %}>
+		<a href="{{ personLink }}/talks/messages" title="Показать все комментарии обсуждений {{ person.name|e }}">все комментарии</a>
+	</li>
+	<li{% if slim.path[4] == 'post' %} class="active" {% endif %}>
+		<a href="{{ personLink }}/talks/post" title="Создать тему для обсуждения {{ person.genitiveName|e }}">создать тему</a>
+	</li>
+</ul>

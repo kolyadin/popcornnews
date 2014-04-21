@@ -1,0 +1,23 @@
+<section class="b-small-news">
+	<ul class="b-small-news__list">
+		{% for post in posts %}
+			{% set photo = post.mainImageId.thumb('110x') %}
+			<li>
+				<a class="b-small-news__head" href="/news/{{ post.id }}" title="{{ post.name|e }}">
+					<img alt="{{ post.name|e }}" src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}">
+				</a>
+
+				<div class="b-small-news__body">
+					<h2 class="b-small-news__title"><a href="/news/{{ post.id }}" title="{{ post.name|e }}">{{ post.name|e }}</a></h2>
+
+					<p class="b-small-news__text">{{ post.announceFriendly(100) }}</p>
+
+					<a class="b-small-news__comments b-comments-status" href="/news/{{ post.id }}#comments">
+						<span class="b-comments-status__num">{{ post.comments }}</span>
+						<span class="b-comments-status__title">{{ post.comments|ruNumber('%s',['комментарий','комментария','комментариев']) }}</span>
+					</a>
+				</div>
+			</li>
+		{% endfor %}
+	</ul>
+</section>

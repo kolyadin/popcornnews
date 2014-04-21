@@ -1,0 +1,48 @@
+{% extends '/GenericInner.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% if slim.path[1] == 'category' %}
+	{% set title = 'Новости - popcornnews' %}
+	{% set paginatorMask = '/category/%s/page%%u'|format(slim.path[2]) %}
+{% elseif slim.path[1] == 'tag' %}
+	{% set title = 'Новости - '~ tag.name|e ~' - popcornnews' %}
+	{% set paginatorMask = '/tag/%s/page%%u'|format(slim.path[2]) %}
+{% else %}
+	{% set title = 'Новости - popcornnews' %}
+	{% set paginatorMask = '/news/page%u' %}
+{% endif %}
+
+
+{% block head %}
+	<title>{{ title }}</title>
+{% endblock %}
+
+
+{% block content %}
+
+	<div class="b-grid__g8">
+		<div class="clearfix">
+			<div class="b-grid__g6 b-grid__a">
+
+				{% if slim.path[1] == 'tag' %}
+					<h1 style="margin-bottom: 20px;">{{ tag.name|e }}</h1>
+				{% endif %}
+
+				{% include '/news/NewsList430.twig' with {'posts':posts} %}
+
+				{{
+					html.paginator(
+						 paginator.pages
+						,paginator.active
+						,paginatorMask
+					)
+				}}
+
+			</div>
+			<div class="b-grid__g2 b-grid__z">
+				{% include '/news/NewsList140.twig' with {'posts':postsSmall} %}
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
