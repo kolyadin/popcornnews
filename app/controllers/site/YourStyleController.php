@@ -206,6 +206,11 @@ class YourStyleController extends GenericController {
 							->getSlim()
 							->get('/getGroupTile/:tId', [$this, 'getGroupTile']);
 
+						$this
+							->getSlim()
+							->get('/withTile/:tId', [$this, 'yourStyleEditor'])
+							->conditions(array('setId' => '[0-9]+'));
+
 				});
 
 				$this
