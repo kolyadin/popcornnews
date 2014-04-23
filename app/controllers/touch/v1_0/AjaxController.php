@@ -779,7 +779,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 					"link" => '/news/' . $post->getId(),
 					"date" => RuHelper::ruDateFriendly($post->getCreateDate()),
 					"title" => $post->getName(),
-					"photoPreview" => $post->getMainImageId()->getId(),
+					"photoPreview" => $post->getMainImageId()->getThumb('393x')->getUrl(),
 					"photoPreviewAlt" => $post->getName(),
 					"numPhoto" => count($post->getImages()),
 					"numComments" => $post->getComments(),
