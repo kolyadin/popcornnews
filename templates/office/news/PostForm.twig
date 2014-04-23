@@ -25,7 +25,15 @@
 				<a href="{{ url }}" class="thumbnail"><img src="{{ thumbUrl }}"/></a>
 			</div>
 
-			<p>Размер: <strong>{{ width }}x{{ height }}</strong></p>
+			<p>
+				Размер: <strong>{{ width }}x{{ height }}</strong>
+				{{ #sizeAlert }}
+					<i class="fa fa-times" style="color:red;"></i>
+				{{ /sizeAlert }}
+				{{ ^sizeAlert }}
+					<i class="fa fa-check" style="color:green;"></i>
+				{{ /sizeAlert }}
+			</p>
 			<p><input type="button" class="btn btn-info" data-action="remove-main-image" value="обрезать" /></p>
 			<p><input type="button" class="btn btn-danger" data-action="remove-main-image" value="выбрать другое фото" /></p>
 			<p>
@@ -41,7 +49,7 @@
 	</script>
 
 	<script id="tmpl-image-box" type="x-tmpl-mustache">
-		<div class="form-group last">
+		<div class="form-group last" data-element="image">
 			<input type="hidden" name="image[]" value="{{ imageId }}"/>
 			<label class="control-label col-md-1"></label>
 			<div class="col-md-10">
@@ -389,11 +397,21 @@
 
 					},
 					UploadComplete: function (up, files) {
+						$('div[data-element=post-images]').sortable({
+							axis : 'y',
+							items : 'div[data-element=image]',
+							handle: 'img',
+//							grid: [ 0, 30 ],
+							opacity : 0.2,
+							cursor: 'move',
+							stop : function(event,ui)
+							{
 
+							}
+						}).disableSelection();
 					},
 					BeforeUpload: function (up, file) {
 					},
-
 					FilesAdded: function (up, files) {
 						up.start();
 					},
@@ -402,14 +420,12 @@
 						var data = $.parseJSON(object.response);
 
 						var $html = Mustache.render($('#tmpl-image-box').html(),{
-							ImageId: data.id,
+							imageId: data.id,
 							url: data.url,
 							thumbUrl: data.thumb.url
 						});
 
-						$('#add-images')
-						.closest('.form-group')
-						.before($html);
+						$('#add-images').closest('.form-group').before($html);
 
 					},
 
@@ -517,7 +533,7 @@
 						<label class="control-label col-md-3">Основное фото: <span class="required">*</span></label>
 
 						<div class="col-md-9">
-							<input type="button" class="btn btn-info" id="main-image-uploader" value="выбрать фото"/>
+							<input type="button" class="btn btn-info" id="main-image-uploader" value="загрузить фото"/>
 							<span class="help-block"></span>
 						</div>
 					</div>
@@ -649,15 +665,24 @@
 						<a href="javascript:;" class="collapse"></a>
 					</div>
 				</div>
-				<div class="portlet-body">
+				<div class="portlet-body" data-element="post-images">
 
+					<div class="alert alert-info alert-dismissable">
+						<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+						Можно выбирать сразу много фотографий. Просто выдели мышью сколько захочешь.
+					</div>
 
-						<div class="form-group last">
-							<label class="control-label col-md-2">&nbsp;</label>
-							<div class="col-md-9 right">
-								<input type="button" class="btn btn-info btn-s" id="add-images" value="добавить фотографии"/>
-							</div>
+					<div class="alert alert-info alert-dismissable">
+						<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+						Фотографии можно сортировать. Наведи курсор на фото, зажми и перетаскивай вверх-вниз меняя последовательность
+					</div>
+
+					<div class="form-group last">
+						<label class="control-label col-md-2">&nbsp;</label>
+						<div class="col-md-9 right">
+							<input type="button" class="btn btn-info btn-s" id="add-images" value="добавить фотографии"/>
 						</div>
+					</div>
 
 					<div class="clearfix"></div>
 
