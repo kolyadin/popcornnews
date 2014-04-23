@@ -739,7 +739,12 @@ class AjaxController extends GenericController implements ControllerInterface {
 			$sample = $this->getSlim()->request()->post('sample');
 			$page = $this->getSlim()->request()->post('page');
 
-			$params = ['category' => $sample, 'page' => $page];
+			if ($sample == 'news') {
+				$params = ['page' => $page];
+			} else {
+				$params = ['category' => $sample, 'page' => $page];
+			}
+
 			$options = [
 				'category' => null,
 				'page' => null,
@@ -772,7 +777,6 @@ class AjaxController extends GenericController implements ControllerInterface {
 				$paginator
 			);
 
-			$postsSmall = $dataMap->findByDate(0, $onPage);
 			$arrPosts = array();
 			foreach($posts as $post) {
 				$aPost = [
