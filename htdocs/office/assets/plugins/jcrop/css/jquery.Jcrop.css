@@ -76,6 +76,9 @@
   margin-top: -4px;
   top: 50%;
 }
+.jcrop-keymgr {
+    opacity: 0;
+}
 .jcrop-handle.ord-nw {
   left: 0;
   margin-left: -4px;

@@ -15,14 +15,15 @@
 
 			{{ #sizeAlert }}
 				<div class="alert alert-danger">
-					Ширина загруженного изображения меньше <strong>620px</strong>.
-					Если использовать эту фотку, отображение на сайте может быть ужасным.
-					Попытайся найти фотку большего размера.
+					<p><i class="fa fa-times"></i>&nbsp;<strong>Ширина загруженного изображения меньше 620px</strong>.
+					<p><i class="fa fa-times"></i>&nbsp;<strong>Функция "обрезания" недоступна</strong>.
+					<p>Использование этой фотографии может привести к ужасному виду на страницах сайта.
+					<p>Лучше всего найти фотку большего размера.
 				</div>
 			{{ /sizeAlert }}
 
 			<div style="float:left;margin-right:20px;">
-				<a href="{{ url }}" class="thumbnail"><img src="{{ thumbUrl }}"/></a>
+				<a href="{{ url }}" data-full-width="{{ width }}" class="thumbnail" id="main-image-preview"><img src="{{ thumbUrl }}"/></a>
 			</div>
 
 			<p>
@@ -34,7 +35,9 @@
 					<i class="fa fa-check" style="color:green;"></i>
 				{{ /sizeAlert }}
 			</p>
-			<p><input type="button" class="btn btn-info" data-action="remove-main-image" value="обрезать" /></p>
+			{{ ^sizeAlert }}
+				<p><input type="button" class="btn btn-info" data-action="crop-main-image" value="обрезать" /></p>
+			{{ /sizeAlert }}
 			<p><input type="button" class="btn btn-danger" data-action="remove-main-image" value="выбрать другое фото" /></p>
 			<p>
 				<select name="mainImageZoom" class="form-control" style="width:220px;">
@@ -88,6 +91,49 @@
 	<script type="text/javascript">
 
 		$(function(){
+
+			var jcropApi;
+
+			//Событие на кнопку убрать у приложенных фотографий
+			$('body').on('click','input[data-action=crop-main-image]',function(){
+
+				var $imagePreview = $('#main-image-preview');
+
+				var $fullSrc = $imagePreview.attr('href');
+				var $fullWidth = $imagePreview.attr('data-full-width');
+
+				$('#modal-crop .modal-body .main-image-crop').html(sprintf('<img src="%s" id="main-image-crop" />',$fullSrc));
+
+				$('#main-image-crop').Jcrop({
+					boxWidth: 560,
+					aspectRatio: 62/40,
+					minSize: [620,0],
+					setSelect: [0,0,620,0],
+					onSelect: function(){
+
+					},
+					bgOpacity: 0.2
+				},function(){
+					jcropApi = this;
+					$('#modal-crop').modal('show');
+				});
+
+
+			});
+
+			$('button[data-action=jcrop-select-all-width]').on('click',function(){
+
+				var $width = $('#main-image-preview').attr('data-full-width');
+
+				jcropApi.setSelect([0,0,$width,0]);
+
+			});
+
+			$('button[data-action=jcrop-select-default]').on('click',function(){
+
+				jcropApi.setSelect([0,0,620,0]);
+
+			});
 
 			//Событие на кнопку убрать у приложенных фотографий
 			$('body').on('click','input[data-action=remove-image]',function(){
@@ -477,6 +523,26 @@
 {% endblock %}
 
 {% block PageContent %}
+
+	<div class="modal fade" id="modal-crop" role="basic" aria-hidden="true" data-backdrop="static">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="main-image-crop">
+
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-info" aria-hidden="true" data-action="jcrop-select-all-width">Подогнать под ширину</button>
+					<button class="btn btn-info" aria-hidden="true" data-action="jcrop-select-default">Выбрать минимальный &quot;кусок&quot;</button>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Отмена</button>
+					<button class="btn btn-danger" data-action="confirm-remove">Сделать обрезание</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 
 	<form class="form-horizontal form-row-seperated" method="post" enctype="multipart/form-data" name="form-edit">

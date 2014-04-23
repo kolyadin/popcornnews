@@ -348,7 +348,7 @@
         }),
 
         $hdl_holder = $('<div />') 
-        .width('100%').height('100%').css('zIndex', 320), 
+        .width('100%').height('100%').css('zIndex', 320),
 
         $sel = $('<div />') 
         .css({
