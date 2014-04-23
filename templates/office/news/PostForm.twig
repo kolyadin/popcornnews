@@ -2,29 +2,129 @@
 
 {% block BodyEnd %}
 
+	{% raw %}
+	<script id="tmpl-main-image-box" type="x-tmpl-mustache">
+		<div class="note note-info">
+			<p><strong>Размеры (ширина)</strong>:<br/>
+			* В списках - 430px<br/>
+			* Полная новость - 500px<br/>
+			* Главная страница - 620px
+		</div>
+		<div class="well well-lg">
+			<input type="hidden" name="mainImageId" value="{{ mainImageId }}" />
+
+			{{ #sizeAlert }}
+				<div class="alert alert-danger">
+					Ширина загруженного изображения меньше <strong>620px</strong>.
+					Если использовать эту фотку, отображение на сайте может быть ужасным.
+					Попытайся найти фотку большего размера.
+				</div>
+			{{ /sizeAlert }}
+
+			<div style="float:left;margin-right:20px;">
+				<a href="{{ url }}" class="thumbnail"><img src="{{ thumbUrl }}"/></a>
+			</div>
+
+			<p>Размер: <strong>{{ width }}x{{ height }}</strong></p>
+			<p><input type="button" class="btn btn-info" data-action="remove-main-image" value="обрезать" /></p>
+			<p><input type="button" class="btn btn-danger" data-action="remove-main-image" value="выбрать другое фото" /></p>
+			<p>
+				<select name="mainImageZoom" class="form-control" style="width:220px;">
+					<option value="">Режим увеличения</option>
+					<option value="zoom">ВКЛючить увеличение</option>
+					<option value="">ВЫКЛючить увеличение</option>
+
+				</select>
+			</p>
+			<div style="clear:both;"></div>
+		</div>
+	</script>
+
+	<script id="tmpl-image-box" type="x-tmpl-mustache">
+		<div class="form-group last">
+			<input type="hidden" name="image[]" value="{{ imageId }}"/>
+			<label class="control-label col-md-1"></label>
+			<div class="col-md-10">
+
+				<div style="float:left;margin-right: 20px;">
+					<a href="{{ url }}" class="thumbnail">
+						<img src="{{ thumbUrl }}" alt=""/>
+					</a>
+				</div>
+				<div style="float:left;">
+					<p><input class="form-control" style="width:450px;" name="title[{{ imageId }}]" type="text" placeholder="Название фото" value=""/></p>
+					<p><input class="form-control" style="width:450px;" name="caption[{{ imageId }}]" type="text" placeholder="Подпись к фото" value=""/></p>
+					<p><input class="btn btn-danger" type="button" value="убрать" data-action="remove-image"/></p>
+				</div>
+
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+	</script>
+
+	<script id="tmpl-poll-answer" type="x-tmpl-mustache">
+		<div class="form-group last">
+			<label class="control-label col-md-3">Ответ: <span class="required">*</span></label>
+			<div class="col-md-9">
+				<div class="input-group input-xlarge">
+					<input name="opinion[]" class="form-control" type="text" required="true"/>
+					<span class="input-group-btn">
+						<button class="btn btn-info" type="button" data-action="poll-remove-answer">убрать</button>
+					</span>
+				</div>
+			</div>
+		</div>
+	</script>
+	{% endraw %}
+
 	<script type="text/javascript">
 
 		$(function(){
 
-			var $newForm =
-			'<div class="form-group">'+
-				'<input type="hidden" name="image[]" value="%u"/>'+
-				'<label class="control-label col-md-2"></label>'+
-				'<div class="col-md-9">'+
-					'<div>'+
-						'<img class="thumbnail" src="%s" style="float:left;margin-right: 20px;" alt=""/>'+
-						'<p><input class="form-control input-xlarge" name="title[%u]" type="text" placeholder="Название фото" value="%s"/></p>'+
-						'<p><input class="form-control input-xlarge" name="caption[%u]" type="text" placeholder="Подпись к фото" value="%s"/></p>'+
-						'<p><input class="btn btn-danger" type="button" value="убрать" data-action="remove-image"/></p>'+
-					'</div>'+
-				'</div>'+
-			'</div>';
-
+			//Событие на кнопку убрать у приложенных фотографий
 			$('body').on('click','input[data-action=remove-image]',function(){
 				var $formGroup = $(this).closest('.form-group');
 				$formGroup.fadeOut('fast',function(){
 					$(this).remove();
 				});
+			});
+
+			//Событие на кнопку "выбрать другое фото" у основного фото
+			$('body').on('click','input[data-action=remove-main-image]',function(){
+				$(this).closest('.col-md-9').find('.help-block').html('');
+
+				$('#main-image-uploader').show().click();
+			});
+
+			//Включить опрос в новости
+			$('input[data-action=add-poll]').on('click',function(){
+				$('div[data-element=poll]')
+					  .removeClass('hide')
+					  .prepend('<p><input type="button" class="btn btn-danger" value="убрать опрос" data-action="poll-remove" />')
+
+				$(this).hide();
+			});
+
+			//Убрать опрос
+			$('body').on('click','input[data-action=poll-remove]',function(){
+				$('div[data-element=poll]').addClass('hide');
+				$('input[data-action=poll-remove]').remove();
+				$('input[data-action=add-poll]').show();
+			});
+
+			//Добавить вариант ответа к опросу
+			$('a[data-action=poll-add-answer]').on('click', function () {
+
+				var $html = Mustache.render($('#tmpl-poll-answer').html());
+
+				$('#poll-question').after($html);
+
+				return false;
+			});
+
+			//Удалить вариант ответа
+			$('body').on('click','button[data-action=poll-remove-answer]',function(){
+				$(this).closest('.form-group').remove();
 			});
 
 			$('#postDate').datetimepicker({
@@ -34,19 +134,46 @@
 				minuteStep: 1
 			});
 
+			//Поставить сегодняшнее время и дату
+			$('body').on('click','input[data-action=set-now-date]',function(){
+
+				var currentDate = new Date();
+
+				var $date = sprintf('%02u.%02u.%04u %02u:%02u',
+					currentDate.getDate(),
+					currentDate.getMonth()+1,
+					currentDate.getFullYear(),
+				    currentDate.getHours(),
+				    currentDate.getMinutes()
+				);
+				$('#postDate').val($date);
+			});
+
+			var articles = [
+				{id:1,text:'Звезды'},
+				{id:2,text:'Мода'},
+				{id:3,text:'Красота'},
+				{id:4,text:'Кино'},
+				{id:5,text:'Тв и сериалы'},
+				{id:6,text:'Музыка'},
+				{id:7,text:'Гаджеты'}
+			];
+
+			var getArticle = function(articleId){
+
+				for (x in articles){
+					if (articles[x].id == articleId){
+						return articles[x].text;
+					}
+				}
+
+			};
+
 			$('input[name=articles]').select2({
-				data: [
-					{id:1,text:'звезды'},
-					{id:2,text:'мода'},
-					{id:3,text:'красота'},
-					{id:4,text:'кино'},
-					{id:5,text:'тв и сериалы'},
-					{id:6,text:'музыка'},
-					{id:7,text:'гаджеты'}
-				],
+				data: articles,
 				width: '480px',
 				multiple: true,
-				placeholder: "Начните вводить название рубрики...",
+				placeholder: "Начни вводить название рубрики...",
 				initSelection: function (element, callback) {
 
 					{% if post.tags(3)|length %}
@@ -54,7 +181,7 @@
 						  var data = [];
 
 						{% for tag in post.tags(3) %}
-							  data.push({'id': {{ tag.id }}, 'text': '{{ tag.name|e }}'});
+							  data.push({'id': {{ tag.name }}, 'text': getArticle({{ tag.name|e }})});
 						{% endfor %}
 
 
@@ -64,16 +191,13 @@
 
 						  callback(data);
 				    {% endif %}
-
-
-
 				}
 			});
 
 			$('input[name=tags]').select2({
 				width: '480px',
 				multiple: true,
-				placeholder: "Начните вводить название тега...",
+				placeholder: "Начни вводить название тега...",
 				initSelection: function (element, callback) {
 
 					{% if post.tags(0)|length %}
@@ -134,7 +258,7 @@
 			$('input[name=movies]').select2({
 				width: '480px',
 				multiple: true,
-				placeholder: "Начни вводить имя персоны...",
+				placeholder: "Начни вводить название фильма...",
 				initSelection: function (element, callback) {
 
 				},
@@ -162,19 +286,21 @@
 				}
 			});
 
+			//Основное изображение
 			var uploaderMainImage = new plupload.Uploader({
 				runtimes: 'html5,flash,silverlight,html4',
 				browse_button: 'main-image-uploader',
 				max_file_size: '10mb',
 				unique_names: true,
 				max_file_count: 1,
+				multi_selection: false,
 				multi: false,
 
 				multipart_params : {
-					'resize' : '200x'
+					'resize' : '300x'
 				},
 
-				url: "/ajax/user-upload",
+				url: "/office/ajax/upload-attach",
 
 				flash_swf_url: '/office/assets/plugins/plupload-2.1.1/js/Moxie.swf',
 				silverlight_xap_url: '/office/assets/plugins/plupload-2.1.1/js/Moxie.xap',
@@ -191,8 +317,7 @@
 
 					},
 					BeforeUpload: function (up, file) {
-						var $parent = $('#main-image-uploader').closest('.col-md-9').find('.help-block');
-						$parent.html('');
+						$('#main-image-uploader').closest('.col-md-9').find('.help-block').html('Ждите...');
 					},
 
 					FilesAdded: function (up, files) {
@@ -202,10 +327,26 @@
 
 						var data = $.parseJSON(object.response);
 
-						var $parent = $('#main-image-uploader').closest('.col-md-9').find('.help-block');
-						$parent
-							  .append('<input type="hidden" name="mainImageId" value="'+ data.id +'" />')
-							  .append('<img src="'+ data.result.url +'"/>');
+						var templateVars = {
+							mainImageId: data.id,
+							width: data.width,
+							height: data.height,
+							thumbUrl: data.thumb.url,
+							url: data.url
+						};
+
+						if (data.width < 620){
+							templateVars['sizeAlert'] = 1;
+						}
+
+						var $html = Mustache.render($('#tmpl-main-image-box').html(),templateVars);
+
+						var $id = $('#main-image-uploader');
+
+						var $parent = $id.closest('.col-md-9').find('.help-block');
+						$parent.html($html);
+
+						$id.hide();
 
 					},
 
@@ -221,6 +362,7 @@
 			});
 			uploaderMainImage.init();
 
+			//Куча приложенных фоток
 			var uploaderImages = new plupload.Uploader({
 				runtimes: 'html5,flash,silverlight,html4',
 				browse_button: 'add-images',
@@ -233,7 +375,7 @@
 					'resize' : '200x'
 				},
 
-				url: "/ajax/user-upload",
+				url: "/office/ajax/upload-attach",
 
 				flash_swf_url: '/office/assets/plugins/plupload-2.1.1/js/Moxie.swf',
 				silverlight_xap_url: '/office/assets/plugins/plupload-2.1.1/js/Moxie.xap',
@@ -250,8 +392,6 @@
 
 					},
 					BeforeUpload: function (up, file) {
-						var $parent = $('#main-image-uploader').closest('.col-md-9').find('.help-block');
-						$parent.html('');
 					},
 
 					FilesAdded: function (up, files) {
@@ -261,11 +401,15 @@
 
 						var data = $.parseJSON(object.response);
 
+						var $html = Mustache.render($('#tmpl-image-box').html(),{
+							ImageId: data.id,
+							url: data.url,
+							thumbUrl: data.thumb.url
+						});
+
 						$('#add-images')
 						.closest('.form-group')
-						.before(sprintf($newForm
-					      ,data.id,data.result.url,data.id,'',data.id,''
-					    ));
+						.before($html);
 
 					},
 
@@ -286,7 +430,7 @@
 
 {% endblock %}
 
-{% block PageContent %}
+{% block PageTop %}
 
 	{% if post %}
 		<h3 class="page-title">
@@ -298,6 +442,25 @@
 			Создание новости
 		</h3>
 	{% endif %}
+
+	<ul class="page-breadcrumb breadcrumb">
+		<li>
+			<i class="fa fa-home"></i>
+			<a href="/office">Консоль</a>
+			<i class="fa fa-angle-right"></i>
+		</li>
+		<li>
+			<a href="/office/posts">Новости</a>
+			<i class="fa fa-angle-right"></i>
+		</li>
+		<li>
+			<a href="/office/post_create">Создание новости</a>
+		</li>
+	</ul>
+
+{% endblock %}
+
+{% block PageContent %}
 
 
 	<form class="form-horizontal form-row-seperated" method="post" enctype="multipart/form-data" name="form-edit">
@@ -335,7 +498,7 @@
 						<label class="control-label col-md-3">Заголовок новости: <span class="required">*</span></label>
 
 						<div class="col-md-9">
-							<input class="form-control input-xlarge" name="name" required="true" type="text" value="{{ post.name|e }}"/>
+							<textarea class="form-control" name="name" id="" cols="30" rows="2">{{ post.name|e }}</textarea>
 							<span class="help-block"></span>
 						</div>
 					</div>
@@ -344,7 +507,8 @@
 						<label class="control-label col-md-3">Дата публикации: <span class="required">*</span></label>
 
 						<div class="col-md-9">
-							<input class="form-control input-medium" id="postDate" name="createDate" required="true" type="text" value="{{ post.createDate|date('d.m.Y H:i')|default('now'|date('d.m.Y H:i')) }}"/>
+							<input class="form-control" style="width:150px;float:left;margin-right: 10px;" id="postDate" name="createDate" required="true" type="text" value="{{ post.createDate|date('d.m.Y H:i')|default('now'|date('d.m.Y H:i')) }}"/>
+							<input class="btn btn-info" type="button" value="поставить текущее время" data-action="set-now-date"/>
 							<span class="help-block"></span>
 						</div>
 					</div>
@@ -359,19 +523,10 @@
 					</div>
 
 					<div class="form-group last">
-						<label class="control-label col-md-3">Источник новости:</label>
-
-						<div class="col-md-9">
-							<input class="form-control input-xlarge" name="source" required="true" type="text" value="{{ post.source|e }}"/>
-							<span class="help-block"></span>
-						</div>
-					</div>
-
-					<div class="form-group last">
 						<label class="control-label col-md-3">Анонс (для списков или, если, новость короткая):</label>
 
 						<div class="col-md-9">
-							<input class="form-control input-xlarge" name="anons" required="true" type="text" value="{{ post.anons|e }}"/>
+							<textarea class="form-control ckeditor" name="announce" cols="30" rows="10">{{ post.announce|e }}</textarea>
 							<span class="help-block"></span>
 						</div>
 					</div>
@@ -380,7 +535,54 @@
 						<label class="control-label col-md-3">Подробное описание новости:</label>
 
 						<div class="col-md-9">
-							<input class="form-control input-xlarge" name="content" required="true" type="text" value="{{ post.content|e }}"/>
+							<textarea class="form-control ckeditor" name="content" cols="30" rows="10">{{ post.content|e }}</textarea>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Источник новости:</label>
+
+						<div class="col-md-9">
+							<input class="form-control input-xlarge" name="source" required="true" type="text" value="{{ post.source|e }}"/>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="portlet">
+				<div class="portlet-title">
+					<div class="caption">
+						<i class="fa fa-reorder"></i>Опции
+					</div>
+					<div class="tools">
+						<a href="javascript:;" class="collapse"></a>
+					</div>
+				</div>
+				<div class="portlet-body">
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Выгружать в RSS:</label>
+
+						<div class="col-md-9">
+							<select class="form-control" name="rssPosting">
+								<option value="">НЕ выгружать в RSS</option>
+								<option value="1">Выгружать в RSS</option>
+							</select>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Комментарии:</label>
+
+						<div class="col-md-9">
+							<select class="form-control" name="commentsOff">
+								<option value="">ВКЛючить комментарии</option>
+								<option value="1">ВЫКЛючить комментарии</option>
+							</select>
 							<span class="help-block"></span>
 						</div>
 					</div>
@@ -458,6 +660,53 @@
 						</div>
 
 					<div class="clearfix"></div>
+
+				</div>
+			</div>
+
+
+			<div class="portlet">
+				<div class="portlet-title">
+					<div class="caption">
+						<i class="fa fa-reorder"></i>Опрос
+					</div>
+					<div class="tools">
+						<a href="javascript:;" class="collapse"></a>
+					</div>
+				</div>
+				<div class="portlet-body">
+
+					<div class="hide" data-element="poll">
+						<div class="note note-warning">
+							Варианты ответов нельзя изменять после создания. Только вручную через программиста
+						</div>
+
+						<div class="form-group last" id="poll-question">
+							<label class="control-label col-md-3">Вопрос: <span class="required">*</span></label>
+							<div class="col-md-9 right">
+								<input class="form-control input-xlarge" name="poll_question" required="true" type="text" placeholder="Что хочешь спросить?"/>
+							</div>
+						</div>
+
+						<div class="form-group last">
+							<label class="control-label col-md-3">&nbsp;</label>
+							<div class="col-md-9 right">
+								<a class="btn btn-info btn-s" href="#" data-action="poll-add-answer">добавить ответ</a>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="form-group last">
+						<label class="control-label col-md-2">&nbsp;</label>
+						<div class="col-md-9 right">
+							<input type="button" class="btn btn-info" value="добавить опрос" data-action="add-poll" />
+						</div>
+					</div>
+
+
+
+
 
 				</div>
 			</div>

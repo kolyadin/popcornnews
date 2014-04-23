@@ -95,6 +95,8 @@ class PostController extends GenericController implements ControllerInterface {
 
 	public function postEditGet($postId = null) {
 
+		$request = $this->getSlim()->request;
+
 		$twigData = [];
 
 		if ($postId > 0) {
@@ -111,14 +113,14 @@ class PostController extends GenericController implements ControllerInterface {
 			$articles = $post->getTags(Tag::ARTICLE);
 
 			if ($events){
-				foreach ($events as $tagEvent){
-					$twigData['tags']['events'][] = $tagEvent->getId();
+				foreach ($events as $tag){
+					$twigData['tags']['events'][] = $tag->getId();
 				}
 			}
 
 			if ($articles){
-				foreach ($articles as $tagEvent){
-					$twigData['tags']['articles'][] = $tagEvent->getId();
+				foreach ($articles as $tag){
+					$twigData['tags']['articles'][] = $tag->getName();
 				}
 			}
 
@@ -130,7 +132,7 @@ class PostController extends GenericController implements ControllerInterface {
 		}
 
 
-		if ($postId > 0 && $this->getSlim()->request->get('action') == 'remove') {
+		if ($postId > 0 && $request->get('action') == 'remove') {
 			$this
 				->getTwig()
 				->display('news/NewsRemove.twig', $twigData);

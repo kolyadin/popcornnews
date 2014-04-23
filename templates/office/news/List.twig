@@ -71,7 +71,7 @@
 			<i class="fa fa-angle-right"></i>
 		</li>
 		<li>
-			<a href="/office/news">Новости</a>
+			<a href="/office/posts">Новости</a>
 			<i class="fa"></i>
 		</li>
 	</ul>
@@ -107,6 +107,10 @@
 
 	{% if posts|length %}
 
+		<div style="text-align: right;">
+			{{ html.paginator(paginator.pages,paginator.active,'/office/posts/page%u') }}
+		</div>
+
 		<div class="table-responsive">
 			<table class="table table-hover table-items">
 				<thead>
@@ -134,7 +138,9 @@
 			</table>
 		</div>
 
-		{{ html.paginator(paginator.pages,paginator.active,'/office/news/page%u') }}
+		<div style="text-align: right;">
+			{{ html.paginator(paginator.pages,paginator.active,'/office/posts/page%u') }}
+		</div>
 
 	{% else %}
 
