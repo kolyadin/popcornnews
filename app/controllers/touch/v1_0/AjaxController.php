@@ -22,6 +22,11 @@ use popcorn\model\voting\UpDownVoting;
 use popcorn\model\persons\Person;
 use popcorn\model\im\Message;
 use popcorn\model\im\MessageFactory;
+use popcorn\model\dataMaps\NewsPostDataMap;
+use popcorn\model\dataMaps\TagDataMap;
+use popcorn\model\tags\TagFactory;
+use popcorn\model\dataMaps\DataMapHelper;
+use popcorn\lib\RuHelper;
 
 
 class AjaxController extends GenericController implements ControllerInterface {
@@ -65,6 +70,9 @@ class AjaxController extends GenericController implements ControllerInterface {
 			->getSlim()
 			->post('/ajax/deleteStatus', [$this, 'statusRemove']);
 
+		$this
+			->getSlim()
+			->post('/ajax/getNews', [$this, 'getNews']);
 
 	}
 
@@ -725,5 +733,70 @@ class AjaxController extends GenericController implements ControllerInterface {
 		}
 	}
 
+	public function getNews() {
+
+		try {
+			$sample = $this->getSlim()->request()->post('sample');
+			$page = $this->getSlim()->request()->post('page');
+
+			$params = ['category' => $sample, 'page' => $page];
+			$options = [
+				'category' => null,
+				'page' => null,
+			];
+
+			$options = array_merge($options, $params);
+
+			if (is_null($options['page'])) {
+				$options['page'] = 1;
+			}
+
+			$onPage = 10;
+			$paginator = [];
+
+			$mapOptions = $options;
+
+			if ($options['category']) {
+				$mapOptions = ['category' => $options['category']];
+			}
+
+			$dataMapHelper = new DataMapHelper();
+			$dataMapHelper->setRelationship([
+				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE,
+			]);
+
+			$dataMap = new NewsPostDataMap($dataMapHelper);
+
+			$posts = $dataMap->find($mapOptions,
+				[($options['page'] - 1) * $onPage, $onPage],
+				$paginator
+			);
+
+			$postsSmall = $dataMap->findByDate(0, $onPage);
+			$arrPosts = array();
+			foreach($posts as $post) {
+				$aPost = [
+					"link" => '/news/' . $post->getId(),
+					"date" => RuHelper::ruDateFriendly($post->getCreateDate()),
+					"title" => $post->getName(),
+					"photoPreview" => $post->getMainImageId()->getId(),
+					"photoPreviewAlt" => $post->getName(),
+					"numPhoto" => count($post->getImages()),
+					"numComments" => $post->getComments(),
+					"desc" => $post->getAnnounceFriendly(),
+					"vk" => 'http://vkontakte.ru/share.php?url=http://www.popcornnews.ru/news/' . $post->getId(),
+					"fb" => 'http://www.facebook.com/sharer.php?u=http://www.popcornnews.ru/news/' . $post->getId(),
+					"tw" => 'https://twitter.com/intent/tweet?original_referer=http://www.popcornnews.ru/news/' . $post->getId() . '&related=anywhereTheJavascriptAPI&text=' . $post->getName() . ' http://www.popcornnews.ru/news/' . $post->getId() . '&tw_p=tweetbutton&url=http://www.popcornnews.ru/news/' . $post->getId() . '&via=popcornnews_ru',
+				];
+				$arrPosts[] = $aPost;
+			}
+
+			$json = '{"status":"1", "pages":"' . $paginator['pages'] . '", "fragment":' . json_encode($arrPosts) . '}';
+			die($json);
+		} catch (AjaxException $e) {
+			$e->exitWithJsonException();
+		}
+
+	}
 
 }

@@ -27,7 +27,8 @@ Ajax.prototype._ajaxHTML={
 		item.date ? date='<span class="news-list__date">'+item.date+'</span>' : date='';
 		return 	(
 			'<div class="news-list__item eitem Eitem">'+
-				'<a class="news-list__content Eitem__content"  href="'+item.link+'">'+
+				'<div class="news-list__content">'+
+				'<a class="Eitem__content"  href="'+item.link+'">'+
 					date+
 					'<span class="news-list__title">'+item.title+'</span>'+
 					'<img class="news-list__photo" src="'+item.photoPreview+'" alt="'+item.photoPreviewAlt+'" />'+
@@ -47,6 +48,7 @@ Ajax.prototype._ajaxHTML={
 					'<a href="'+item.vk+'"><img class="eitem__extra-social" src="i/vk-white.svg" alt="" /></a> '+
 					'<a href="'+item.fb+'"><img class="eitem__extra-social" src="i/fb-white.svg" alt="" /></a> '+
 					'<a href="'+item.tw+'"><img class="eitem__extra-social" src="i/tw-white.svg" alt="" /></a>'+
+				'</div>'+
 				'</div>'+
 			'</div>'
 		);	

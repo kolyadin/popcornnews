@@ -2,6 +2,8 @@
 
 {% block topmenu %}
 
+	<header class="page__header nav">
+
 	{% if companionProfile %}
 
 		{% if companionProfile.avatar.id %}
@@ -42,12 +44,14 @@
 
 	{% endif %}
 
+	</header>
+
 {% endblock %}
 
 {% block content %}
 
 	{% if dialogs %}
-	
+
 		<div class="users users_dialogues">
 
 			{% for dialog in dialogs %}
@@ -106,7 +110,7 @@
 					</div>
 					<div class="dialogue__date">
 						{{ messageDate }}
-					</div>					
+					</div>
 				</li>
 			{% endif %}
 			</ul>
