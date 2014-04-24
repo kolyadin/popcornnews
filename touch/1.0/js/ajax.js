@@ -72,11 +72,28 @@ Ajax.prototype._ajaxHTML={
 						'<a data-type="deleteUser" class="eitem__extra-item" href="#">'+
 							'<img class="eitem__extra-icon" src="i/close-white.svg" alt="Удалить" />'+
 						'</a>'+
-						'<a class="eitem__extra-item" href="html/dialogue.html?user='+item.uid+'">'+
+						'<a class="eitem__extra-item" href="/im/companion'+item.uid+'">'+
 							'<img class="eitem__extra-icon" src="i/message-white.svg" alt="Написать сообщение" />'+
 						'</a>'+
 					'</div>'+
-				'</div>	'+				
+				'</div>	'+
+			'</div>'
+		);
+	},
+	getUsersForDialog:function(item){
+		var isOnline = item.isOnline ? ' users__name_online' : '';
+		return 	(
+			'<div data-uid="'+item.uid+'" class="users__item eitem eitem Eitem">'+
+				'<a class="users__content Eitem__content" href="'+item.userLink+'">'+
+					'<div class="users__photo" style="background-image:url('+item.avatar+');"></div>'+
+					'<div class="users__info">'+
+						'<div class="users__name color-'+item.ratingName+isOnline+'">'+item.nick+'</div>'+
+						'<div class="users__row">'+
+							'<span class="users__city">'+item.city+'</span>'+
+							'<span class="stars color-'+item.ratingName+'"><span style="width:'+item.ratingValue+'%;" class="stars__inner"></span></span>'+							
+						'</div>'+
+					'</div>'+
+				'</a>'+
 			'</div>'		
 		);	
 	}

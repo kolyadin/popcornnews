@@ -4,7 +4,7 @@
 
 	<header class="page__header nav">
 
-	{% if companionProfile %}
+	{% if companionId > 0 %}
 
 		{% if companionProfile.avatar.id %}
 			{% set src = companionProfile.avatar.url('256x') %}
@@ -25,7 +25,7 @@
 		</div>
 		<div class="nav__right">
 			<span class="nav__user-date">22.09</span>
-			<a class="nav__user-photo" href="#" style="background-image:url({{ src }});"></a>
+			<a class="nav__user-photo" href="/profile/{{ companionProfile.id }}" style="background-image:url({{ src }});"></a>
 		</div>
 
 	{% else %}
@@ -39,7 +39,7 @@
 			</div>
 		</div>
 		<div class="nav__right">
-			<a class="nav__large" href="/im/create{# Не сделан шаблон для этой ссылки #}">Написать</a>
+			<a class="nav__large" href="/im/create">Написать</a>
 		</div>
 
 	{% endif %}
@@ -50,7 +50,7 @@
 
 {% block content %}
 
-	{% if dialogs %}
+	{% if companionId == 0 %}
 
 		<div class="users users_dialogues">
 

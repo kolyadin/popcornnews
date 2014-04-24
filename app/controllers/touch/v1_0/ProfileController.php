@@ -338,11 +338,15 @@ class ProfileController extends GenericController implements ControllerInterface
 				->display('/profile/ProfileMessages.twig',[
 					'profile' => $profile,
 					'messages' => $messages,
-					'companionProfile' => $companionProfile
+					'companionProfile' => $companionProfile,
+					'companionId' => $companionId,
 				]);
 		} else {
 			$dialogs = $dataMap->getDialogs($profile);
 
+			if (!count($dialogs)) {
+				self::getSlim()->redirect('/im/create');
+			}
 			self::getTwig()
 				->display('/profile/ProfileMessages.twig',[
 					'profile' => $profile,
@@ -352,11 +356,25 @@ class ProfileController extends GenericController implements ControllerInterface
 
 	}
 
-	public static function imCreate(){
+	public static function imCreate() {
 
 		$profile = UserFactory::getCurrentUser();
-		$dataMap = new MessageDataMap();
+		$dataMap = new UserDataMap();
 
+		$onPage = 20;
+		$paginator = [];
+
+		$friends = $dataMap->getFriends($profile,
+			['myFriends' => true],
+			[0, $onPage],
+			$paginator
+		);
+
+		self::getTwig()
+			->display('/profile/ProfileMessageCreate.twig',[
+				'friends' => $friends,
+			])
+		;
 
 	}
 

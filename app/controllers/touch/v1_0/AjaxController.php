@@ -64,6 +64,10 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 		$this
 			->getSlim()
+			->post('/ajax/getUsersForDialog', [$this, 'findRecipientForDialog']);
+
+		$this
+			->getSlim()
 			->post('/ajax/complainUser', [$this, 'blacklistAdd']);
 
 		$this
@@ -312,38 +316,55 @@ class AjaxController extends GenericController implements ControllerInterface {
 		}
 	}
 
+	public function findRecipients($link) {
+
+		$recipientNick = $this->getSlim()->request()->post('val');
+
+		$users = UserFactory::searchUsers($recipientNick);
+
+		$jsonOut = [];
+
+		foreach ($users as $user) {
+			$city = UserFactory::getCityNameById($user->getUserInfo()->getCityId());
+			if (!$city) {
+				$city = '';
+			}
+			$jsonOut[] = [
+				'uid' => $user->getId(),
+				'userLink' => $link . $user->getId(),
+				'avatar' => $user->getAvatar()->getUrl(),
+				'isOnline' => $user->isOnline(),
+				'ratingName' => $user->getRating()->getRank(),
+				'nick' => $user->getNick(),
+				'city' => $city,
+				'ratingValue' => $user->getRating()->getPersents()
+			];
+		}
+
+		if (count($jsonOut)) {
+			$json = ['status' => 1, 'fragment' => $jsonOut];
+		} else {
+			$json = ['status' => 0];
+		}
+		return $json;
+
+	}
+
 	public function findRecipient() {
 
 		try {
+			$json = $this->findRecipients('/profile/');
+			die(json_encode($json));
+		} catch (AjaxException $e) {
+			$e->exitWithJsonException();
+		}
 
-			$recipientNick = $this->getSlim()->request()->post('val');
+	}
 
-			$users = UserFactory::searchUsers($recipientNick);
+	public function findRecipientForDialog() {
 
-			$jsonOut = [];
-
-			foreach ($users as $user) {
-				$city = UserFactory::getCityNameById($user->getUserInfo()->getCityId());
-				if (!$city) {
-					$city = '';
-				}
-				$jsonOut[] = [
-					'uid' => $user->getId(),
-					'userLink' => '/profile/' . $user->getId(),
-					'avatar' => $user->getAvatar()->getUrl(),
-					'isOnline' => $user->isOnline(),
-					'ratingName' => $user->getRating()->getRank(),
-					'nick' => $user->getNick(),
-					'city' => $city,
-					'ratingValue' => $user->getRating()->getPersents()
-				];
-			}
-
-			if (count($jsonOut)) {
-				$json = ['status' => 1, 'fragment' => $jsonOut];
-			} else {
-				$json = ['status' => 0];
-			}
+		try {
+			$json = $this->findRecipients('/im/companion');
 			die(json_encode($json));
 		} catch (AjaxException $e) {
 			$e->exitWithJsonException();
