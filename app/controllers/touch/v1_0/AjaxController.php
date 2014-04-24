@@ -324,7 +324,11 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 		$jsonOut = [];
 
+		$currentUser = UserFactory::getCurrentUser();
 		foreach ($users as $user) {
+			if ($user->getId() == $currentUser->getId()) {
+				continue;
+			}
 			$city = UserFactory::getCityNameById($user->getUserInfo()->getCityId());
 			if (!$city) {
 				$city = '';
