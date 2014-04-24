@@ -2,6 +2,8 @@
 
 namespace popcorn\lib;
 
+use popcorn\model\content\Image;
+
 class ImageGeneratorResult {
 
 	private $imGen;
@@ -19,6 +21,14 @@ class ImageGeneratorResult {
 
 	public function __toString() {
 		return (string)$this->image->relPath;
+	}
+
+	public function getRelPath(){
+		return (string)$this->image->relPath;
+	}
+
+	public function getId(){
+		return $this->image->imageId;
 	}
 
 	function getImgTag() {

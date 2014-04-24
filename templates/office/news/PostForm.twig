@@ -17,13 +17,15 @@
 				<div class="alert alert-danger">
 					<p><i class="fa fa-times"></i>&nbsp;<strong>Ширина загруженного изображения меньше 620px</strong>.
 					<p><i class="fa fa-times"></i>&nbsp;<strong>Функция "обрезания" недоступна</strong>.
+					<p><i class="fa fa-times"></i>&nbsp;<strong>Функция "режим увеличения" недоступна</strong>.
+					<p><i class="fa fa-times"></i>&nbsp;<strong>Эта новость не будет показана в блоке top-корн на главной странице</strong>.
 					<p>Использование этой фотографии может привести к ужасному виду на страницах сайта.
 					<p>Лучше всего найти фотку большего размера.
 				</div>
 			{{ /sizeAlert }}
 
 			<div style="float:left;margin-right:20px;">
-				<a href="{{ url }}" data-full-width="{{ width }}" class="thumbnail" id="main-image-preview"><img src="{{ thumbUrl }}"/></a>
+				<a href="{{ url }}" data-full-width="{{ width }}" class="thumbnail" id="main-image-preview"><img src="{{ thumbUrl }}" width="300"/></a>
 			</div>
 
 			<p>
@@ -35,18 +37,18 @@
 					<i class="fa fa-check" style="color:green;"></i>
 				{{ /sizeAlert }}
 			</p>
+			<p><input type="button" class="btn btn-danger" data-action="remove-main-image" value="выбрать другое фото" /></p>
 			{{ ^sizeAlert }}
 				<p><input type="button" class="btn btn-info" data-action="crop-main-image" value="обрезать" /></p>
-			{{ /sizeAlert }}
-			<p><input type="button" class="btn btn-danger" data-action="remove-main-image" value="выбрать другое фото" /></p>
-			<p>
-				<select name="mainImageZoom" class="form-control" style="width:220px;">
-					<option value="">Режим увеличения</option>
-					<option value="zoom">ВКЛючить увеличение</option>
-					<option value="">ВЫКЛючить увеличение</option>
+				<p>
+					<select name="mainImageZoom" class="form-control" style="width:220px;">
+						<option value="">Режим увеличения</option>
+						<option value="zoom">ВКЛючить увеличение</option>
+						<option value="">ВЫКЛючить увеличение</option>
 
-				</select>
-			</p>
+					</select>
+				</p>
+			{{ /sizeAlert }}
 			<div style="clear:both;"></div>
 		</div>
 	</script>
@@ -94,7 +96,23 @@
 
 			var jcropApi;
 
-			//Событие на кнопку убрать у приложенных фотографий
+			var resetMainImage = function(data,templateVars){
+
+				if (data.width < 620){
+					templateVars['sizeAlert'] = 1;
+				}
+
+				var $html = Mustache.render($('#tmpl-main-image-box').html(),templateVars);
+
+				var $id = $('#main-image-uploader');
+
+				var $parent = $id.closest('.col-md-9').find('.help-block');
+				$parent.html($html);
+
+				$id.hide();
+			};
+
+			//Показываем фотку с возможностью обрезания
 			$('body').on('click','input[data-action=crop-main-image]',function(){
 
 				var $imagePreview = $('#main-image-preview');
@@ -104,14 +122,17 @@
 
 				$('#modal-crop .modal-body .main-image-crop').html(sprintf('<img src="%s" id="main-image-crop" />',$fullSrc));
 
+				var handlerWriteCoords = function(c){
+					$('#modal-crop input[name=cropCoords]').val(sprintf('%u,%u,%u,%u,%u,%u', c.x, c.y, c.x2, c.y2, c.w, c.h));
+				};
+
 				$('#main-image-crop').Jcrop({
 					boxWidth: 560,
 					aspectRatio: 62/40,
 					minSize: [620,0],
 					setSelect: [0,0,620,0],
-					onSelect: function(){
-
-					},
+					onSelect: handlerWriteCoords,
+					onChange: handlerWriteCoords,
 					bgOpacity: 0.2
 				},function(){
 					jcropApi = this;
@@ -119,6 +140,34 @@
 				});
 
 
+			});
+
+			//Подтверждение обрезания
+			$('button[data-action=confirm-crop]').on('click',function(){
+
+				var params = {
+					'imageId': $('input[name=mainImageId]').val(),
+					'coords': $('#modal-crop input[name=cropCoords]').val()
+				};
+
+				var handler = function(response){
+
+					var templateVars = {
+						mainImageId: response.id,
+						width: response.width,
+						height: response.height,
+						thumbUrl: response.url,
+						url: response.url
+					};
+
+					resetMainImage(response,templateVars);
+
+					$('form[name=form-edit]').prepend('<input type="hidden" name="cropped" value="1" />');
+
+					$('#modal-crop').modal('hide');
+				};
+
+				$.post('/office/ajax/crop',params,handler,'json');
 			});
 
 			$('button[data-action=jcrop-select-all-width]').on('click',function(){
@@ -340,6 +389,8 @@
 				}
 			});
 
+
+
 			//Основное изображение
 			var uploaderMainImage = new plupload.Uploader({
 				runtimes: 'html5,flash,silverlight,html4',
@@ -389,18 +440,7 @@
 							url: data.url
 						};
 
-						if (data.width < 620){
-							templateVars['sizeAlert'] = 1;
-						}
-
-						var $html = Mustache.render($('#tmpl-main-image-box').html(),templateVars);
-
-						var $id = $('#main-image-uploader');
-
-						var $parent = $id.closest('.col-md-9').find('.help-block');
-						$parent.html($html);
-
-						$id.hide();
+						resetMainImage(data,templateVars);
 
 					},
 
@@ -525,6 +565,7 @@
 {% block PageContent %}
 
 	<div class="modal fade" id="modal-crop" role="basic" aria-hidden="true" data-backdrop="static">
+		<input name="cropCoords" type="hidden"/>
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-body">
@@ -538,7 +579,7 @@
 				</div>
 				<div class="modal-footer">
 					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Отмена</button>
-					<button class="btn btn-danger" data-action="confirm-remove">Сделать обрезание</button>
+					<button class="btn btn-success" data-action="confirm-crop">Сделать обрезание&nbsp;<i class="fa fa-check"></i></button>
 				</div>
 			</div>
 		</div>

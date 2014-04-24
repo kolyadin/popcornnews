@@ -80,8 +80,8 @@ VALUES (
 			$this->pdo->exec(sprintf('DELETE FROM pn_persons WHERE id = %u', $input->getOption('personId')));
 			$this->pdo->exec(sprintf('DELETE FROM pn_persons_images WHERE personId = %u', $input->getOption('personId')));
 
-			$this->selector = $this->pdo->prepare("SELECT * FROM popcornnews.popconnews_goods_ WHERE goods_id = 3 AND id = ?");
-			$this->selector->bindValue(1, $input->getOption('personId'), \PDO::PARAM_INT);
+			$this->selector = $this->pdo->prepare("SELECT * FROM popcornnews.popconnews_goods_ WHERE goods_id = 3 AND id = :personId");
+			$this->selector->bindValue(':personId', $input->getOption('personId'), \PDO::PARAM_INT);
 
 		} else {
 			$this->selector = $this->pdo->prepare("SELECT * FROM popcornnews.popconnews_goods_ WHERE goods_id = 3");
@@ -111,6 +111,7 @@ VALUES (
 			$personImage = ImageFactory::createFromUrl(sprintf('http://v1.popcorn-news.ru/upload/%s', $item['pole5']));
 			$this->insert->bindValue(':photo', $personImage->getId());
 
+			/*
 			//region Импортируем приложенные фотографии
 			{
 				$sql = <<<EOL
@@ -156,6 +157,7 @@ EOL;
 
 			}
 			//endregion
+			*/
 
 			$bd = $item['pole10'];
 			$y = substr($bd, 0, 4);

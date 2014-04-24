@@ -137,6 +137,9 @@ abstract class DataMap {
 	protected function update($object) {
 		$this->checkStatement($this->updateStatement);
 		$this->updateBindings($object);
+
+//		$this->updateStatement->debugDumpParams();
+
 		$this->updateStatement->bindValue(':id', $object->getId());
 		$this->updateStatement->execute();
 	}

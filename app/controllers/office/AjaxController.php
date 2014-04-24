@@ -3,7 +3,9 @@ namespace popcorn\app\controllers\office;
 
 use popcorn\app\controllers\ControllerInterface;
 use popcorn\app\controllers\GenericController;
+use popcorn\lib\ImageGenerator;
 use popcorn\lib\PDOHelper;
+use popcorn\model\content\Image;
 use popcorn\model\content\ImageFactory;
 use popcorn\model\dataMaps\TagDataMap;
 use popcorn\model\persons\PersonFactory;
@@ -26,6 +28,10 @@ class AjaxController extends GenericController implements ControllerInterface {
 		$this
 			->getSlim()
 			->post('/ajax/upload-attach', [$this, 'uploadAttach']);
+
+		$this
+			->getSlim()
+			->post('/ajax/crop', [$this, 'crop']);
 
 
 	}
@@ -204,6 +210,39 @@ class AjaxController extends GenericController implements ControllerInterface {
 			'height' => $img->getHeight(),
 			'id' => $img->getId()
 		]));
+
+	}
+
+	public function crop(){
+
+		$imageId = $this->getSlim()->request->post('imageId');
+		$coords = $this->getSlim()->request->post('coords');
+
+		$image = ImageFactory::getImage($imageId);
+
+		list($x1, $y1, $x2, $y2,$w,$h) = sscanf($coords, '%u,%u,%u,%u,%u,%u');
+
+		$gen = new ImageGenerator();
+		$gen->setImage($image);
+
+		$thumb = $gen->convert($image->getPath(),[
+			'crop' => sprintf('%ux%u+%u+%u',
+				$w,$h,$x1,$y1
+			)
+		]);
+
+		if ($thumb->getId()){
+
+			$newImage = ImageFactory::createFromUpload(__DIR__ . '/../../../htdocs' . $thumb->getRelPath());
+
+			$this->getApp()->exitWithJsonSuccessMessage([
+				'id' => $newImage->getId(),
+				'url' => $newImage->getUrl(),
+				'width' => $newImage->getWidth(),
+				'height' => $newImage->getHeight()
+			]);
+
+		}
 
 	}
 }

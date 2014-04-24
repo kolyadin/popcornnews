@@ -90,22 +90,6 @@ class Person extends Model {
 	 */
 	private $allowFacts = true;
 	/**
-	 * @var bool
-	 * @export
-	 */
-	private $isWidgetAvailable = true;
-	/**
-	 * @var Image
-	 * @export
-	 */
-	private $widgetPhoto = 0;
-	/**
-	 * в старой версии написано, что картинки 243х211
-	 * @var Image
-	 * @export
-	 */
-	private $widgetFullPhoto = 0;
-	/**
 	 * @var string
 	 * @export
 	 */
@@ -115,6 +99,11 @@ class Person extends Model {
 	 * @export
 	 */
 	private $twitterLogin = '';
+	/**
+	 * @var string
+	 * @export
+	 */
+	private $instagramLogin = '';
 	/**
 	 * заголовок страницы (видимо что-то для сеошников)
 	 * @var string
@@ -147,19 +136,19 @@ class Person extends Model {
 	private $votesCount = 0;
 
 	/**
-	 * @var int
+	 * @var float
 	 */
-	private $look;
+	private $look = 0;
 
 	/**
-	 * @var int
+	 * @var float
 	 */
-	private $style;
+	private $style = 0;
 
 	/**
-	 * @var int
+	 * @var float
 	 */
-	private $talent;
+	private $talent = 0;
 
 	//endregion
 
@@ -209,13 +198,6 @@ class Person extends Model {
 		return $this->isSinger;
 	}
 
-	/**
-	 * @return boolean
-	 * @get isWidgetAvailable
-	 */
-	public function isWidgetAvailable() {
-		return $this->isWidgetAvailable;
-	}
 
 	/**
 	 * @return \popcorn\model\persons\Person[]
@@ -298,22 +280,15 @@ class Person extends Model {
 	/**
 	 * @return string
 	 */
+	public function getInstagramLogin() {
+		return $this->instagramLogin;
+	}
+
+	/**
+	 * @return string
+	 */
 	public function getVkPage() {
 		return $this->vkPage;
-	}
-
-	/**
-	 * @return \popcorn\model\content\Image
-	 */
-	public function getWidgetFullPhoto() {
-		return $this->widgetFullPhoto;
-	}
-
-	/**
-	 * @return \popcorn\model\content\Image
-	 */
-	public function getWidgetPhoto() {
-		return $this->widgetPhoto;
 	}
 
 	/**
@@ -403,6 +378,13 @@ class Person extends Model {
 	 */
 	public function setEnglishName($englishName) {
 		$this->englishName = $englishName;
+
+		$urlName = str_replace('-', '_', $englishName);
+		$urlName = str_replace('&dash;', '_', $urlName);
+		$urlName = str_replace(' ', '-', $urlName);
+
+		$this->urlName = $urlName;
+
 		$this->changed();
 	}
 
@@ -427,14 +409,6 @@ class Person extends Model {
 	 */
 	public function setIsSinger($isSinger) {
 		$this->isSinger = $isSinger;
-		$this->changed();
-	}
-
-	/**
-	 * @param boolean $isWidgetAvailable
-	 */
-	public function setIsWidgetAvailable($isWidgetAvailable) {
-		$this->isWidgetAvailable = $isWidgetAvailable;
 		$this->changed();
 	}
 
@@ -526,6 +500,14 @@ class Person extends Model {
 	}
 
 	/**
+	 * @param $instagramLogin
+	 */
+	public function setInstagramLogin($instagramLogin) {
+		$this->instagramLogin = $instagramLogin;
+		$this->changed();
+	}
+
+	/**
 	 * @param string $vkPage
 	 */
 	public function setVkPage($vkPage) {
@@ -533,35 +515,6 @@ class Person extends Model {
 		$this->changed();
 	}
 
-	/**
-	 * @param \popcorn\model\content\Image $widgetFullPhoto
-	 */
-	public function setWidgetFullPhoto($widgetFullPhoto) {
-		$changed = false;
-		if (is_object($this->widgetFullPhoto)) {
-			$changed = true;
-			if ($widgetFullPhoto == $this->widgetFullPhoto) {
-				return;
-			}
-		}
-		$this->widgetFullPhoto = $widgetFullPhoto;
-		if ($changed) $this->changed();
-	}
-
-	/**
-	 * @param \popcorn\model\content\Image $widgetPhoto
-	 */
-	public function setWidgetPhoto($widgetPhoto) {
-		$changed = false;
-		if (is_object($this->widgetPhoto)) {
-			$changed = true;
-			if ($widgetPhoto == $this->widgetPhoto) {
-				return;
-			}
-		}
-		$this->widgetPhoto = $widgetPhoto;
-		if ($changed) $this->changed();
-	}
 
 	public function publish() {
 		$this->published = 1;

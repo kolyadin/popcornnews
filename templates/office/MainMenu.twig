@@ -30,6 +30,29 @@
 	</ul>
 </li>
 
+
+{#Персоны#}
+<li class="{% if app.request.path starts with '/office/person' %}active{% endif %}">
+	<a href="javascript:;">
+		<i class="fa fa-cogs"></i>
+		<span class="title">Персоны</span>
+		<span class="arrow open"></span>
+	</a>
+	<ul class="sub-menu">
+		<li class="{% if app.request.path == '/office/person_create' %}active{% endif %}">
+			<a href="/office/person_create">
+				Создать персону
+			</a>
+		</li>
+		<li class="{% if app.request.path == '/office/persons' %}active{% endif %}">
+			<a href="/office/persons">
+				Просмотреть все
+			</a>
+		</li>
+	</ul>
+</li>
+
+
 <li class="{% if app.request.path starts with '/office/poll' %}active{% endif %}">
 	<a href="javascript:;">
 		<i class="fa fa-cogs"></i>

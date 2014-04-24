@@ -18,10 +18,7 @@ class PersonDataMap extends DataMap {
 	const WITH_NONE = 1;
 	const WITH_IMAGES = 2;
 	const WITH_PHOTO = 4;
-	const WITH_WIDGET_PHOTO = 8;
-	const WITH_WIDGET_FULL_PHOTO = 16;
-
-	const WITH_ALL = 31;
+	const WITH_ALL = 7;
 
 
 	/**
@@ -74,11 +71,9 @@ class PersonDataMap extends DataMap {
 		$this->insertStatement->bindValue(":sex", $item->getSex());
 		$this->insertStatement->bindValue(":isSinger", $item->isSinger(), \PDO::PARAM_BOOL);
 		$this->insertStatement->bindValue(":allowFacts", $item->isAllowFacts(), \PDO::PARAM_BOOL);
-		$this->insertStatement->bindValue(":isWidgetAvailable", $item->isWidgetAvailable(), \PDO::PARAM_BOOL);
-		$this->insertStatement->bindValue(":widgetPhoto", $item->getWidgetPhoto()->getId());
-		$this->insertStatement->bindValue(":widgetFullPhoto", $item->getWidgetFullPhoto()->getId());
 		$this->insertStatement->bindValue(":vkPage", $item->getVkPage());
 		$this->insertStatement->bindValue(":twitterLogin", $item->getTwitterLogin());
+		$this->insertStatement->bindValue(":instagramLogin", $item->getInstagramLogin());
 		$this->insertStatement->bindValue(":pageName", $item->getPageName());
 		$this->insertStatement->bindValue(":nameForBio", $item->getNameForBio());
 		$this->insertStatement->bindValue(":published", $item->isPublished(), \PDO::PARAM_BOOL);
@@ -108,18 +103,13 @@ class PersonDataMap extends DataMap {
 		$this->updateStatement->bindValue(":sex", $item->getSex());
 		$this->updateStatement->bindValue(":isSinger", $item->isSinger(), \PDO::PARAM_BOOL);
 		$this->updateStatement->bindValue(":allowFacts", $item->isAllowFacts(), \PDO::PARAM_BOOL);
-		$this->updateStatement->bindValue(":isWidgetAvailable", $item->isWidgetAvailable(), \PDO::PARAM_BOOL);
-		$this->updateStatement->bindValue(":widgetPhoto", $item->getWidgetPhoto()->getId());
-		$this->updateStatement->bindValue(":widgetFullPhoto", $item->getWidgetFullPhoto()->getId());
 		$this->updateStatement->bindValue(":vkPage", $item->getVkPage());
 		$this->updateStatement->bindValue(":twitterLogin", $item->getTwitterLogin());
+		$this->updateStatement->bindValue(":instagramLogin", $item->getInstagramLogin());
 		$this->updateStatement->bindValue(":pageName", $item->getPageName());
 		$this->updateStatement->bindValue(":nameForBio", $item->getNameForBio());
 		$this->updateStatement->bindValue(":published", $item->isPublished(), \PDO::PARAM_BOOL);
 		$this->updateStatement->bindValue(":urlName", $item->getUrlName());
-		$this->updateStatement->bindValue(':look', $item->getLook());
-		$this->updateStatement->bindValue(':style', $item->getStyle());
-		$this->updateStatement->bindValue(':talent', $item->getTalent());
 	}
 
 	/**
@@ -134,14 +124,6 @@ class PersonDataMap extends DataMap {
 
 		if ($modifier & self::WITH_PHOTO) {
 			$item->setPhoto(ImageFactory::getImage($item->getPhoto()));
-		}
-
-		if ($modifier & self::WITH_WIDGET_PHOTO) {
-			$item->setWidgetPhoto(ImageFactory::getImage($item->getWidgetPhoto()));
-		}
-
-		if ($modifier & self::WITH_WIDGET_FULL_PHOTO) {
-			$item->setWidgetFullPhoto(ImageFactory::getImage($item->getWidgetFullPhoto()));
 		}
 
 		if (!is_null($item->getBirthDate())) {
@@ -240,6 +222,28 @@ class PersonDataMap extends DataMap {
 
 	}
 
+	public function findWithPaginator(array $orders = [], array &$paginator = []) {
+
+		$orders = array_merge([
+			'name' => 'asc'
+		],$orders);
+
+		$sql = 'SELECT %s FROM pn_persons';
+
+		$stmt = $this->prepare(sprintf($sql, 'count(*)'));
+		$stmt->execute();
+		$totalFound = $stmt->fetchColumn();
+
+		$sql .= $this->getOrderString($orders);
+		$sql .= $this->getLimitString($paginator[0], $paginator[1]);
+
+		$paginator['overall'] = $totalFound;
+		$paginator['pages'] = ceil($totalFound / $paginator[1]);
+
+		return $this->fetchAll(sprintf($sql, '*'));
+
+	}
+
 	/**
 	 * @param $query
 	 * @param array $orders
@@ -261,12 +265,12 @@ class PersonDataMap extends DataMap {
 		$this->insertStatement =
 			$this->prepare("INSERT INTO pn_persons
             (name, englishName, genitiveName, prepositionalName, info, source,
-            photo, birthDate, showInCloud, sex, isSinger, allowFacts, isWidgetAvailable,
-            widgetPhoto, widgetFullPhoto, vkPage, twitterLogin, pageName, nameForBio, published, urlName,
+            photo, birthDate, showInCloud, sex, isSinger, allowFacts, vkPage, twitterLogin,
+            instagramLogin, pageName, nameForBio, published, urlName,
             look, style, talent)
             VALUES (:name, :englishName, :genitiveName, :prepositionalName, :info, :source,
-            :photo, :birthDate, :showInCloud, :sex, :isSinger, :allowFacts, :isWidgetAvailable,
-            :widgetPhoto, :widgetFullPhoto, :vkPage, :twitterLogin, :pageName, :nameForBio, :published, :urlName,
+            :photo, :birthDate, :showInCloud, :sex, :isSinger, :allowFacts, :vkPage, :twitterLogin,
+             :instagramLogin, :pageName, :nameForBio, :published, :urlName,
             :look, :style, :talent)");
 		$this->updateStatement =
 			$this->prepare("UPDATE pn_persons
@@ -283,11 +287,9 @@ class PersonDataMap extends DataMap {
                 sex = :sex,
                 isSinger = :isSinger,
                 allowFacts = :allowFacts,
-                isWidgetAvailable = :isWidgetAvailable,
-                widgetPhoto = :widgetPhoto,
-                widgetFullPhoto = :widgetFullPhoto,
                 vkPage = :vkPage,
                 twitterLogin = :twitterLogin,
+                instagramLogin = :instagramLogin,
                 pageName = :pageName,
                 nameForBio = :nameForBio,
                 published = :published,
@@ -358,12 +360,6 @@ class PersonDataMap extends DataMap {
 	protected function prepareItem($item) {
 		if (!is_object($item->getPhoto())) {
 			$item->setPhoto(ImageFactory::getImage($item->getPhoto()));
-		}
-		if (!is_object($item->getWidgetPhoto())) {
-			$item->setWidgetPhoto(ImageFactory::getImage($item->getWidgetPhoto()));
-		}
-		if (!is_object($item->getWidgetFullPhoto())) {
-			$item->setWidgetFullPhoto(ImageFactory::getImage($item->getWidgetFullPhoto()));
 		}
 		if (!($item->getBirthDate() instanceof \DateTime) && !is_null($item->getBirthDate())) {
 			$item->setBirthDate(new \DateTime($item->getBirthDate()));

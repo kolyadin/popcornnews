@@ -7,6 +7,7 @@ use popcorn\app\controllers\GenericController;
 use popcorn\app\controllers\office\AjaxController;
 use popcorn\app\controllers\office\PollController;
 use popcorn\app\controllers\office\PostController;
+use popcorn\app\controllers\office\PersonController;
 use popcorn\lib\Config;
 
 class OfficeApp extends Application {
@@ -26,6 +27,7 @@ class OfficeApp extends Application {
 
 		$this->registerController(new AjaxController());
 		$this->registerController(new PostController());
+		$this->registerController(new PersonController());
 		$this->registerController(new PollController());
 
 	}

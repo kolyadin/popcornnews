@@ -193,10 +193,10 @@ class ImageGenerator
 
 		$autoFilename = $this->genAutoName(func_get_args()) . $outExt;
 
-
-		$stmt = $this->pdo->prepare('select * from pn_images_gen where genName = ? limit 1');
-		$stmt->bindValue(1,$autoFilename,\PDO::PARAM_INT);
-		$stmt->execute();
+		$stmt = $this->pdo->prepare('select * from pn_images_gen where genName = :genName limit 1');
+		$stmt->execute([
+			':genName' => $autoFilename
+		]);
 
 		if ($stmt->rowCount() == 1){
 			$foundImage = $stmt->fetch(\PDO::FETCH_OBJ);
@@ -226,9 +226,9 @@ class ImageGenerator
 			$outFile = $genPath . '/' . $autoFilename;
 		}
 
-		if (file_exists($outFile) && filesize($outFile) > 0){
-			return new ImageGeneratorResult($this, $outFile);
-		}
+//		if (file_exists($outFile) && filesize($outFile) > 0){
+//			return new ImageGeneratorResult($this, $outFile);
+//		}
 
 		if (!is_writeable(dirname($outFile))){
 			throw new ImageGeneratorException(sprintf('Не могу записать файл в директорию "%s"',dirname($outFile)),self::ERROR_PERMS);
@@ -260,9 +260,10 @@ class ImageGenerator
 			throw new ImageGeneratorException('Не могу выполнить конвертацию',100,join("\n",$output));
 		}
 
-		$stmt = $this->pdo->prepare('select * from pn_images_gen where genName = ? limit 1');
-		$stmt->bindValue(1,$autoFilename,\PDO::PARAM_INT);
-		$stmt->execute();
+		$stmt = $this->pdo->prepare('select * from pn_images_gen where genName = :genName limit 1');
+		$stmt->execute([
+			':genName' => $autoFilename
+		]);
 
 		if ($stmt->rowCount() == 1){
 			$foundImage = $stmt->fetch(\PDO::FETCH_OBJ);

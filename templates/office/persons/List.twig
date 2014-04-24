@@ -1,0 +1,161 @@
+{% extends '/Generic.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% block HeadEnd %}
+
+	<style type="text/css">
+
+		.table-items a {
+			font-size: 13px;
+		}
+
+		.table-items .stat .progress {
+			margin-bottom: 5px;
+		}
+
+		.table-items .stat .progress-bar strong {
+			padding-left: 5px;
+		}
+
+		.table-items .stat .label {
+			margin-right: 5px;
+		}
+	</style>
+
+{% endblock %}
+
+{% block BodyEnd %}
+
+	<script type="text/javascript">
+		$(function () {
+
+			var removePersonCandidateId = null;
+
+			$('button[data-action=confirm-remove]').on('click', function () {
+
+				var params = {
+					personId: removePersonCandidateId
+				};
+
+				var handler = function (response) {
+					if (response.status == 'success') {
+
+						var $tr = $('tr[data-person-id=' + removePersonCandidateId + ']');
+
+						$('#modal-remove').modal('hide');
+					}
+				};
+
+				$.post('/office/ajax/person/remove', params, handler, 'json');
+
+			});
+
+			$('a[data-action=remove-person]').on('click', function () {
+				removePersonCandidateId = $(this).closest('tr').attr('data-person-id');
+			});
+		});
+	</script>
+
+{% endblock %}
+
+{% block PageTop %}
+
+	<h3 class="page-title">
+		Список персон
+		<small>просмотр сводной информации</small>
+	</h3>
+
+	<ul class="page-breadcrumb breadcrumb">
+		<li>
+			<i class="fa fa-home"></i>
+			<a href="/office">Консоль</a>
+			<i class="fa fa-angle-right"></i>
+		</li>
+		<li>
+			<a href="/office/persons">Персоны</a>
+			<i class="fa"></i>
+		</li>
+	</ul>
+
+{% endblock %}
+
+{% block PageContent %}
+
+	<div id="modal-remove" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1"
+	     aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+					<h4 class="modal-title">Вы ТОЧНО хотите удалить эту персону?</h4>
+				</div>
+				<div class="modal-body">
+					<p><strong>Удаление персону приведет к</strong>:</p>
+					<ul>
+						<li>удалению фотографий</li>
+					</ul>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Отмена</button>
+					<button class="btn btn-danger" data-dismiss="modal" data-action="confirm-remove">Подтверждаю
+						удаление
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{% if persons|length %}
+
+		<div style="text-align: right;">
+			{{ html.paginator(paginator.pages,paginator.active,'/office/persons/page%u') }}
+		</div>
+
+		<div class="table-responsive">
+			<table class="table table-hover table-items">
+				<thead>
+				<tr>
+					<th></th>
+					<th>Дата рождения</th>
+					<th>Имя</th>
+					<th>Общий рейтинг</th>
+					<th>Кол-во новостей</th>
+				</tr>
+				</thead>
+				<tbody>
+				{% for person in persons %}
+					<tr data-post-id="{{ person.id }}">
+						<td style="white-space: nowrap;">
+							<a class="btn btn-default btn-xs tooltips" data-original-title="Редактировать персону"
+							   data-placement="top" href="/office/person{{ person.id }}"><i class="fa fa-edit"></i></a>
+							<a class="btn btn-danger btn-xs tooltips" data-original-title="Удалить персону"
+							   data-placement="top" role="button" data-toggle="modal" data-action="remove-person"
+							   href="#modal-remove"><i class="fa fa-trash-o"></i></a>
+						</td>
+						<td>{{ person.birthDate|date('d.m.Y') }}</td>
+						<td style=""><a href="/office/person{{ person.id }}">{{ person.name|e }}</a></td>
+						<td>{{ person.totalRating }}</td>
+						<td>{{ person.newsCount }}</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+
+		<div style="text-align: right;">
+			{{ html.paginator(paginator.pages,paginator.active,'/office/persons/page%u') }}
+		</div>
+
+	{% else %}
+
+		<div class="note note-info">
+			<h4 class="note-heading">Пока не создано ни одной персоны</h4>
+
+			<p>
+				<a class="btn btn-success" href="/office/person_create">Создать персону</a>
+			</p>
+		</div>
+
+	{% endif %}
+
+{% endblock %}
