@@ -21,10 +21,10 @@ class PersonController extends GenericController implements ControllerInterface 
 			->map('/person_create', function () {
 				switch ($this->getSlim()->request->getMethod()) {
 					case 'GET':
-						$this->postEditGet();
+						$this->personEditGet();
 						break;
 					case 'POST':
-						$this->postEditPost();
+						$this->personEditPost();
 						break;
 				}
 			})
@@ -44,7 +44,7 @@ class PersonController extends GenericController implements ControllerInterface 
 			->map('/person:personId', function ($personId) {
 				switch ($this->getSlim()->request->getMethod()) {
 					case 'GET':
-						$this->getTwig()->addGlobal('tab1',true);
+						$this->getTwig()->addGlobal('tab1', true);
 						$this->personEditGet($personId);
 						break;
 					case 'POST':
@@ -62,7 +62,7 @@ class PersonController extends GenericController implements ControllerInterface 
 			->map('/person:personId/linking', function ($personId) {
 				switch ($this->getSlim()->request->getMethod()) {
 					case 'GET':
-						$this->getTwig()->addGlobal('tab2',true);
+						$this->getTwig()->addGlobal('tab2', true);
 						$this->linkingEditGet($personId);
 						break;
 					case 'POST':
@@ -159,30 +159,27 @@ class PersonController extends GenericController implements ControllerInterface 
 		$bd = vsprintf('%3$04u-%2$02u-%1$02u 03:00:00', sscanf($request->post('bd'), '%02u.%02u.%04u'));
 		$person->setBirthDate(new \DateTime($bd));
 
-		if ($request->post('sex') == Person::MALE){
+		if ($request->post('sex') == Person::MALE) {
 			$person->setSex(Person::MALE);
-		}elseif ($request->post('sex') == Person::FEMALE){
+		} elseif ($request->post('sex') == Person::FEMALE) {
 			$person->setSex(Person::FEMALE);
 		}
 
-		//Если поставили новую фотку обновим
-		if ($request->post('mainImageId') != $person->getPhoto()->getId()){
-			$image = ImageFactory::getImage($request->post('mainImageId'));
-			$person->setPhoto($image);
-		}
+		$image = ImageFactory::getImage($request->post('mainImageId'));
+		$person->setPhoto($image);
 
 		$person->setInfo($request->post('info'));
 		$person->setSource($request->post('source'));
 
-		if ($request->post('allowFacts') == 1){
+		if ($request->post('allowFacts') == 1) {
 			$person->setAllowFacts(true);
-		}else{
+		} else {
 			$person->setAllowFacts(false);
 		}
 
-		if ($request->post('isSinger') == 1){
+		if ($request->post('isSinger') == 1) {
 			$person->setIsSinger(true);
-		}else{
+		} else {
 			$person->setIsSinger(false);
 		}
 
@@ -200,15 +197,15 @@ class PersonController extends GenericController implements ControllerInterface 
 		$this->personDataMap->save($person);
 
 		if ($person->getId()) {
-			if ($personId){
+			if ($personId) {
 				$this->getSlim()->redirect(sprintf('/office/person%u?status=updated', $person->getId()));
-			}else{
+			} else {
 				$this->getSlim()->redirect(sprintf('/office/person%u?status=created', $person->getId()));
 			}
 		}
 	}
 
-	public function linkingEditGet($personId){
+	public function linkingEditGet($personId) {
 
 		/** @var Person $post */
 		$person = $this->personDataMap->findById($personId);
@@ -220,14 +217,14 @@ class PersonController extends GenericController implements ControllerInterface 
 
 		$this
 			->getTwig()
-			->display('persons/PersonsLinking.twig',[
+			->display('persons/PersonsLinking.twig', [
 				'person' => $person,
 				'links' => $links
 			]);
 
 	}
 
-	public function linkingEditPost(){
+	public function linkingEditPost() {
 
 		$request = $this->getSlim()->request;
 
@@ -238,14 +235,14 @@ class PersonController extends GenericController implements ControllerInterface 
 
 		$dataMap->unlinkAll($personId);
 
-		if (!count($links)){
-			$this->getSlim()->redirect(sprintf('/office/person%u/linking?status=updated',$personId));
+		if (!count($links)) {
+			$this->getSlim()->redirect(sprintf('/office/person%u/linking?status=updated', $personId));
 		}
 
-		foreach ($links as $linkPersonId){
-			$dataMap->link($personId,$linkPersonId);
+		foreach ($links as $linkPersonId) {
+			$dataMap->link($personId, $linkPersonId);
 		}
 
-		$this->getSlim()->redirect(sprintf('/office/person%u/linking?status=updated',$personId));
+		$this->getSlim()->redirect(sprintf('/office/person%u/linking?status=updated', $personId));
 	}
 }

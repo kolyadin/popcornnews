@@ -42,7 +42,12 @@
 
 						var $tr = $('tr[data-person-id=' + removePersonCandidateId + ']');
 
-						$('#modal-remove').modal('hide');
+						$('#modal-remove').modal('hide').on('hidden.bs.modal',function(){
+							$tr.animate({'background-color':'red'},800,function(){
+								$tr.fadeOut('fast');
+							});
+
+						});
 					}
 				};
 
@@ -124,7 +129,7 @@
 				</thead>
 				<tbody>
 				{% for person in persons %}
-					<tr data-post-id="{{ person.id }}">
+					<tr data-person-id="{{ person.id }}">
 						<td style="white-space: nowrap;">
 							<a class="btn btn-default btn-xs tooltips" data-original-title="Редактировать персону"
 							   data-placement="top" href="/office/person{{ person.id }}"><i class="fa fa-edit"></i></a>

@@ -97,7 +97,7 @@ VALUES (
 
 			if ($item['pole33'] == 'Yes' || !empty($item['pole40'])) continue;
 
-			$output->write("<info>Персона #" . $item['id'] . "...");
+			$output->write("<info>Персона #" . $item['id'] . ' ' . $item['name'] . "...");
 
 			$this->insert->bindValue(':id', $item['id']);
 			$this->insert->bindValue(':name', $item['name']);

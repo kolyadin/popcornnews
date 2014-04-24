@@ -51,6 +51,44 @@ class PersonDataMap extends DataMap {
 		return $this->checksum;
 	}
 
+	private function initStatements() {
+		$this->insertStatement =
+			$this->prepare("INSERT INTO pn_persons
+            (name, englishName, genitiveName, prepositionalName, info, source,
+            photo, birthDate, showInCloud, sex, isSinger, allowFacts, vkPage, twitterLogin,
+            instagramLogin, pageName, nameForBio, published, urlName,
+            look, style, talent)
+            VALUES (:name, :englishName, :genitiveName, :prepositionalName, :info, :source,
+            :photo, :birthDate, :showInCloud, :sex, :isSinger, :allowFacts, :vkPage, :twitterLogin,
+             :instagramLogin, :pageName, :nameForBio, :published, :urlName,
+            :look, :style, :talent)");
+		$this->updateStatement =
+			$this->prepare("UPDATE pn_persons
+            SET
+                name = :name,
+                englishName = :englishName,
+                genitiveName = :genitiveName,
+                prepositionalName = :prepositionalName,
+                info = :info,
+                source = :source,
+                photo = :photo,
+                birthDate = :birthDate,
+                showInCloud = :showInCloud,
+                sex = :sex,
+                isSinger = :isSinger,
+                allowFacts = :allowFacts,
+                vkPage = :vkPage,
+                twitterLogin = :twitterLogin,
+                instagramLogin = :instagramLogin,
+                pageName = :pageName,
+                nameForBio = :nameForBio,
+                published = :published,
+                urlName = :urlName
+            WHERE id = :id");
+		$this->deleteStatement = $this->prepare("DELETE FROM pn_persons WHERE id=:id");
+		$this->findOneStatement = $this->prepare("SELECT * FROM pn_persons WHERE id=:id");
+	}
+
 	/**
 	 * @param Person $item
 	 */
@@ -111,6 +149,7 @@ class PersonDataMap extends DataMap {
 		$this->updateStatement->bindValue(":published", $item->isPublished(), \PDO::PARAM_BOOL);
 		$this->updateStatement->bindValue(":urlName", $item->getUrlName());
 	}
+
 
 	/**
 	 * @param Person $item
@@ -226,7 +265,7 @@ class PersonDataMap extends DataMap {
 
 		$orders = array_merge([
 			'name' => 'asc'
-		],$orders);
+		], $orders);
 
 		$sql = 'SELECT %s FROM pn_persons';
 
@@ -259,44 +298,6 @@ class PersonDataMap extends DataMap {
 		$sql .= $this->getOrderString($orders);
 
 		return $this->fetchAll($sql, array(':query' => '%' . $query . '%'));
-	}
-
-	private function initStatements() {
-		$this->insertStatement =
-			$this->prepare("INSERT INTO pn_persons
-            (name, englishName, genitiveName, prepositionalName, info, source,
-            photo, birthDate, showInCloud, sex, isSinger, allowFacts, vkPage, twitterLogin,
-            instagramLogin, pageName, nameForBio, published, urlName,
-            look, style, talent)
-            VALUES (:name, :englishName, :genitiveName, :prepositionalName, :info, :source,
-            :photo, :birthDate, :showInCloud, :sex, :isSinger, :allowFacts, :vkPage, :twitterLogin,
-             :instagramLogin, :pageName, :nameForBio, :published, :urlName,
-            :look, :style, :talent)");
-		$this->updateStatement =
-			$this->prepare("UPDATE pn_persons
-            SET
-                name = :name,
-                englishName = :englishName,
-                genitiveName = :genitiveName,
-                prepositionalName = :prepositionalName,
-                info = :info,
-                source = :source,
-                photo = :photo,
-                birthDate = :birthDate,
-                showInCloud = :showInCloud,
-                sex = :sex,
-                isSinger = :isSinger,
-                allowFacts = :allowFacts,
-                vkPage = :vkPage,
-                twitterLogin = :twitterLogin,
-                instagramLogin = :instagramLogin,
-                pageName = :pageName,
-                nameForBio = :nameForBio,
-                published = :published,
-                urlName = :urlName
-            WHERE id = :id");
-		$this->deleteStatement = $this->prepare("DELETE FROM pn_persons WHERE id=:id");
-		$this->findOneStatement = $this->prepare("SELECT * FROM pn_persons WHERE id=:id");
 	}
 
 	/**
