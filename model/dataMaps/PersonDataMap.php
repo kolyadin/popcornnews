@@ -141,14 +141,14 @@ class PersonDataMap extends DataMap {
 	 * @param Person $item
 	 */
 	protected function onInsert($item) {
-		$this->attachImages($item);
+//		$this->attachImages($item);
 	}
 
 	/**
 	 * @param Person $item
 	 */
 	protected function onUpdate($item) {
-		$this->attachImages($item);
+//		$this->attachImages($item);
 	}
 
 	/**

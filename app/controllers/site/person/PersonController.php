@@ -336,14 +336,14 @@ class PersonController extends GenericController implements ControllerInterface 
 	public function personPhoto() {
 
 		$person = PersonFactory::getPerson(self::$personId);
+		$photos = PersonFactory::getPersonPhotos($person);
 
 		$this
 			->getTwig()
 			->display('/person/PersonPhoto.twig', [
 				'person' => $person,
-				'photos' => []
+				'photos' => $photos
 			]);
-
 	}
 
 

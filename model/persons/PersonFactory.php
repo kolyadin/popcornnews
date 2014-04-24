@@ -11,6 +11,7 @@ use popcorn\lib\PDOHelper;
 use popcorn\model\content\ImageFactory;
 use popcorn\model\dataMaps\DataMap;
 use popcorn\model\dataMaps\PersonDataMap;
+use popcorn\model\dataMaps\PersonImageDataMap;
 use popcorn\model\dataMaps\PersonsLinkDataMap;
 
 class PersonFactory {
@@ -34,6 +35,16 @@ class PersonFactory {
 		self::checkDataMap();
 
 		return self::$dataMap->findById($id);
+	}
+
+	public static function getPersonPhotos(Person $person) {
+		$dataMap = new PersonImageDataMap();
+		return $dataMap->findById($person->getId());
+	}
+
+	public static function getPersonPhotosByPersonId($personId){
+		$dataMap = new PersonImageDataMap();
+		return $dataMap->findById($personId);
 	}
 
 	/**

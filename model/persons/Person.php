@@ -133,6 +133,11 @@ class Person extends Model {
 	/**
 	 * @var int
 	 */
+	private $photosCount = 0;
+
+	/**
+	 * @var int
+	 */
 	private $votesCount = 0;
 
 	/**
@@ -339,6 +344,13 @@ class Person extends Model {
 	 */
 	public function getNewsCount() {
 		return $this->newsCount;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getPhotosCount() {
+		return $this->photosCount;
 	}
 
 	/**
@@ -557,6 +569,13 @@ class Person extends Model {
 	 */
 	public function setNewsCount($count) {
 		$this->newsCount = $count;
+	}
+
+	/**
+	 * @param int $count
+	 */
+	public function setPhotosCount($count) {
+		$this->photosCount = $count;
 	}
 
 	/**

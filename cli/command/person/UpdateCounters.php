@@ -39,12 +39,34 @@ class UpdateCounters extends Command {
 
 		foreach ($persons as $personId => $personName) {
 			$this->updateNewsCount($personId);
+			$this->updatePhotosCount($personId);
 			$this->updateVotesCount($personId);
 		}
 
 		$output->writeln('<info>Счетчики персон обновлены</info>');
 	}
 
+	/**
+	 * Обновление счетчиков фотографий у конкретной персоны
+	 *
+	 * @param $personId
+	 */
+	private function updatePhotosCount($personId) {
+
+		$subquery1 = 'SELECT count(*) FROM pn_persons_images WHERE personId = :personId';
+
+		$stmt = $this->pdo->prepare("UPDATE pn_persons SET photosCount = ($subquery1) WHERE id = :personId");
+		$stmt->execute([
+			':personId' => $personId
+		]);
+
+	}
+
+	/**
+	 * Обновление счетчиков голосов у конкретной персоны
+	 *
+	 * @param $personId
+	 */
 	private function updateVotesCount($personId) {
 
 		$subquery1 = 'SELECT count(*) FROM pn_persons_voting WHERE personId = :personId';
@@ -60,6 +82,11 @@ class UpdateCounters extends Command {
 
 	}
 
+	/**
+	 * Обновление счетчиков новостей у конкретной персоны
+	 *
+	 * @param $personId
+	 */
 	private function updateNewsCount($personId) {
 		$sql = <<<SQL
 SELECT

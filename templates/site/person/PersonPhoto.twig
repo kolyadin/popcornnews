@@ -32,25 +32,18 @@
 					$(function(){
 						$('.fotorama').fotorama({
 							data: [
-								{% for image in person.images %}
-								{% set photo = image.thumb('600x500') %}
+								{% for image in photos %}
+									{% set photo = image.thumb('600x500') %}
 
-								{img: '{{ photo.url }}', full: '{{ image.url }}'},
+									{img: '{{ photo.url }}', full: '{{ image.url }}', id: 'photo{{ image.id }}'},
 								{% endfor %}
 							]
 						});
 					});
 				</script>
 
-
-
-
-
-
 			</div>
-
 		</div>
-
 	</div>
 
 {% endblock %}

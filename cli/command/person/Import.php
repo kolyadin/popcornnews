@@ -107,10 +107,9 @@ VALUES (
 			$this->insert->bindValue(':info', $item['pole2']);
 			$this->insert->bindValue(':source', $item['pole4']);
 
-			$personImage = ImageFactory::createFromUrl(sprintf('http://v1.popcorn-news.ru/upload/%s', $item['pole5']));
+			$personImage = ImageFactory::createFromUrl(sprintf('http://www.popcornnews.ru/upload1/%s', $item['pole5']));
 			$this->insert->bindValue(':photo', $personImage->getId());
 
-			/*
 			//region Импортируем приложенные фотографии
 			{
 				$sql = <<<EOL
@@ -126,7 +125,7 @@ EOL;
 
 				while ($imagePath = $stmt->fetch(\PDO::FETCH_COLUMN)) {
 					try {
-						$url = sprintf('http://v1.popcorn-news.ru/upload/%s', $imagePath);
+						$url = sprintf('http://www.popcornnews.ru/upload1/%s', $imagePath);
 
 						$output->write("\n\t<comment>Пытаемся скачать $url...</comment>");
 
@@ -143,20 +142,16 @@ EOL;
 
 					foreach ($images as $image) {
 
-						$stmt = $this->pdo->prepare('INSERT INTO pn_persons_images SET personId = ?, imageId = ?, seq = ?');
-						$stmt->bindValue(1, $item['id'], \PDO::PARAM_INT);
-						$stmt->bindValue(2, $image->getId(), \PDO::PARAM_INT);
-						$stmt->bindValue(3, $i++, \PDO::PARAM_INT);
-
-						$stmt->execute();
-
+						$stmt = $this->pdo->prepare('INSERT INTO pn_persons_images SET personId = :personId, imageId = :imageId, seq = :seq');
+						$stmt->execute([
+							':personId' => $item['id'],
+							':imageId' => $image->getId(),
+							':seq' => $i++
+						]);
 					}
-
 				}
-
 			}
 			//endregion
-			*/
 
 			$bd = $item['pole10'];
 			$y = substr($bd, 0, 4);

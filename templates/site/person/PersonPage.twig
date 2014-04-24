@@ -38,7 +38,7 @@
 		<div class="b-grid__g4 b-grid__a">
 			<div class="b-person__picture">
 				{% set photo = person.photo.thumb('300x') %}
-				<img src="{{ photo.url }}" alt="{{ person.name|e }}"/>
+				<img src="{{ photo.url }}" alt="{{ person.name|e }} ({{ person.englishName|e }})" title="{{ person.name|e }} ({{ person.englishName|e }})"/>
 
 				{% if isFan %}
 					<a href="/persons/{{ person.urlName }}/fans/unsubscribe" rel="nofollow" class="b-person__be-fan">
@@ -122,14 +122,12 @@
 			<h1 class="b-news__title b-rubrics-title b-rubrics-title_s24">
 				<a rel="nofollow" href="/persons/{{ slim.path[2] }}/news">новости</a>
 			</h1>
-			<span class="b-news__counter b-counter b-counter-section"><a rel="nofollow"
-			                                                             href="/persons/{{ person.urlName }}/news">{{ person.newsCount }}</a></span>
+			<span class="b-news__counter b-counter b-counter-section"><a rel="nofollow" href="/persons/{{ person.urlName }}/news">{{ person.newsCount }}</a></span>
 		</div>
 		<ul class="b-news__entry-list b-list">
 			{% for post in posts %}
 				<li>
-					<a href="/news/{{ post.id }}">{{ post.name|e }}</a><span
-						  class="b-list__counter">({{ post.comments }})</span>
+					<a href="/news/{{ post.id }}">{{ post.name|e }}</a><span class="b-list__counter">({{ post.comments }})</span>
 				</li>
 			{% endfor %}
 		</ul>
@@ -297,17 +295,14 @@
 
 	<section class="b-person__simple-gallery b-person__photos">
 		<div class="b-person__photos__title-cont b-grid__g8 b-grid__a">
-			<h1 class="b-person__photos__title b-rubrics-title b-rubrics-title_s24"><a rel="nofollow"
-			                                                                           href="/persons/{{ person.urlName }}/photo">фото</a>
-			</h1>
-			<span class="b-person__photos__counter b-counter b-counter-section"><a rel="nofollow"
-			                                                                       href="/persons/{{ person.urlName }}/photo">1960</a></span>
+			<h1 class="b-person__photos__title b-rubrics-title b-rubrics-title_s24"><a rel="nofollow" href="/persons/{{ person.urlName }}/photo">фото</a></h1>
+			<span class="b-person__photos__counter b-counter b-counter-section"><a rel="nofollow" href="/persons/{{ person.urlName }}/photo">{{ person.photosCount }}</a></span>
 		</div>
 		<ul class="b-person__simple-gallery__list clearfix">
 			{% for image in person.images %}
 				{% set photo = image.thumb('x150') %}
 				<li>
-					<a href="/persons/{{ person.urlName }}/photo"><img alt="" src="{{ photo.url }}"></a>
+					<a href="/persons/{{ person.urlName }}/photo#photo{{ image.id }}"><img alt="" src="{{ photo.url }}"></a>
 				</li>
 			{% endfor %}
 		</ul>
