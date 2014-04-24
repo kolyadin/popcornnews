@@ -111,11 +111,11 @@ Ajax.prototype.ajaxSend=function(data){
 			if (res.status){
 				if (res.fragment) res.fragment = self._ajaxFragment({fragment:res.fragment, name:data.type})
 				if(data.success) data.success.call(self, res);
-				else alert(res.message);	
+				else alert(res.exception.message);
 			}
 			else{
 				if(data.error) data.error.call(self, res);
-				else alert(res.message);	
+				else alert(res.exception.message);
 			}
 		},
 		'json'
