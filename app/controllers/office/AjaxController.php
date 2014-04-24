@@ -27,6 +27,10 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 		$this
 			->getSlim()
+			->get('/ajax/get/person', [$this, 'getPerson']);
+
+		$this
+			->getSlim()
 			->post('/ajax/upload-attach', [$this, 'uploadAttach']);
 
 		$this
@@ -34,6 +38,18 @@ class AjaxController extends GenericController implements ControllerInterface {
 			->post('/ajax/crop', [$this, 'crop']);
 
 
+	}
+
+	public function getPerson(){
+		$personId = $this->getSlim()->request->get('personId');
+
+		$person = PersonFactory::getPerson($personId);
+
+		$this->getApp()->exitWithJsonSuccessMessage([
+			'id' => $person->getId(),
+			'name' => $person->getName(),
+			'photo' => $person->getPhoto()->getThumb('x100')->getUrl()
+		]);
 	}
 
 	public function pollRemove() {

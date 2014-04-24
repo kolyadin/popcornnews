@@ -1,0 +1,212 @@
+{% extends '/persons/PersonGeneric.twig' %}
+
+{% block HeadEnd %}
+
+	<style type="text/css">
+		.card {
+			float: left;
+			margin-bottom: 20px;
+		}
+
+		.card-create input {
+			width:250px;
+			float:left;
+			margin-top: 60px;
+		}
+
+		.parent {
+			float: left;
+			text-align: center;
+			padding:5px;
+		}
+
+		.finder {
+			margin:20px 0;
+		}
+
+		.thumbnail {
+			margin-bottom: 0;
+		}
+
+		.parent p {
+			display: block;
+			text-align: center;
+		}
+
+		.parent .thumbnail {
+			text-align: center;
+			display: inline-block;
+		}
+
+		.plus {
+			margin:70px 15px 0 15px;
+			float: left;
+		}
+
+	</style>
+
+{% endblock %}
+
+{% block BodyEnd %}
+
+	{% raw %}
+	<script id="tmpl-person" type="x-tmpl-mustache">
+		<div class="card">
+			<input type="hidden" name="link[]" value="{{ personId }}" />
+			<div class="plus"><i class="fa fa-plus"></i></div>
+			<div class="parent thumbnail alert-warning">
+				<p><strong>{{ name }}</strong></p>
+				<p><a href="#"><img src="{{ url }}" class="thumbnail" alt=""/></a></p>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+	</script>
+	{% endraw %}
+
+	<script type="text/javascript">
+
+		$(function(){
+
+			var $addLink = function(params){
+				var $html = Mustache.render($('#tmpl-person').html(),params);
+
+				$('.card:last').after($html);
+
+				$('input[data-action=find-person]').select2('val','');
+			};
+
+
+			$('body').on('click','.card .thumbnail a',function(){
+
+				$(this).closest('.card').remove();
+
+				return false;
+			});
+
+			$('input[data-action=find-person]').select2({
+				width: '270px',
+				multiple: false,
+				placeholder: "Начни вводить имя персоны...",
+				initSelection: function (element, callback) {
+
+				},
+				ajax: {
+					url: '/office/ajax/post/persons',
+					dataType: 'json',
+					data: function (term) {
+						return {
+							term: term
+						};
+					},
+					results: function (data) {
+						return {
+							results: data.persons
+						};
+					}
+				}
+			}).on('select2-selecting',function(val,object){
+				$.get('/office/ajax/get/person',{personId:val.val},function(response){
+
+					var $params = {
+						name: response.name,
+						url: response.photo,
+						personId: response.id
+					};
+
+					$addLink($params);
+
+
+				},'json');
+			});
+
+
+		});
+
+	</script>
+
+{% endblock %}
+
+{% block PageTop %}
+
+	{% if person %}
+		<h3 class="page-title">
+			Персона
+			<small>&quot;{{ person.name|e }} ({{ person.englishName|e }})&quot;</small>
+		</h3>
+	{% else %}
+		<h3 class="page-title">
+			Создание персоны
+		</h3>
+	{% endif %}
+
+	<ul class="page-breadcrumb breadcrumb">
+		<li>
+			<i class="fa fa-home"></i>
+			<a href="/office">Консоль</a>
+			<i class="fa fa-angle-right"></i>
+		</li>
+		<li>
+			<a href="/office/persons">Персоны</a>
+			<i class="fa fa-angle-right"></i>
+		</li>
+		<li>
+			<a href="/office/person_create">Создание персоны</a>
+		</li>
+	</ul>
+
+	{{ parent() }}
+
+{% endblock %}
+
+{% block PageContent %}
+
+	{% if app.request.get('status') == 'updated' %}
+		<div class="alert alert-success">
+			<i class="fa fa-check"></i>
+			<strong>Связи обновлены</strong>
+		</div>
+	{% endif %}
+
+	<div class="alert alert-info">
+		Для удаления связи нажми на фотографию персоны
+	</div>
+
+	<form class="form-horizontal form-row-seperated" method="post" enctype="multipart/form-data" name="form-edit">
+		<input name="personId" value="{{ person.id }}" type="hidden"/>
+
+		<div class="clearfix">
+
+			<div class="card">
+				<div class="parent thumbnail alert-success">
+					<p><strong>{{ person.name|e }}</strong></p>
+					<p><img src="{{ person.photo.thumb('x100').url }}" class="thumbnail" alt=""/></p>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+
+			{% for person in links %}
+
+				<div class="card">
+					<input type="hidden" name="link[]" value="{{ person.id }}" />
+					<div class="plus"><i class="fa fa-plus"></i></div>
+					<div class="parent thumbnail">
+						<p><strong>{{ person.name|e }}</strong></p>
+						<p><a href="#"><img src="{{ person.photo.getThumb('x100').url }}" class="thumbnail" alt=""/></a></p>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+
+			{% endfor %}
+
+			<div class="clearfix"></div>
+			<input class="form-control finder" type="text" data-action="find-person" placeholder="Начни набирать имя персоны..."/>
+		</div>
+
+		<div class="clearfix"></div>
+
+		<div class="form-actions right">
+			<button class="btn btn-m btn-success" type="submit">Обновить связи&nbsp;<i class="fa fa-check"></i></button>
+		</div>
+	</form>
+
+{% endblock %}

@@ -1,1 +1,48 @@
 /* here you can put your own css to customize and override the theme */
+
+.table td {
+    vertical-align: middle !important;
+}
+
+.table .stat span.label {
+    line-height: 30px;
+}
+
+.tree .tree-folder-name input[type=checkbox] {
+    vertical-align: middle;
+    border: none !important;
+    border: 0 !important;
+    color: red;
+}
+
+.mix-filter {
+    list-style: none;
+    margin: 0 0 20px 0;
+    padding: 0;
+}
+
+.mix-filter li {
+    color: #555;
+    cursor: pointer;
+    padding: 6px 15px;
+    margin-right: 2px;
+    margin-bottom: 5px;
+    background: #eee;
+    display: inline-block;
+}
+
+.mix-filter li a {
+    color: #555;
+    text-decoration: none;
+}
+
+.mix-filter li:hover,
+.mix-filter li.active {
+    color: #fff;
+    background: #0da3e2;
+}
+
+.mix-filter li:hover a,
+.mix-filter li.active a {
+    color: #fff;
+}

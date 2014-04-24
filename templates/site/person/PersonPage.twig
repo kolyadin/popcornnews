@@ -37,7 +37,8 @@
 	<section class="b-person__content">
 		<div class="b-grid__g4 b-grid__a">
 			<div class="b-person__picture">
-				<img src="{{ person.photo.url }}" alt="{{ person.name|e }}"/>
+				{% set photo = person.photo.thumb('300x') %}
+				<img src="{{ photo.url }}" alt="{{ person.name|e }}"/>
 
 				{% if isFan %}
 					<a href="/persons/{{ person.urlName }}/fans/unsubscribe" rel="nofollow" class="b-person__be-fan">

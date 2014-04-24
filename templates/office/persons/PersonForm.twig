@@ -1,4 +1,4 @@
-{% extends '/Generic.twig' %}
+{% extends '/persons/PersonGeneric.twig' %}
 
 {% block BodyEnd %}
 
@@ -238,10 +238,10 @@
 
 {% block PageTop %}
 
-	{% if post %}
+	{% if person %}
 		<h3 class="page-title">
 			Персона
-			<small>&quot;{{ person.name|e }}&quot;</small>
+			<small>&quot;{{ person.name|e }} ({{ person.englishName|e }})&quot;</small>
 		</h3>
 	{% else %}
 		<h3 class="page-title">
@@ -263,6 +263,8 @@
 			<a href="/office/person_create">Создание персоны</a>
 		</li>
 	</ul>
+
+	{{ parent() }}
 
 {% endblock %}
 

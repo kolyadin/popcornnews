@@ -92,6 +92,9 @@ VALUES (
 
 			$item = $this->selector->fetch(\PDO::FETCH_ASSOC);
 
+			$this->pdo->exec(sprintf('DELETE FROM pn_persons WHERE id = %u', $item['id']));
+			$this->pdo->exec(sprintf('DELETE FROM pn_persons_images WHERE personId = %u', $item['id']));
+
 			if ($item['pole33'] == 'Yes' || !empty($item['pole40'])) continue;
 
 			$output->write("<info>Персона #" . $item['id'] . "...");

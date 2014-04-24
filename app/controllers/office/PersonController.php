@@ -7,6 +7,8 @@ use popcorn\model\content\Image;
 use popcorn\model\content\ImageFactory;
 use popcorn\model\dataMaps\DataMapHelper;
 use popcorn\model\dataMaps\PersonDataMap;
+use popcorn\model\dataMaps\PersonsLinkDataMap;
+use popcorn\model\exceptions\Exception;
 use popcorn\model\persons\Person;
 
 class PersonController extends GenericController implements ControllerInterface {
@@ -42,10 +44,29 @@ class PersonController extends GenericController implements ControllerInterface 
 			->map('/person:personId', function ($personId) {
 				switch ($this->getSlim()->request->getMethod()) {
 					case 'GET':
+						$this->getTwig()->addGlobal('tab1',true);
 						$this->personEditGet($personId);
 						break;
 					case 'POST':
 						$this->personEditPost();
+						break;
+				}
+			})
+			->conditions([
+				':personId' => '[1-9][0-9]*'
+			])
+			->via('GET', 'POST');
+
+		$this
+			->getSlim()
+			->map('/person:personId/linking', function ($personId) {
+				switch ($this->getSlim()->request->getMethod()) {
+					case 'GET':
+						$this->getTwig()->addGlobal('tab2',true);
+						$this->linkingEditGet($personId);
+						break;
+					case 'POST':
+						$this->linkingEditPost();
 						break;
 				}
 			})
@@ -172,10 +193,6 @@ class PersonController extends GenericController implements ControllerInterface 
 		$person->setNameForBio($person->getName());
 		$person->setPageName($person->getPageName());
 
-		$person->setLook($person->getLook());
-		$person->setStyle($person->getStyle());
-		$person->setTalent($person->getTalent());
-
 		$person->setVkPage($request->post('vkPage'));
 		$person->setTwitterLogin($request->post('twitterLogin'));
 		$person->setInstagramLogin($request->post('instagramLogin'));
@@ -189,5 +206,46 @@ class PersonController extends GenericController implements ControllerInterface 
 				$this->getSlim()->redirect(sprintf('/office/person%u?status=created', $person->getId()));
 			}
 		}
+	}
+
+	public function linkingEditGet($personId){
+
+		/** @var Person $post */
+		$person = $this->personDataMap->findById($personId);
+
+		$links = [];
+
+		$dataMap = new PersonsLinkDataMap();
+		$links = $dataMap->find($person->getId());
+
+		$this
+			->getTwig()
+			->display('persons/PersonsLinking.twig',[
+				'person' => $person,
+				'links' => $links
+			]);
+
+	}
+
+	public function linkingEditPost(){
+
+		$request = $this->getSlim()->request;
+
+		$personId = $request->post('personId');
+		$links = $request->post('link');
+
+		$dataMap = new PersonsLinkDataMap();
+
+		$dataMap->unlinkAll($personId);
+
+		if (!count($links)){
+			$this->getSlim()->redirect(sprintf('/office/person%u/linking?status=updated',$personId));
+		}
+
+		foreach ($links as $linkPersonId){
+			$dataMap->link($personId,$linkPersonId);
+		}
+
+		$this->getSlim()->redirect(sprintf('/office/person%u/linking?status=updated',$personId));
 	}
 }

@@ -16,7 +16,7 @@ class PersonsLinkDataMap extends PersonDataMap {
     /**
      * @var \PDOStatement
      */
-    private $unlinkStatement = null;
+    private $unlinkStatement,$unlinkAllStatement = null;
 
     public function __construct() {
         parent::__construct();
@@ -27,6 +27,10 @@ class PersonsLinkDataMap extends PersonDataMap {
             $this->prepare("
                 DELETE FROM pn_persons_link
                 WHERE (firstId = :firstId AND secondId = :secondId) OR (firstId = :secondId AND secondId = :firstId)");
+		$this->unlinkAllStatement =
+			$this->prepare("
+                DELETE FROM pn_persons_link
+                WHERE firstId = :personId OR secondId = :personId");
     }
 
     /**
@@ -75,5 +79,11 @@ class PersonsLinkDataMap extends PersonDataMap {
         $this->unlinkStatement->bindValue(':secondId', $person2);
         $this->unlinkStatement->execute();
     }
+
+	public function unlinkAll($personId) {
+		$this->checkStatement($this->unlinkAllStatement);
+		$this->unlinkAllStatement->bindValue(':personId', $personId);
+		$this->unlinkAllStatement->execute();
+	}
 
 }
