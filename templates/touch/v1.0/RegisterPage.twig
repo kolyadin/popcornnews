@@ -13,6 +13,28 @@
 
 	{% else %}
 
+		{% if errors %}
+
+			<div class="form-top-mistake">
+				<strong>Ошибка</strong>.<br/>
+
+				{% if userError == 102 %}
+					Нужно согласиться с правилами
+				{% elseif userError == 103 %}
+					Пароли не совпадают
+				{% elseif userError == 104 %}
+					Заполните необходимые поля (отмечены *)
+				{% elseif userError == 110 %}
+					Такой ник уже используется
+				{% elseif userError == 111 %}
+					Такой адрес электронной почты уже используется
+				{% endif %}
+
+			</div>
+			<br/>
+
+		{% endif %}
+
 		<div class="form-top">
 			Пожалуйста, зарегистрируйтесь
 			на&nbsp;<a href="#">popcornnews.ru</a>
