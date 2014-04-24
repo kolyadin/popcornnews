@@ -51,9 +51,7 @@ INSERT INTO pn_persons (
   genitiveName, prepositionalName,
   info, source, photo, birthDate,
   showInCloud, sex, isSinger,
-  allowFacts, isWidgetAvailable,
-  widgetPhoto, widgetFullPhoto,
-  vkPage, twitterLogin, pageName,
+  allowFacts,  vkPage, twitterLogin, pageName,
   nameForBio, published, urlName,
   look, style, talent
 )
@@ -62,9 +60,7 @@ VALUES (
   :genitiveName, :prepositionalName,
   :info, :source, :photo, :birthDate,
   :showInCloud, :sex, :isSinger,
-  :allowFacts, :isWidgetAvailable,
-  :widgetPhoto, :widgetFullPhoto,
-  :vkPage, :twitterLogin, :pageName,
+  :allowFacts, :vkPage, :twitterLogin, :pageName,
   :nameForBio, :published, :urlName,
   :look, :style, :talent
 )");
@@ -169,9 +165,6 @@ EOL;
 			$this->insert->bindValue(':sex', ($item['pole12'] == 'Yes' ? Person::FEMALE : Person::MALE));
 			$this->insert->bindValue(':isSinger', $item['pole13'] == 'Yes');
 			$this->insert->bindValue(':allowFacts', $item['pole25'] != 'Yes');
-			$this->insert->bindValue(':isWidgetAvailable', $item['pole20'] == 'Yes');
-			$this->insert->bindValue(':widgetPhoto', 0);
-			$this->insert->bindValue(':widgetFullPhoto', 0);
 			$this->insert->bindValue(':vkPage', $item['pole26']);
 			$this->insert->bindValue(':twitterLogin', $item['pole30']);
 			$this->insert->bindValue(':pageName', $item['pole32']);
