@@ -116,7 +116,7 @@ class PersonDataMap extends DataMap {
 	 * @param Person $item
 	 * @param int $modifier
 	 */
-	protected function itemCallback($item, $modifier = self::WITH_ALL) {
+	protected function itemCallback($item, $modifier = self::WITH_PHOTO) {
 
 		$modifier = $this->getModifier($this, $modifier);
 

@@ -9,6 +9,7 @@ use popcorn\model\dataMaps\NewsTagDataMap;
 use popcorn\model\dataMaps\PersonDataMap;
 use popcorn\model\dataMaps\PersonFanDataMap;
 use popcorn\model\dataMaps\PersonImageDataMap;
+use popcorn\model\dataMaps\PersonsLinkDataMap;
 use popcorn\model\dataMaps\TagDataMap;
 use popcorn\model\dataMaps\UserDataMap;
 use popcorn\model\exceptions\NotAuthorizedException;
@@ -232,6 +233,12 @@ class PersonController extends GenericController implements ControllerInterface 
 			$news['posts'] = $dataMap->findByPerson($person, $news['paginator']);
 		}
 
+		//Связи
+		{
+			$linkDataMap = new PersonsLinkDataMap();
+			$links = $linkDataMap->find($person->getId());
+		}
+
 		//Фотографии персоны (выводим определенную часть)
 		{
 			$personImageDataMap = new PersonImageDataMap();
@@ -256,7 +263,8 @@ class PersonController extends GenericController implements ControllerInterface 
 				'posts' => $news['posts'],
 				'postsTotal' => $news['paginator']['overall'],
 				'fans' => $fans['fans'],
-				'fansTotal' => $fans['paginator']['overall']
+				'fansTotal' => $fans['paginator']['overall'],
+				'links' => $links
 			]);
 	}
 

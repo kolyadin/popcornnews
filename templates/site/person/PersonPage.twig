@@ -168,78 +168,32 @@
 
 	<section class="b-person__info-blocks clearfix">
 		<div class="b-grid__g4 b-grid__a">
-			<section class="b-person__connection">
-				<div class="b-person__connection__title-cont">
-					<h1 class="b-person__connection__title b-rubrics-title b-rubrics-title_s24">
-						<a rel="nofollow" href="#">связи</a>
-					</h1>
-					<span class="b-person__connection__counter b-counter b-counter-section"><a rel="nofollow" href="#">17</a></span>
-				</div>
-				<div class="b-person__connection__block">
-					<ul class="b-person__connection__list clearfix">
-						<li class="b-person__connection__item">
-							<div class="b-person__connection__img">
-								<a href="#">
-									<img alt="" src="./img/content/phs5.jpg">
-								</a>
-							</div>
-							<div class="b-person__connection__name">
-								<a href="#">Дэниел Крэйг</a>
-							</div>
-						</li>
-						<li class="b-person__connection__item">
-							<div class="b-person__connection__img">
-								<a href="#">
-									<img alt="" src="./img/content/phs5.jpg">
-								</a>
-							</div>
-							<div class="b-person__connection__name">
-								<a href="#">Джонатан Рис Майерс</a>
-							</div>
-						</li>
-						<li class="b-person__connection__item">
-							<div class="b-person__connection__img">
-								<a href="#">
-									<img alt="" src="./img/content/phs5.jpg">
-								</a>
-							</div>
-							<div class="b-person__connection__name">
-								<a href="#">Дженнифер Энистон</a>
-							</div>
-						</li>
-						<li class="b-person__connection__item">
-							<div class="b-person__connection__img">
-								<a href="#">
-									<img alt="" src="./img/content/phs5.jpg">
-								</a>
-							</div>
-							<div class="b-person__connection__name">
-								<a href="#">Джонатан Рис Майерс</a>
-							</div>
-						</li>
-						<li class="b-person__connection__item">
-							<div class="b-person__connection__img">
-								<a href="#">
-									<img alt="" src="./img/content/phs5.jpg">
-								</a>
-							</div>
-							<div class="b-person__connection__name">
-								<a href="#">Николас Кейдж</a>
-							</div>
-						</li>
-						<li class="b-person__connection__item">
-							<div class="b-person__connection__img">
-								<a href="#">
-									<img alt="" src="./img/content/phs5.jpg">
-								</a>
-							</div>
-							<div class="b-person__connection__name">
-								<a href="#">Дэниел Крэйг</a>
-							</div>
-						</li>
-					</ul>
-				</div>
-			</section>
+			{% if links %}
+				<section class="b-person__connection">
+					<div class="b-person__connection__title-cont">
+						<h1 class="b-person__connection__title b-rubrics-title b-rubrics-title_s24">
+							<a rel="nofollow" href="/persons/{{ person.urlName }}/links">связи</a>
+						</h1>
+						<span class="b-person__connection__counter b-counter b-counter-section"><a href="/persons/{{ person.urlName }}/links">{{ links|length }}</a></span>
+					</div>
+					<div class="b-person__connection__block">
+						<ul class="b-person__connection__list clearfix">
+							{% for linkPerson in links[:6] %}
+								<li class="b-person__connection__item">
+									<div class="b-person__connection__img">
+										<a href="/persons/{{ linkPerson.urlName }}">
+											<img alt="" src="{{ linkPerson.photo.thumb('82x123').url }}">
+										</a>
+									</div>
+									<div class="b-person__connection__name">
+										<a title="{{ linkPerson.name|e }}" href="/persons/{{ linkPerson.urlName }}">{{ linkPerson.name|e[:14] }}</a>
+									</div>
+								</li>
+							{% endfor %}
+						</ul>
+					</div>
+				</section>
+			{% endif %}
 		</div>
 		<div class="b-grid__g4 b-grid__z">
 			<section class="b-person__films">
