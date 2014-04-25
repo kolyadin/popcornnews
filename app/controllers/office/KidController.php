@@ -138,6 +138,8 @@ class KidController extends GenericController implements ControllerInterface {
 		$bd = vsprintf('%3$04u-%2$02u-%1$02u 03:00:00', sscanf($request->post('bd'), '%02u.%02u.%04u'));
 		$kid->setBirthDate(new \DateTime($bd));
 
+		//
+
 
 		$this->kidDataMap->save($kid);
 
