@@ -1,11 +1,11 @@
 /.idea/
 /.realsync
+
+/c/
 /logs/
-/vendor/
+/tests2/
 /var/
-/tmp/
+/vendor/
 
-/df/blin.txt2
-
-config/config.ini
-upload
+/config/config.ini
+/upload/
