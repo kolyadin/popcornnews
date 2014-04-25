@@ -52,6 +52,27 @@
 	</ul>
 </li>
 
+{#Дети#}
+<li class="{% if app.request.path starts with '/office/kid' %}active{% endif %}">
+	<a href="javascript:;">
+		<i class="fa fa-cogs"></i>
+		<span class="title">Дети</span>
+		<span class="arrow open"></span>
+	</a>
+	<ul class="sub-menu">
+		<li class="{% if app.request.path == '/office/kid_create' %}active{% endif %}">
+			<a href="/office/kid_create">
+				Добавить ребенка
+			</a>
+		</li>
+		<li class="{% if app.request.path == '/office/kids' %}active{% endif %}">
+			<a href="/office/kids">
+				Найти детей
+			</a>
+		</li>
+	</ul>
+</li>
+
 
 <li class="{% if app.request.path starts with '/office/poll' %}active{% endif %}">
 	<a href="javascript:;">

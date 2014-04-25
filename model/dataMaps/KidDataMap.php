@@ -13,11 +13,11 @@ class KidDataMap extends DataMap {
         parent::__construct();
         $this->class = "popcorn\\model\\persons\\Kid";
         $this->insertStatement =
-            $this->prepare("INSERT INTO pn_kids (firstParent, secondParent, name, description, birthDate, photo, votesUp, votesDown, commentsCount)
-            VALUES (:firstParent, :secondParent, :name, :description, :birthDate, :photo, :votesUp, :votesDown, :commentsCount)");
+            $this->prepare("INSERT INTO pn_kids (firstParent, secondParent, name, sex, description, birthDate, photo, votesUp, votesDown, commentsCount)
+            VALUES (:firstParent, :secondParent, :name, :sex, :description, :birthDate, :photo, :votesUp, :votesDown, :commentsCount)");
         $this->updateStatement =
             $this->prepare("
-            UPDATE pn_kids SET name=:name, description=:description, birthDate=:birthDate, photo=:photo, votesUp=:votesUp, votesDown=:votesDown, commentsCount=:commentsCount WHERE id=:id");
+            UPDATE pn_kids SET name=:name, sex=:sex, description=:description, birthDate=:birthDate, photo=:photo, votesUp=:votesUp, votesDown=:votesDown, commentsCount=:commentsCount WHERE id=:id");
         $this->deleteStatement = $this->prepare("DELETE FROM pn_kids WHERE id=:id");
         $this->findOneStatement = $this->prepare("SELECT * FROM pn_kids WHERE id=:id");
     }
@@ -41,6 +41,7 @@ class KidDataMap extends DataMap {
         $this->insertStatement->bindValue(":firstParent", $item->getFirstParent()->convert());
         $this->insertStatement->bindValue(":secondParent", $item->getSecondParent()->convert());
         $this->insertStatement->bindValue(":name", $item->getName());
+		$this->insertStatement->bindValue(":sex", $item->getSex());
         $this->insertStatement->bindValue(":description", $item->getDescription());
         $this->insertStatement->bindValue(":birthDate", $item->getBirthDate()->format('Y-m-d'));
         $this->insertStatement->bindValue(":photo", $item->getPhoto()->convert());
@@ -53,6 +54,7 @@ class KidDataMap extends DataMap {
      */
     protected function updateBindings($item) {
         $this->updateStatement->bindValue(":name", $item->getName());
+		$this->updateStatement->bindValue(":sex", $item->getSex());
         $this->updateStatement->bindValue(":description", $item->getDescription());
         $this->updateStatement->bindValue(":birthDate", $item->getBirthDate()->format('Y-m-d'));
         $this->updateStatement->bindValue(":photo", $item->getPhoto()->convert());

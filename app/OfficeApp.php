@@ -5,6 +5,7 @@ namespace popcorn\app;
 use popcorn\app\controllers\ControllerInterface;
 use popcorn\app\controllers\GenericController;
 use popcorn\app\controllers\office\AjaxController;
+use popcorn\app\controllers\office\KidController;
 use popcorn\app\controllers\office\PollController;
 use popcorn\app\controllers\office\PostController;
 use popcorn\app\controllers\office\PersonController;
@@ -28,6 +29,7 @@ class OfficeApp extends Application {
 		$this->registerController(new AjaxController());
 		$this->registerController(new PostController());
 		$this->registerController(new PersonController());
+		$this->registerController(new KidController());
 		$this->registerController(new PollController());
 
 	}

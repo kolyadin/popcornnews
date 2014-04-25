@@ -1,0 +1,18 @@
+{% extends '/Generic.twig' %}
+
+{% block PageTop %}
+
+	{% if kid %}
+
+		<ul class="mix-filter">
+			<li class="filter btn {% if tab1 %}active{% endif %}" data-filter="person">
+				<a href="/office/person{{ person.id }}">Ребенок</a>
+			</li>
+			<li class="filter btn {% if tab2 %}active{% endif %}" data-filter="linking">
+				<a href="/office/person{{ person.id }}/linking">Связи с персонами</a>
+			</li>
+		</ul>
+
+	{% endif %}
+
+{% endblock %}

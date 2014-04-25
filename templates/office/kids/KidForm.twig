@@ -1,0 +1,674 @@
+{% extends '/kids/KidGeneric.twig' %}
+
+{% block HeadEnd %}
+
+	<style type="text/css">
+		.card {
+			float: left;
+			margin-bottom: 20px;
+		}
+
+		.card-create input {
+			width:250px;
+			float:left;
+			margin-top: 60px;
+		}
+
+		.parent {
+			float: left;
+			text-align: center;
+			padding:5px;
+		}
+
+		.finder {
+			margin:20px 0;
+		}
+
+		.thumbnail {
+			margin-bottom: 0;
+		}
+
+		.parent p {
+			display: block;
+			text-align: center;
+		}
+
+		.parent .thumbnail {
+			text-align: center;
+			display: inline-block;
+		}
+
+		.plus {
+			margin:70px 15px 0 15px;
+			float: left;
+		}
+
+	</style>
+
+{% endblock %}
+
+{% block BodyEnd %}
+
+	{% raw %}
+	<script id="tmpl-main-image-box" type="x-tmpl-mustache">
+		<div class="note note-info">
+			<p><strong>Размеры (ширина)</strong>:<br/>
+			* В списках и в подробном описании - 393px
+		</div>
+		<div class="well well-lg">
+			<input type="hidden" name="mainImageId" value="{{ mainImageId }}" />
+
+			{{ #sizeAlert }}
+				<div class="alert alert-danger">
+					<p><i class="fa fa-times"></i>&nbsp;<strong>Ширина загруженного изображения меньше 393px</strong>.
+					<p><i class="fa fa-times"></i>&nbsp;<strong>Функция "обрезания" недоступна</strong>.
+					<p>Использование этой фотографии может привести к ужасному виду на страницах сайта.
+					<p>Лучше всего найти фотку большего размера.
+				</div>
+			{{ /sizeAlert }}
+
+			<div style="float:left;margin-right:20px;">
+				<a href="{{ url }}" data-full-width="{{ width }}" class="thumbnail" id="main-image-preview"><img src="{{ thumbUrl }}" width="300"/></a>
+			</div>
+
+			<p>
+				Размер: <strong>{{ width }}x{{ height }}</strong>
+				{{ #sizeAlert }}
+					<i class="fa fa-times" style="color:red;"></i>
+				{{ /sizeAlert }}
+				{{ ^sizeAlert }}
+					<i class="fa fa-check" style="color:green;"></i>
+				{{ /sizeAlert }}
+			</p>
+			<p><input type="button" class="btn btn-danger" data-action="remove-main-image" value="выбрать другое фото" /></p>
+			{{ ^sizeAlert }}
+				<p><input type="button" class="btn btn-info" data-action="crop-main-image" value="обрезать" /></p>
+			{{ /sizeAlert }}
+			<div style="clear:both;"></div>
+		</div>
+	</script>
+
+	<script id="tmpl-person" type="x-tmpl-mustache">
+		<div class="card">
+			<input type="hidden" name="link[]" value="{{ personId }}" />
+			<div class="parent thumbnail alert-warning">
+				<p><strong>{{ name }}</strong></p>
+				<p><a href="#"><img src="{{ url }}" class="thumbnail" alt=""/></a></p>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+	</script>
+	{% endraw %}
+
+	<script type="text/javascript">
+
+		$(function(){
+
+			var jcropApi;
+
+			var resetMainImage = function(params){
+
+				if (params.width < 393){
+					params['sizeAlert'] = 1;
+				}
+
+				var $html = Mustache.render($('#tmpl-main-image-box').html(),params);
+
+				var $id = $('#main-image-uploader');
+
+				var $parent = $id.closest('.col-md-9').find('.help-block');
+				$parent.html($html);
+
+				$id.hide();
+			};
+
+			//Показываем фотку с возможностью обрезания
+			$('body').on('click','input[data-action=crop-main-image]',function(){
+
+				var $imagePreview = $('#main-image-preview');
+
+				var $fullSrc = $imagePreview.attr('href');
+				var $fullWidth = $imagePreview.attr('data-full-width');
+
+				$('#modal-crop .modal-body .main-image-crop').html(sprintf('<img src="%s" id="main-image-crop" />',$fullSrc));
+
+				var handlerWriteCoords = function(c){
+					$('#modal-crop input[name=cropCoords]').val(sprintf('%u,%u,%u,%u,%u,%u', c.x, c.y, c.x2, c.y2, c.w, c.h));
+				};
+
+				$('#main-image-crop').Jcrop({
+					boxWidth: 560,
+					aspectRatio: 300/382,
+					minSize: [300,0],
+					setSelect: [0,0,300,0],
+					onSelect: handlerWriteCoords,
+					onChange: handlerWriteCoords,
+					bgOpacity: 0.2
+				},function(){
+					jcropApi = this;
+					$('#modal-crop').modal('show');
+				});
+
+
+			});
+
+			//Подтверждение обрезания
+			$('button[data-action=confirm-crop]').on('click',function(){
+
+				var params = {
+					'imageId': $('input[name=mainImageId]').val(),
+					'coords': $('#modal-crop input[name=cropCoords]').val()
+				};
+
+				var handler = function(response){
+
+					var params = {
+						mainImageId: response.id,
+						width: response.width,
+						height: response.height,
+						thumbUrl: response.url,
+						url: response.url
+					};
+
+					resetMainImage(params);
+
+					$('form[name=form-edit]').prepend('<input type="hidden" name="cropped" value="1" />');
+
+					$('#modal-crop').modal('hide');
+				};
+
+				$.post('/office/ajax/crop',params,handler,'json');
+			});
+
+			$('button[data-action=jcrop-select-all-width]').on('click',function(){
+
+				var $width = $('#main-image-preview').attr('data-full-width');
+
+				jcropApi.setSelect([0,0,$width,0]);
+
+			});
+
+			$('button[data-action=jcrop-select-default]').on('click',function(){
+
+				jcropApi.setSelect([0,0,620,0]);
+
+			});
+
+			//Событие на кнопку "выбрать другое фото" у основного фото
+			$('body').on('click','input[data-action=remove-main-image]',function(){
+				$(this).closest('.col-md-9').find('.help-block').html('');
+
+				$('#main-image-uploader').show().click();
+			});
+
+			//Календарь для дня рождения
+			$('#bd').datepicker({
+				language: 'ru',
+				format: 'dd.mm.yyyy',
+				autoclose: true
+			});
+
+			//Основное изображение
+			var uploaderMainImage = new plupload.Uploader({
+				runtimes: 'html5,flash,silverlight,html4',
+				browse_button: 'main-image-uploader',
+				max_file_size: '10mb',
+				unique_names: true,
+				max_file_count: 1,
+				multi_selection: false,
+				multi: false,
+
+				multipart_params : {
+					'resize' : '300x'
+				},
+
+				url: "/office/ajax/upload-attach",
+
+				flash_swf_url: '/office/assets/plugins/plupload-2.1.1/js/Moxie.swf',
+				silverlight_xap_url: '/office/assets/plugins/plupload-2.1.1/js/Moxie.xap',
+
+				filters: [
+					{title: "Фотографии", extensions: "jpg,jpeg,gif,png"}
+				],
+
+				init: {
+					PostInit: function () {
+
+					},
+					UploadComplete: function (up, files) {
+
+					},
+					BeforeUpload: function (up, file) {
+						$('#main-image-uploader').closest('.col-md-9').find('.help-block').html('Ждите...');
+					},
+
+					FilesAdded: function (up, files) {
+						up.start();
+					},
+					FileUploaded: function (upldir, file, object) {
+
+						var data = $.parseJSON(object.response);
+
+						var params = {
+							mainImageId: data.id,
+							width: data.width,
+							height: data.height,
+							thumbUrl: data.thumb.url,
+							url: data.url
+						};
+
+						resetMainImage(params);
+
+					},
+
+					UploadProgress: function (up, file) {
+
+					},
+
+					Error: function (up, err) {
+
+					}
+				}
+
+			});
+			uploaderMainImage.init();
+
+			$('input[data-action=btn-find-person]').on('click',function(){
+				$(this).closest('.thumbnail').find('.finder').removeClass('hide').end().find('.choose').addClass('hide');
+			});
+
+			$addKidParent = function(params,obj){
+
+				var $html = Mustache.render($('#tmpl-person').html(),params);
+
+				$(".select2-drop,.select2-container").remove();
+
+				$(obj).closest('.thumbnail').find('.box').html($html);
+			};
+
+
+			$('input[data-action=find-person]').each(function(){
+				$(this).select2({
+					width: '200px',
+					multiple: false,
+					placeholder: "Начни вводить имя персоны...",
+					initSelection: function (element, callback) {
+
+					},
+					ajax: {
+						url: '/office/ajax/post/persons',
+						dataType: 'json',
+						data: function (term) {
+							return {
+								term: term
+							};
+						},
+						results: function (data) {
+							return {
+								results: data.persons
+							};
+						}
+					}
+				}).on('select2-selecting',function(val,object){
+					$this = this;
+
+					$.get('/office/ajax/get/person',{personId:val.val},function(response){
+
+						var $params = {
+							name: response.name,
+							url: response.photo,
+							personId: response.id
+						};
+
+						$addKidParent($params,$this);
+
+
+					},'json');
+				});
+			});
+
+
+
+
+			{% if kid.photo %}
+
+				var $params = {
+					  mainImageId: {{ kid.photo.id }},
+					  width: {{ kid.photo.width }},
+					  height: {{ kid.photo.height }},
+					  thumbUrl: '{{ kid.photo.url }}',
+					  url: '{{ kid.photo.url }}'
+				};
+
+				resetMainImage($params);
+			{% endif %}
+
+		});
+
+	</script>
+
+{% endblock %}
+
+{% block PageTop %}
+
+	{% if person %}
+		<h3 class="page-title">
+			Ребенок
+			<small>&quot;{{ kid.name|e }}&quot;</small>
+		</h3>
+	{% else %}
+		<h3 class="page-title">
+			Добавление ребенка
+		</h3>
+	{% endif %}
+
+	<ul class="page-breadcrumb breadcrumb">
+		<li>
+			<i class="fa fa-home"></i>
+			<a href="/office">Консоль</a>
+			<i class="fa fa-angle-right"></i>
+		</li>
+		<li>
+			<a href="/office/kids">Дети</a>
+			<i class="fa fa-angle-right"></i>
+		</li>
+		<li>
+			<a href="/office/kid_create">Добавление ребенка</a>
+		</li>
+	</ul>
+
+	{{ parent() }}
+
+{% endblock %}
+
+{% block PageContent %}
+
+	<div class="modal fade" id="modal-crop" role="basic" aria-hidden="true" data-backdrop="static">
+		<input name="cropCoords" type="hidden"/>
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="main-image-crop">
+
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-info" aria-hidden="true" data-action="jcrop-select-all-width">Подогнать под ширину</button>
+					<button class="btn btn-info" aria-hidden="true" data-action="jcrop-select-default">Выбрать минимальный &quot;кусок&quot;</button>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Отмена</button>
+					<button class="btn btn-success" data-action="confirm-crop">Сделать обрезание&nbsp;<i class="fa fa-check"></i></button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<form class="form-horizontal form-row-seperated" method="post" enctype="multipart/form-data" name="form-edit">
+		{% if kid %}
+			<input type="hidden" name="kidId" value="{{ kid.id }}"/>
+		{% endif %}
+
+		<div class="form-body">
+
+			{% if app.request.get('status') == 'updated' %}
+				<div class="alert alert-success">
+					<i class="fa fa-check"></i>
+					<strong>Информация о ребенке обновлена</strong>
+				</div>
+			{% endif %}
+
+			{% if app.request.get('status') == 'created' %}
+				<div class="alert alert-success">
+					<i class="fa fa-check"></i>
+					<strong>Ребенок добавлен</strong>
+				</div>
+			{% endif %}
+
+			<div class="portlet">
+				<div class="portlet-title">
+					<div class="caption">
+						<i class="fa fa-reorder"></i>Родители
+					</div>
+					<div class="tools">
+						<a href="javascript:;" class="collapse"></a>
+					</div>
+				</div>
+				<div class="portlet-body">
+
+					<div class="col-md-2">&nbsp;</div>
+					<div class="col-md-9">
+						<div style="float:left;text-align: right;padding:20px;" class="thumbnail first-person">
+							<p><strong>Первая персона</strong></p>
+
+							<div class="box">
+								<div class="hide finder">
+									<input class="form-control" type="text" data-action="find-person" placeholder="Начни набирать имя персоны..."/>
+								</div>
+								<div class="hide custom">
+									<input class="form-control" type="text" placeholder="Напиши любое имя"/>
+								</div>
+
+								<div class="choose">
+									<p><input class="btn btn-info" type="button" value="Выбрать из существующих" data-action="btn-find-person"/></p>
+									<p><input class="btn btn-info" type="button" value="Указать вручную" data-action="btn-custom-person"/></p>
+								</div>
+								<div class="clearfix"></div>
+							</div>
+						</div>
+						<div style="float:left;margin:70px 20px 0 20px;">
+							<i class="fa fa-plus"></i>
+						</div>
+						<div style="float:left;padding: 20px;" class="thumbnail second-person">
+							<p><strong>Вторая персона</strong></p>
+
+							<div class="box">
+								<div class="hide finder">
+									<input class="form-control" type="text" data-action="find-person" placeholder="Начни набирать имя персоны..."/>
+								</div>
+								<div class="hide custom">
+									<input class="form-control" type="text" placeholder="Напиши любое имя"/>
+								</div>
+
+								<div class="choose">
+									<p><input class="btn btn-info" type="button" value="Выбрать из существующих" data-action="btn-find-person"/></p>
+									<p><input class="btn btn-info" type="button" value="Указать вручную" data-action="btn-custom-person"/></p>
+								</div>
+							</div>
+						</div>
+
+						<div class="clearfix"></div>
+					</div>
+					<div class="clearfix"></div>
+
+					<br/><br/><br/><br/><br/>
+
+					<div class="col-md-2">&nbsp;</div>
+					<div class="col-md-9">
+						<div style="float:left;text-align: right;padding:20px;height:170px;width:250px;" class="thumbnail first-person">
+							<p><strong>Первая персона</strong></p>
+
+
+
+						</div>
+						<div style="float:left;margin:70px 20px 0 20px;">
+							<i class="fa fa-plus"></i>
+						</div>
+						<div style="float:left;padding: 20px;height:170px;width:250px;" class="thumbnail second-person">
+							<p><strong>Вторая персона</strong></p>
+
+						</div>
+
+						<div class="clearfix"></div>
+					</div>
+					<div class="clearfix"></div>
+
+				</div>
+			</div>
+
+			<div class="portlet">
+				<div class="portlet-title">
+					<div class="caption">
+						<i class="fa fa-reorder"></i>Главное
+					</div>
+					<div class="tools">
+						<a href="javascript:;" class="collapse"></a>
+					</div>
+				</div>
+				<div class="portlet-body">
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Имя ребенка: <span class="required">*</span></label>
+
+						<div class="col-md-9">
+							<input class="form-control" name="name" required="true" type="text" value="{{ kid.name|e }}"/>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Дата рождения: <span class="required">*</span></label>
+
+						<div class="col-md-9">
+							<input class="form-control" style="width:100px;float:left;margin-right: 10px;" id="bd" name="bd" required="true" type="text" value="{{ kid.birthDateFriendly }}"/>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Пол: <span class="required">*</span></label>
+
+						<div class="col-md-9">
+							<select class="form-control input-small" name="sex">
+								<option value="0"{% if kid.sex == 0 %} selected{% endif %}>Мальчик</option>
+								<option value="1"{% if kid.sex == 1 %} selected{% endif %}>Девочка</option>
+							</select>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Основное фото: <span class="required">*</span></label>
+
+						<div class="col-md-9">
+							<input type="button" class="btn btn-info" id="main-image-uploader" value="загрузить фото"/>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Информация:</label>
+
+						<div class="col-md-9">
+							<textarea class="form-control ckeditor" name="description" cols="30" rows="10">{{ kid.description|e }}</textarea>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+
+
+			<div class="portlet">
+				<div class="portlet-title">
+					<div class="caption">
+						<i class="fa fa-reorder"></i>Опции
+					</div>
+					<div class="tools">
+						<a href="javascript:;" class="collapse"></a>
+					</div>
+				</div>
+				<div class="portlet-body">
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Факты:</label>
+
+						<div class="col-md-9">
+							<select class="form-control" name="allowFacts">
+								<option value="1"{% if person.allowFacts %} selected{% endif %}>Можно писать факты</option>
+								<option value="0"{% if not person.allowFacts %} selected{% endif %}>Нельзя писать факты</option>
+							</select>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Фильмография:</label>
+
+						<div class="col-md-9">
+							<select class="form-control" name="isSinger">
+								<option value="1"{% if person.isSinger %} selected{% endif %}>ВКЛючить фильмографию</option>
+								<option value="0"{% if not person.isSinger %} selected{% endif %}>ВЫКЛючить фильмографию</option>
+							</select>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="portlet">
+				<div class="portlet-title">
+					<div class="caption">
+						<i class="fa fa-reorder"></i>Имена пользователей в соц сетях
+					</div>
+					<div class="tools">
+						<a href="javascript:;" class="collapse"></a>
+					</div>
+				</div>
+				<div class="portlet-body">
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Вконтакте:</label>
+
+						<div class="col-md-9">
+							<input class="form-control" name="vkPage" type="text" value="{{ person.vkPage|e }}"/>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Instagram:</label>
+
+						<div class="col-md-9">
+							<input class="form-control" name="instagramLogin" type="text" value="{{ person.instagramLogin|e }}"/>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Twitter:</label>
+
+						<div class="col-md-9">
+							<input class="form-control" name="twitterLogin" type="text" value="{{ person.twitterLogin|e }}"/>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+
+				</div>
+			</div>
+
+
+
+		</div>
+
+		<div class="form-actions right">
+
+			{% if person %}
+
+				<button class="btn btn-m btn-danger" type="button" data-action="person-remove">Удалить персону</button>
+				<button class="btn btn-m btn-success" type="submit">Обновить персону&nbsp;<i class="fa fa-check"></i></button>
+
+			{% else %}
+
+				{#<button class="btn btn-m btn-info" type="button" data-action="submit-just-save">Создать опрос</button>#}
+				<button class="btn btn-m btn-success" type="submit">Создать персону&nbsp;<i class="fa fa-check"></i></button>
+
+			{% endif %}
+		</div>
+	</form>
+
+{% endblock %}

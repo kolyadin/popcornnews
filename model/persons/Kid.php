@@ -20,6 +20,9 @@ use popcorn\model\voting\VotingFactory;
  */
 class Kid extends Model {
 
+	const MALE = 0;
+	const FEMALE = 1;
+
     //region Fields
 
     /**
@@ -41,6 +44,12 @@ class Kid extends Model {
      * @export
      */
     private $name = '';
+
+	/**
+	 * @var int
+	 * @export
+	 */
+	private $sex = self::MALE;
 
     /**
      * @var string
@@ -97,6 +106,12 @@ class Kid extends Model {
         return $this->birthDate;
     }
 
+	public function getBirthDateFriendly() {
+		if (is_null($this->getBirthDate())) return null;
+
+		return vsprintf('%3$02u.%2$02u.%1$04u', sscanf($this->getBirthDate()->format('Y-m-d'), '%04u-%02u-%02u'));
+	}
+
     /**
      * @return string
      */
@@ -117,6 +132,13 @@ class Kid extends Model {
     public function getName() {
         return $this->name;
     }
+
+	/**
+	 * @return int
+	 */
+	public function getSex() {
+		return $this->sex;
+	}
 
     /**
      * @return \popcorn\model\persons\Person
@@ -194,6 +216,14 @@ class Kid extends Model {
         $this->name = $name;
         $this->changed();
     }
+
+	/**
+	 * @param int $sex
+	 */
+	public function setSex($sex) {
+		$this->sex = $sex;
+		$this->changed();
+	}
 
     /**
      * @param \popcorn\model\persons\Person $secondParent
