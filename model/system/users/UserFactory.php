@@ -84,6 +84,13 @@ class UserFactory {
 		return $stmt->fetchColumn();
 	}
 
+	public static function getHeadersChecksum() {
+		$ip = $_SERVER['REMOTE_ADDR'];
+		$browser = $_SERVER['HTTP_USER_AGENT'];
+
+		return md5(implode('', [$ip, $browser]));
+	}
+
     public static function login($email, $pass) {
         self::checkDataMap();
         $user = self::$dataMap->findByEmail($email);

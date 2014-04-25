@@ -35,10 +35,16 @@ class Import extends Command {
 		$this
 			->setName('import:persons')
 			->addOption(
-				'personId',
+				'person-id',
 				null,
 				InputOption::VALUE_REQUIRED,
 				'Импорт одной конкретной персоны'
+			)
+			->addOption(
+				'set-images-limit',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Ограничим кол-во импортируемых фото'
 			)
 			->setDescription("Импорт персон");
 
@@ -71,10 +77,9 @@ VALUES (
 
 		$output->writeln('<info>Импорт персон...</info>');
 
-		if ($input->getOption('personId')) {
+		PDOHelper::truncate(['pn_persons', 'pn_persons_images']);
 
-			$this->pdo->exec(sprintf('DELETE FROM pn_persons WHERE id = %u', $input->getOption('personId')));
-			$this->pdo->exec(sprintf('DELETE FROM pn_persons_images WHERE personId = %u', $input->getOption('personId')));
+		if ($input->getOption('person-id')) {
 
 			$this->selector = $this->pdo->prepare("SELECT * FROM popcornnews.popconnews_goods_ WHERE goods_id = 3 AND id = :personId");
 			$this->selector->bindValue(':personId', $input->getOption('personId'), \PDO::PARAM_INT);
@@ -86,39 +91,35 @@ VALUES (
 		$this->selector->execute();
 
 		$count = 0;
-		$total = $this->selector->rowCount();
 
-		for ($i = 0; $i < $total; $i++) {
+		while ($table = $this->selector->fetch(\PDO::FETCH_ASSOC)) {
 
-			$item = $this->selector->fetch(\PDO::FETCH_ASSOC);
+			if ($table['pole33'] == 'Yes' || !empty($table['pole40'])) continue;
 
-			$this->pdo->exec(sprintf('DELETE FROM pn_persons WHERE id = %u', $item['id']));
-			$this->pdo->exec(sprintf('DELETE FROM pn_persons_images WHERE personId = %u', $item['id']));
+			$output->write("<info>Персона #" . $table['id'] . ' ' . $table['name'] . "...");
 
-			if ($item['pole33'] == 'Yes' || !empty($item['pole40'])) continue;
+			$this->insert->bindValue(':id', $table['id']);
+			$this->insert->bindValue(':name', $table['name']);
+			$this->insert->bindValue(':englishName', $table['pole1']);
+			$this->insert->bindValue(':genitiveName', $table['pole14']);
+			$this->insert->bindValue(':prepositionalName', $table['pole15']);
+			$this->insert->bindValue(':info', $table['pole2']);
+			$this->insert->bindValue(':source', $table['pole4']);
 
-			$output->write("<info>Персона #" . $item['id'] . ' ' . $item['name'] . "...");
-
-			$this->insert->bindValue(':id', $item['id']);
-			$this->insert->bindValue(':name', $item['name']);
-			$this->insert->bindValue(':englishName', $item['pole1']);
-			$this->insert->bindValue(':genitiveName', $item['pole14']);
-			$this->insert->bindValue(':prepositionalName', $item['pole15']);
-			$this->insert->bindValue(':info', $item['pole2']);
-			$this->insert->bindValue(':source', $item['pole4']);
-
-			$personImage = ImageFactory::createFromUrl(sprintf('http://www.popcornnews.ru/upload1/%s', $item['pole5']));
+			$personImage = ImageFactory::createFromUrl(sprintf('http://www.popcornnews.ru/upload1/%s', $table['pole5']));
 			$this->insert->bindValue(':photo', $personImage->getId());
 
 			//region Импортируем приложенные фотографии
 			{
-				$sql = <<<EOL
-SELECT filename filepath FROM popcornnews.popkorn_user_pix where gid_ = :personId
-union
-SELECT diskname filepath FROM popcornnews.popconnews_pix where goods_id_ = :personId
-EOL;
-				$stmt = $this->pdo->prepare($sql);
-				$stmt->bindValue(':personId', $item['id'], \PDO::PARAM_INT);
+				$sql = '
+					SELECT filename filepath FROM popcornnews.popkorn_user_pix where gid_ = :personId
+					union
+					SELECT diskname filepath FROM popcornnews.popconnews_pix where goods_id_ = :personId
+					Limit %u';
+
+
+				$stmt = $this->pdo->prepare(sprintf($sql, $input->getOption('set-images-limit') ? : 999999));
+				$stmt->bindValue(':personId', $table['id'], \PDO::PARAM_INT);
 				$stmt->execute();
 
 				$images = [];
@@ -144,7 +145,7 @@ EOL;
 
 						$stmt = $this->pdo->prepare('INSERT INTO pn_persons_images SET personId = :personId, imageId = :imageId, seq = :seq');
 						$stmt->execute([
-							':personId' => $item['id'],
+							':personId' => $table['id'],
 							':imageId' => $image->getId(),
 							':seq' => $i++
 						]);
@@ -153,23 +154,23 @@ EOL;
 			}
 			//endregion
 
-			$bd = $item['pole10'];
+			$bd = $table['pole10'];
 			$y = substr($bd, 0, 4);
 			$m = substr($bd, 4, 2);
 			$d = substr($bd, 6, 2);
 			$this->insert->bindValue(':birthDate', "{$y}-{$m}-{$d}");
 
-			$this->insert->bindValue(':showInCloud', $item['pole11'] == 'Yes');
-			$this->insert->bindValue(':sex', ($item['pole12'] == 'Yes' ? Person::FEMALE : Person::MALE));
-			$this->insert->bindValue(':isSinger', $item['pole13'] == 'Yes');
-			$this->insert->bindValue(':allowFacts', $item['pole25'] != 'Yes');
-			$this->insert->bindValue(':vkPage', $item['pole26']);
-			$this->insert->bindValue(':twitterLogin', $item['pole30']);
-			$this->insert->bindValue(':pageName', $item['pole32']);
-			$this->insert->bindValue(':nameForBio', $item['pole33']);
+			$this->insert->bindValue(':showInCloud', $table['pole11'] == 'Yes');
+			$this->insert->bindValue(':sex', ($table['pole12'] == 'Yes' ? Person::FEMALE : Person::MALE));
+			$this->insert->bindValue(':isSinger', $table['pole13'] == 'Yes');
+			$this->insert->bindValue(':allowFacts', $table['pole25'] != 'Yes');
+			$this->insert->bindValue(':vkPage', $table['pole26']);
+			$this->insert->bindValue(':twitterLogin', $table['pole30']);
+			$this->insert->bindValue(':pageName', $table['pole32']);
+			$this->insert->bindValue(':nameForBio', $table['pole33']);
 			$this->insert->bindValue(':published', 1);
 
-			$urlName = str_replace('-', '_', $item['pole1']);
+			$urlName = str_replace('-', '_', $table['pole1']);
 			$urlName = str_replace('&dash;', '_', $urlName);
 			$urlName = str_replace(' ', '-', $urlName);
 			$this->insert->bindValue(':urlName', $urlName);
@@ -185,8 +186,13 @@ EOL;
 			} else {
 				$output->writeln("готово</info>");
 			}
+
 			$count++;
 		}
+
+		$total = $this->selector->rowCount();
+
+
 
 		$output->writeln("<info>Импортированно {$count} персон из {$total}</info>");
 		$this->selector->closeCursor();
