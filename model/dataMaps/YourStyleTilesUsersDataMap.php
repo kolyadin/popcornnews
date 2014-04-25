@@ -14,7 +14,7 @@ class YourStyleTilesUsersDataMap extends DataMap {
 		$this->insertStatement = $this->prepare("INSERT INTO `pn_yourstyle_tiles_users` (`tId`, `uId`, `createTime`)
 		    VALUES (:tId, :uId, :createTime)");
 		$this->updateStatement = $this->prepare("UPDATE `pn_yourstyle_tiles_users`
-			SET `tId`, `createTime` WHERE `uId`=:uId");
+			SET `tId`=:tId, `createTime`=:createTime WHERE `uId`=:uId");
 		$this->deleteStatement = $this->prepare("DELETE FROM `pn_yourstyle_tiles_users` WHERE `tId`=:tId AND `uId`=:uId");
 		$this->findOneStatement = $this->prepare("SELECT * FROM `pn_yourstyle_tiles_users` WHERE `tId`=:tId AND `uId`=:uId");
 	}

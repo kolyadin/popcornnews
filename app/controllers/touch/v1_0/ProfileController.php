@@ -12,6 +12,7 @@ use popcorn\model\dataMaps\MessageWallDataMap;
 use popcorn\model\exceptions\NotAuthorizedException;
 use popcorn\model\im\MessageWall;
 use popcorn\model\im\MessageWallFactory;
+use popcorn\model\dataMaps\UserImagesDataMap;
 use Slim\Route;
 
 /**
@@ -122,7 +123,8 @@ class ProfileController extends GenericController implements ControllerInterface
 		$dataMap = new UserDataMap();
 		self::$twigData['inBlackList'] = $dataMap->checkInBlackList(UserFactory::getCurrentUser(),self::$profile);
 		self::$twigData['isMyProfile'] = false;
-
+		$userImagesDataMap = new UserImagesDataMap();
+		self::$twigData['photosCount'] = $userImagesDataMap->getCountByUser($currentUser);
 
 		//Авторизованный пользователь смотрит свой профиль
 		if ($currentUser->getId() == $profileId){
