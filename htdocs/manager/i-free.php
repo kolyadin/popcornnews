@@ -1,2 +1,0 @@
-<script type="text/javascript" src="http://informer.mmi.ru/informer_ifs_data.js?id=3-511-5852&enc=utf-8"></script>
-<script type="text/javascript" src="http://informer.mmi.ru/informer-ifs_1.js?enc=utf-8"></script>

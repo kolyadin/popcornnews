@@ -1,3 +1,0 @@
-<?
-print $DOCUMENT_ROOT;
-?>
