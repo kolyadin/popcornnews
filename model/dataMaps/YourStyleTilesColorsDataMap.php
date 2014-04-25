@@ -34,4 +34,27 @@ class YourStyleTilesColorsDataMap extends DataMap {
 		return $this->deleteStatement->execute();
 
 	}
+
+	public function getColorByHuman($color) {
+
+		$sql = <<<SQL
+			SELECT `html`
+			FROM `pn_yourstyle_tiles_colors`
+			WHERE `human` = ?
+			LIMIT 1
+SQL;
+
+		$stmt = $this->prepare($sql);
+		$stmt->bindValue(1, $color, \PDO::PARAM_STR);
+		$stmt->execute();
+
+		$items = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+		if (empty($items[0]['html'])) {
+			return null;
+		} else {
+			return $items[0]['html'];
+		}
+
+	}
 }

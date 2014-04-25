@@ -22,6 +22,11 @@ use popcorn\model\voting\UpDownVoting;
 use popcorn\model\persons\Person;
 use popcorn\model\im\Message;
 use popcorn\model\im\MessageFactory;
+use popcorn\model\dataMaps\NewsPostDataMap;
+use popcorn\model\dataMaps\TagDataMap;
+use popcorn\model\tags\TagFactory;
+use popcorn\model\dataMaps\DataMapHelper;
+use popcorn\lib\RuHelper;
 
 
 class AjaxController extends GenericController implements ControllerInterface {
@@ -59,12 +64,19 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 		$this
 			->getSlim()
+			->post('/ajax/getUsersForDialog', [$this, 'findRecipientForDialog']);
+
+		$this
+			->getSlim()
 			->post('/ajax/complainUser', [$this, 'blacklistAdd']);
 
 		$this
 			->getSlim()
 			->post('/ajax/deleteStatus', [$this, 'statusRemove']);
 
+		$this
+			->getSlim()
+			->post('/ajax/getNews', [$this, 'getNews']);
 
 	}
 
@@ -304,38 +316,59 @@ class AjaxController extends GenericController implements ControllerInterface {
 		}
 	}
 
+	public function findRecipients($link) {
+
+		$recipientNick = $this->getSlim()->request()->post('val');
+
+		$users = UserFactory::searchUsers($recipientNick);
+
+		$jsonOut = [];
+
+		$currentUser = UserFactory::getCurrentUser();
+		foreach ($users as $user) {
+			if ($user->getId() == $currentUser->getId()) {
+				continue;
+			}
+			$city = UserFactory::getCityNameById($user->getUserInfo()->getCityId());
+			if (!$city) {
+				$city = '';
+			}
+			$jsonOut[] = [
+				'uid' => $user->getId(),
+				'userLink' => $link . $user->getId(),
+				'avatar' => $user->getAvatar()->getUrl(),
+				'isOnline' => $user->isOnline(),
+				'ratingName' => $user->getRating()->getRank(),
+				'nick' => $user->getNick(),
+				'city' => $city,
+				'ratingValue' => $user->getRating()->getPersents()
+			];
+		}
+
+		if (count($jsonOut)) {
+			$json = ['status' => 1, 'fragment' => $jsonOut];
+		} else {
+			$json = ['status' => 0];
+		}
+		return $json;
+
+	}
+
 	public function findRecipient() {
 
 		try {
+			$json = $this->findRecipients('/profile/');
+			die(json_encode($json));
+		} catch (AjaxException $e) {
+			$e->exitWithJsonException();
+		}
 
-			$recipientNick = $this->getSlim()->request()->post('val');
+	}
 
-			$users = UserFactory::searchUsers($recipientNick);
+	public function findRecipientForDialog() {
 
-			$jsonOut = [];
-
-			foreach ($users as $user) {
-				$city = UserFactory::getCityNameById($user->getUserInfo()->getCityId());
-				if (!$city) {
-					$city = '';
-				}
-				$jsonOut[] = [
-					'uid' => $user->getId(),
-					'userLink' => '/profile/' . $user->getId(),
-					'avatar' => $user->getAvatar()->getUrl(),
-					'isOnline' => $user->isOnline(),
-					'ratingName' => $user->getRating()->getRank(),
-					'nick' => $user->getNick(),
-					'city' => $city,
-					'ratingValue' => $user->getRating()->getPersents()
-				];
-			}
-
-			if (count($jsonOut)) {
-				$json = ['status' => 1, 'fragment' => $jsonOut];
-			} else {
-				$json = ['status' => 0];
-			}
+		try {
+			$json = $this->findRecipients('/im/companion');
 			die(json_encode($json));
 		} catch (AjaxException $e) {
 			$e->exitWithJsonException();
@@ -725,5 +758,74 @@ class AjaxController extends GenericController implements ControllerInterface {
 		}
 	}
 
+	public function getNews() {
+
+		try {
+			$sample = $this->getSlim()->request()->post('sample');
+			$page = $this->getSlim()->request()->post('page');
+
+			if ($sample == 'news') {
+				$params = ['page' => $page];
+			} else {
+				$params = ['category' => $sample, 'page' => $page];
+			}
+
+			$options = [
+				'category' => null,
+				'page' => null,
+			];
+
+			$options = array_merge($options, $params);
+
+			if (is_null($options['page'])) {
+				$options['page'] = 1;
+			}
+
+			$onPage = 10;
+			$paginator = [];
+
+			$mapOptions = $options;
+
+			if ($options['category']) {
+				$mapOptions = ['category' => $options['category']];
+			}
+
+			$dataMapHelper = new DataMapHelper();
+			$dataMapHelper->setRelationship([
+				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE,
+			]);
+
+			$dataMap = new NewsPostDataMap($dataMapHelper);
+
+			$posts = $dataMap->find($mapOptions,
+				[($options['page'] - 1) * $onPage, $onPage],
+				$paginator
+			);
+
+			$arrPosts = array();
+			foreach($posts as $post) {
+				$aPost = [
+					"link" => '/news/' . $post->getId(),
+					"date" => RuHelper::ruDateFriendly($post->getCreateDate()),
+					"title" => $post->getName(),
+					"photoPreview" => $post->getMainImageId()->getThumb('393x')->getUrl(),
+					"photoPreviewAlt" => $post->getName(),
+					"numPhoto" => count($post->getImages()),
+					"numComments" => $post->getComments(),
+					"desc" => $post->getAnnounceFriendly(),
+					"vk" => 'http://vkontakte.ru/share.php?url=http://www.popcornnews.ru/news/' . $post->getId(),
+					"fb" => 'http://www.facebook.com/sharer.php?u=http://www.popcornnews.ru/news/' . $post->getId(),
+					"tw" => 'https://twitter.com/intent/tweet?original_referer=http://www.popcornnews.ru/news/' . $post->getId() . '&related=anywhereTheJavascriptAPI&text=' . $post->getName() . ' http://www.popcornnews.ru/news/' . $post->getId() . '&tw_p=tweetbutton&url=http://www.popcornnews.ru/news/' . $post->getId() . '&via=popcornnews_ru',
+				];
+				$arrPosts[] = $aPost;
+			}
+
+			$json = '{"status":"1", "pages":"' . $paginator['pages'] . '", "fragment":' . json_encode($arrPosts) . '}';
+			die($json);
+		} catch (AjaxException $e) {
+			$e->exitWithJsonException();
+		}
+
+	}
 
 }

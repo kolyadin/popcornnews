@@ -2,7 +2,11 @@
 
 {% block topmenu %}
 
-	{% include '/TopMenu.twig' %}
+	<header class="page__header nav">
+
+		{% include '/TopMenu.twig' %}
+
+	</header>
 
 {% endblock %}
 
@@ -27,7 +31,7 @@
 							<div class="news-list__stat">
 								<span class="icon-text icon-text_count">
 									<img class="icon-text__icon"  src="i/camera-white.svg" alt="Фотографии" />
-									<span class="icon-text__text">{{ photo|length }}</span>
+									<span class="icon-text__text">{{ post.images|length }}</span>
 								</span>
 								<span class="icon-text icon-text_count">
 									<img class="icon-text__icon"  src="i/message-white.svg" alt="Комментарии" />
@@ -39,9 +43,9 @@
 							{{ post.announceTouchFriendly }}
 						</div>
 						<div class="eitem__extra Eitem__extra">
-							<a href="#"><img class="eitem__extra-social" src="i/vk-white.svg" alt="" /></a>
-							<a href="#"><img class="eitem__extra-social" src="i/fb-white.svg" alt="" /></a>
-							<a href="#"><img class="eitem__extra-social" src="i/tw-white.svg" alt="" /></a>
+							<a href="http://vkontakte.ru/share.php?url=http://www.popcornnews.ru/news/{{ post.id }}"><img class="eitem__extra-social" src="i/vk-white.svg" alt="" /></a>
+							<a href="http://www.facebook.com/sharer.php?u=http://www.popcornnews.ru/news/{{ post.id }}"><img class="eitem__extra-social" src="i/fb-white.svg" alt="" /></a>
+							<a href="https://twitter.com/intent/tweet?original_referer=http://www.popcornnews.ru/news/{{ post.id }}&related=anywhereTheJavascriptAPI&text={{ post.name|e }} http://www.popcornnews.ru/news/{{ post.id }}&tw_p=tweetbutton&url=http://www.popcornnews.ru/news/{{ post.id }}&via=popcornnews_ru"><img class="eitem__extra-social" src="i/tw-white.svg" alt="" /></a>
 						</div>
 					</div>
 				</div>
@@ -53,10 +57,10 @@
 				$(function(){
 					eitems.init();
 					new Sample({
-						selectUid:'news-sample', 
-						textUid:'nav-title', 
-						boxUid:'news-box', 
-						type:'getNews', 
+						selectUid:'news-sample',
+						textUid:'nav-title',
+						boxUid:'news-box',
+						type:'getNews',
 						pager:new Pager({boxUid:'news-box', type:'getNews', pages:5})});
 				});
 			</script>

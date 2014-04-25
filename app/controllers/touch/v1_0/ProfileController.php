@@ -12,6 +12,7 @@ use popcorn\model\dataMaps\MessageWallDataMap;
 use popcorn\model\exceptions\NotAuthorizedException;
 use popcorn\model\im\MessageWall;
 use popcorn\model\im\MessageWallFactory;
+use popcorn\model\dataMaps\UserImagesDataMap;
 use Slim\Route;
 
 /**
@@ -122,7 +123,8 @@ class ProfileController extends GenericController implements ControllerInterface
 		$dataMap = new UserDataMap();
 		self::$twigData['inBlackList'] = $dataMap->checkInBlackList(UserFactory::getCurrentUser(),self::$profile);
 		self::$twigData['isMyProfile'] = false;
-
+		$userImagesDataMap = new UserImagesDataMap();
+		self::$twigData['photosCount'] = $userImagesDataMap->getCountByUser($currentUser);
 
 		//Авторизованный пользователь смотрит свой профиль
 		if ($currentUser->getId() == $profileId){
@@ -338,11 +340,15 @@ class ProfileController extends GenericController implements ControllerInterface
 				->display('/profile/ProfileMessages.twig',[
 					'profile' => $profile,
 					'messages' => $messages,
-					'companionProfile' => $companionProfile
+					'companionProfile' => $companionProfile,
+					'companionId' => $companionId,
 				]);
 		} else {
 			$dialogs = $dataMap->getDialogs($profile);
 
+			if (!count($dialogs)) {
+				self::getSlim()->redirect('/im/create');
+			}
 			self::getTwig()
 				->display('/profile/ProfileMessages.twig',[
 					'profile' => $profile,
@@ -352,11 +358,25 @@ class ProfileController extends GenericController implements ControllerInterface
 
 	}
 
-	public static function imCreate(){
+	public static function imCreate() {
 
 		$profile = UserFactory::getCurrentUser();
-		$dataMap = new MessageDataMap();
+		$dataMap = new UserDataMap();
 
+		$onPage = 20;
+		$paginator = [];
+
+		$friends = $dataMap->getFriends($profile,
+			['myFriends' => true],
+			[0, $onPage],
+			$paginator
+		);
+
+		self::getTwig()
+			->display('/profile/ProfileMessageCreate.twig',[
+				'friends' => $friends,
+			])
+		;
 
 	}
 

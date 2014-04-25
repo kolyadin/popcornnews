@@ -18,13 +18,13 @@ use popcorn\app\controllers\site\YourStyleController;
 use popcorn\app\controllers\SiteMain;
 use popcorn\app\controllers\site\person\PersonController;
 use popcorn\lib\GenericHelper;
-use popcorn\model\dataMaps\UserDataMap;
 use popcorn\model\exceptions\BadAuthorizationException;
 use popcorn\model\exceptions\NotAuthorizedException;
 use popcorn\model\exceptions\RemindWrongEmailException;
 use popcorn\model\system\users\GuestUser;
 use popcorn\model\system\users\User;
 use popcorn\model\system\users\UserFactory;
+use popcorn\model\dataMaps\UserDataMap;
 use Twig_SimpleFilter;
 use popcorn\lib\Config;
 

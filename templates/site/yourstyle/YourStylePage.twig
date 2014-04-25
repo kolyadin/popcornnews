@@ -1,140 +1,153 @@
-﻿Популярные сеты
+{% extends '/yourstyle/YourStyleGeneric.twig' %}
 
-{# dump(topSets) #}
+{% block subYourStyle %}
 
-<div id="contentWrapper" class="twoCols">
-	<div id="content">
-		<ul class="menu">
-			<li class="active"><a href="/yourstyle">your.style</a></li>
-			<li><a href="/yourstyle/sets">сеты</a></li>
-			<li><a href="/yourstyle/groups">вещи</a></li>
-			<li><a href="/yourstyle/stars">звезды</a></li>
-			<li><a href="/yourstyle/brands">бренды</a></li>
-			<li><a href="/yourstyle/editor" target="_blank">создать</a></li>
-		</ul>
-
-		<div class="twoCols b-sets-intro">
-			<div class="left">
-				<div class="irh irhContainer irhPopularSets">
-					<h3><a class="replacer" href="/yourstyle/sets"></a>Популярные сеты</h3>
+	<div class="article-cols">
+		<div class="article-cols__left">
+			<div class="popular-sets">
+				<div class="article-title">популярные сеты</div>
+				<div class="popular-sets__big">
+					<a href="/yourstyle/set/{{ topSets[0].id }}" class="popular-sets__big-wrapper">
+						<img class="popular-sets__big-image" src="{{ topSets[0].image }}" alt=""/>
+					</a>
+					<div class="popular-sets__big-data">
+						<div class="popular-sets__big-title">
+							<a class="popular-sets__big-title-link" href="/yourstyle/set/{{ topSets[0].id }}">{{ topSets[0].title }}</a>
+						</div>
+						<div class="popular-sets__big-voices">
+							{{ topSets[0].rating|ruNumber(['голос', 'голоса', 'голосов']) }}
+						</div>
+						<div class="popular-sets__big-comments">
+							<a class="popular-sets__comments-counter" href="/yourstyle/set/{{ topSets[0].id }}#comments">{{ topSets[0].comments|ruNumber(['комментарий', 'комментария', 'комментариев']) }}</a>,
+							<div class="rating-count">{{ topSets[0].urating }}</div>
+						</div>
+					</div>
 				</div>
+			</div>
+			<ul class="popular-sets__list">
 
 				{% for key, topSet in topSets %}
 
-					{% if key == 0 %}
+					{% if key > 0 %}
 
-<ul class="b-sets-roll b-sets-roll_full">
-	<li class="b-sets-roll__set">
-		<a class="set-image" href="/yourstyle/set/{{ topSet.id }}"><img src="{{ getWwwUploadSetPath(topSet.id, topSet.image, '274x274') }}" /></a>
-		<h2><a href="/yourstyle/set/{{ topSet.id }}">{{ topSet.title }}</a></h2>
-		<div class="b-meta">
-			<span class="votes-count">{{ topSet.rating }} {{ topSet.rating|ruNumber(['голос', 'голоса', 'голосов']) }}</span>
-			<a class="comments-count" href="/yourstyle/set/{{ topSet.id }}#comments">{{ topSet.comments }} {{ topSet.comments|ruNumber(['комментарий', 'комментария', 'комментариев']) }}</a>,
-			<a class="username" href="/profile/{{ topSet.uid }}">{{ topSet.unick }}</a>
-			<span class="sub_rating">{{ topSet.urating }}</span>
-		</div>
-	</li>
-</ul>
-
-					{% else %}
-
-<ul class="b-sets-roll ys-canvas__sets">
-	<li class="ys-canvas__sets_set">
-		<a class="set-image" href="/yourstyle/set/{{ topSet.id }}"><img src="{{ getWwwUploadSetPath(topSet.id, topSet.image, '110x110') }}" /></a>
-		<h2 class="ys-canvas_sets_set_name"><a href="/yourstyle/set/{{ topSet.id }}">{{ topSet.title }}</a></h2>
-		<div class="b-meta">
-			<span class="votes-count">{{ topSet.votes }} {{ topSet.votes|ruNumber(['голос', 'голоса', 'голосов']) }}</span>
-			<a class="comments-count" href="/yourstyle/set/{{ topSet.id }}#comments">{{ topSet.comments }} {{ topSet.comments|ruNumber(['комментарий', 'комментария', 'комментариев']) }}</a>,
-			<a class="username" href="/profile/{{ topSet.uid }}">{{ topSet.unick }}</a>
-			<span class="sub_rating">{{ topSet.urating }}</span>
-		</div>
-	</li>
-</ul>
+						<li class="popular-sets__item">
+							<div class="popular-sets__hover"></h1></div>
+							<div class="pupular-sets__item-wrapper">
+								<a href="/yourstyle/set/{{ topSet.id }}" class="popular-sets__item-image">
+									<img class="popular-sets__item-pic" src="{{ topSet.image }}" alt=""/>
+								</a>
+								<div class="popular-sets__item-data">
+									<div class="popular-sets__big-title">
+										<a class="popular-sets__big-title-link" href="/yourstyle/set/{{ topSet.id }}">{{ topSet.title }}</a>
+									</div>
+									<div class="popular-sets__big-voices">
+										{{ topSet.votes|ruNumber(['голос', 'голоса', 'голосов']) }}
+									</div>
+									<div class="popular-sets__big-comments">
+										<a class="popular-sets__comments-counter" href="/yourstyle/set/{{ topSet.id }}#comments">{{ topSet.comments|ruNumber(['комментарий', 'комментария', 'комментариев']) }}</a>,
+										<a class="popular-sets__comments-username" href="/profile/{{ topSet.uid }}">{{ topSet.unick }}</a>,
+										<div class="rating-count">{{ topSet.urating }}</div>
+									</div>
+								</div>
+							</div>
+						</li>
 
 					{% endif %}
 
 				{% endfor %}
 
+			</ul>
+		</div>
+		<div class="article-cols__right">
+			<div class="create-your-set">
+				<div class="b-grid__g4 b-grid__a b-grid__z clearfix b-side__vertical-margin b-side__vertical-margin_30">
+					<section class="b-create-your-style">
+						<div class="b-create-your-style__rubrics-title b-rubrics-title b-rubrics-title_s24">cоздай свой стиль</div>
+						<div class="b-create-your-style__body clearfix">
+							<div class="b-create-your-style__text">Смешивай и комбинируй различные вещи, чтобы создать свой собственный и неповторимый стиль</div>
+							<a href="/yourstyle/editor" target="_blank" class="b-create-your-style__link b-firm-grad">&gt;</a>
+						</div>
+					</section>
+				</div>
 			</div>
-			<div class="right">
-				<?/*
-				<div class="irh irhContainer irhMail">
-					<h3><a class="replacer" href="#"></a>Личные сообщения</h3>
-				</div>
-				*/?>
-				<div class="b-create-set-promo"> 
-					<a href="/yourstyle/editor" class="newWindow" target="_blank">создать сет</a> 
-				</div>
+			<div class="celebrities-sets">
+				<div class="article-title">звездные сеты</div>
+				<ul class="celebrities-sets__list">
 
-				<div class="irh irhContainer irhStarSet">
-					<h3><a class="replacer" href="/yourstyle/stars"></a>Звездные сеты</h3>
-				</div>
-				<div class="b-cols b-cols-2 b-ys-content b-starsets">
-					<?foreach ($d['newStarsBy2Coll'] as $stars) {?>
-					<div class="b-cols__col">
-						<dl class="b-stars-list">
-							<?foreach ($stars as $star) {
-							    $link = $star['eng_name'];
-							    $link = str_replace('-', '_', $link);
-							    $link = str_replace('&dash;', '_', $link);
-							    $link = '/persons/'.str_replace(' ', '-', $link).'/sets';
-							?>
-							<dd><a href="<?=$link;?>"><?=$star['name']?></a></dd>
-							<?}?>
-						</dl>
-					</div>
-					<?}?>
-					<div class="b-cols__col b-cols__col_final">
-						<a href="/yourstyle/stars/byName">все звезды</a>
-					</div>
-				</div>
+					{% for star in newStarsBy2Coll %}
 
-				<div class="irh irhContainer irhPopularItems">
-					<h3><a class="replacer" href="/yourstyle/tiles/top"></a>Популярные вещи</h3>
+						<li class="celebrities-sets__item">
+							<a class="celebrities-sets__link" href="/persons/{{ star.eng_name }}/sets">{{ star.name }}</a>
+						</li>
+
+					{% endfor %}
+
+				</ul>
+				<div class="celebrities-sets__expand">
+					<a class="celebrities-sets__expand-link" href="/yourstyle/stars/byName">
+						все звезды
+					</a>
 				</div>
-				<ul class="ys-canvas__stuff">
-					<?foreach ($d['topTiles'] as $tile) {?>
-					<li><a href="/yourstyle/tile/<?=$tile['id']?>"><img src="<?=$p['ys']::getWwwUploadTilesPath($tile['gid'], $tile['image'], '110x110')?>" /></a></li> 
-					<?}?>
+			</div>
+			<div class="celebrities__stuff">
+				<div class="article-title">популярные вещи</div>
+				<ul class="celebrities__stuff-list">
+
+					{% for tile in topTiles %}
+
+						<li class="celebrities__stuff-item">
+							<a class="celebrities__stuff-link" href="/yourstyle/tile/{{ tile.id }}">
+								<img class="celebrities__stuff-image" src=" {{ tile.image }}" alt=""/>
+							</a>
+						</li>
+
+					{% endfor %}
+
 				</ul>
 			</div>
 		</div>
-
-		<div class="setRoll irhNewSets">
-			<div class="irh irhContainer">
-				<h3>новые сеты<a rel="nofollow" href="/yourstyle/sets/new" class="replacer"></a></h3>
-			</div>
-			<ul class="setRoll">
-				<?foreach ($d['newSets'] as $set) {?>
-				<li><a href="/yourstyle/set/<?=$set['id']?>"><img src="<?=$p['ys']::getWwwUploadSetPath($set['id'], $set['image'], '110x110')?>" /></a></li>
-				<?}?>
-			</ul>
-		</div>
-		<div class="div1" style="border-bottom:none;"> 
-			<div class="h3"><a href="#"><img class="h" src="/i/ys/active_users-h3.png" alt="активные пользователи" /></a></div>
-			<table class="table1"><tbody>
-			<?php $i = 0; ?>
-			<?php foreach ($d['activeUsers'] as $user) { ?>
-				<?php if($i % 4 == 0) { ?>
-					<tr>
-				<?php } ?>
-				<td> 
-					<div class="b-user_small"> 
-						<a href="/profile/<?=$user['id'];?>"><img src="<?=$this->getStaticPath($this->getUserAvatar($user['avatara']));?>"></a> 
-						<div class="right"> 
-							<a href="/profile/<?=$user['id'];?>"><?=$user['nick'];?></a>
-							<span class="sub_rating"><?=$user['rating'];?></span>
-						</div> 
-					</div>					
-				</td>
-				<?php if($i % 4 == 3) { ?>
-					</tr>
-				<?php }
-				$i++;
-				?>
-			<?php } ?>
-			</tbody></table> 
-		</div> 
 	</div>
-	<?$this->_render('inc_right_column');?>
-</div>
+	<div class="new-sets">
+		<div class="article-title">новые cеты</div>
+		<ul class="celebrities__stuff-list">
+
+			{% for set in newSets %}
+
+				<li class="celebrities__stuff-item">
+					<a class="celebrities__stuff-link" href="/yourstyle/set/{{ set.id }}">
+						<img class="celebrities__stuff-image" src="{{ set.image }}" alt=""/>
+					</a>
+				</li>
+
+			{% endfor %}
+
+		</ul>
+	</div>
+	<div class="active-users">
+		<div class="article-title">активные пользователи</div>
+		<ul class="active-users__list">
+
+			{% for user in activeUsers %}
+
+				{% if user.avatar.id %}
+					{% set src = user.avatar.url('140x') %}
+				{% else %}
+					{% set src = '/i/no_photo_small.jpg' %}
+				{% endif %}
+
+				<li class="active-users__item">
+					<a href="/profile/{{ user.id }}" class="active-users__avatar">
+						<img class="active-users__avatar-pic" src="{{ src }}" alt=""/>
+					</a>
+					<div class="active-users__data">
+						<a class="popular-sets__comments-username" href="/profile/{{ user.id }}">{{ user.nick }}</a>,
+						<div class="rating-count">{{ user.rating.points|number_format(0,'',' ') }}</div>
+					</div>
+				</li>
+
+			{% endfor %}
+
+		</ul>
+	</div>
+
+{% endblock %}

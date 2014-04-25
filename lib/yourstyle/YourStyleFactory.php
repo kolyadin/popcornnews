@@ -128,8 +128,8 @@ abstract class YourStyleFactory {
 		for ($i = 0; $i < 3; $i++) {
 			$path .= (isset($revGid[$i]) ? $revGid[$i] : 0) . '/';
 		}
-		//return 'http://v1.popcorn-news.ru' . $path . $gid . '/' . $image;
-		return 'http://test.popcornnews.ru' . $path . $gid . '/' . $image;
+		return 'http://v1.popcorn-news.ru' . $path . $gid . '/' . $image;
+//		return 'http://test.popcornnews.ru' . $path . $gid . '/' . $image;
 //		return VPA_template::getInstance()->getStaticPath($path . $gid . '/' . $image);
 	}
 
@@ -186,7 +186,8 @@ abstract class YourStyleFactory {
 		for ($i = 0; $i < 3; $i++) {
 			$path .= (isset($revId[$i]) ? $revId[$i] : 0) . '/';
 		}
-		return 'http://test.popcornnews.ru' . $path . $image;
+		//return 'http://test.popcornnews.ru' . $path . $image;
+		return 'http://v1.popcorn-news.ru' . $path . $image;
 		//return VPA_template::getInstance()->getStaticPath($path . $image);
 	}
 
@@ -229,7 +230,7 @@ abstract class YourStyleFactory {
 		for ($i = 0; $i < 3; $i++) {
 			$path .= (isset($revGid[$i]) ? $revGid[$i] : 0) . '/';
 		}
-		return VPA_template::getInstance()->getStaticPath($path . $gid . '/' . $image);
+		return 'http://v1.popcorn-news.ru' . $path . $gid . '/' . $image;
 	}
 
 	/*---for brands---*/

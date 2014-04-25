@@ -1,0 +1,107 @@
+	<div class="select-bar">
+		<div class="select-bar__inner">
+			<form action="{% if mode == 'top' %}/yourstyle/tiles/top/filtered/{% else %}/yourstyle/tiles/{% endif %}">
+				<div class="select-bar__item">
+					<div class="select-bar__title">Группа</div>
+					<select class="select-bar__select" name="rootGroup" id="rootGroup">
+						<option value="0">Все</option>
+
+						{% for k,v in allGroups['name'] %}
+						        {% if rootCurrent == k %}
+								{% set selected = 'selected' %}
+						        {% else %}
+								{% set selected = '' %}
+						        {% endif %}
+
+							<option {{ selected }} value="{{ k }}">{{ v }}</option>
+
+						{% endfor %}
+
+					</select>
+				</div>
+				<div class="select-bar__item disabled">
+					<div class="select-bar__title">Подгруппа</div>
+					<select class="select-bar__select" name="group" id="group" {% if rootCurrent == 0 %}disabled{% endif %}>
+
+						{% if rootCurrent == 0 %}<option value="0">Все</option>{% endif %}
+
+					</select>
+				</div>
+				<div class="select-bar__item">
+					<div class="select-bar__title">Бренд</div>
+					<select class="select-bar__select" name="brand" id="">
+						<option {% if brandCurrent == 0 %}selected{% endif %} value="0">Все</option>
+
+						{% for brand in brands %}
+						        {% if brandCurrent == brand.id %}
+								{% set selected = 'selected' %}
+							{% else %}
+								{% set selected = '' %}
+							{% endif %}
+        
+							<option {{ selected }} value="{{ brand.id }}">{{ brand.title }}</option>
+
+						{% endfor %}
+
+					</select>
+				</div>
+				<div class="select-bar__item">
+					<div class="select-bar__title">Цвет</div>
+					<select class="select-bar__select" name="color" id="">
+						<option {% if colorCurrent == '' %}selected{% endif %} value="0">Все</option>
+
+						{% for color in colors %}
+						        {% if colorCurrent == color.en %}
+								{% set selected = 'selected' %}
+							{% else %}
+								{% set selected = '' %}
+							{% endif %}
+        
+							<option {{ selected }} value="{{ color.en }}">{{ color.ru }}</option>
+
+						{% endfor %}
+
+					</select>
+				</div>
+				<input class="select-bar__submit" type="submit" value="Выбрать"/>
+			</form>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+
+		$("#rootGroup").change(function() {
+			if (this.value == 0) {
+				$("#group").attr("disabled", "disabled");
+				var val = 1;
+			} else {
+				var val = this.value;
+			}
+			changeGroup(comboBoxes[val], 0);
+			if ($("#group").attr("disabled")) {
+				$("#group").removeAttr("disabled");
+			}
+		});
+
+		var comboBoxes = new Array();
+
+		{% for key,val in allGroups['groups'] %}
+
+			comboBoxes[{{ key }}] = new Array("0|Все"{% for k,v in val %}, "{{ k }}|{{ v }}"{% endfor %});
+
+		{% endfor %}
+	
+		{% if rootCurrent > 0 %}changeGroup(comboBoxes[{{ rootCurrent }}], {{ groupCurrent }});{% endif %}
+
+		function changeGroup(arr, selected) {
+			$("#group").empty();
+			jQuery.each(arr, function(i, val) {
+				a = val.split('|') ;
+				if (a[0] == selected) {
+					$("#group").append('<option selected value="' + a[0] + '">' + a[1] + '</option>');
+				} else {
+					$("#group").append('<option value="' + a[0] + '">' + a[1] + '</option>');
+				}
+			});
+		}
+	</script>

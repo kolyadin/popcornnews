@@ -16,24 +16,24 @@ use TwigExtensionRuNumber\TwigExtensionRuNumber;
 
 class Application {
 
-	/**
-	 * @var \Slim\Slim
-	 */
-	private $slim;
-	private $twig, $twigString;
+    /**
+     * @var \Slim\Slim
+     */
+    private $slim;
+	private $twig,$twigString;
 	private $imageGenerator;
 
-	public function __construct($settings = []) {
+    public function __construct($settings = []) {
 
 		$this->slim = new Slim();
 
-		switch ($settings['mode']) {
+		switch ($settings['mode']){
 			case 'production':
-				ini_set('display_errors', false);
+				ini_set('display_errors',false);
 				error_reporting(0);
 				break;
 			default:
-				ini_set('display_errors', true);
+				ini_set('display_errors',true);
 				error_reporting(E_ALL ^ E_STRICT);
 				break;
 		}
@@ -105,15 +105,5 @@ class Application {
 
 	final public function getTwigString() {
 		return $this->twigString;
-	}
-
-	protected function addGetCommand($pattern, Command $command) {
-		$command->setApp($this);
-		return $this->slim->get($pattern, $command->getCallback());
-	}
-
-	protected function addPostCommand($pattern, Command $command) {
-		$command->setApp($this);
-		$this->slim->post($pattern, $command->getCallback());
 	}
 }

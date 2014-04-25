@@ -2,19 +2,20 @@
 
 {% block topmenu %}
 
-			<div class="nav__left">
-				<a class="icon-text x-large" href="/">
-					<img class="icon-text__icon"  src="i/arrow-left-red.svg" alt="Назад">
-					<span class="icon-text__text">Новости</span>
-				</a>
-			</div>
-			<div class="nav__center">
-				&nbsp;
-			</div>
-			<div class="nav__right">
-				&nbsp;
-			</div>
-
+	<header class="page__header nav">
+		<div class="nav__left">
+			<a class="icon-text x-large" href="/">
+				<img class="icon-text__icon"  src="i/arrow-left-red.svg" alt="Назад">
+				<span class="icon-text__text">Новости</span>
+			</a>
+		</div>
+		<div class="nav__center">
+			&nbsp;
+		</div>
+		<div class="nav__right">
+			&nbsp;
+		</div>
+	</header>
 
 {% endblock %}
 
@@ -72,13 +73,13 @@
 			</script>
 			<div class="social-block">
 				<div class="social-block__item">
-					<a href="#"><img class="social-block__icon" src="i/vk-grey.svg" alt="" /></a>
+					<a href="http://vkontakte.ru/share.php?url=http://www.popcornnews.ru/news/{{ post.id }}"><img class="social-block__icon" src="i/vk-grey.svg" alt="" /></a>
 				</div>
 				<div class="social-block__item">
-					<a href="#"><img class="social-block__icon" src="i/fb-grey.svg" alt="" /></a>
+					<a href="http://www.facebook.com/sharer.php?u=http://www.popcornnews.ru/news/{{ post.id }}"><img class="social-block__icon" src="i/fb-grey.svg" alt="" /></a>
 				</div>
 				<div class="social-block__item">
-					<a href="#"><img class="social-block__icon" src="i/tw-grey.svg" alt="" /></a>
+					<a href="https://twitter.com/intent/tweet?original_referer=http://www.popcornnews.ru/news/{{ post.id }}&related=anywhereTheJavascriptAPI&text={{ post.name|e }} http://www.popcornnews.ru/news/{{ post.id }}&tw_p=tweetbutton&url=http://www.popcornnews.ru/news/{{ post.id }}&via=popcornnews_ru"><img class="social-block__icon" src="i/tw-grey.svg" alt="" /></a>
 				</div>
 			</div>
 			<div class="column-title column-title_bottom">

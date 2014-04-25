@@ -57,7 +57,7 @@ class YourStyleGroupsTilesDataMap extends DataMap {
 		$this->updateStatement->bindValue(":colorMode", $item->getColorMode());
 	}
 
-	public function getTilesByGId($gId, $offset, $limit) {
+	public function getTilesByGId($gId, $offset, $limit, $imageSize = '') {
 		$sql = <<<SQL
 			SELECT *
 			FROM `pn_yourstyle_groups_tiles`
@@ -77,7 +77,7 @@ SQL;
 		if($items === false) return null;
 
 		foreach($items as &$item) {
-            $this->itemCallback($item);
+            $this->itemCallback($item, $imageSize);
         }
 
 		return $items;
@@ -114,22 +114,6 @@ SQL;
 	public function getTilesByColor($color, $offset, $limit) {
 
 		$sql = <<<SQL
-			SELECT `html`
-			FROM `pn_yourstyle_tiles_colors`
-			WHERE `human` = ?
-			LIMIT 1
-SQL;
-
-		$stmt = $this->prepare($sql);
-		$stmt->bindValue(1, $color, \PDO::PARAM_STR);
-		$stmt->execute();
-
-		$items = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-		if (empty($items[0]['html'])) {
-			return null;
-		}
-
-		$sql = <<<SQL
 			SELECT *
 			FROM `pn_yourstyle_groups_tiles`
 			WHERE `id` IN (SELECT `tid`
@@ -140,7 +124,7 @@ SQL;
 SQL;
 
 		$stmt = $this->prepare($sql);
-		$stmt->bindValue(1, $items[0]['html'], \PDO::PARAM_STR);
+		$stmt->bindValue(1, $color, \PDO::PARAM_STR);
 		$stmt->bindValue(2, $offset, \PDO::PARAM_INT);
 		$stmt->bindValue(3, $limit, \PDO::PARAM_INT);
 		$stmt->execute();
@@ -185,29 +169,13 @@ SQL;
 	public function getCountByColor($color) {
 
 		$sql = <<<SQL
-			SELECT `html`
-			FROM `pn_yourstyle_tiles_colors`
-			WHERE `human` = ?
-			LIMIT 1
-SQL;
-
-		$stmt = $this->prepare($sql);
-		$stmt->bindValue(1, $color, \PDO::PARAM_STR);
-		$stmt->execute();
-
-		$items = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-		if (empty($items[0]['html'])) {
-			return null;
-		}
-
-		$sql = <<<SQL
 			SELECT count(`tid`) AS `cnt`
 			FROM `pn_yourstyle_tiles_colors_new`
 			WHERE `color` = ?
 SQL;
 
 		$stmt = $this->prepare($sql);
-		$stmt->bindValue(1, $items[0]['html'], \PDO::PARAM_STR);
+		$stmt->bindValue(1, $color, \PDO::PARAM_STR);
 		$stmt->execute();
 
 		$items = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -219,8 +187,8 @@ SQL;
     }
 
 
-	protected function itemCallback($item) {
-		$item->setImage(YourStyleFactory::getWwwUploadTilesPath($item->getGId(), $item->getImage()));
+	protected function itemCallback($item, $imageSize = '') {
+		$item->setImage(YourStyleFactory::getWwwUploadTilesPath($item->getGId(), $item->getImage(), $imageSize));
 
 		$dataMap = new YourStyleTilesBrandsDataMap();
 		$brand = $dataMap->findById($item->getBId());
@@ -246,6 +214,174 @@ SQL;
 //		$item->setTitle(($item->getTitle()));
 
 		parent::itemCallback($item);
+	}
+
+	public function getTop($offset = 0, $limit = 50, $imageSize = '') {
+		$sql = <<<SQL
+			SELECT a.*,
+				c.title brand,
+				COUNT(DISTINCT v.uid) as votes,
+				IF(COUNT(DISTINCT v.uid) > 0, ROUND(a.rate/COUNT(DISTINCT v.uid),1), 0) as rating
+			FROM `pn_yourstyle_groups_tiles` a
+				LEFT JOIN pn_yourstyle_tiles_brands c ON (c.id = a.bid)
+				LEFT JOIN pn_yourstyle_groups_tiles_votes as v ON (v.tid = a.id)
+			WHERE a.gid != 0
+			GROUP BY a.id
+			ORDER BY rating DESC, a.createtime DESC
+			LIMIT ?, ?
+SQL;
+
+		$stmt = $this->prepare($sql);
+		$stmt->bindValue(1, $offset, \PDO::PARAM_INT);
+		$stmt->bindValue(2, $limit, \PDO::PARAM_INT);
+		$stmt->execute();
+
+		$items = $stmt->fetchAll(\PDO::FETCH_CLASS, $this->class);
+
+		if($items === false) return null;
+
+		foreach($items as &$item) {
+            $this->itemCallback($item, $imageSize);
+        }
+
+		return $items;
+
+	}
+
+	protected function getConditions($group, $brand, $color) {
+
+		$condition = array();
+		if ($group) {
+			$condition[] = '`gId` = :gId';
+		}
+		if ($brand) {
+			$condition[] = '`bId` = :bId';
+		}
+		if ($color) {
+			$condition[] = '`id` IN (SELECT `tid` FROM `pn_yourstyle_tiles_colors_new` WHERE `color` = :color)';
+		}
+
+		if (!count($condition)) {
+			return false;
+		}
+		$condition = ' AND ' . implode(' AND ', $condition);
+
+		return $condition;
+
+	}
+
+	public function getTilesByParams($group, $brand, $color, $offset, $limit, $imageSize = '') {
+
+		$condition = $this->getConditions($group, $brand, $color);
+		$sql = <<<SQL
+			SELECT *
+			FROM `pn_yourstyle_groups_tiles`
+			WHERE 1 = 1
+				$condition
+			ORDER BY `id` DESC
+			LIMIT :offset, :limit
+SQL;
+
+		$stmt = $this->prepare($sql);
+		if ($group) {
+			$stmt->bindValue(":gId", $group, \PDO::PARAM_INT);
+		}
+		if ($brand) {
+			$stmt->bindValue(":bId", $brand, \PDO::PARAM_INT);
+		}
+		if ($color) {
+			$stmt->bindValue(":color", $color, \PDO::PARAM_STR);
+		}
+		$stmt->bindValue(":offset", $offset, \PDO::PARAM_INT);
+		$stmt->bindValue(":limit", $limit, \PDO::PARAM_INT);
+
+		$stmt->execute();
+
+		$items = $stmt->fetchAll(\PDO::FETCH_CLASS, $this->class);
+		if ($items === false) {
+			return null;
+		}
+
+		foreach($items as &$item) {
+            $this->itemCallback($item, $imageSize);
+        }
+
+		return $items;
+
+	}
+
+	public function getTilesTopByParams($group, $brand, $color, $offset, $limit, $imageSize = '') {
+
+		$condition = $this->getConditions($group, $brand, $color);
+		$sql = <<<SQL
+			SELECT `a`.*,
+				`c`.`title` brand,
+				COUNT(DISTINCT `v`.`uId`) AS `votes`,
+				IF(COUNT(DISTINCT `v`.`uId`) > 0, ROUND(`a`.`rate`/COUNT(DISTINCT `v`.`uId`),1), 0) AS `rating`
+			FROM `pn_yourstyle_groups_tiles` AS `a`
+				LEFT JOIN `pn_yourstyle_tiles_brands` c ON (`c`.`id` = `a`.`bId`)
+				LEFT JOIN `pn_yourstyle_groups_tiles_votes` as v ON (`v`.`tId` = `a`.`id`)
+			WHERE `a`.`gId` != 0
+				$condition
+			GROUP BY a.id
+			ORDER BY `rating` DESC, `a`.`createTime` DESC
+			LIMIT :offset, :limit
+SQL;
+
+		$stmt = $this->prepare($sql);
+		if ($group) {
+			$stmt->bindValue(":gId", $group, \PDO::PARAM_INT);
+		}
+		if ($brand) {
+			$stmt->bindValue(":bId", $brand, \PDO::PARAM_INT);
+		}
+		if ($color) {
+			$stmt->bindValue(":color", $color, \PDO::PARAM_STR);
+		}
+		$stmt->bindValue(":offset", $offset, \PDO::PARAM_INT);
+		$stmt->bindValue(":limit", $limit, \PDO::PARAM_INT);
+
+		$stmt->execute();
+
+		$items = $stmt->fetchAll(\PDO::FETCH_CLASS, $this->class);
+		if ($items === false) {
+			return null;
+		}
+
+		foreach($items as &$item) {
+            $this->itemCallback($item, $imageSize);
+        }
+
+		return $items;
+
+	}
+
+	public function getCountByParams($group, $brand, $color) {
+
+		$condition = $this->getConditions($group, $brand, $color);
+		$sql = <<<SQL
+			SELECT COUNT(*)
+			FROM `pn_yourstyle_groups_tiles`
+			WHERE 1 = 1
+				$condition
+SQL;
+
+		$stmt = $this->prepare($sql);
+		if ($group) {
+			$stmt->bindValue(":gId", $group, \PDO::PARAM_INT);
+		}
+		if ($brand) {
+			$stmt->bindValue(":bId", $brand, \PDO::PARAM_INT);
+		}
+		if ($color) {
+			$stmt->bindValue(":color", $color, \PDO::PARAM_STR);
+		}
+		$stmt->execute();
+        $count = $stmt->fetchColumn(0);
+        $stmt->closeCursor();
+
+        return $count;
+
 	}
 
 }

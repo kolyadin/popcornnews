@@ -30,4 +30,25 @@ class YourStyleSetsTagsDataMap extends DataMap {
 		$this->updateStatement->bindValue(":createTime", $item->getCreateTime());
 	}
 
+	public function getPersonsList() {
+
+		$sql = <<<SQL
+			SELECT a.id, a.name, a.urlName as eng_name
+			FROM pn_persons a
+				LEFT JOIN pn_yourstyle_sets_tags b ON (b.tid = a.id)
+			WHERE b.tid IS NOT NULL
+			GROUP BY a.id
+			ORDER BY a.name
+SQL;
+
+		$stmt = $this->prepare($sql);
+		$stmt->execute();
+
+		$items = $stmt->fetchAll();
+
+		if($items === false) return null;
+		return $items;
+
+	}
+
 }

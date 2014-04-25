@@ -1,0 +1,54 @@
+{% extends '/GenericInner.twig' %}
+
+{% block head %}
+
+	<title>yourstyle - popcornnews</title>
+	<link rel="stylesheet" type="text/css" href="/st/css/addition.css" media="screen, projection, print">
+	<script type="text/javascript" src="/st/js/main.js"></script>
+	<script type="text/javascript" src="/st/js/jquery.columnizer.js"></script>
+	<script type="text/javascript" src="/st/js/YourStyle.js"></script>
+	<script type="text/javascript" src="/st/js/ys.js"></script>
+	<script type="text/javascript" src="/js/as.js"></script>
+
+{% endblock %}
+
+{% block content %}
+
+	<div class="b-grid__g8">
+		<article class="b-group">
+			<h1 class="b-single-article__title">your.style</h1>
+			<section class="b-group__menu b-inside__menu">
+				<ul class="b-inside__menu-firstlist">
+					<li {% if slim.path[2] is null %}class="active"{% endif %}>
+						<a href="/yourstyle">your.style</a>
+					</li>
+					<li {% if slim.path[2] == 'sets' %}class="active"{% endif %}>
+						<a href="/yourstyle/sets">сеты</a>
+					</li>
+					<li {% if slim.path[2] == 'groups' or slim.path[2] == 'rootGroup' or slim.path[2] == 'group' or slim.path[2] == 'tiles' %}class="active"{% endif %}>
+						<a href="/yourstyle/groups">вещи</a>
+					</li>
+					<li {% if slim.path[2] == 'stars' %}class="active"{% endif %}>
+						<a href="/yourstyle/stars">звезды</a>
+					</li>
+					<li {% if slim.path[2] == 'brands' %}class="active"{% endif %}>
+						<a href="/yourstyle/brands">бренды</a>
+					</li>
+					<li>
+						<a href="/yourstyle/editor" target="_blank">создать</a>
+					</li>
+					<li {% if slim.path[2] == 'rules' %}class="active"{% endif %}>
+						<a href="/yourstyle/rules">правила</a>
+					</li>
+				</ul>
+
+				{% block subMenu %}{% endblock %}
+
+			</section>
+
+			{% block subYourStyle %}{% endblock %}
+
+		</article>
+	</div>
+
+{% endblock %}

@@ -2,7 +2,7 @@
 
 namespace popcorn\model\dataMaps;
 
-use popcorn\model\YourStyleGroup;
+use popcorn\model\yourStyle\YourStyleGroup;
 use popcorn\model\yourStyle\YourStyleGroupsTilesFactory;
 
 class YourStyleGroupDataMap extends DataMap {
@@ -40,24 +40,35 @@ class YourStyleGroupDataMap extends DataMap {
 		$this->updateStatement->bindValue(":tId", $item->getTId());
     }
 
-	public function getGroupsById($id) {
+	public function getGroupsByRootId($id, $orderBy = 1, $modifier = 2) {
 		$sql = <<<SQL
 			SELECT *
 			FROM `pn_yourstyle_groups`
 			WHERE `rgId` = ?
-			ORDER BY `id`
+			ORDER BY ?
 SQL;
 
 		$stmt = $this->prepare($sql);
 		$stmt->bindValue(1, $id, \PDO::PARAM_INT);
+		$stmt->bindValue(2, $orderBy, \PDO::PARAM_INT);
 		$stmt->execute();
 
 		$items = $stmt->fetchAll(\PDO::FETCH_CLASS, $this->class);
 
 		if($items === false) return null;
 
+		switch($modifier) {
+			case 1:
+				$mod = self::WITH_NONE;
+				break;
+			case 2:
+				$mod = self::WITH_TILE;
+				break;
+			default:
+				$mod = self::WITH_NONE;
+		}
 		foreach($items as &$item) {
-            $this->itemCallback($item, self::WITH_TILE);
+            $this->itemCallback($item, $mod);
         }
 
 		return $items;

@@ -1,0 +1,42 @@
+{% extends '/yourstyle/YourStyleGeneric.twig' %}
+
+{% block subMenu %}
+
+	{% include '/yourstyle/YourStyleSubMenuSets.twig' %}
+
+{% endblock %}
+
+{% block subYourStyle %}
+
+	<div class="popular-sets">
+		<div class="article-title">Новые сеты</div>
+		<ul class="popular-sets__list">
+
+			{% for newSet in newSets %}
+
+				<li class="popular-sets__item">
+					<div class="popular-sets__big">
+						<a href="/yourstyle/set/{{ newSet.id }}" class="popular-sets__big-wrapper">
+							<img class="popular-sets__big-image" src="{{ newSet.image }}" alt=""/>
+						</a>
+						<div class="popular-sets__big-data">
+							<div class="popular-sets__big-title">
+								<a class="popular-sets__big-title-link" href="/yourstyle/set/{{ newSet.id }}">{{ newSet.title }}</a>
+							</div>
+							<div class="popular-sets__big-voices">
+								{{ newSet.votes }} {{ newSet.votes|ruNumber(['голос', 'голоса', 'голосов']) }}
+							</div>
+							<div class="popular-sets__big-comments">
+								<a class="popular-sets__comments-counter" href="/yourstyle/set/{{ newSet.id }}#comments">{{ newSet.comments }} {{ newSet.comments|ruNumber(['комментарий', 'комментария', 'комментариев']) }}</a>,
+								<div class="rating-count">{{ newSet.urating }}</div>
+							</div>
+						</div>
+					</div>
+				</li>
+
+			{% endfor %}
+
+		</ul>
+	</div>
+
+{% endblock %}

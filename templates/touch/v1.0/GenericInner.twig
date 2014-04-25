@@ -6,7 +6,7 @@
 
 <title>Страница</title>
 
-<meta name="Keywords" content="Страница" /> 
+<meta name="Keywords" content="Страница" />
 <meta name="Description" content="Страница" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
@@ -26,12 +26,10 @@
 
 </head>
 <body>
+
 	<div class="page {% block page_classes %}{% endblock %}">
-		<header class="page__header nav">
 
-			{% block topmenu %}{% endblock %}
-
-		</header>
+		{% block topmenu %}{% endblock %}
 
 		<section class="page__content">
 

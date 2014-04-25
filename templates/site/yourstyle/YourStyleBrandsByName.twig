@@ -1,0 +1,37 @@
+{% extends '/yourstyle/YourStyleGeneric.twig' %}
+
+{% block subMenu %}
+
+	{% include '/yourstyle/YourStyleSubMenuBrands.twig' %}
+
+{% endblock %}
+
+{% block subYourStyle %}
+
+	<div class="popular-sets">
+		<div class="article-title">Все бренды</div>
+		<ul class="celebrities-alphabet">
+
+			{% for letter,brands in brandsByNames %}
+
+			<li class="celebrities-alphabet__item">
+				<div class="celebrities-alphabet__letter">{{ letter }}</div>
+				<ul class="celebrities-alphabet__list">
+
+					{% for brand in brands %}
+
+						<li class="celebrities-alphabet__list-item">
+							<a class="celebrities-alphabet__link" href="/yourstyle/brands/{{ brand.id }}">{{ brand.title }}</a>
+						</li>
+
+					{% endfor %}
+
+				</ul>
+			</li>
+
+			{% endfor %}
+
+		</ul>
+	</div>
+
+{% endblock %}

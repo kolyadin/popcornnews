@@ -1,0 +1,80 @@
+{% extends '/GenericInner.twig' %}
+
+{% block topmenu %}
+
+	<header class="page__header nav">
+		<div class="nav__left">
+			<a class="icon-text x-large" href="/im">
+				<img class="icon-text__icon"  src="i/arrow-left-red.svg" alt="Назад">
+				<span class="icon-text__text">Назад</span>
+			</a>
+		</div>
+		<div class="nav__center">
+			<div class="nav__frame nav__title">
+				Новое сообщение
+			</div>
+		</div>
+		<div class="nav__right">
+			&nbsp;
+		</div>
+	</header>
+
+{% endblock %}
+
+{% block content %}
+
+	<div class="column-title column-title_highlighted">
+		<div class="column-title__cell">
+			<input id="select-users" class="field-icon field-icon_search entire" autocomplete="off" type="text" placeholder="Search" />
+			<script src="js/search.js"></script>
+			<script>
+				$(function(){
+					new Search({uid:'select-users', boxUid:'users-box', type:'getUsersForDialog'});
+					eitems.init();
+				});
+			</script>
+		</div>
+	</div>
+
+	<div id="users-box" class="users users_messages">
+
+	{% for friend in friends %}
+
+		{% set color = 'color-' ~ friend.rating.rank %}
+
+		{% if friend.isOnline %}
+			{% set online = 'users__name_online' %}
+		{% else %}
+			{% set online = '' %}
+		{% endif %}
+
+		{% if friend.avatar.id %}
+			{% set src = friend.avatar.url('256x') %}
+		{% else %}
+			{% set src = 'st/img/no-photo/large.png' %}
+		{% endif %}
+
+		<div data-uid="{{ friend.id }}" class="users__item {{ needAdd }}">
+			<a class="users__content Eitem__content" href="/im/companion{{ friend.id }}">
+				<div class="users__photo" style="background-image:url({{ src }});"></div>
+				<div class="users__info">
+					<div class="users__name {{ online }} {{ color }}">{{ friend.nick }}</div>
+					<div class="users__row">
+						<span class="users__city">{{ friend.userInfo.cityName|e }}</span>
+						<span class="stars {{ color }}"><span style="width:{{ friend.rating.persents }}%;" class="stars__inner"></span></span>							
+					</div>
+				</div>
+			</a>
+		</div>
+
+	{% endfor %}
+
+	</div>
+
+	<script>
+		$(function(){
+			eitems.init();
+		});
+	</script>
+
+{% endblock %}

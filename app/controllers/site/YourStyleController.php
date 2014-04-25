@@ -7,6 +7,7 @@ use popcorn\app\controllers\GenericController;
 use popcorn\lib\Config;
 use popcorn\model\system\users\UserFactory;
 use Slim\Route;
+use popcorn\model\dataMaps\UserDataMap;
 use popcorn\model\dataMaps\YourStyleSetsDataMap;
 use popcorn\model\dataMaps\YourStyleRootGroupsDataMap;
 use popcorn\model\dataMaps\YourStyleGroupDataMap;
@@ -18,6 +19,7 @@ use popcorn\model\dataMaps\YourStyleBookmarksDataMap;
 use popcorn\model\dataMaps\YourStyleTilesUsersDataMap;
 use popcorn\model\dataMaps\YourStyleGroupsTilesVotesDataMap;
 use popcorn\model\dataMaps\YourStyleTilesColorsDataMap;
+use popcorn\model\dataMaps\YourStyleTilesColorsNewDataMap;
 use popcorn\model\yourStyle\YourStyleSets;
 use popcorn\model\yourStyle\YourStyleSetsTiles;
 use popcorn\model\yourStyle\YourStyleSetsTags;
@@ -30,6 +32,7 @@ use popcorn\lib\yourstyle\YourStyleFactory;
 use popcorn\lib\JSONHelper;
 use popcorn\model\exceptions\NotAuthorizedException;
 use popcorn\model\persons\PersonFactory;
+use popcorn\model\content\ImageFactory;
 
 
 /**
@@ -56,6 +59,81 @@ class YourStyleController extends GenericController {
 				$this
 					->getSlim()
 					->get('', [$this, 'yourStyleMainPage']);
+
+				$this
+					->getSlim()
+					->group('/sets', function () {
+
+						$this
+							->getSlim()
+							->get('', [$this, 'yourStyleSetsPage']);
+
+						$this
+							->getSlim()
+							->get('/new', [$this, 'yourStyleNewSetsPage']);
+					}
+				);
+
+				$this
+					->getSlim()
+					->group('/stars', $profileMiddleware, function () {
+
+						$this
+							->getSlim()
+							->get('(/:page)', [$this, 'yourStyleStarsSets'])
+							->conditions(array('page' => '\d+'));
+
+						$this
+							->getSlim()
+							->get('/byName', [$this, 'yourStyleStarsSetsByName']);
+					}
+				);
+
+				$this
+					->getSlim()
+					->group('/brands', function () {
+
+						$this
+								->getSlim()
+						->get('', [$this, 'yourStyleBrandsByName']);
+
+						$this
+							->getSlim()
+							->get('/top', [$this, 'yourStyleBrands']);
+					}
+				);
+
+				$this
+					->getSlim()
+					->get('/groups', $profileMiddleware, [$this, 'yourStyleRootGroups']);
+
+				$this
+					->getSlim()
+					->get('/rootGroup/:id', $profileMiddleware, [$this, 'yourStyleGroups'])
+					->conditions(array('id' => '\d+'));
+
+				$this
+					->getSlim()
+					->get('/group/:gId(/page/:page)', $profileMiddleware, [$this, 'yourStyleGroup'])
+					->conditions(
+						array(
+							'gId' => '\d+',
+							'page' => '\d+',
+						)
+					);
+
+				$this
+					->getSlim()
+					->get('/tiles(/page/:page)/', $profileMiddleware, [$this, 'yourStyleTiles'])
+					->conditions(array('page' => '\d+'));
+
+				$this
+					->getSlim()
+					->get('/tiles/top(/filtered/)', $profileMiddleware, [$this, 'yourStyleTilesTop']);
+
+				$this
+					->getSlim()
+					->get('/rules', [$this, 'yourStyleRules']);
 
 				$this
 					->getSlim()
@@ -131,6 +209,11 @@ class YourStyleController extends GenericController {
 							->getSlim()
 							->get('/getGroupTile/:tId', [$this, 'getGroupTile']);
 
+						$this
+							->getSlim()
+							->get('/withTile/:tId', [$this, 'yourStyleEditor'])
+							->conditions(array('setId' => '[0-9]+'));
+
 				});
 
 				$this
@@ -147,14 +230,52 @@ class YourStyleController extends GenericController {
 
 	public function yourStyleMainPage() {
 
-		$dataMap = new YourStyleSetsDataMap();
-		$topSets = $dataMap->getTopSets();
+		$setsDataMap = new YourStyleSetsDataMap();
+		$topSets = $setsDataMap->getTopSets(0, 20, 1);
+		$newStarsBy2Coll = $setsDataMap->getPersonsSets(0, 20);
+		$newSets = $setsDataMap->getNewSets(0, 20, 1);
+
+		$tilesDataMap = new YourStyleGroupsTilesDataMap();
+		$topTiles = $tilesDataMap->getTop(0, 34);
+
+		$userDataMap = new UserDataMap();
+		$activeUsers = $userDataMap->getActiveUsers(0, 8);
+
+		$tpl = [
+			'topSets' => $topSets,
+			'newStarsBy2Coll' => $newStarsBy2Coll,
+			'topTiles' => $topTiles,
+			'newSets' => $newSets,
+			'activeUsers' => $activeUsers
+		];
+		self::getTwig()
+			->display('/yourstyle/YourStylePage.twig', $tpl);
+
+	}
+
+	public function yourStyleSetsPage() {
+
+		$setsDataMap = new YourStyleSetsDataMap();
+		$topSets = $setsDataMap->getTopSets(0, 24, 2);
 
 		$tpl = [
 			'topSets' => $topSets,
 		];
 		self::getTwig()
-			->display('/yourstyle/YourStylePage.twig', $tpl);
+			->display('/yourstyle/YourStyleSets.twig', $tpl);
+
+	}
+
+	public function yourStyleNewSetsPage() {
+
+		$setsDataMap = new YourStyleSetsDataMap();
+		$newSets = $setsDataMap->getNewSets(0, 24, 2);
+
+		$tpl = [
+			'newSets' => $newSets,
+		];
+		self::getTwig()
+			->display('/yourstyle/YourStyleNewSets.twig', $tpl);
 
 	}
 
@@ -188,7 +309,7 @@ class YourStyleController extends GenericController {
 			$rootGroups = json_encode($rootGroups);
 			$rootGroups = json_decode($rootGroups);
 			foreach($rootGroups as &$group) {
-				$tmp = $dataMapGroups->getGroupsById($group->id);
+				$tmp = $dataMapGroups->getGroupsByRootId($group->id);
 				$tmp = json_encode($tmp);
 				$tmp = json_decode($tmp);
 				$group->groups = $tmp;
@@ -330,6 +451,8 @@ class YourStyleController extends GenericController {
 				$limit = 30;
 				$offset = ($page - 1) * $limit;
 				if ($tabColor) {
+					$colorDataMap = new YourStyleTilesColorsDataMap();
+					$tabColor = $colorDataMap->getColorByHuman($tabColor);
 					$items = $dataMap->getTilesByColor($tabColor, $offset, $limit);
 					$pages = ceil($dataMap->getCountByColor($tabColor) / $limit);
 				} else {
@@ -698,6 +821,284 @@ class YourStyleController extends GenericController {
 		} catch (\Exception $e) {
 			die(json_encode(['error' => 'Ошибка: ' . $e->getMessage()]));
 		}
+	}
+
+	public function yourStyleRules() {
+
+		self::getTwig()
+			->display('/yourstyle/YourStyleRules.twig');
+
+	}
+
+	public function yourStyleStarsSets($page = 1) {
+
+		$setsDataMap = new YourStyleSetsDataMap();
+		$perPage = 24;
+		$offset = ($page - 1) * $perPage;
+		$stars = $setsDataMap->getPersonsSets($offset, $perPage, 2, 1);
+		$count = $setsDataMap->getCountPersonsSets();
+		$pages = ceil($count / $perPage);
+
+		foreach($stars as &$star) {
+			$star->setsCount = $setsDataMap->getCountSetsByPersons($star->getId());
+			$sets = $setsDataMap->getSetsByPersons($star->getId(), 0, 2, 2);
+			foreach($sets as &$set) {
+				$set->urating = $setsDataMap->getUserWithRating($set->getUId());
+			}
+			$star->sets = $sets;
+		}
+
+		$tpl = [
+			'stars' => $stars,
+			'pages' => $pages,
+			'page' => $page,
+		];
+		self::getTwig()
+			->display('/yourstyle/YourStyleStarsSets.twig', $tpl);
+
+	}
+
+	public function yourStyleStarsSetsByName() {
+
+		$tagsDataMap = new YourStyleSetsTagsDataMap();
+		$stars = $tagsDataMap->getPersonsList();
+
+		$starsByNames = array();
+		foreach ($stars as &$star) {
+			$letter = mb_substr(mb_strtoupper($star['name'], "utf-8"), 0, 1, 'utf-8');
+			$starsByNames[$letter][] = &$star;
+		}
+
+		$tpl = [
+			'starsByNames' => $starsByNames,
+		];
+		self::getTwig()
+			->display('/yourstyle/YourStyleStarsSetsByName.twig', $tpl);
+
+	}
+
+	public function yourStyleBrandsByName() {
+
+		$dataMap = new YourStyleTilesBrandsDataMap();
+		$brands = $dataMap->getBrands();
+
+		$brandsByNames = array();
+		foreach ($brands as &$brand) {
+			$letter = mb_substr(mb_strtoupper($brand->getTitle(), "utf-8"), 0, 1, 'utf-8');
+			$brandsByNames[$letter][] = &$brand;
+		}
+
+		$tpl = [
+			'brandsByNames' => $brandsByNames,
+		];
+		self::getTwig()
+			->display('/yourstyle/YourStyleBrandsByName.twig', $tpl);
+
+	}
+
+	public function yourStyleBrands() {
+
+		$dataMap = new YourStyleTilesBrandsDataMap();
+		$brands = $dataMap->getTopBrands(52);
+
+		$tpl = [
+			'brands' => $brands,
+		];
+		self::getTwig()
+			->display('/yourstyle/YourStyleBrands.twig', $tpl);
+
+	}
+
+	public function yourStyleRootGroups() {
+
+		$dataMapRootGroups = new YourStyleRootGroupsDataMap();
+		$rootGroups = $dataMapRootGroups->getRootGroups();
+
+		$tpl = [
+			'rootGroups' => $rootGroups,
+			'allGroups' => $this->getGroupsParams(),
+			'brands' => $this->getBrandsByParam(0),
+			'colors' => $this->getColorsByParams(0),
+			'rootCurrent' => 0,
+			'groupCurrent' => 0,
+			'brandCurrent' => 0,
+			'colorCurrent' => '',
+		];
+		self::getTwig()
+			->display('/yourstyle/YourStyleRootGroups.twig', $tpl);
+
+	}
+
+	public function yourStyleGroups($id) {
+
+		$dataMapGroups = new YourStyleGroupDataMap();
+		$groups = $dataMapGroups->getGroupsByRootId($id);
+
+		$tpl = [
+			'groups' => $groups,
+			'allGroups' => $this->getGroupsParams(),
+			'brands' => $this->getBrandsByParam($id),
+			'colors' => $this->getColorsByParams($id),
+			'rootCurrent' => $id,
+			'groupCurrent' => 0,
+			'brandCurrent' => 0,
+			'colorCurrent' => '',
+		];
+		self::getTwig()
+			->display('/yourstyle/YourStyleGroups.twig', $tpl);
+
+	}
+
+	public function yourStyleGroup($gId, $page = 1) {
+
+		$dataMap = new YourStyleGroupsTilesDataMap();
+		$limit = 45;
+		$offset = ($page - 1) * $limit;
+		$items = $dataMap->getTilesByGId($gId, $offset, $limit, '150x150');
+		$pages = ceil($dataMap->getCountByGId($gId) / $limit);
+
+		$groupsDataMap = new YourStyleGroupDataMap();
+		$rootCurrent = $groupsDataMap->findById($gId);
+		$rootGroup = $rootCurrent->getRgId();
+
+		$tpl = [
+			'items' => $items,
+			'pages' => $pages,
+			'page' => $page,
+			'allGroups' => $this->getGroupsParams(),
+			'brands' => $this->getBrandsByParam($rootGroup),
+			'colors' => $this->getColorsByParams($rootGroup),
+			'rootCurrent' => $rootGroup,
+			'groupCurrent' => $gId,
+			'brandCurrent' => 0,
+			'colorCurrent' => '',
+		];
+		self::getTwig()
+			->display('/yourstyle/YourStyleGroup.twig', $tpl);
+
+	}
+
+	public function yourStyleTiles($page = 1) {
+
+		$rootGroup = $this->getSlim()->request()->get('rootGroup');
+		$group = $this->getSlim()->request()->get('group');
+		$brand = $this->getSlim()->request()->get('brand');
+		$colorCurrent = $color = $this->getSlim()->request()->get('color');
+		if ($colorCurrent) {
+			$colorDataMap = new YourStyleTilesColorsDataMap();
+			$color = $colorDataMap->getColorByHuman($colorCurrent);
+		}
+
+		$dataMap = new YourStyleGroupsTilesDataMap();
+		$limit = 45;
+		$offset = ($page - 1) * $limit;
+		$items = $dataMap->getTilesByParams($group, $brand, $color, $offset, $limit, '150x150');
+		$pages = ceil($dataMap->getCountByParams($group, $brand, $color) / $limit);
+
+		$tpl = [
+			'items' => $items,
+			'pages' => $pages,
+			'page' => $page,
+			'allGroups' => $this->getGroupsParams(),
+			'brands' => $this->getBrandsByParam($rootGroup),
+			'colors' => $this->getColorsByParams($rootGroup),
+			'rootCurrent' => $rootGroup,
+			'groupCurrent' => $group,
+			'brandCurrent' => $brand,
+			'colorCurrent' => $colorCurrent,
+			'searchParams' => $_SERVER['REDIRECT_QUERY_STRING'],
+		];
+		self::getTwig()
+			->display('/yourstyle/YourStyleGroup.twig', $tpl);
+
+	}
+
+	public function yourStyleTilesTop() {
+
+		$rootGroup = $this->getSlim()->request()->get('rootGroup');
+		$group = $this->getSlim()->request()->get('group');
+		$brand = $this->getSlim()->request()->get('brand');
+		$colorCurrent = $color = $this->getSlim()->request()->get('color');
+		if ($colorCurrent) {
+			$colorDataMap = new YourStyleTilesColorsDataMap();
+			$color = $colorDataMap->getColorByHuman($colorCurrent);
+		}
+
+		$dataMap = new YourStyleGroupsTilesDataMap();
+		$items = $dataMap->getTilesTopByParams($group, $brand, $color, 0, 48, '150x150');
+
+		$tpl = [
+			'items' => $items,
+			'allGroups' => $this->getGroupsParams(),
+			'brands' => $this->getBrandsByParam($rootGroup),
+			'colors' => $this->getColorsByParams($rootGroup),
+			'rootCurrent' => $rootGroup,
+			'groupCurrent' => $group,
+			'brandCurrent' => $brand,
+			'colorCurrent' => $colorCurrent,
+			'mode' => 'top',
+		];
+		self::getTwig()
+			->display('/yourstyle/YourStyleGroupTop.twig', $tpl);
+
+	}
+
+	protected function getGroupsParams() {
+
+		$rootGroupsDataMap = new YourStyleRootGroupsDataMap();
+		$groupsDataMap = new YourStyleGroupDataMap();
+
+		$rg = $rootGroupsDataMap->getRootGroups();
+		$rootGroups = array();
+		foreach($rg as $key => $g) {
+			$grs = $groupsDataMap->getGroupsByRootId($g->getId(), 3, 1);
+			$grp = array();
+			foreach($grs as $gr) {
+				$grp[$gr->getId()] = $gr->getTitle();
+			}
+			$rootGroups['name'][$g->getId()] = $g->getTitle();
+			$rootGroups['groups'][$g->getId()] = $grp;
+		}
+
+		return $rootGroups;
+
+	}
+
+	protected function getBrandsByParam($rgId) {
+
+		$brandsDataMap = new YourStyleTilesBrandsDataMap();
+
+		if ($rgId) {
+			return $brandsDataMap->getBrandsByRootGroop($rgId);
+		} else {
+			return $brandsDataMap->getBrands();
+		}
+
+	}
+
+	protected function getColorsByParams($rgId) {
+
+		$colorsNewDataMap = new YourStyleTilesColorsNewDataMap();
+
+		if ($rgId) {
+			$colorsNew = $colorsNewDataMap->getColorsByRootGroup($rgId);
+		} else {
+			$colorsNew = $colorsNewDataMap->getColors();
+		}
+
+		$clrs = array();
+		foreach($colorsNew as $color) {
+			$clrs[] = $color->getColor();
+		}
+
+		$filteredColors = array();
+        foreach (YourStyleBackEnd::$humanColors as $html => $clr) {
+            if(in_array($html, $clrs)) {
+                $filteredColors[$html] = $clr;
+            }
+        }
+        return $filteredColors;
+
 	}
 
 }

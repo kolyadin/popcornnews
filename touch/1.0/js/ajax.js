@@ -27,7 +27,8 @@ Ajax.prototype._ajaxHTML={
 		item.date ? date='<span class="news-list__date">'+item.date+'</span>' : date='';
 		return 	(
 			'<div class="news-list__item eitem Eitem">'+
-				'<a class="news-list__content Eitem__content"  href="'+item.link+'">'+
+				'<div class="news-list__content">'+
+				'<a class="Eitem__content"  href="'+item.link+'">'+
 					date+
 					'<span class="news-list__title">'+item.title+'</span>'+
 					'<img class="news-list__photo" src="'+item.photoPreview+'" alt="'+item.photoPreviewAlt+'" />'+
@@ -47,6 +48,7 @@ Ajax.prototype._ajaxHTML={
 					'<a href="'+item.vk+'"><img class="eitem__extra-social" src="i/vk-white.svg" alt="" /></a> '+
 					'<a href="'+item.fb+'"><img class="eitem__extra-social" src="i/fb-white.svg" alt="" /></a> '+
 					'<a href="'+item.tw+'"><img class="eitem__extra-social" src="i/tw-white.svg" alt="" /></a>'+
+				'</div>'+
 				'</div>'+
 			'</div>'
 		);	
@@ -70,11 +72,28 @@ Ajax.prototype._ajaxHTML={
 						'<a data-type="deleteUser" class="eitem__extra-item" href="#">'+
 							'<img class="eitem__extra-icon" src="i/close-white.svg" alt="Удалить" />'+
 						'</a>'+
-						'<a class="eitem__extra-item" href="html/dialogue.html?user='+item.uid+'">'+
+						'<a class="eitem__extra-item" href="/im/companion'+item.uid+'">'+
 							'<img class="eitem__extra-icon" src="i/message-white.svg" alt="Написать сообщение" />'+
 						'</a>'+
 					'</div>'+
-				'</div>	'+				
+				'</div>	'+
+			'</div>'
+		);
+	},
+	getUsersForDialog:function(item){
+		var isOnline = item.isOnline ? ' users__name_online' : '';
+		return 	(
+			'<div data-uid="'+item.uid+'" class="users__item eitem eitem Eitem">'+
+				'<a class="users__content Eitem__content" href="'+item.userLink+'">'+
+					'<div class="users__photo" style="background-image:url('+item.avatar+');"></div>'+
+					'<div class="users__info">'+
+						'<div class="users__name color-'+item.ratingName+isOnline+'">'+item.nick+'</div>'+
+						'<div class="users__row">'+
+							'<span class="users__city">'+item.city+'</span>'+
+							'<span class="stars color-'+item.ratingName+'"><span style="width:'+item.ratingValue+'%;" class="stars__inner"></span></span>'+							
+						'</div>'+
+					'</div>'+
+				'</a>'+
 			'</div>'		
 		);	
 	}
@@ -109,11 +128,11 @@ Ajax.prototype.ajaxSend=function(data){
 			if (res.status){
 				if (res.fragment) res.fragment = self._ajaxFragment({fragment:res.fragment, name:data.type})
 				if(data.success) data.success.call(self, res);
-				else alert(res.message);	
+				else alert(res.exception.message);
 			}
 			else{
 				if(data.error) data.error.call(self, res);
-				else alert(res.message);	
+				else alert(res.exception.message);
 			}
 		},
 		'json'
