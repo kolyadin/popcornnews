@@ -88,16 +88,6 @@
 		</div>
 	</script>
 
-	<script id="tmpl-person" type="x-tmpl-mustache">
-		<div class="card">
-			<input type="hidden" name="link[]" value="{{ personId }}" />
-			<div class="parent thumbnail alert-warning">
-				<p><strong>{{ name }}</strong></p>
-				<p><a href="#"><img src="{{ url }}" class="thumbnail" alt=""/></a></p>
-			</div>
-			<div class="clearfix"></div>
-		</div>
-	</script>
 	{% endraw %}
 
 	<script type="text/javascript">
@@ -280,15 +270,6 @@
 				$(this).closest('.thumbnail').find('.custom').removeClass('hide').end().find('.choose').addClass('hide');
 			});
 
-			$addKidParent = function(params,obj){
-
-				var $html = Mustache.render($('#tmpl-person').html(),params);
-
-				$(".select2-drop,.select2-container").remove();
-
-				$(obj).closest('.thumbnail').find('.box').html($html);
-			};
-
 
 			$('input[data-id=first-parent]').select2({
 				width: '200px',
@@ -368,7 +349,7 @@
 
 {% block PageTop %}
 
-	{% if person %}
+	{% if kid %}
 		<h3 class="page-title">
 			Ребенок
 			<small>&quot;{{ kid.name|e }}&quot;</small>
@@ -456,13 +437,13 @@
 
 					<div class="col-md-2">&nbsp;</div>
 					<div class="col-md-9">
-						{% if kid %}
+						{% if kid and not kid.isImported %}
 							<div style="float:left;text-align: right;padding:20px;" class="thumbnail first-person">
 								<p><strong>Первая персона</strong></p>
 
 								<div class="box">
 
-									{% if kid.firstParent.id > 0 %}
+									{% if not kid.firstParentCustom %}
 										<input class="form-control" type="text" name="firstParent" data-action="find-person" data-id="first-parent" placeholder="Начни набирать имя персоны..." value="{{ kid.firstParent.id }}"/>
 									{% else %}
 										<input class="form-control" type="text" name="firstParentCustom" placeholder="Напиши любое имя" value="{{ kid.firstParent|e }}"/>
@@ -478,7 +459,7 @@
 								<p><strong>Вторая персона</strong></p>
 
 								<div class="box">
-									{% if kid.secondParent.id > 0 %}
+									{% if not kid.secondParentCustom %}
 										<input class="form-control" type="text" name="secondParent" data-action="find-person" data-id="second-parent" placeholder="Начни набирать имя персоны..." value="{{ kid.secondParent.id }}"/>
 									{% else %}
 										<input class="form-control" type="text" name="secondParentCustom" placeholder="Напиши любое имя" value="{{ kid.secondParent|e }}"/>
@@ -563,7 +544,7 @@
 						</div>
 					</div>
 
-					<div class="form-group last">
+					<div class="form-group last"{% if kid.isImported %} style="border: 1px solid orange;"{% endif %}>
 						<label class="control-label col-md-3">Пол: <span class="required">*</span></label>
 
 						<div class="col-md-9">
@@ -602,7 +583,7 @@
 
 			{% if kid %}
 
-				<button class="btn btn-m btn-danger" type="button" data-action="person-remove">Удалить ребенка</button>
+				<button class="btn btn-m btn-danger" type="button" data-action="kid-remove">Удалить ребенка</button>
 				<button class="btn btn-m btn-success" type="submit">Обновить ребенка&nbsp;<i class="fa fa-check"></i></button>
 
 			{% else %}

@@ -39,12 +39,12 @@ class Import extends Command {
 INSERT INTO pn_kids (
   id, firstParent, secondParent,
   name, description, birthDate,
-  photo, votesUp, votesDown
+  photo, votesUp, votesDown, sex
 )
 VALUES (
   :id, :firstParent, :secondParent,
   :name, :description, :birthDate,
-  :photo, :votesUp, :votesDown
+  :photo, :votesUp, :votesDown, 0
 )");
 
 	}
@@ -52,6 +52,8 @@ VALUES (
 	protected function execute(InputInterface $input, OutputInterface $output) {
 
 		$output->writeln('<info>Импорт детей...</info>');
+
+		PDOHelper::truncate(['pn_kids']);
 
 		$this->selector->execute();
 
@@ -65,8 +67,8 @@ VALUES (
 			$output->write("<info>Дите #".$item['id']."...");
 
 			$this->insert->bindValue(':id', $item['id']);
-			$this->insert->bindValue(':firstParent', 0);
-			$this->insert->bindValue(':secondParent', 0);
+			$this->insert->bindValue(':firstParent', -1);
+			$this->insert->bindValue(':secondParent', -1);
 			$this->insert->bindValue(':name', $item['name']);
 			$this->insert->bindValue(':description', $item['pole1']);
 
@@ -76,8 +78,10 @@ VALUES (
 			$d = substr($bd, 6, 2);
 			$this->insert->bindValue(':birthDate', "{$y}-{$m}-{$d}");
 
-			$kidImage = ImageFactory::createFromUrl(sprintf('http://v1.popcorn-news.ru/upload/%s',$item['pole6']));
-			$this->insert->bindValue(':photo', $kidImage->getId());
+			if ($item['pole6']){
+				$kidImage = ImageFactory::createFromUrl(sprintf('http://www.popcornnews.ru/upload1/%s',$item['pole6']));
+				$this->insert->bindValue(':photo', $kidImage->getId());
+			}
 
 			$this->insert->bindValue(':votesUp', $item['pole20']);
 			$this->insert->bindValue(':votesDown', $item['pole21']);

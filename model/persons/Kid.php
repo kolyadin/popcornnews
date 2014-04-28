@@ -23,24 +23,24 @@ class Kid extends Model {
 	const MALE = 0;
 	const FEMALE = 1;
 
-    //region Fields
+	//region Fields
 
-    /**
-     * @export ro
-     */
-    private $firstParent;
+	/**
+	 * @export ro
+	 */
+	private $firstParent;
 
-    /**
-     * @export ro
-     */
-    private $secondParent;
+	/**
+	 * @export ro
+	 */
+	private $secondParent;
 
 
-    /**
-     * @var string
-     * @export
-     */
-    private $name = '';
+	/**
+	 * @var string
+	 * @export
+	 */
+	private $name = '';
 
 	/**
 	 * @var int
@@ -48,31 +48,31 @@ class Kid extends Model {
 	 */
 	private $sex = self::MALE;
 
-    /**
-     * @var string
-     * @export
-     */
-    private $description = '';
+	/**
+	 * @var string
+	 * @export
+	 */
+	private $description = '';
 
-    /**
-     * @var \DateTime
-     * @export
-     * @create new \DateTime($value)
-     * @convert format('Y-m-d')
-     */
-    private $birthDate;
+	/**
+	 * @var \DateTime
+	 * @export
+	 * @create new \DateTime($value)
+	 * @convert format('Y-m-d')
+	 */
+	private $birthDate;
 
-    /**
-     * @var UpDownVoting
-     * @export ro
-     */
-    private $voting = 0;
+	/**
+	 * @var UpDownVoting
+	 * @export ro
+	 */
+	private $voting = 0;
 
-    /**
-     * @var Image
-     * @export
-     */
-    private $photo;
+	/**
+	 * @var Image
+	 * @export
+	 */
+	private $photo;
 
 	/**
 	 * @var int
@@ -92,21 +92,21 @@ class Kid extends Model {
 	 */
 	private $commentsCount;
 
-    //endregion
+	//endregion
 
-	public function __construct(){
+	public function __construct() {
 		$this->setVotesDown(0);
 		$this->setVotesUp(0);
 	}
 
-    //region Getters
+	//region Getters
 
-    /**
-     * @return \DateTime
-     */
-    public function getBirthDate() {
-        return $this->birthDate;
-    }
+	/**
+	 * @return \DateTime
+	 */
+	public function getBirthDate() {
+		return $this->birthDate;
+	}
 
 	public function getBirthDateFriendly() {
 		if (is_null($this->getBirthDate())) return null;
@@ -114,26 +114,34 @@ class Kid extends Model {
 		return vsprintf('%3$02u.%2$02u.%1$04u', sscanf($this->getBirthDate()->format('Y-m-d'), '%04u-%02u-%02u'));
 	}
 
-    /**
-     * @return string
-     */
-    public function getDescription() {
-        return $this->description;
-    }
+	/**
+	 * @return string
+	 */
+	public function getDescription() {
+		return $this->description;
+	}
 
-    /**
-     * @return \popcorn\model\persons\Person
-     */
-    public function getFirstParent() {
-        return $this->firstParent;
-    }
+	/**
+	 * @return \popcorn\model\persons\Person
+	 */
+	public function getFirstParent() {
+		return $this->firstParent;
+	}
 
-    /**
-     * @return string
-     */
-    public function getName() {
-        return $this->name;
-    }
+	public function isFirstParentCustom() {
+		if (!($this->firstParent instanceof Person)){
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getName() {
+		return $this->name;
+	}
 
 	/**
 	 * @return int
@@ -142,82 +150,101 @@ class Kid extends Model {
 		return $this->sex;
 	}
 
-    /**
-     * @return \popcorn\model\persons\Person
-     */
-    public function getSecondParent() {
-        return $this->secondParent;
-    }
+	/**
+	 * @return \popcorn\model\persons\Person
+	 */
+	public function getSecondParent() {
+		return $this->secondParent;
+	}
 
-    /**
-     * @return \popcorn\model\voting\UpDownVoting
-     */
-    public function getVoting() {
-        return $this->voting;
-    }
+	public function isSecondParentCustom() {
+		if (!($this->secondParent instanceof Person)){
+			return true;
+		}
 
-    /**
-     * @return Image
-     */
-    public function getPhoto() {
-        return $this->photo;
-    }
+		return false;
+	}
 
-	public function getVotesUp(){
+	/**
+	 * @return \popcorn\model\voting\UpDownVoting
+	 */
+	public function getVoting() {
+		return $this->voting;
+	}
+
+	/**
+	 * @return Image
+	 */
+	public function getPhoto() {
+		return $this->photo;
+	}
+
+	public function getVotesUp() {
 		return $this->votesUp;
 	}
 
-	public function getVotesDown(){
+	public function getVotesDown() {
 		return $this->votesDown;
 	}
 
-	public function getVotesOverall(){
+	public function getVotesOverall() {
 		return $this->votesUp + $this->votesDown;
 	}
 
-	public function getVotes(){
+	public function getVotes() {
 		return $this->votesUp - $this->votesDown;
 	}
 
-	public function getCommentsCount(){
+	public function getCommentsCount() {
 		return $this->commentsCount;
 	}
 
-    //endregion
+	//endregion
 
-    //region Settings
+	public function isImported() {
+		if (
+			(!($this->getFirstParent() instanceof Person) && $this->getFirstParent() == -1) or
+			(!($this->getSecondParent() instanceof Person) && $this->getSecondParent() == -1)
+		) {
+			return true;
+		}
 
-    /**
-     * @param \DateTime $birthDate
-     */
-    public function setBirthDate($birthDate) {
-        $this->birthDate = $birthDate;
-        $this->changed();
-    }
+		return false;
+	}
 
-    /**
-     * @param string $description
-     */
-    public function setDescription($description) {
-        $this->description = $description;
-        $this->changed();
-    }
+	//region Settings
 
-    /**
-     * @param \popcorn\model\persons\Person $firstParent | string
-     */
-    public function setFirstParent($firstParent) {
-        $this->firstParent = $firstParent;
-        $this->changed();
-    }
+	/**
+	 * @param \DateTime $birthDate
+	 */
+	public function setBirthDate($birthDate) {
+		$this->birthDate = $birthDate;
+		$this->changed();
+	}
 
-    /**
-     * @param string $name
-     */
-    public function setName($name) {
-        $this->name = $name;
-        $this->changed();
-    }
+	/**
+	 * @param string $description
+	 */
+	public function setDescription($description) {
+		$this->description = $description;
+		$this->changed();
+	}
+
+	/**
+	 * @param \popcorn\model\persons\Person $firstParent | string
+	 */
+	public function setFirstParent($firstParent) {
+		$this->firstParent = $firstParent;
+		$this->changed();
+	}
+
+	/**
+	 * @param string $name
+	 */
+	public function setName($name) {
+		$this->name = $name;
+		$this->changed();
+	}
 
 	/**
 	 * @param int $sex
@@ -227,37 +254,37 @@ class Kid extends Model {
 		$this->changed();
 	}
 
-    /**
-     * @param \popcorn\model\persons\Person $secondParent | string
-     */
-    public function setSecondParent($secondParent) {
-        $this->secondParent = $secondParent;
-        $this->changed();
-    }
+	/**
+	 * @param \popcorn\model\persons\Person $secondParent | string
+	 */
+	public function setSecondParent($secondParent) {
+		$this->secondParent = $secondParent;
+		$this->changed();
+	}
 
-    /**
-     * @param \popcorn\model\voting\UpDownVoting $voting
-     */
-    public function setVoting($voting) {
-        $this->voting = $voting;
-    }
+	/**
+	 * @param \popcorn\model\voting\UpDownVoting $voting
+	 */
+	public function setVoting($voting) {
+		$this->voting = $voting;
+	}
 
-    /**
-     * @param Image $photo
-     */
-    public function setPhoto($photo) {
-        $changed = true;
-        if(!is_object($this->photo)) {
-            $changed = false;
-        }
-        $this->photo = $photo;
-        if($changed) $this->changed();
-    }
+	/**
+	 * @param Image $photo
+	 */
+	public function setPhoto($photo) {
+		$changed = true;
+		if (!is_object($this->photo)) {
+			$changed = false;
+		}
+		$this->photo = $photo;
+		if ($changed) $this->changed();
+	}
 
 	/**
 	 * @param int $votesUp
 	 */
-	public function setVotesUp($votesUp){
+	public function setVotesUp($votesUp) {
 		$this->votesUp = $votesUp;
 		$this->changed();
 	}
@@ -265,7 +292,7 @@ class Kid extends Model {
 	/**
 	 * @param int $votesDown
 	 */
-	public function setVotesDown($votesDown){
+	public function setVotesDown($votesDown) {
 		$this->votesDown = $votesDown;
 		$this->changed();
 	}
@@ -273,10 +300,10 @@ class Kid extends Model {
 	/**
 	 * @param int $commentsCount
 	 */
-	public function setCommentsCount($commentsCount){
+	public function setCommentsCount($commentsCount) {
 		$this->commentsCount = $commentsCount;
 	}
 
-    //endregion
+	//endregion
 
 }

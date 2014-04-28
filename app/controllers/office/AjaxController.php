@@ -8,18 +8,17 @@ use popcorn\lib\PDOHelper;
 use popcorn\model\content\Image;
 use popcorn\model\content\ImageFactory;
 use popcorn\model\dataMaps\TagDataMap;
+use popcorn\model\persons\KidFactory;
 use popcorn\model\persons\PersonFactory;
 use popcorn\model\poll\PollDataMap;
+use popcorn\model\posts\PostFactory;
 
 class AjaxController extends GenericController implements ControllerInterface {
 	public function getRoutes() {
-		$this
-			->getSlim()
-			->post('/ajax/poll/remove', [$this, 'pollRemove']);
 
 		$this
 			->getSlim()
-			->post('/ajax/person/remove', [$this, 'personRemove']);
+			->post('/ajax/:entity/remove', [$this, 'removeEntity']);
 
 		$this
 			->getSlim()
@@ -44,7 +43,31 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 	}
 
-	public function getPerson(){
+	public function removeEntity($entity) {
+
+		$entityId = $this->getSlim()->request->post('entityId');
+
+		switch ($entity){
+			case 'post':
+				PostFactory::removePost($entityId);
+				break;
+			case 'person':
+				PersonFactory::removePerson($entityId);
+				break;
+			case 'kid':
+				KidFactory::removeKid($entityId);
+				break;
+			case 'poll':
+				$dataMap = new PollDataMap();
+				$dataMap->delete($entityId);
+				break;
+		}
+
+		$this->getApp()->exitWithJsonSuccessMessage();
+
+	}
+
+	public function getPerson() {
 		$personId = $this->getSlim()->request->get('personId');
 
 		$person = PersonFactory::getPerson($personId);
@@ -54,30 +77,6 @@ class AjaxController extends GenericController implements ControllerInterface {
 			'name' => $person->getName(),
 			'photo' => $person->getPhoto()->getThumb('x100')->getUrl()
 		]);
-	}
-
-	public function pollRemove() {
-		$pollId = $this->getSlim()->request->post('pollId');
-
-		$dataMap = new PollDataMap();
-		$dataMap->delete($pollId);
-
-		//Удаляем привязанные варианты ответов
-		$stmt = PDOHelper::getPDO()->prepare('DELETE FROM pn_poll_opinions WHERE pollId = :pollId');
-		$stmt->execute([
-			'pollId' => $pollId
-		]);
-
-
-		$this->getApp()->exitWithJsonSuccessMessage();
-	}
-
-	public function personRemove() {
-		$personId = $this->getSlim()->request->post('personId');
-
-		PersonFactory::removePerson($personId);
-
-		$this->getApp()->exitWithJsonSuccessMessage();
 	}
 
 	public function postPersons() {
@@ -220,7 +219,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 		$resizeValue = 'x30';
 
-		if (isset($_POST['resize'])){
+		if (isset($_POST['resize'])) {
 			$resizeValue = $_POST['resize'];
 		}
 
@@ -241,25 +240,25 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 	}
 
-	public function crop(){
+	public function crop() {
 
 		$imageId = $this->getSlim()->request->post('imageId');
 		$coords = $this->getSlim()->request->post('coords');
 
 		$image = ImageFactory::getImage($imageId);
 
-		list($x1, $y1, $x2, $y2,$w,$h) = sscanf($coords, '%u,%u,%u,%u,%u,%u');
+		list($x1, $y1, $x2, $y2, $w, $h) = sscanf($coords, '%u,%u,%u,%u,%u,%u');
 
 		$gen = new ImageGenerator();
 		$gen->setImage($image);
 
-		$thumb = $gen->convert($image->getPath(),[
+		$thumb = $gen->convert($image->getPath(), [
 			'crop' => sprintf('%ux%u+%u+%u',
-				$w,$h,$x1,$y1
+				$w, $h, $x1, $y1
 			)
 		]);
 
-		if ($thumb->getId()){
+		if ($thumb->getId()) {
 
 			$newImage = ImageFactory::createFromUpload(__DIR__ . '/../../../htdocs' . $thumb->getRelPath());
 

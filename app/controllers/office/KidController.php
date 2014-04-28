@@ -115,6 +115,7 @@ class KidController extends GenericController implements ControllerInterface {
 			}
 
 			$twigData['kid'] = $kid;
+
 		}
 
 		if ($kidId > 0 && $request->get('action') == 'remove') {
@@ -180,7 +181,6 @@ class KidController extends GenericController implements ControllerInterface {
 		}
 
 		$kid->setDescription($request->post('description'));
-
 
 		KidFactory::save($kid);
 
