@@ -792,7 +792,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 			$dataMapHelper = new DataMapHelper();
 			$dataMapHelper->setRelationship([
-				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE,
+				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_MAIN_IMAGE,
 			]);
 
 			$dataMap = new NewsPostDataMap($dataMapHelper);
