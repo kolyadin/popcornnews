@@ -149,7 +149,6 @@
 					$('#modal-crop').modal('show');
 				});
 
-
 			});
 
 			//Подтверждение обрезания
@@ -277,6 +276,10 @@
 				$(this).closest('.thumbnail').find('.finder').removeClass('hide').end().find('.choose').addClass('hide');
 			});
 
+			$('input[data-action=btn-custom-person]').on('click',function(){
+				$(this).closest('.thumbnail').find('.custom').removeClass('hide').end().find('.choose').addClass('hide');
+			});
+
 			$addKidParent = function(params,obj){
 
 				var $html = Mustache.render($('#tmpl-person').html(),params);
@@ -309,26 +312,8 @@
 							};
 						}
 					}
-				}).on('select2-selecting',function(val,object){
-					$this = this;
-
-					$.get('/office/ajax/get/person',{personId:val.val},function(response){
-
-						var $params = {
-							name: response.name,
-							url: response.photo,
-							personId: response.id
-						};
-
-						$addKidParent($params,$this);
-
-
-					},'json');
 				});
 			});
-
-
-
 
 			{% if kid.photo %}
 
@@ -439,66 +424,87 @@
 
 					<div class="col-md-2">&nbsp;</div>
 					<div class="col-md-9">
-						<div style="float:left;text-align: right;padding:20px;" class="thumbnail first-person">
-							<p><strong>Первая персона</strong></p>
+						{% if kid %}
+							<div style="float:left;text-align: right;padding:20px;" class="thumbnail first-person">
+								<p><strong>Первая персона</strong></p>
 
-							<div class="box">
-								<div class="hide finder">
-									<input class="form-control" type="text" data-action="find-person" placeholder="Начни набирать имя персоны..."/>
-								</div>
-								<div class="hide custom">
-									<input class="form-control" type="text" placeholder="Напиши любое имя"/>
-								</div>
+								<div class="box">
 
-								<div class="choose">
-									<p><input class="btn btn-info" type="button" value="Выбрать из существующих" data-action="btn-find-person"/></p>
-									<p><input class="btn btn-info" type="button" value="Указать вручную" data-action="btn-custom-person"/></p>
-								</div>
-								<div class="clearfix"></div>
-							</div>
-						</div>
-						<div style="float:left;margin:70px 20px 0 20px;">
-							<i class="fa fa-plus"></i>
-						</div>
-						<div style="float:left;padding: 20px;" class="thumbnail second-person">
-							<p><strong>Вторая персона</strong></p>
+									<div class="hide finder">
+										<input class="form-control" type="text" data-action="find-person" placeholder="Начни набирать имя персоны..."/>
+									</div>
+									<div class="hide custom">
+										<input class="form-control" type="text" placeholder="Напиши любое имя"/>
+									</div>
 
-							<div class="box">
-								<div class="hide finder">
-									<input class="form-control" type="text" data-action="find-person" placeholder="Начни набирать имя персоны..."/>
-								</div>
-								<div class="hide custom">
-									<input class="form-control" type="text" placeholder="Напиши любое имя"/>
-								</div>
-
-								<div class="choose">
-									<p><input class="btn btn-info" type="button" value="Выбрать из существующих" data-action="btn-find-person"/></p>
-									<p><input class="btn btn-info" type="button" value="Указать вручную" data-action="btn-custom-person"/></p>
+									<div class="choose">
+										<p><input class="btn btn-info" type="button" value="Выбрать из существующих" data-action="btn-find-person"/></p>
+										<p><input class="btn btn-info" type="button" value="Указать вручную" data-action="btn-custom-person"/></p>
+									</div>
+									<div class="clearfix"></div>
 								</div>
 							</div>
-						</div>
+							<div style="float:left;margin:70px 20px 0 20px;">
+								<i class="fa fa-plus"></i>
+							</div>
+							<div style="float:left;padding: 20px;" class="thumbnail second-person">
+								<p><strong>Вторая персона</strong></p>
 
-						<div class="clearfix"></div>
-					</div>
-					<div class="clearfix"></div>
+								<div class="box">
+									<div class="hide finder">
+										<input class="form-control" type="text" data-action="find-person" placeholder="Начни набирать имя персоны..."/>
+									</div>
+									<div class="hide custom">
+										<input class="form-control" type="text" placeholder="Напиши любое имя"/>
+									</div>
 
-					<br/><br/><br/><br/><br/>
+									<div class="choose">
+										<p><input class="btn btn-info" type="button" value="Выбрать из существующих" data-action="btn-find-person"/></p>
+										<p><input class="btn btn-info" type="button" value="Указать вручную" data-action="btn-custom-person"/></p>
+									</div>
+								</div>
+							</div>
+						{% else %}
+							<div style="float:left;text-align: right;padding:20px;" class="thumbnail first-person">
+								<p><strong>Первая персона</strong></p>
 
-					<div class="col-md-2">&nbsp;</div>
-					<div class="col-md-9">
-						<div style="float:left;text-align: right;padding:20px;height:170px;width:250px;" class="thumbnail first-person">
-							<p><strong>Первая персона</strong></p>
+								<div class="box">
+									<div class="hide finder">
+										<input class="form-control" type="text" data-action="find-person" placeholder="Начни набирать имя персоны..."/>
+									</div>
+									<div class="hide custom">
+										<input class="form-control" type="text" placeholder="Напиши любое имя"/>
+									</div>
 
+									<div class="choose">
+										<p><input class="btn btn-info" type="button" value="Выбрать из существующих" data-action="btn-find-person"/></p>
+										<p><input class="btn btn-info" type="button" value="Указать вручную" data-action="btn-custom-person"/></p>
+									</div>
+									<div class="clearfix"></div>
+								</div>
+							</div>
+							<div style="float:left;margin:70px 20px 0 20px;">
+								<i class="fa fa-plus"></i>
+							</div>
+							<div style="float:left;padding: 20px;" class="thumbnail second-person">
+								<p><strong>Вторая персона</strong></p>
 
+								<div class="box">
+									<div class="hide finder">
+										<input class="form-control" type="text" data-action="find-person" placeholder="Начни набирать имя персоны..."/>
+									</div>
+									<div class="hide custom">
+										<input class="form-control" type="text" placeholder="Напиши любое имя"/>
+									</div>
 
-						</div>
-						<div style="float:left;margin:70px 20px 0 20px;">
-							<i class="fa fa-plus"></i>
-						</div>
-						<div style="float:left;padding: 20px;height:170px;width:250px;" class="thumbnail second-person">
-							<p><strong>Вторая персона</strong></p>
+									<div class="choose">
+										<p><input class="btn btn-info" type="button" value="Выбрать из существующих" data-action="btn-find-person"/></p>
+										<p><input class="btn btn-info" type="button" value="Указать вручную" data-action="btn-custom-person"/></p>
+									</div>
+								</div>
+							</div>
+						{% endif %}
 
-						</div>
 
 						<div class="clearfix"></div>
 					</div>
@@ -569,103 +575,19 @@
 				</div>
 			</div>
 
-
-
-			<div class="portlet">
-				<div class="portlet-title">
-					<div class="caption">
-						<i class="fa fa-reorder"></i>Опции
-					</div>
-					<div class="tools">
-						<a href="javascript:;" class="collapse"></a>
-					</div>
-				</div>
-				<div class="portlet-body">
-
-					<div class="form-group last">
-						<label class="control-label col-md-3">Факты:</label>
-
-						<div class="col-md-9">
-							<select class="form-control" name="allowFacts">
-								<option value="1"{% if person.allowFacts %} selected{% endif %}>Можно писать факты</option>
-								<option value="0"{% if not person.allowFacts %} selected{% endif %}>Нельзя писать факты</option>
-							</select>
-							<span class="help-block"></span>
-						</div>
-					</div>
-
-					<div class="form-group last">
-						<label class="control-label col-md-3">Фильмография:</label>
-
-						<div class="col-md-9">
-							<select class="form-control" name="isSinger">
-								<option value="1"{% if person.isSinger %} selected{% endif %}>ВКЛючить фильмографию</option>
-								<option value="0"{% if not person.isSinger %} selected{% endif %}>ВЫКЛючить фильмографию</option>
-							</select>
-							<span class="help-block"></span>
-						</div>
-					</div>
-
-				</div>
-			</div>
-
-			<div class="portlet">
-				<div class="portlet-title">
-					<div class="caption">
-						<i class="fa fa-reorder"></i>Имена пользователей в соц сетях
-					</div>
-					<div class="tools">
-						<a href="javascript:;" class="collapse"></a>
-					</div>
-				</div>
-				<div class="portlet-body">
-
-					<div class="form-group last">
-						<label class="control-label col-md-3">Вконтакте:</label>
-
-						<div class="col-md-9">
-							<input class="form-control" name="vkPage" type="text" value="{{ person.vkPage|e }}"/>
-							<span class="help-block"></span>
-						</div>
-					</div>
-
-					<div class="form-group last">
-						<label class="control-label col-md-3">Instagram:</label>
-
-						<div class="col-md-9">
-							<input class="form-control" name="instagramLogin" type="text" value="{{ person.instagramLogin|e }}"/>
-							<span class="help-block"></span>
-						</div>
-					</div>
-
-					<div class="form-group last">
-						<label class="control-label col-md-3">Twitter:</label>
-
-						<div class="col-md-9">
-							<input class="form-control" name="twitterLogin" type="text" value="{{ person.twitterLogin|e }}"/>
-							<span class="help-block"></span>
-						</div>
-					</div>
-
-
-				</div>
-			</div>
-
-
-
 		</div>
 
 		<div class="form-actions right">
 
-			{% if person %}
+			{% if kids %}
 
-				<button class="btn btn-m btn-danger" type="button" data-action="person-remove">Удалить персону</button>
-				<button class="btn btn-m btn-success" type="submit">Обновить персону&nbsp;<i class="fa fa-check"></i></button>
+				<button class="btn btn-m btn-danger" type="button" data-action="person-remove">Удалить ребенка</button>
+				<button class="btn btn-m btn-success" type="submit">Обновить ребенка&nbsp;<i class="fa fa-check"></i></button>
 
 			{% else %}
 
 				{#<button class="btn btn-m btn-info" type="button" data-action="submit-just-save">Создать опрос</button>#}
-				<button class="btn btn-m btn-success" type="submit">Создать персону&nbsp;<i class="fa fa-check"></i></button>
+				<button class="btn btn-m btn-success" type="submit">Добавить ребенка&nbsp;<i class="fa fa-check"></i></button>
 
 			{% endif %}
 		</div>

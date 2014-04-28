@@ -9,6 +9,7 @@ use popcorn\model\dataMaps\KidDataMap;
 use popcorn\model\dataMaps\PersonDataMap;
 use popcorn\model\dataMaps\PersonsLinkDataMap;
 use popcorn\model\persons\Kid;
+use popcorn\model\persons\KidFactory;
 
 class KidController extends GenericController implements ControllerInterface {
 
@@ -58,7 +59,8 @@ class KidController extends GenericController implements ControllerInterface {
 	}
 
 	public function __construct() {
-		$this->kidDataMap = new KidDataMap();
+
+
 	}
 
 	public function kids($page = null) {
@@ -69,20 +71,20 @@ class KidController extends GenericController implements ControllerInterface {
 
 		$dataMapHelper = new DataMapHelper();
 		$dataMapHelper->setRelationship([
-			'popcorn\\model\\dataMaps\\PersonDataMap' => PersonDataMap::WITH_NONE
+			'popcorn\\model\\dataMaps\\KidDataMap' => KidDataMap::WITH_NONE
 		]);
 
-		$personDataMap = new PersonDataMap($dataMapHelper);
+		$kidDataMap = new KidDataMap($dataMapHelper);
 
-		$onPage = 100;
+		$onPage = 50;
 		$paginator = [($page - 1) * $onPage, $onPage];
 
-		$persons = $personDataMap->findWithPaginator([], $paginator);
+		$kids = $kidDataMap->findWithPaginator([], $paginator);
 
 		$this
 			->getTwig()
-			->display('persons/List.twig', [
-				'persons' => $persons,
+			->display('kids/List.twig', [
+				'kids' => $kids,
 				'paginator' => [
 					'pages' => $paginator['pages'],
 					'active' => $page
@@ -98,8 +100,14 @@ class KidController extends GenericController implements ControllerInterface {
 		$twigData = [];
 
 		if ($kidId > 0) {
+			$dataMapHelper = new DataMapHelper();
+			$dataMapHelper->setRelationship([
+				'popcorn\\model\\dataMaps\\KidDataMap' => KidDataMap::WITH_ALL
+			]);
+
+			$kidDataMap = new KidDataMap($dataMapHelper);
 			/** @var Kid $post */
-			$kid = $this->kidDataMap->findById($kidId);
+			$kid = $kidDataMap->findById($kidId);
 
 			if (!$kid) {
 				$this->getSlim()->notFound();
@@ -107,7 +115,6 @@ class KidController extends GenericController implements ControllerInterface {
 
 			$twigData['kid'] = $kid;
 		}
-
 
 		if ($kidId > 0 && $request->get('action') == 'remove') {
 			$this
@@ -127,21 +134,17 @@ class KidController extends GenericController implements ControllerInterface {
 		$kidId = $request->post('kidId');
 
 		if ($kidId > 0) {
-			$kid = $this->kidDataMap->findById($kidId);
+			$kid = KidFactory::get($kidId);;
 		} else {
 			$kid = new Kid();
 		}
-
 
 		$kid->setName($request->post('name'));
 
 		$bd = vsprintf('%3$04u-%2$02u-%1$02u 03:00:00', sscanf($request->post('bd'), '%02u.%02u.%04u'));
 		$kid->setBirthDate(new \DateTime($bd));
 
-		//
-
-
-		$this->kidDataMap->save($kid);
+		KidFactory::save($kid);
 
 		if ($kid->getId()) {
 			if ($kidId) {

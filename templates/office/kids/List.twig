@@ -29,18 +29,18 @@
 	<script type="text/javascript">
 		$(function () {
 
-			var removePersonCandidateId = null;
+			var removeKidCandidateId = null;
 
 			$('button[data-action=confirm-remove]').on('click', function () {
 
 				var params = {
-					personId: removePersonCandidateId
+					kidId: removeKidCandidateId
 				};
 
 				var handler = function (response) {
 					if (response.status == 'success') {
 
-						var $tr = $('tr[data-person-id=' + removePersonCandidateId + ']');
+						var $tr = $('tr[data-kid-id=' + removeKidCandidateId + ']');
 
 						$('#modal-remove').modal('hide').on('hidden.bs.modal',function(){
 							$tr.animate({'background-color':'red'},800,function(){
@@ -51,12 +51,12 @@
 					}
 				};
 
-				$.post('/office/ajax/person/remove', params, handler, 'json');
+				$.post('/office/ajax/kid/remove', params, handler, 'json');
 
 			});
 
-			$('a[data-action=remove-person]').on('click', function () {
-				removePersonCandidateId = $(this).closest('tr').attr('data-person-id');
+			$('a[data-action=remove-kid]').on('click', function () {
+				removeKidCandidateId = $(this).closest('tr').attr('data-kid-id');
 			});
 		});
 	</script>
@@ -66,7 +66,7 @@
 {% block PageTop %}
 
 	<h3 class="page-title">
-		Список персон
+		Список детей
 		<small>просмотр сводной информации</small>
 	</h3>
 
@@ -77,7 +77,7 @@
 			<i class="fa fa-angle-right"></i>
 		</li>
 		<li>
-			<a href="/office/persons">Персоны</a>
+			<a href="/office/kids">Дети</a>
 			<i class="fa"></i>
 		</li>
 	</ul>
@@ -86,34 +86,31 @@
 
 {% block PageContent %}
 
-	<div id="modal-remove" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1"
-	     aria-hidden="true">
+	<div id="modal-remove" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-					<h4 class="modal-title">Вы ТОЧНО хотите удалить эту персону?</h4>
+					<h4 class="modal-title">Вы ТОЧНО хотите удалить этого ребенка?</h4>
 				</div>
 				<div class="modal-body">
-					<p><strong>Удаление персону приведет к</strong>:</p>
+					<p><strong>Удаление ребенка приведет к</strong>:</p>
 					<ul>
-						<li>удалению фотографий</li>
+						<li>удалению комментарий</li>
 					</ul>
 				</div>
 				<div class="modal-footer">
 					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Отмена</button>
-					<button class="btn btn-danger" data-dismiss="modal" data-action="confirm-remove">Подтверждаю
-						удаление
-					</button>
+					<button class="btn btn-danger" data-dismiss="modal" data-action="confirm-remove">Подтверждаю удаление</button>
 				</div>
 			</div>
 		</div>
 	</div>
 
-	{% if persons|length %}
+	{% if kids|length %}
 
 		<div style="text-align: right;">
-			{{ html.paginator(paginator.pages,paginator.active,'/office/persons/page%u') }}
+			{{ html.paginator(paginator.pages,paginator.active,'/office/kids/page%u') }}
 		</div>
 
 		<div class="table-responsive">
@@ -123,24 +120,22 @@
 					<th></th>
 					<th>Дата рождения</th>
 					<th>Имя</th>
-					<th>Общий рейтинг</th>
-					<th>Кол-во новостей</th>
+					<th>Рейтинг</th>
 				</tr>
 				</thead>
 				<tbody>
-				{% for person in persons %}
-					<tr data-person-id="{{ person.id }}">
+				{% for kid in kids %}
+					<tr data-kid-id="{{ kid.id }}">
 						<td style="white-space: nowrap;">
-							<a class="btn btn-default btn-xs tooltips" data-original-title="Редактировать персону"
-							   data-placement="top" href="/office/person{{ person.id }}"><i class="fa fa-edit"></i></a>
-							<a class="btn btn-danger btn-xs tooltips" data-original-title="Удалить персону"
-							   data-placement="top" role="button" data-toggle="modal" data-action="remove-person"
+							<a class="btn btn-default btn-xs tooltips" data-original-title="Редактировать ребенка"
+							   data-placement="top" href="/office/kid{{ kid.id }}"><i class="fa fa-edit"></i></a>
+							<a class="btn btn-danger btn-xs tooltips" data-original-title="Удалить ребенка"
+							   data-placement="top" role="button" data-toggle="modal" data-action="remove-kid"
 							   href="#modal-remove"><i class="fa fa-trash-o"></i></a>
 						</td>
-						<td>{{ person.birthDate|date('d.m.Y') }}</td>
-						<td style=""><a href="/office/person{{ person.id }}">{{ person.name|e }}</a></td>
-						<td>{{ person.totalRating }}</td>
-						<td>{{ person.newsCount }}</td>
+						<td>{{ kid.birthDate|date('d.m.Y') }}</td>
+						<td style=""><a href="/office/kid{{ kid.id }}">{{ kid.name|e }}</a></td>
+						<td>{{ kid.votes }}</td>
 					</tr>
 				{% endfor %}
 				</tbody>
@@ -148,16 +143,16 @@
 		</div>
 
 		<div style="text-align: right;">
-			{{ html.paginator(paginator.pages,paginator.active,'/office/persons/page%u') }}
+			{{ html.paginator(paginator.pages,paginator.active,'/office/kids/page%u') }}
 		</div>
 
 	{% else %}
 
 		<div class="note note-info">
-			<h4 class="note-heading">Пока не создано ни одной персоны</h4>
+			<h4 class="note-heading">Пока не добавлено ни одного ребенка</h4>
 
 			<p>
-				<a class="btn btn-success" href="/office/person_create">Создать персону</a>
+				<a class="btn btn-success" href="/office/kid_create">Добавить ребенка</a>
 			</p>
 		</div>
 
