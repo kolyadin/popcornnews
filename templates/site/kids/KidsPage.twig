@@ -1,4 +1,5 @@
 {% extends '/GenericInner.twig' %}
+{% import '/Mixins.twig' as html %}
 
 {% block head %}
 
@@ -118,12 +119,25 @@
 				    </div>
 			    </div>
 			    <div class="desc">
-				    <p class="db">Родился(ась) {{ kid.birthDate|ruDate('j f2 Y') }}, сейчас {{ kid.birthDate|ruAge }}</p>
+				    {% if kid.sex == 0 %}
+					    {% set bText = 'Родился' %}
+				    {% elseif kid.sex == 1 %}
+					    {% set bText = 'Родилась' %}
+				    {% endif %}
+				    <p class="db">{{ bText }} {{ kid.birthDate|ruDate('j f2 Y') }}, сейчас {{ kid.birthDate|ruAge }}</p>
 				    <div class="description">{{ kid.description }}</div>
 			    </div>
 		    </div>
 
 	    {% endfor %}
+
+	    {{
+		    html.paginator(
+			     paginator.pages
+			    ,paginator.active
+			    ,'/kids/page%u'
+		    )
+	    }}
 
     </div>
 

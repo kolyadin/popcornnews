@@ -7,6 +7,7 @@
 
 namespace popcorn\model\persons;
 
+use popcorn\lib\PDOHelper;
 use popcorn\model\content\Image;
 use popcorn\model\dataMaps\KidDataMap;
 
@@ -93,6 +94,11 @@ class KidFactory {
 		return self::$dataMap->getKids($from, $count);
 	}
 
+
+	/**
+	 * @param $kidId
+	 * @return bool
+	 */
 	public static function removeKid($kidId) {
 		self::checkDataMap();
 		return self::$dataMap->delete($kidId);

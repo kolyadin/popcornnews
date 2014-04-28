@@ -128,8 +128,17 @@ class KidDataMap extends DataMap {
 
 	/**
 	 * @param Kid $item
+	 * @return \popcorn\model\Model
 	 */
 	protected function prepareItem($item) {
+
+		if (!$item->getVotesDown()){
+			$item->setVotesDown(0);
+		}
+
+		if (!$item->getVotesUp()){
+			$item->setVotesUp(0);
+		}
 
 		return parent::prepareItem($item);
 

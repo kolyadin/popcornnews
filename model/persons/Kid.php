@@ -8,10 +8,8 @@
 namespace popcorn\model\persons;
 
 use popcorn\model\content\Image;
-use popcorn\model\content\ImageFactory;
 use popcorn\model\Model;
 use popcorn\model\voting\UpDownVoting;
-use popcorn\model\voting\VotingFactory;
 
 /**
  * Class Kid
@@ -95,8 +93,8 @@ class Kid extends Model {
 	//endregion
 
 	public function __construct() {
-		$this->setVotesDown(0);
-		$this->setVotesUp(0);
+
+
 	}
 
 	//region Getters

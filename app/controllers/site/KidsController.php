@@ -4,6 +4,8 @@ namespace popcorn\app\controllers\site;
 
 use popcorn\app\controllers\ControllerInterface;
 use popcorn\app\controllers\GenericController;
+use popcorn\model\dataMaps\DataMapHelper;
+use popcorn\model\dataMaps\KidDataMap;
 use popcorn\model\dataMaps\KidsCommentDataMap;
 use popcorn\model\persons\KidFactory;
 
@@ -16,7 +18,13 @@ class KidsController extends GenericController implements ControllerInterface {
 	public function getRoutes() {
 		$this
 			->getSlim()
-			->get('/kids(/page:pageId)', [$this, 'kidsPage'])
+			->get('/kids(/page:pageId)', function($page = null){
+				if ($page == 1){
+					$this->getSlim()->redirect('/kids',301);
+				}
+
+				$this->kidsPage($page?:1);
+			})
 			->conditions(['pageId' => '\d+']);
 
 		$this
@@ -25,14 +33,28 @@ class KidsController extends GenericController implements ControllerInterface {
 			->conditions(['pageId' => '\d+']);
 	}
 
-	public function kidsPage($currentPage = 1) {
+	public function kidsPage($page = 1) {
 
-		$kids = KidFactory::getKids(0, 10);
+		$dataMapHelper = new DataMapHelper();
+		$dataMapHelper->setRelationship([
+			'popcorn\\model\\dataMaps\\KidDataMap' => KidDataMap::WITH_PHOTO
+		]);
+
+		$kidDataMap = new KidDataMap($dataMapHelper);
+
+		$onPage = 10;
+		$paginator = [($page - 1) * $onPage, $onPage];
+
+		$kids = $kidDataMap->findWithPaginator([], $paginator);
 
 		$this
 			->getTwig()
 			->display('/kids/KidsPage.twig', [
-				'kids' => $kids
+				'kids' => $kids,
+				'paginator' => [
+					'pages' => $paginator['pages'],
+					'active' => $page
+				]
 			]);
 	}
 
