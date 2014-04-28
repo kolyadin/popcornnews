@@ -34,6 +34,11 @@ class KidController extends GenericController implements ControllerInterface {
 		$this
 			->getSlim()
 			->get('/kids(/page:pageId)', function ($page = null) {
+
+				if ($page == 1){
+					$this->getSlim()->redirect('/office/kids');
+				}
+
 				$this->kids($page);
 			})
 			->conditions([
