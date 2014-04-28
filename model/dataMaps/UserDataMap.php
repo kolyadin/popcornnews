@@ -765,7 +765,7 @@ SQL;
 
 	public function getActiveUsers($offset = 0, $limit = 8){
 		$sql = <<<SQL
-			SELECT IFNULL(ROUND(SUM(r.points/r.votes) / COUNT(r.id), 1), 0) as rating, u.id, u.nick, u.avatara
+			SELECT IFNULL(ROUND(SUM(r.points/r.votes) / COUNT(r.id), 1), 0) as rating, u.id, u.nick, u.avatar
 			FROM (
 				SELECT s.id, s.uid, s.rating as points, count(DISTINCT v.uid) as votes
 				FROM `pn_yourstyle_sets` as s
@@ -774,7 +774,7 @@ SQL;
 				GROUP BY s.id
 				HAVING votes >= 0
 			) as r
-				INNER JOIN popkorn_users as u ON (r.uid = u.id)
+				INNER JOIN pn_users as u ON (r.uid = u.id)
 			GROUP BY r.uid
 			ORDER BY rating DESC
 			LIMIT ?, ?

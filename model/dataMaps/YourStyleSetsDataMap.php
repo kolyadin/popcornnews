@@ -140,7 +140,7 @@ SQL;
 				INNER JOIN pn_yourstyle_sets_tags as t ON (s.id = t.sid)
 				LEFT JOIN pn_yourstyle_sets_comments as c ON (c.sid = s.id)
 				LEFT JOIN pn_yourstyle_sets_votes as v ON (v.sid = s.id)
-				LEFT JOIN `popkorn_users` as u ON (s.uid = u.id)
+				LEFT JOIN `pn_users` as u ON (s.uid = u.id)
 			WHERE t.tid = ?
 				AND s.isDraft = 'n'
 			GROUP BY s.id
