@@ -290,30 +290,62 @@
 			};
 
 
-			$('input[data-action=find-person]').each(function(){
-				$(this).select2({
-					width: '200px',
-					multiple: false,
-					placeholder: "Начни вводить имя персоны...",
-					initSelection: function (element, callback) {
+			$('input[data-id=first-parent]').select2({
+				width: '200px',
+				multiple: false,
+				placeholder: "Начни вводить имя персоны...",
+				initSelection: function (element, callback) {
+					{% if kid and kid.firstParent.id %}
 
+						var data = [];
+						data.push({'id': {{ kid.firstParent.id }}, 'text': '{{ kid.firstParent.name|e }}'});
+						callback(data[0]);
+
+					{% endif %}
+				},
+				ajax: {
+					url: '/office/ajax/post/persons',
+					dataType: 'json',
+					data: function (term) {
+						return {
+							term: term
+						};
 					},
-					ajax: {
-						url: '/office/ajax/post/persons',
-						dataType: 'json',
-						data: function (term) {
-							return {
-								term: term
-							};
-						},
-						results: function (data) {
-							return {
-								results: data.persons
-							};
-						}
+					results: function (data) {
+						return {
+							results: data.persons
+						};
 					}
-				});
+				}
 			});
+
+			$('input[data-id=second-parent]').select2({
+				width: '200px',
+				multiple: false,
+				placeholder: "Начни вводить имя персоны...",
+				initSelection: function (element, callback) {
+					{% if kid and kid.secondParent.id %}
+						var data = [];
+						data.push({'id': {{ kid.secondParent.id }}, 'text': '{{ kid.secondParent.name|e }}'});
+						callback(data[0]);
+					{% endif %}
+				},
+				ajax: {
+					url: '/office/ajax/post/persons',
+					dataType: 'json',
+					data: function (term) {
+						return {
+							term: term
+						};
+					},
+					results: function (data) {
+						return {
+							results: data.persons
+						};
+					}
+				}
+			});
+
 
 			{% if kid.photo %}
 
@@ -430,17 +462,12 @@
 
 								<div class="box">
 
-									<div class="hide finder">
-										<input class="form-control" type="text" data-action="find-person" placeholder="Начни набирать имя персоны..."/>
-									</div>
-									<div class="hide custom">
-										<input class="form-control" type="text" placeholder="Напиши любое имя"/>
-									</div>
+									{% if kid.firstParent.id > 0 %}
+										<input class="form-control" type="text" name="firstParent" data-action="find-person" data-id="first-parent" placeholder="Начни набирать имя персоны..." value="{{ kid.firstParent.id }}"/>
+									{% else %}
+										<input class="form-control" type="text" name="firstParentCustom" placeholder="Напиши любое имя" value="{{ kid.firstParent|e }}"/>
+									{% endif %}
 
-									<div class="choose">
-										<p><input class="btn btn-info" type="button" value="Выбрать из существующих" data-action="btn-find-person"/></p>
-										<p><input class="btn btn-info" type="button" value="Указать вручную" data-action="btn-custom-person"/></p>
-									</div>
 									<div class="clearfix"></div>
 								</div>
 							</div>
@@ -451,17 +478,11 @@
 								<p><strong>Вторая персона</strong></p>
 
 								<div class="box">
-									<div class="hide finder">
-										<input class="form-control" type="text" data-action="find-person" placeholder="Начни набирать имя персоны..."/>
-									</div>
-									<div class="hide custom">
-										<input class="form-control" type="text" placeholder="Напиши любое имя"/>
-									</div>
-
-									<div class="choose">
-										<p><input class="btn btn-info" type="button" value="Выбрать из существующих" data-action="btn-find-person"/></p>
-										<p><input class="btn btn-info" type="button" value="Указать вручную" data-action="btn-custom-person"/></p>
-									</div>
+									{% if kid.secondParent.id > 0 %}
+										<input class="form-control" type="text" name="secondParent" data-action="find-person" data-id="second-parent" placeholder="Начни набирать имя персоны..." value="{{ kid.secondParent.id }}"/>
+									{% else %}
+										<input class="form-control" type="text" name="secondParentCustom" placeholder="Напиши любое имя" value="{{ kid.secondParent|e }}"/>
+									{% endif %}
 								</div>
 							</div>
 						{% else %}
@@ -470,10 +491,10 @@
 
 								<div class="box">
 									<div class="hide finder">
-										<input class="form-control" type="text" data-action="find-person" placeholder="Начни набирать имя персоны..."/>
+										<input type="hidden" name="firstParent" data-action="find-person" data-id="first-parent" placeholder="Начни набирать имя персоны..."/>
 									</div>
 									<div class="hide custom">
-										<input class="form-control" type="text" placeholder="Напиши любое имя"/>
+										<input class="form-control" type="text" name="firstParentCustom" placeholder="Напиши любое имя"/>
 									</div>
 
 									<div class="choose">
@@ -491,10 +512,10 @@
 
 								<div class="box">
 									<div class="hide finder">
-										<input class="form-control" type="text" data-action="find-person" placeholder="Начни набирать имя персоны..."/>
+										<input class="form-control" type="text" name="secondParent" data-action="find-person" data-id="second-parent" placeholder="Начни набирать имя персоны..."/>
 									</div>
 									<div class="hide custom">
-										<input class="form-control" type="text" placeholder="Напиши любое имя"/>
+										<input class="form-control" type="text" name="secondParentCustom" placeholder="Напиши любое имя"/>
 									</div>
 
 									<div class="choose">
@@ -579,7 +600,7 @@
 
 		<div class="form-actions right">
 
-			{% if kids %}
+			{% if kid %}
 
 				<button class="btn btn-m btn-danger" type="button" data-action="person-remove">Удалить ребенка</button>
 				<button class="btn btn-m btn-success" type="submit">Обновить ребенка&nbsp;<i class="fa fa-check"></i></button>

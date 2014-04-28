@@ -26,14 +26,11 @@ class Kid extends Model {
     //region Fields
 
     /**
-     * @var Person
      * @export ro
-     * @create PersonFactory::getPerson($value)
      */
     private $firstParent;
 
     /**
-     * @var Person
      * @export ro
      */
     private $secondParent;
@@ -96,6 +93,11 @@ class Kid extends Model {
 	private $commentsCount;
 
     //endregion
+
+	public function __construct(){
+		$this->setVotesDown(0);
+		$this->setVotesUp(0);
+	}
 
     //region Getters
 
@@ -202,7 +204,7 @@ class Kid extends Model {
     }
 
     /**
-     * @param \popcorn\model\persons\Person $firstParent
+     * @param \popcorn\model\persons\Person $firstParent | string
      */
     public function setFirstParent($firstParent) {
         $this->firstParent = $firstParent;
@@ -226,7 +228,7 @@ class Kid extends Model {
 	}
 
     /**
-     * @param \popcorn\model\persons\Person $secondParent
+     * @param \popcorn\model\persons\Person $secondParent | string
      */
     public function setSecondParent($secondParent) {
         $this->secondParent = $secondParent;

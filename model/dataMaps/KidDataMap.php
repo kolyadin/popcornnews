@@ -4,6 +4,7 @@ namespace popcorn\model\dataMaps;
 
 use popcorn\model\content\ImageFactory;
 use popcorn\model\persons\Kid;
+use popcorn\model\persons\Person;
 use popcorn\model\persons\PersonFactory;
 use popcorn\model\voting\VotingFactory;
 
@@ -24,11 +25,11 @@ class KidDataMap extends DataMap {
 
 		$this->class = "popcorn\\model\\persons\\Kid";
 		$this->insertStatement =
-			$this->prepare("INSERT INTO pn_kids (firstParent, secondParent, name, sex, description, birthDate, photo, votesUp, votesDown, commentsCount)
-            VALUES (:firstParent, :secondParent, :name, :sex, :description, :birthDate, :photo, :votesUp, :votesDown, :commentsCount)");
+			$this->prepare("INSERT INTO pn_kids (firstParent, secondParent, name, sex, description, birthDate, photo, votesUp, votesDown)
+            VALUES (:firstParent, :secondParent, :name, :sex, :description, :birthDate, :photo, :votesUp, :votesDown)");
 		$this->updateStatement =
 			$this->prepare("
-            UPDATE pn_kids SET name=:name, sex=:sex, description=:description, birthDate=:birthDate, photo=:photo, votesUp=:votesUp, votesDown=:votesDown, commentsCount=:commentsCount WHERE id=:id");
+            UPDATE pn_kids SET firstParent=:firstParent, secondParent=:secondParent, name=:name, sex=:sex, description=:description, birthDate=:birthDate, photo=:photo, votesUp=:votesUp, votesDown=:votesDown WHERE id=:id");
 		$this->deleteStatement = $this->prepare("DELETE FROM pn_kids WHERE id=:id");
 		$this->findOneStatement = $this->prepare("SELECT * FROM pn_kids WHERE id=:id");
 	}
@@ -49,8 +50,19 @@ class KidDataMap extends DataMap {
 	 * @param Kid $item
 	 */
 	protected function insertBindings($item) {
-		$this->insertStatement->bindValue(":firstParent", $item->getFirstParent()->convert());
-		$this->insertStatement->bindValue(":secondParent", $item->getSecondParent()->convert());
+
+		if ($item->getFirstParent() instanceof Person) {
+			$this->insertStatement->bindValue(":firstParent", $item->getFirstParent()->convert());
+		} else {
+			$this->insertStatement->bindValue(":firstParent", $item->getFirstParent());
+		}
+
+		if ($item->getSecondParent() instanceof Person) {
+			$this->insertStatement->bindValue(":secondParent", $item->getSecondParent()->convert());
+		} else {
+			$this->insertStatement->bindValue(":secondParent", $item->getSecondParent());
+		}
+
 		$this->insertStatement->bindValue(":name", $item->getName());
 		$this->insertStatement->bindValue(":sex", $item->getSex());
 		$this->insertStatement->bindValue(":description", $item->getDescription());
@@ -64,6 +76,18 @@ class KidDataMap extends DataMap {
 	 * @param Kid $item
 	 */
 	protected function updateBindings($item) {
+		if ($item->getFirstParent() instanceof Person) {
+			$this->updateStatement->bindValue(":firstParent", $item->getFirstParent()->convert());
+		} else {
+			$this->updateStatement->bindValue(":firstParent", $item->getFirstParent());
+		}
+
+		if ($item->getSecondParent() instanceof Person) {
+			$this->updateStatement->bindValue(":secondParent", $item->getSecondParent()->convert());
+		} else {
+			$this->updateStatement->bindValue(":secondParent", $item->getSecondParent());
+		}
+
 		$this->updateStatement->bindValue(":name", $item->getName());
 		$this->updateStatement->bindValue(":sex", $item->getSex());
 		$this->updateStatement->bindValue(":description", $item->getDescription());
@@ -80,8 +104,6 @@ class KidDataMap extends DataMap {
 	protected function itemCallback($item, $modifier = self::WITH_PHOTO) {
 
 		$modifier = $this->getModifier($this, $modifier);
-
-		parent::itemCallback($item);
 
 		if ($modifier & self::WITH_PHOTO) {
 			$item->setPhoto(ImageFactory::getImage($item->getPhoto()));
@@ -100,6 +122,8 @@ class KidDataMap extends DataMap {
 
 		$item->setBirthDate(new \DateTime($item->getBirthDate()));
 
+		parent::itemCallback($item);
+
 	}
 
 	/**
@@ -107,7 +131,9 @@ class KidDataMap extends DataMap {
 	 */
 	protected function prepareItem($item) {
 
-		$item->setCommentsCount($item->getCommentsCount());
+		return parent::prepareItem($item);
+
+//		$item->setCommentsCount($item->getCommentsCount());
 
 	}
 

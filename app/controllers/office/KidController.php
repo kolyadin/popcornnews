@@ -10,6 +10,7 @@ use popcorn\model\dataMaps\PersonDataMap;
 use popcorn\model\dataMaps\PersonsLinkDataMap;
 use popcorn\model\persons\Kid;
 use popcorn\model\persons\KidFactory;
+use popcorn\model\persons\PersonFactory;
 
 class KidController extends GenericController implements ControllerInterface {
 
@@ -134,23 +135,60 @@ class KidController extends GenericController implements ControllerInterface {
 		$kidId = $request->post('kidId');
 
 		if ($kidId > 0) {
-			$kid = KidFactory::get($kidId);;
+			$kid = KidFactory::get($kidId);
 		} else {
 			$kid = new Kid();
 		}
 
 		$kid->setName($request->post('name'));
 
+		//Разбираемся с родителями
+		{
+			$firstParent = $request->post('firstParent');
+			$firstParentCustom = $request->post('firstParentCustom');
+
+			$secondParent = $request->post('secondParent');
+			$secondParentCustom = $request->post('secondParentCustom');
+
+			if ($firstParent > 0){
+				$firstParent = PersonFactory::getPerson($firstParent);
+			}else{
+				$firstParent = $firstParentCustom;
+			}
+
+			if ($secondParent > 0){
+				$secondParent = PersonFactory::getPerson($secondParent);
+			}else{
+				$secondParent = $secondParentCustom;
+			}
+
+			$kid->setFirstParent($firstParent);
+			$kid->setSecondParent($secondParent);
+		}
+
+		if ($request->post('sex') == Kid::MALE) {
+			$kid->setSex(Kid::MALE);
+		} elseif ($request->post('sex') == Kid::FEMALE) {
+			$kid->setSex(Kid::FEMALE);
+		}
+
 		$bd = vsprintf('%3$04u-%2$02u-%1$02u 03:00:00', sscanf($request->post('bd'), '%02u.%02u.%04u'));
 		$kid->setBirthDate(new \DateTime($bd));
+
+		if ($photoId = $request->post('mainImageId')){
+			$kid->setPhoto(ImageFactory::getImage($photoId));
+		}
+
+		$kid->setDescription($request->post('description'));
+
 
 		KidFactory::save($kid);
 
 		if ($kid->getId()) {
 			if ($kidId) {
-				$this->getSlim()->redirect(sprintf('/office/person%u?status=updated', $kid->getId()));
+				$this->getSlim()->redirect(sprintf('/office/kid%u?status=updated', $kid->getId()));
 			} else {
-				$this->getSlim()->redirect(sprintf('/office/person%u?status=created', $kid->getId()));
+				$this->getSlim()->redirect(sprintf('/office/kid%u?status=created', $kid->getId()));
 			}
 		}
 	}
