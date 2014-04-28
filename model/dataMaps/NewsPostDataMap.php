@@ -105,7 +105,7 @@ class NewsPostDataMap extends DataMap {
 	 * @param NewsPost $item
 	 * @param int $modifier
 	 */
-	public function itemCallback($item, $modifier = self::WITH_ALL) {
+	public function itemCallback($item, $modifier = self::WITH_MAIN_IMAGE) {
 
 		parent::itemCallback($item);
 

@@ -6,6 +6,8 @@
     <meta name="description" content="Новостной блог" />
     <meta name="keywords"    content="попкорнньюз, popcornnews, блог звезды, новости звезд, звездные новости" />
 
+	<script type="text/javascript" src="/st/js/jquery.columnizer.js"></script>
+
     {# Эти js нужны только для главной страницы #}
     <script type="text/javascript" src="/st/js/news_gallery.js"></script>
     <script type="text/javascript" src="/st/js/freeze_gallery.js"></script>
@@ -57,14 +59,14 @@
 
 {% block content %}
 
-{% set topPost = topCornNews[0] %}
+{% set topPost = topPosts[0] %}
 
 <section class="b-top-corn clearfix b-grid__c12">
     <div class="b-top-corn__large">
         <div class="b-top-corn__large-news b-top-corn__large-news_active clearfix" id="b-top-corn__large-news_0">
             <div class="b-grid__g8">
                 <a href="/news/{{ topPost.id }}" title="{{ topPost.name|e }}" class="b-top-corn__large-photo">
-                    <img src="/st/img/content/large_front.jpg" alt="" />
+                    <img src="{{ topPost.mainImageId.thumb('620x').url }}" alt="" />
                 </a>
             </div>
 
@@ -86,7 +88,7 @@
 
     <ul class="b-top-corn__short-news clearfix">
 
-        {% for post in topCornNews|slice(1) %}
+        {% for post in topPosts[1:6] %}
 
             <li class="b-grid__g2" data-url="./ajax/gallery2.html">
                 <div class="b-top-corn__short-news-container {% if loop.first %} b-top-corn__short-news-container_first {% endif %}" >
@@ -244,34 +246,20 @@
             <section class="b-freeze-frame__persons clearfix">
                 <div class="b-freeze-frame__rubrics-title-cont">
                     <div class="b-freeze-frame__persons-rubrics-title b-rubrics-title b-rubrics-title_s18">персоны</div>
-                    <span class="b-freeze-frame__rubrics-counter b-counter">275</span>
+                    <span class="b-freeze-frame__rubrics-counter b-counter">{{ personsCount }}</span>
                 </div>
                 <div class="b-grid__g2 b-grid__a">
                     <ul class="b-freeze-frame__list">
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color1">Lady GaGa</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Анджелина Джоли</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color2">Бейонсе Ноулз</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Бритни Спирс</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color4">Брэд Питт</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Виктория Бэкхем</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color5">Дженнифер Лопес</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Дженнифер Энистон</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color6">Джессика Альба</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Джонни Депп</a></li>
+						{% for person in sidebar.persons[:10] %}
+							<li class="b-freeze-frame__item"><a href="/persons/{{ person.urlName }}" class="b-freeze-frame__link b-freeze-frame__link_color{{ person.color }}">{{ person.name|e }}</a></li>
+						{% endfor %}
                     </ul>
                 </div>
                 <div class="b-grid__g2 b-grid__z">
                     <ul class="b-freeze-frame__list">
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color7">Ким Кардашиан</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Кристен Стюарт</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color8">Кэти Перри</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Линдсей Лохан</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color1">Мадонна</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Майли Сайрус</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color2">Пэрис Хилтон</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Рианна</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color4">Роберт Паттинсон</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Тэйлор Лотнер</a></li>
+	                    {% for person in sidebar.persons[10:10] %}
+		                    <li class="b-freeze-frame__item"><a href="/persons/{{ person.urlName }}" class="b-freeze-frame__link b-freeze-frame__link_color{{ person.color }}">{{ person.name|e }}</a></li>
+	                    {% endfor %}
                     </ul>
                 </div>
             </section>
@@ -283,33 +271,16 @@
                 </div>
                 <div class="b-grid__g2 b-grid__a">
                     <ul class="b-freeze-frame__list">
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color1">Благотворительность</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color2">Болезнь</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Видео</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color4">Дети</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color8">Дни Рождения</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color7">Другие светские мероприятия</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color5">Животные</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color4">Записки Мидды Пипплтон</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Интервью</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color2">Интересные штучки</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color1">Книги / комиксы</a></li>
+	                    {% for tag in sidebar.tags[:10] %}
+		                    <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;{{ tag.name|e }}&quot;" href="/tag/{{ tag.tagId }}" class="b-freeze-frame__link b-freeze-frame__link_color{{ tag.color }}">{{ tag.name|e }}</a></li>
+	                    {% endfor %}
                     </ul>
                 </div>
                 <div class="b-grid__g2 b-grid__z">
                     <ul class="b-freeze-frame__list">
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color1">Монархи</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">О сайте попкорнnews</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color4">Развод, разрыв, измены</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Рекламная кампания</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color8">Самые-самые</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color5">Свадьба, помолвка</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color2">Скандалы и события</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color7">Смерть</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color6">Спорт</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color4">Фестивали и премии</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color1">Фотосессии</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Юмор</a></li>
+	                    {% for tag in sidebar.tags[10:10] %}
+		                    <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;{{ tag.name|e }}&quot;" href="/tag/{{ tag.tagId }}" class="b-freeze-frame__link b-freeze-frame__link_color{{ tag.color }}">{{ tag.name|e }}</a></li>
+	                    {% endfor %}
                     </ul>
                 </div>
             </section>

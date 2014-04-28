@@ -151,7 +151,9 @@ class ImageFactory {
 
         if(!file_exists($path)) {
             mkdir($path, 0777, true);
+			exec("find $path -type d -exec chmod 777 {} \;");
         }
+
 
         $name = md5($tmpFile.$path);
 

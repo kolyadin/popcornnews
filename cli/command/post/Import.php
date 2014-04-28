@@ -202,7 +202,7 @@ VALUES (
 
 			//region Пробуем скачать основное фото новости
 			try {
-				$url = sprintf('http://v1.popcorn-news.ru/upload/%s', $item['pole5']);
+				$url = sprintf('http://www.popcornnews.ru/upload1/%s', $item['pole5']);
 
 				$output->write("\n\t<comment>Пытаемся скачать $url...</comment>");
 

@@ -3,10 +3,12 @@
 namespace popcorn\app;
 
 use popcorn\app\commands\SiteCommand;
+use popcorn\app\controllers\ControllerInterface;
 use popcorn\app\controllers\GenericController;
 use popcorn\app\controllers\site\AjaxController;
 use popcorn\app\controllers\site\community\CommunityController;
 use popcorn\app\controllers\site\KidsController;
+use popcorn\app\controllers\site\MainPageController;
 use popcorn\app\controllers\site\MeetController;
 use popcorn\app\controllers\site\NewsController;
 use popcorn\app\controllers\site\ProfileController;
@@ -44,8 +46,8 @@ class Popcorn extends Application {
 
 			$detectDevice = new \Mobile_Detect();
 
-			if ($detectDevice->isMobile() && !$mobileVersionOff){
-				header('Location:'.Config::getInfo()['mobileVersionUrl']);
+			if ($detectDevice->isMobile() && !$mobileVersionOff) {
+				header('Location:' . Config::getInfo()['mobileVersionUrl']);
 				die;
 			}
 		}
@@ -111,7 +113,7 @@ class Popcorn extends Application {
 			}
 		});
 
-		$this->initRoutes();
+		$this->initControllers();
 	}
 
 	private function needAuthorization($role = USER::USER) {
@@ -128,43 +130,37 @@ class Popcorn extends Application {
 		$output = ['status' => 'success'];
 
 		if (count($messages)) {
-
 			foreach ($messages as $key => $message) {
 				$output[$key] = $message;
 			}
-
 		}
 
 		die(json_encode($output));
 	}
 
-	protected function initRoutes() {
-		//run_time_logger('a_routes', print_r($_SERVER, 1), print_r($_POST, 1));
-		$this->setAjaxRoutes();
-		$this->setProfileManagerRoutes();
-		$this->setKidsRoutes();
-		$this->setUsersRoutes();
-		$this->setProfileRoutes();
-		$this->setPersonsRoutes();
-		$this->setNewsRoutes();
-		$this->setStaticRoutes();
-		$this->setCommunityRoutes();
-		$this->setMeetRoutes();
-		$this->setYourStyleRoutes();
+	protected function initControllers() {
 
-		$this->getSlim()->get('/version/desktop',function(){
+		$this->registerController(new AjaxController());
+		$this->registerController(new MainPageController());
+		$this->registerController(new ProfileManagerController());
+		$this->registerController(new KidsController());
+		$this->registerController(new UsersController());
+		$this->registerController(new ProfileController());
+		$this->registerController(new PersonController());
+		$this->registerController(new NewsController());
+		$this->registerController(new NewsController());
+		$this->registerController(new StaticController());
+		$this->registerController(new CommunityController());
+		$this->registerController(new MeetController());
+		$this->registerController(new YourStyleController());
 
-			$this->getSlim()->setCookie('popcorn-mobile-version','off',strtotime('+1 year'),'/');
+
+		$this->getSlim()->get('/version/desktop', function () {
+
+			$this->getSlim()->setCookie('popcorn-mobile-version', 'off', strtotime('+1 year'), '/');
 			$this->getSlim()->redirect('/');
 
 		});
-
-		$this
-			->getSlim()
-			->get('/',function(){
-				$this->getTwig()->display('MainPage.twig',['showSidebar'=>false]);
-			});
-
 
 		//Обработчик для 404 ошибки
 		$this->getSlim()->notFound(function () {
@@ -193,84 +189,8 @@ class Popcorn extends Application {
 		return $class;
 	}
 
-	private function setKidsRoutes() {
-
-		$controller = new KidsController();
-		$controller->getRoutes();
-
-	}
-
-	private function setAjaxRoutes() {
-
-		$controller = new AjaxController();
-		$controller->getRoutes();
-
-	}
-
-	private function setProfileManagerRoutes() {
-
-		$controller = new ProfileManagerController();
-		$controller->getRoutes();
-
-	}
-
-	/**
-	 * Роуты для статичных страниц (/faq,/contacts,etc..)
-	 */
-	private function setStaticRoutes() {
-
-		$controller = new StaticController();
-		$controller->getRoutes();
-
-	}
-
-	private function setNewsRoutes() {
-
-		$controller = new NewsController();
-		$controller->getRoutes();
-
-	}
-
-	private function setProfileRoutes() {
-
-		$controller = new ProfileController();
-		$controller->getRoutes();
-
-	}
-
-	private function setUsersRoutes() {
-
-		$controller = new UsersController();
-		$controller->getRoutes();
-
-	}
-
-	private function setPersonsRoutes() {
-
-		$controller = new PersonController();
-		$controller->getRoutes();
-
-	}
-
-	private function setCommunityRoutes() {
-
-		$controller = new CommunityController();
-		$controller->getRoutes();
-
-	}
-
-	private function setMeetRoutes() {
-
-		$controller = new MeetController();
-		$controller->getRoutes();
-
-	}
-
-	private function setYourStyleRoutes() {
-
-		$controller = new YourStyleController();
-		$controller->getRoutes();
-
+	private function registerController(ControllerInterface $ctr) {
+		$ctr->getRoutes();
 	}
 
 }

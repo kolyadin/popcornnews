@@ -39,7 +39,7 @@ use popcorn\model\content\ImageFactory;
  * Class YourStyleController
  * @package popcorn\app\controllers\site
  */
-class YourStyleController extends GenericController {
+class YourStyleController extends GenericController implements ControllerInterface {
 
 	private $currentUser;
 
