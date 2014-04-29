@@ -66,17 +66,14 @@
         <div class="b-top-corn__large-news b-top-corn__large-news_active clearfix" id="b-top-corn__large-news_0">
             <div class="b-grid__g8">
                 <a href="/news/{{ topPost.id }}" title="{{ topPost.name|e }}" class="b-top-corn__large-photo">
-                    <img src="{{ topPost.mainImageId.thumb('620x').url }}" alt="" />
+                    <img src="{{ topPost.mainImageId.thumb('x400').url }}" alt="" />
                 </a>
             </div>
-
-            {# Ограничиваем размер анонса (высота блока довольно маленькая и фиксированная) #}
-            {% set topPostAnnounce = topPost.announce|length > 100 ? topPost.announce|slice(0,100) ~ '...' : topPost.announce %}
 
             <div class="b-grid__g4 b-top-corn__large-right-block">
                 <h1 class="b-top-corn__rubrics-title b-rubrics-title b-rubrics-title_s30">топ-корн</h1>
                 <h2 class="b-top-corn__large-news-title"><a href="/news/{{ topPost.id }}">{{ topPost.name|e }}</a></h2>
-                <h3 class="b-top-corn__large-news-lead">{{ topPostAnnounce }}</h3>
+                <h3 class="b-top-corn__large-news-lead">{{ topPost.announceFriendly(100) }}</h3>
                 <div class="b-top-corn__large-news-comments b-comments-status b-comments-status_large">
                     <a href="/news/{{ topPost.id }}#comments" class="b-comments-status__num">{{ topPost.comments }}</a>
                     <div class="b-comments-status__title">ком-<br />мента-<br />риев</div>

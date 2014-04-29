@@ -3,6 +3,8 @@
 namespace popcorn\model\dataMaps;
 
 use popcorn\model\content\ImageFactory;
+use popcorn\model\posts\fashionBattle\FashionBattle;
+use popcorn\model\posts\fashionBattle\FashionBattleDataMap;
 use popcorn\model\posts\NewsPost;
 use popcorn\model\posts\PostCategory;
 use popcorn\model\tags\Tag;
@@ -23,6 +25,10 @@ class NewsPostDataMap extends DataMap {
 	 * @var NewsTagDataMap
 	 */
 	private $tagsDataMap;
+	/**
+	 * @var FashionBattleDataMap
+	 */
+	private $fashionBattleDataMap;
 
 	public function __construct(DataMapHelper $helper = null) {
 
@@ -35,6 +41,7 @@ class NewsPostDataMap extends DataMap {
 		$this->initStatements();
 		$this->imagesDataMap = new NewsImageDataMap();
 		$this->tagsDataMap = new NewsTagDataMap();
+		$this->fashionBattleDataMap = new FashionBattleDataMap();
 	}
 
 	private function initStatements() {
@@ -126,6 +133,9 @@ class NewsPostDataMap extends DataMap {
 		}
 
 
+		$item->addFashionBattle($this->getFashionBattle($item->getId()));
+
+
 	}
 
 	/**
@@ -133,7 +143,8 @@ class NewsPostDataMap extends DataMap {
 	 */
 	protected function onInsert($item) {
 		$this->attachImages($item);
-		$this->attachTags($item);
+		$this->attachFashionBattle($item);
+//		$this->attachTags($item);
 	}
 
 	/**
@@ -141,7 +152,8 @@ class NewsPostDataMap extends DataMap {
 	 */
 	protected function onUpdate($item) {
 		$this->attachImages($item);
-		$this->attachTags($item);
+		$this->attachFashionBattle($item);
+//		$this->attachTags($item);
 	}
 
 	/**
@@ -171,6 +183,22 @@ class NewsPostDataMap extends DataMap {
 		return $this->imagesDataMap->findById($id);
 	}
 
+	/**
+	 * @param NewsPost $item
+	 */
+	private function attachFashionBattle($item) {
+
+		if ($item->getFashionBattle() instanceof FashionBattle){
+			$this->fashionBattleDataMap->saveWithPost($item);
+		}else{
+			$this->fashionBattleDataMap->deleteWithPost($item);
+		}
+	}
+
+	private function getFashionBattle($id) {
+		return $this->fashionBattleDataMap->getByNewsId($id);
+	}
+
 	public function findByDate($from = 0, $count = -1) {
 		$sql = "SELECT * FROM pn_news ORDER BY createDate DESC";
 		$sql .= $this->getLimitString($from, $count);
@@ -180,7 +208,7 @@ class NewsPostDataMap extends DataMap {
 
 	public function findEarlier(NewsPost $post) {
 
-		$currentDate = date('Y-m-d H:i:s',$post->getCreateDate());
+		$currentDate = date('Y-m-d H:i:s', $post->getCreateDate());
 
 		$sql = "SELECT * FROM pn_news WHERE
 				YEAR(from_unixtime(createDate)) = YEAR('$currentDate' - INTERVAL :month MONTH) AND
@@ -219,7 +247,7 @@ class NewsPostDataMap extends DataMap {
 
 		$options = array_merge([
 			'category' => null,
-			'tag' => null
+			'tag'      => null
 		], $options);
 
 		if ($options['category']) {
@@ -234,7 +262,7 @@ WHERE
 	tags.type = :tagType AND tags.name = :category
 EOL;
 			$binds = [
-				':tagType' => Tag::ARTICLE,
+				':tagType'  => Tag::ARTICLE,
 				':category' => $options['category']
 			];
 
@@ -268,7 +296,7 @@ where
 EOL;
 
 			$binds = [
-				':tagType' => Tag::ARTICLE,
+				':tagType'  => Tag::ARTICLE,
 				':category' => $categoryId
 			];
 
@@ -298,7 +326,7 @@ EOL;
 
 			$binds = [
 				':tagType' => Tag::EVENT,
-				':tag' => $options['tag']
+				':tag'     => $options['tag']
 			];
 
 			$stmt = $this->prepare(sprintf($sql, 'count(*)'));

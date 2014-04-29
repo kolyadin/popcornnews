@@ -4,8 +4,12 @@ namespace popcorn\app\controllers\office;
 use popcorn\app\controllers\ControllerInterface;
 use popcorn\app\controllers\GenericController;
 use popcorn\model\dataMaps\DataMapHelper;
+use popcorn\model\dataMaps\FashionBattleDataMap;
 use popcorn\model\dataMaps\NewsPostDataMap;
 use popcorn\model\dataMaps\TagDataMap;
+use popcorn\model\persons\PersonFactory;
+use popcorn\model\posts\fashionBattle\FashionBattle;
+use popcorn\model\posts\fashionBattle\FashionBattleFactory;
 use popcorn\model\posts\NewsPost;
 use popcorn\model\tags\Tag;
 
@@ -14,9 +18,26 @@ class PostController extends GenericController implements ControllerInterface {
 	private $newsDataMap, $tagDataMap;
 
 	public function getRoutes() {
+
+		//Добавление поста
 		$this
 			->getSlim()
 			->map('/post_create', function () {
+				switch ($this->getSlim()->request->getMethod()) {
+					case 'GET':
+						$this->postEditGet();
+						break;
+					case 'POST':
+						$this->postEditPost();
+						break;
+				}
+			})
+			->via('GET', 'POST');
+
+		//Добавление fashion battle
+		$this
+			->getSlim()
+			->map('/fb_create', function () {
 				switch ($this->getSlim()->request->getMethod()) {
 					case 'GET':
 						$this->postEditGet();
@@ -84,9 +105,9 @@ class PostController extends GenericController implements ControllerInterface {
 		$this
 			->getTwig()
 			->display('news/List.twig', [
-				'posts' => $posts,
+				'posts'     => $posts,
 				'paginator' => [
-					'pages' => $paginator['pages'],
+					'pages'  => $paginator['pages'],
 					'active' => $page
 				]
 			]);
@@ -100,8 +121,15 @@ class PostController extends GenericController implements ControllerInterface {
 		$twigData = [];
 
 		if ($postId > 0) {
+
+			$dataMapHelper = new DataMapHelper();
+			$dataMapHelper->setRelationship([
+				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_ALL
+			]);
+
+			$newsDataMap = new NewsPostDataMap($dataMapHelper);
 			/** @var NewsPost $post */
-			$post = $this->newsDataMap->findById($postId);
+			$post = $newsDataMap->findById($postId);
 
 			if (!$post) {
 				$this->getSlim()->notFound();
@@ -112,14 +140,14 @@ class PostController extends GenericController implements ControllerInterface {
 			$events = $post->getTags(Tag::EVENT);
 			$articles = $post->getTags(Tag::ARTICLE);
 
-			if ($events){
-				foreach ($events as $tag){
+			if ($events) {
+				foreach ($events as $tag) {
 					$twigData['tags']['events'][] = $tag->getId();
 				}
 			}
 
-			if ($articles){
-				foreach ($articles as $tag){
+			if ($articles) {
+				foreach ($articles as $tag) {
 					$twigData['tags']['articles'][] = $tag->getName();
 				}
 			}
@@ -147,6 +175,8 @@ class PostController extends GenericController implements ControllerInterface {
 
 		$request = $this->getSlim()->request;
 
+		print '<pre>'.print_r($_POST,true).'</pre>';
+
 
 		$postId = $request->post('postId');
 
@@ -163,7 +193,7 @@ class PostController extends GenericController implements ControllerInterface {
 		$post->setName($request->post('name'));
 		$post->setCreateDate($createDate);
 		$post->setSource($request->post('source'));
-		$post->setAnnounce($request->post('anons'));
+		$post->setAnnounce($request->post('announce'));
 		$post->setContent($request->post('content'));
 
 
@@ -209,6 +239,29 @@ class PostController extends GenericController implements ControllerInterface {
 		}
 
 
+
+
+		//region Fashion Battle
+		if ($request->post('fashionBattle') == 1 && $request->post('fbFirstPerson') > 0  && $request->post('fbSecondPerson') > 0 ) {
+
+			//Только для нового поста, редактировать fashion battle в существующем посте нелья
+			if (!$postId) {
+
+				$firstPerson = PersonFactory::getPerson($request->post('fbFirstPerson'));
+				$secondPerson = PersonFactory::getPerson($request->post('fbSecondPerson'));
+
+				$fashionBattle = new FashionBattle();
+				$fashionBattle->setFirstPerson($firstPerson);
+				$fashionBattle->setSecondPerson($secondPerson);
+
+				$post->addFashionBattle($fashionBattle);
+			}
+
+
+		}
+		//endregion
+
+		$this->newsDataMap->save($post);
 
 		/*
 		$poll->setQuestion($request->post('question'));

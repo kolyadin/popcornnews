@@ -90,156 +90,6 @@
 	</script>
 	{% endraw %}
 
-
-	<script id="tmpl-fashion-battle" type="x-tmpl-mustache">
-
-	</script>
-
-	<script type="text/javascript">
-		$(function () {
-			//Добавляем fashion battle к новости
-
-			var fashionBattle = {
-				fbBlock: null,
-				fbButtons: null,
-				fbAddButton: null,
-				fbRemoveButton: null,
-
-				checkParent: function(){
-
-					if (this.fbBlock == null){
-						this.fbBlock = $('div[data-element=fashion-battle]');
-					}
-
-					if (this.fbButtons == null){
-						this.fbButtons = $('div[data-element=fashion-battle-buttons]');
-					}
-
-					if (this.fbAddButton == null){
-						this.fbAddButton = $('input[data-action=add-fb]');
-					}
-
-					if (this.fbRemoveButton == null){
-						this.fbRemoveButton = $('input[data-action=remove-fb]');
-					}
-
-				},
-				handler: function(){
-					this.checkParent();
-
-					$this = this;
-
-					$this.fbAddButton.removeClass('hide');
-
-					$this.fbAddButton.on('click',function(){
-						$this.activate();
-					});
-
-					$this.fbRemoveButton.on('click',function(){
-						$this.deactivate();
-					});
-				},
-				activate: function(){
-					this.checkParent();
-
-					this.fbBlock.find('input[name=fashionBattle]').val(1);
-					this.fbBlock.removeClass('hide');
-					this.fbAddButton.addClass('hide');
-					this.fbRemoveButton.removeClass('hide');
-				},
-				hideButtons: function(){
-					this.fbAddButton.addClass('hide');
-					this.fbRemoveButton.addClass('hide');
-				},
-				deactivate: function(){
-					this.checkParent();
-
-					this.fbBlock.find('input[name=fashionBattle]').val(0);
-					this.fbBlock.addClass('hide');
-					this.fbAddButton.removeClass('hide');
-					this.fbRemoveButton.addClass('hide');
-				}
-			};
-
-			fashionBattle.handler();
-
-			//Первая персона
-			$('input[name=fbFirstPerson]').select2({
-				width: '480px',
-				multiple: false,
-				placeholder: "Начни вводить имя персоны...",
-				initSelection: function (element, callback) {
-					{% if post.fashionBattle %}
-
-						var data = [];
-
-						data.push({'id': {{ post.fashionBattle.firstPerson.id }}, 'text': '{{ post.fashionBattle.firstPerson.name|e }}'});
-
-						callback(data[0]);
-					{% endif %}
-				},
-				ajax: {
-					url: '/office/ajax/post/persons',
-					dataType: 'json',
-					data: function (term) {
-						return {
-							term: term
-						};
-					},
-					results: function (data) {
-						return {
-							results: data.persons
-						};
-					}
-				}
-			});
-
-			//Вторая персона
-			$('input[name=fbSecondPerson]').select2({
-				width: '480px',
-				multiple: false,
-				{% if post.fashionBattle %}readonly: true,{% endif %}
-				placeholder: "Начни вводить имя персоны...",
-				initSelection: function (element, callback) {
-					{% if post.fashionBattle %}
-
-						var data = [];
-
-						data.push({'id': {{ post.fashionBattle.secondPerson.id }}, 'text': '{{ post.fashionBattle.secondPerson.name|e }}'});
-
-						callback(data[0]);
-					{% endif %}
-				},
-				ajax: {
-					url: '/office/ajax/post/persons',
-					dataType: 'json',
-					data: function (term) {
-						return {
-							term: term
-						};
-					},
-					results: function (data) {
-						return {
-							results: data.persons
-						};
-					}
-				}
-			});
-
-			{% if post.fashionBattle %}
-				//Активируем панель fashion battle
-				//покажем только выбранные персоны
-				fashionBattle.activate();
-
-				//Уберем возможность любых манипуляция с УЖЕ добавленным fashion battle
-				fashionBattle.hideButtons();
-				$('input[name=fbFirstPerson]').select2('enable',false);
-				$('input[name=fbSecondPerson]').select2('enable',false);
-			{% endif %}
-
-		})
-	</script>
-
 	<script type="text/javascript">
 
 		$(function(){
@@ -960,49 +810,6 @@
 			<div class="portlet">
 				<div class="portlet-title">
 					<div class="caption">
-						<i class="fa fa-reorder"></i>Fashion Battle
-					</div>
-					<div class="tools">
-						<a href="javascript:;" class="collapse"></a>
-					</div>
-				</div>
-				<div class="portlet-body">
-
-					<div class="hide" data-element="fashion-battle">
-						<input type="hidden" name="fashionBattle" value="0" />
-
-						<div class="form-group last">
-							<label class="control-label col-md-3">#1 персона: <span class="required">*</span></label>
-							<div class="col-md-9 right">
-								<input type="hidden" name="fbFirstPerson" value="{{ post.fashionBattle.firstPerson.id }}"/>
-							</div>
-						</div>
-
-						<div class="form-group last">
-							<label class="control-label col-md-3">#2 персона: <span class="required">*</span></label>
-							<div class="col-md-9 right">
-								<input type="hidden" name="fbSecondPerson" value="{{ post.fashionBattle.secondPerson.id }}"/>
-							</div>
-						</div>
-					</div>
-
-
-					<div class="form-group last" data-element="fashion-battle-buttons">
-						<label class="control-label col-md-2">&nbsp;</label>
-						<div class="col-md-9 right">
-							<input type="button" class="btn btn-info hide" value="добавить fashion battle" data-action="add-fb" />
-							<input type="button" class="btn btn-danger hide" value="убрать fashion battle" data-action="remove-fb" />
-						</div>
-					</div>
-
-				</div>
-			</div>
-
-
-
-			<div class="portlet">
-				<div class="portlet-title">
-					<div class="caption">
 						<i class="fa fa-reorder"></i>Опрос
 					</div>
 					<div class="tools">
@@ -1012,6 +819,9 @@
 				<div class="portlet-body">
 
 					<div class="hide" data-element="poll">
+						<div class="note note-warning">
+							Варианты ответов нельзя изменять после создания. Только вручную через программиста
+						</div>
 
 						<div class="form-group last" id="poll-question">
 							<label class="control-label col-md-3">Вопрос: <span class="required">*</span></label>
@@ -1037,8 +847,12 @@
 					</div>
 
 
+
+
+
 				</div>
 			</div>
+
 		</div>
 
 		<div class="form-actions right">

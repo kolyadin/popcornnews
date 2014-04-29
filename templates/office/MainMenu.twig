@@ -5,6 +5,7 @@
 	</a>
 </li>
 
+{#Новости, посты, fashionbattle#}
 <li class="{% if app.request.path starts with '/office/post' %}active{% endif %}">
 	<a href="javascript:;">
 		<i class="fa fa-cogs"></i>
@@ -14,17 +15,17 @@
 	<ul class="sub-menu">
 		<li class="{% if app.request.path == '/office/post_create' %}active{% endif %}">
 			<a href="/office/post_create">
-				Создать новость
+				Добавить новость
 			</a>
 		</li>
 		<li class="{% if app.request.path == '/office/fb_create' %}active{% endif %}">
 			<a href="/office/fb_create">
-				Создать fashion battle
+				Добавить fashion battle
 			</a>
 		</li>
 		<li class="{% if app.request.path == '/office/posts' %}active{% endif %}">
 			<a href="/office/posts">
-				Просмотреть все
+				Найти все
 			</a>
 		</li>
 	</ul>
