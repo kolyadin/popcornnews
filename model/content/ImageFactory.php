@@ -150,10 +150,10 @@ class ImageFactory {
         $path = self::getUploadPath(time());
 
         if(!file_exists($path)) {
-            mkdir($path, 0777, true);
-			exec("find $path -type d -exec chmod 777 {} \;");
+			$old = umask(0);
+			mkdir($path, 0770, true);
+			umask($old);
         }
-
 
         $name = md5($tmpFile.$path);
 

@@ -221,7 +221,7 @@ class ImageGenerator
 			}
 
 			if (!is_dir($genPath))
-				mkdir($genPath,0777,true);
+				mkdir($genPath,0770,true);
 
 			$outFile = $genPath . '/' . $autoFilename;
 		}

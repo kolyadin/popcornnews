@@ -10,6 +10,7 @@ namespace popcorn\cli\command\person;
 use popcorn\lib\PDOHelper;
 use popcorn\model\content\ImageFactory;
 use popcorn\model\exceptions\Exception;
+use popcorn\model\exceptions\FileNotFoundException;
 use popcorn\model\persons\Person;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -106,8 +107,13 @@ VALUES (
 			$this->insert->bindValue(':info', $table['pole2']);
 			$this->insert->bindValue(':source', $table['pole4']);
 
-			$personImage = ImageFactory::createFromUrl(sprintf('http://www.popcornnews.ru/upload1/%s', $table['pole5']));
-			$this->insert->bindValue(':photo', $personImage->getId());
+			try {
+				$personImage = ImageFactory::createFromUrl(sprintf('http://www.popcornnews.ru/upload1/%s', $table['pole5']));
+				$this->insert->bindValue(':photo', $personImage->getId());
+			} catch (FileNotFoundException $e) {
+				$this->insert->bindValue(':photo', 0);
+			}
+
 
 			//region Импортируем приложенные фотографии
 			{
@@ -191,7 +197,6 @@ VALUES (
 		}
 
 		$total = $this->selector->rowCount();
-
 
 
 		$output->writeln("<info>Импортированно {$count} персон из {$total}</info>");

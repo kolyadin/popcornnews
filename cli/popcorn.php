@@ -15,7 +15,7 @@ use Symfony\Component\Console\Application;
 setlocale(LC_TIME, 'ru_RU.utf8');
 date_default_timezone_set('Europe/Moscow');
 
-include '../vendor/autoload.php';
+include __DIR__ . '/../vendor/autoload.php';
 
 class PopcornCliApp extends Application {
 
