@@ -46,7 +46,7 @@ class PostFactory {
 	public static function getPosts($from = 0, $count = 10) {
 		self::checkDataMap();
 
-		return self::$dataMap->findByDate($from, $count);
+		return self::$dataMap->findByLimit($from, $count);
 	}
 
 	/**

@@ -12,6 +12,7 @@ use popcorn\model\posts\NewsPost;
 use popcorn\model\posts\PostCategory;
 use popcorn\model\posts\PostFactory;
 use popcorn\model\tags\TagFactory;
+use popcorn\lib\RuHelper;
 
 /**
  * Class NewsController
@@ -82,6 +83,15 @@ class NewsController extends GenericController implements ControllerInterface {
 				'page' => '[1-9][0-9]*'
 			]);
 
+		$this
+			->getSlim()
+			->get('/archive(/:year)(/:month)(/:day)', [$this, 'newsArchive'])
+			->conditions([
+				'year' => '[0-9]*',
+				'month' => '[0-9]*',
+				'day' => '[0-9]*',
+			]);
+
 
 	}
 
@@ -133,7 +143,7 @@ class NewsController extends GenericController implements ControllerInterface {
 			$this->getSlim()->notFound();
 		}
 
-		$postsSmall = $dataMap->findByDate(0, 10);
+		$postsSmall = $dataMap->findByLimit(0, 10);
 
 		$this
 			->getTwig()
@@ -197,4 +207,66 @@ class NewsController extends GenericController implements ControllerInterface {
 				'earlyTime' => $month
 			]);
 	}
+
+	public function newsArchive($year = 0, $month = 0, $day = 0) {
+
+		if (empty($year)) {
+			$year = date('Y', time());
+		}
+		if (empty($month) || $month > 12) {
+			$month = date('m', time());
+		}
+
+		if (date('n') == $month && date('Y') == $year) {
+			$dayEnd = date('j');
+		} else {
+			$dayEnd = date('j', mktime(0, 0, 0, $month + 1, 0, $year));
+		}
+
+		$helper = new DataMapHelper();
+		if (empty($day)) {
+			$from = mktime(0, 0, 0, $month, 1, $year);
+			$to = mktime(0, 0, 0, $month + 1, 1, $year);
+
+			$helper->setRelationship([
+				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE
+			]);
+
+			$dataMap = new NewsPostDataMap($helper);
+			$items = $dataMap->findByDate($from, $to);
+			$posts = [];
+			foreach($items as $item) {
+				$posts[RuHelper::ruDate("d f2", $item->getCreateDate())][] = $item;
+			}
+		} else {
+			if ($day > $dayEnd) {
+				$day = $dayEnd;
+			}
+			$from = mktime(0, 0, 0, $month, $day, $year);
+			$to = mktime(0, 0, 0, $month, $day + 1, $year);
+
+			$helper->setRelationship([
+				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_MAIN_IMAGE
+			]);
+
+			$dataMap = new NewsPostDataMap($helper);
+			$posts = $dataMap->findByDate($from, $to);
+		}
+
+		$this
+			->getTwig()
+			->display('/news/NewsArcList.twig', [
+				'posts' => $posts,
+				'curYear' => date('Y'),
+				'curMonth' => date('m'),
+				'curDay' => date('d'),
+				'year' => $year,
+				'month' => $month,
+				'day' => $day,
+				'dayEnd' => $dayEnd,
+				'months' => RuHelper::$ruMonth,
+			]);
+
+	}
+
 }

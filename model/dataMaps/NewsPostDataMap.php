@@ -105,7 +105,7 @@ class NewsPostDataMap extends DataMap {
 	 * @param NewsPost $item
 	 * @param int $modifier
 	 */
-	public function itemCallback($item, $modifier = self::WITH_MAIN_IMAGE) {
+	public function itemCallback($item, $modifier = self::WITH_ALL) {
 
 		parent::itemCallback($item);
 
@@ -171,9 +171,22 @@ class NewsPostDataMap extends DataMap {
 		return $this->imagesDataMap->findById($id);
 	}
 
-	public function findByDate($from = 0, $count = -1) {
+	public function findByLimit($from = 0, $count = -1) {
 		$sql = "SELECT * FROM pn_news ORDER BY createDate DESC";
 		$sql .= $this->getLimitString($from, $count);
+
+		return $this->fetchAll($sql);
+	}
+
+	public function findByDate($from, $to, $limit = 0) {
+		$sql = "SELECT *
+				FROM pn_news
+				WHERE createDate BETWEEN $from AND $to
+				ORDER BY createDate DESC";
+
+		if ($limit) {
+			$sql .= ' LIMIT ' . (int)$limit;
+		}
 
 		return $this->fetchAll($sql);
 	}
