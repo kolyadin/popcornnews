@@ -1,8 +1,8 @@
 <section class="b-large-news">
 	<ul class="b-large-news__list">
 		{% for post in posts %}
-			{% set photo = post.mainImageId.thumb('430x') %}
-			<li class="b-large-news__item">
+			{% set photo = post.mainImageId.thumb('590x') %}
+			<li class="b-large-news__item" style="width:590px;">
 				<h2 class="b-large-news__title">
 					<a href="/news/{{ post.id }}">{{ post.name|e }}</a>
 				</h2>

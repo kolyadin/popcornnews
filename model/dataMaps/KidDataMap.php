@@ -2,6 +2,7 @@
 
 namespace popcorn\model\dataMaps;
 
+use popcorn\lib\PDOHelper;
 use popcorn\model\content\ImageFactory;
 use popcorn\model\persons\Kid;
 use popcorn\model\persons\Person;
@@ -32,6 +33,24 @@ class KidDataMap extends DataMap {
             UPDATE pn_kids SET firstParent=:firstParent, secondParent=:secondParent, name=:name, sex=:sex, description=:description, birthDate=:birthDate, photo=:photo, votesUp=:votesUp, votesDown=:votesDown WHERE id=:id");
 		$this->deleteStatement = $this->prepare("DELETE FROM pn_kids WHERE id=:id");
 		$this->findOneStatement = $this->prepare("SELECT * FROM pn_kids WHERE id=:id");
+	}
+
+	public function getRandomKid() {
+
+		$stmt = PDOHelper::getPDO()->query('select count(*) from pn_kids');
+		$stmt->execute();
+
+		$totalFound = $stmt->fetchColumn();
+
+		$stmt = PDOHelper::getPDO()->prepare('select * from pn_kids limit :limitStart,1');
+		$stmt->bindValue(':limitStart',rand(0,$totalFound-1),\PDO::PARAM_INT);
+		$stmt->execute();
+
+		$item = $stmt->fetchAll(\PDO::FETCH_CLASS, $this->class)[0];
+		$this->itemCallback($item);
+
+		return $item;
+
 	}
 
 	/**
@@ -132,11 +151,11 @@ class KidDataMap extends DataMap {
 	 */
 	protected function prepareItem($item) {
 
-		if (!$item->getVotesDown()){
+		if (!$item->getVotesDown()) {
 			$item->setVotesDown(0);
 		}
 
-		if (!$item->getVotesUp()){
+		if (!$item->getVotesUp()) {
 			$item->setVotesUp(0);
 		}
 

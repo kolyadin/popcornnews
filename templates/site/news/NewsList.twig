@@ -28,7 +28,7 @@
 					<h1 style="margin-bottom: 20px;">{{ tag.name|e }}</h1>
 				{% endif %}
 
-				{% include '/news/NewsList430.twig' with {'posts':posts} %}
+				{% include '/news/NewsList590.twig' with {'posts':posts} %}
 
 				{{
 					html.paginator(
@@ -38,9 +38,6 @@
 					)
 				}}
 
-			</div>
-			<div class="b-grid__g2 b-grid__z">
-				{% include '/news/NewsList140.twig' with {'posts':postsSmall} %}
 			</div>
 		</div>
 	</div>

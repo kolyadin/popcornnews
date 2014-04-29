@@ -82,6 +82,12 @@ class KidFactory {
 		self::$dataMap->save($kid);
 	}
 
+	public static function getRandomKid() {
+		self::checkDataMap();
+
+		return self::$dataMap->getRandomKid();
+	}
+
 	/**
 	 * @param int $from
 	 * @param $count

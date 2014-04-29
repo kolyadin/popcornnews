@@ -111,84 +111,23 @@
 
 <section class="b-center-column clearfix">
     <ul class="b-column-news">
-        <li class="b-grid__g2">
-            <a href="#" class="b-column-news__head">
-                <img src="/st/img/content/phs1.jpg" alt="" />
-            </a>
-            <div class="b-column-news__body">
-                <h2 class="b-column-news__title"><a href="#">Рианна подала в суд на своих бухгалтеров</a></h2>
-                <p class="b-column-news__text">Рианна вчера подала иск на своих бухгалтеров в суд города Нью-Йорк, обвиняя их в том, что певица потеряла миллионы долларов по их вине.</p>
-                <a href="#" class="b-column-news__comments b-comments-status">
-                    <span class="b-comments-status__num">734</span>
-                    <span class="b-comments-status__title">комменария</span>
-                </a>
-            </div>
-        </li>
-        <li class="b-grid__g2">
-            <a href="#" class="b-column-news__head">
-                <img src="/st/img/content/phs2.jpg" alt="" />
-            </a>
-            <div class="b-column-news__body">
-                <h2 class="b-column-news__title"><a href="#">Линдсей Лохан отметила День независимости с Джемсом Дином</a></h2>
-                <p class="b-column-news__text">Кажется, звезда фильмов для взрослых Джемс Дин и скандальная актриса Линдсей Лохан действительно подружились: их видели вместе покидающими вечеринку на День независимости.</p>
-                <a href="#" class="b-column-news__comments b-comments-status">
-                    <span class="b-comments-status__num">734</span>
-                    <span class="b-comments-status__title">комменария</span>
-                </a>
-            </div>
-        </li>
-        <li class="b-grid__g2">
-            <a href="#" class="b-column-news__head">
-                <img src="/st/img/content/phs3.jpg" alt="" />
-            </a>
-            <div class="b-column-news__body">
-                <h2 class="b-column-news__title"><a href="#">«Новый Человек-паук» станет трилогией</a></h2>
-                <p class="b-column-news__text">Студия Columbia Pictures анонсировала, что на экраны выйдет еще 2 части фантастического экшна «Новый Человек-паук», тем самым подтвердив создание полноценной трилогии.</p>
-                <a href="#" class="b-column-news__comments b-comments-status">
-                    <span class="b-comments-status__num">734</span>
-                    <span class="b-comments-status__title">комменария</span>
-                </a>
-            </div>
-        </li>
-        <li class="b-grid__g2">
-            <a href="#" class="b-column-news__head">
-                <img src="/st/img/content/phs4.jpg" alt="" />
-            </a>
-            <div class="b-column-news__body">
-                <h2 class="b-column-news__title"><a href="#">Близнецы Уизли будут покорять Голливуд</a></h2>
-                <p class="b-column-news__text">Оливер и Джеймс Фелпсы, известные по фильмам о Гарри Поттере, где они играли близнецов Уизли, наконец вернули свой естественный цвет волос и теперь собираются покорять Голливуд.</p>
-                <a href="#" class="b-column-news__comments b-comments-status">
-                    <span class="b-comments-status__num">734</span>
-                    <span class="b-comments-status__title">комменария</span>
-                </a>
-            </div>
-        </li>
-        <li class="b-grid__g2">
-            <a href="#" class="b-column-news__head">
-                <img src="/st/img/content/phs5.jpg" alt="" />
-            </a>
-            <div class="b-column-news__body">
-                <h2 class="b-column-news__title"><a href="#">Стильный питомец Алессандры Амбросио</a></h2>
-                <p class="b-column-news__text">Алессандра Амбросио внимательно относится не только к собственной внешности, но и к тому, как выглядит ее домашний питомец. Вчера модель отправилась на ужин с мужем, прихватив с собой любимого щенка. Собачка была выкрашена в розовый и фиолетовый цвета.</p>
-                <a href="#" class="b-column-news__comments b-comments-status">
-                    <span class="b-comments-status__num">734</span>
-                    <span class="b-comments-status__title">комменария</span>
-                </a>
-            </div>
-        </li>
-        <li class="b-grid__g2">
-            <a href="#" class="b-column-news__head">
-                <img src="/st/img/content/phs6.jpg" alt="" />
-            </a>
-            <div class="b-column-news__body">
-                <h2 class="b-column-news__title"><a href="#">Бритни Спирс на Мауи демонстрирует свою фигуру</a></h2>
-                <p class="b-column-news__text">Бритни Спирс постепенно возвращает себе былую форму. На фотографии, которую певица выложила в Твиттер, можно заметить, что ее фигура снова становится весьма привлекательной.</p>
-                <a href="#" class="b-column-news__comments b-comments-status">
-                    <span class="b-comments-status__num">734</span>
-                    <span class="b-comments-status__title">комменария</span>
-                </a>
-            </div>
-        </li>
+	    {% for post in lastPosts[:6] %}
+		    {% set photo = post.mainImageId.thumb('140x') %}
+
+		    <li class="b-grid__g2">
+			    <a href="/news/{{ post.id }}" title="{{ post.name|e }}" class="b-column-news__head">
+				    <img src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}" alt="{{ post.name|e }}" />
+			    </a>
+			    <div class="b-column-news__body">
+				    <h2 class="b-column-news__title"><a href="/news/{{ post.id }}">{{ post.name|e }}</a></h2>
+				    <p class="b-column-news__text">{{ post.announceFriendly(100) }}</p>
+				    <a href="/news/{{ post.id }}#comments" title="{{ post.name|e }}" class="b-column-news__comments b-comments-status">
+					    <span class="b-comments-status__num">{{ post.comments }}</span>
+					    <span class="b-comments-status__title">{{ post.comments|ruNumber('%s',['комментарий','комментария','комментариев','нет комментариев']) }}</span>
+				    </a>
+			    </div>
+		    </li>
+	    {% endfor %}
     </ul>
 </section>
 
@@ -343,87 +282,57 @@
 <div class="b-grid__c12 b-fashion-line clearfix">
     <div class="b-grid__g6">
         <ul class="b-column-news clearfix">
-            <li class="b-grid__g2 b-grid__a">
-                <a href="#" class="b-column-news__head">
-                    <img src="/st/img/content/large_front.jpg" alt="" />
-                </a>
-                <div class="b-column-news__body">
-                    <h2 class="b-column-news__title"><a href="#">Christian Louboutin создал туфли Золушки для Disney</a></h2>
-                    <p class="b-column-news__text">Легендарный дизайнер обуви Кристиан Лубутен создал оригинальные туфли для компании Disney. Он воплотил в жизнь сказочные туфельки Золушки.</p>
-                    <a href="#" class="b-column-news__comments b-comments-status">
-                        <span class="b-comments-status__num">734</span>
-                        <span class="b-comments-status__title">комменария</span>
-                    </a>
-                </div>
-            </li>
-            <li class="b-grid__g2">
-                <a href="#" class="b-column-news__head">
-                    <img src="/st/img/content/large_front.jpg" alt="" />
-                </a>
-                <div class="b-column-news__body">
-                    <h2 class="b-column-news__title"><a href="#">Кэти Холмс готовила свой "побег" от Тома Круза несколько месяцев</a></h2>
-                    <p class="b-column-news__text">Новость о том, что Кэти Холмс подала на развод застала в расплох не только поклонников пары, но и самого Тома Круза. Оказывается, актриса тайно готовилась к своему "побегу" от мужа несколько месяцев.</p>
-                    <a href="#" class="b-column-news__comments b-comments-status">
-                        <span class="b-comments-status__num">734</span>
-                        <span class="b-comments-status__title">комменария</span>
-                    </a>
-                </div>
-            </li>
-            <li class="b-grid__g2 b-grid__z">
-                <a href="#" class="b-column-news__head">
-                    <img src="/st/img/content/large_front.jpg" alt="" />
-                </a>
-                <div class="b-column-news__body">
-                    <h2 class="b-column-news__title"><a href="#">Бен Стиллер на гавайском пляже с семьей</a></h2>
-                    <p class="b-column-news__text">Бен Стиллер выкроил в плотном съемочном графике время для отдыха с семьей на Гавайях.</p>
-                    <a href="#" class="b-column-news__comments b-comments-status">
-                        <span class="b-comments-status__num">734</span>
-                        <span class="b-comments-status__title">комменария</span>
-                    </a>
-                </div>
-            </li>
+	        {% for post in lastPosts[6:3] %}
+		        {% set photo = post.mainImageId.thumb('x163') %}
+		        {% set addClass = '' %}
+
+		        {% if loop.first %}
+			        {% set addClass = 'b-grid__a' %}
+		        {% elseif loop.last %}
+			        {% set addClass = 'b-grid__z' %}
+		        {% endif %}
+
+		        <li class="b-grid__g2 {{ addClass }}">
+			        <a href="/news/{{ post.id }}" class="b-column-news__head" title="{{ post.name|e }}">
+				        <img src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}" alt="{{ post.name|e }}" />
+			        </a>
+			        <div class="b-column-news__body">
+				        <h2 class="b-column-news__title"><a href="/news/{{ post.id }}" title="{{ post.name|e }}">{{ post.name|e }}</a></h2>
+				        <p class="b-column-news__text">{{ post.announceFriendly(180) }}</p>
+				        <a href="/news/{{ post.id }}#comments" class="b-column-news__comments b-comments-status">
+					        <span class="b-comments-status__num">{{ post.comments }}</span>
+					        <span class="b-comments-status__title">{{ post.comments|ruNumber('%s',['комментарий','комментария','комментариев','нет комментариев']) }}</span>
+				        </a>
+			        </div>
+		        </li>
+	        {% endfor %}
         </ul>
 
         <ul class="b-column-news clearfix">
-            <li class="b-grid__g2 b-grid__a">
-                <a href="#" class="b-column-news__head">
-                    <img src="/st/img/content/large_front.jpg" alt="" />
-                </a>
-                <div class="b-column-news__body">
-                    <h2 class="b-column-news__title"><a href="#">Первый кадр «Элизиума» с Мэттом Дэймоном в главной роли</a></h2>
-                    <p class="b-column-news__text">В интернете появился первый официальный кадр из фантастической драмы Нила Бломкампа «Элизиум». На снимке изображен воинственный и лысый Мэтт Дэймон.</p>
-                    <a href="#" class="b-column-news__comments b-comments-status">
-                        <span class="b-comments-status__num">734</span>
-                        <span class="b-comments-status__title">комменария</span>
-                    </a>
-                </div>
-            </li>
-            <li class="b-grid__g2">
-                <a href="#" class="b-column-news__head">
-                    <img src="/st/img/content/large_front.jpg" alt="" />
-                </a>
-                <div class="b-column-news__body">
-                    <h2 class="b-column-news__title"><a href="#">Дженнифер Энистон не стремится к идеальной жизни</a></h2>
-                    <p class="b-column-news__text">Многие считают, что жизнь звезд великолепна и безупречна. Но Дженнифер Энистон в недавнем интервью заявила, что идеальная жизнь это всего лишь клише.</p>
-                    <a href="#" class="b-column-news__comments b-comments-status">
-                        <span class="b-comments-status__num">734</span>
-                        <span class="b-comments-status__title">комменария</span>
-                    </a>
-                </div>
-            </li>
-            <li class="b-grid__g2 b-grid__z">
-                <a href="#" class="b-column-news__head">
-                    <img src="/st/img/content/large_front.jpg" alt="" />
-                </a>
-                <div class="b-column-news__body">
-                    <h2 class="b-column-news__title"><a href="#">Кэтрин Зета-Джонс на пляже с семьей</a></h2>
-                    <p class="b-column-news__text">Кэтрин Зета-Джонс провела день со своими родными на пляже в Малибу. Она наблюдала за тем, как веселятся ее дети и даже сделала несколько фото на память.</p>
-                    <a href="#" class="b-column-news__comments b-comments-status">
-                        <span class="b-comments-status__num">734</span>
-                        <span class="b-comments-status__title">комменария</span>
-                    </a>
-                </div>
-            </li>
+	        {% for post in lastPosts[9:3] %}
+		        {% set photo = post.mainImageId.thumb('x163') %}
+		        {% set addClass = '' %}
+
+		        {% if loop.first %}
+			        {% set addClass = 'b-grid__a' %}
+		        {% elseif loop.last %}
+			        {% set addClass = 'b-grid__z' %}
+		        {% endif %}
+
+		        <li class="b-grid__g2 {{ addClass }}">
+			        <a href="/news/{{ post.id }}" class="b-column-news__head" title="{{ post.name|e }}">
+				        <img src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}" alt="{{ post.name|e }}" />
+			        </a>
+			        <div class="b-column-news__body">
+				        <h2 class="b-column-news__title"><a href="/news/{{ post.id }}" title="{{ post.name|e }}">{{ post.name|e }}</a></h2>
+				        <p class="b-column-news__text">{{ post.announceFriendly(180) }}</p>
+				        <a href="/news/{{ post.id }}#comments" class="b-column-news__comments b-comments-status">
+					        <span class="b-comments-status__num">{{ post.comments }}</span>
+					        <span class="b-comments-status__title">{{ post.comments|ruNumber('%s',['комментарий','комментария','комментариев','нет комментариев']) }}</span>
+				        </a>
+			        </div>
+		        </li>
+	        {% endfor %}
         </ul>
     </div>
     <div class="b-grid__g6 clearfix">
@@ -456,9 +365,10 @@
     </div>
     <div class="b-grid__g4">
         <section class="b-star-childrens">
-            <a href="#" class="b-star-childrens__link">
-                <img src="/st/img/content/large_front.jpg" alt="" class="b-star-childrens__img" />
-                <div class="b-star-childrens__news-title">Звёздные дети: Лилли Роуз Мэлоди Депп</div>
+	        {% set photo = randomKid.photo.thumb('287x') %}
+            <a href="/kid/{{ randomKid.id }}" class="b-star-childrens__link">
+                <img src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}" alt="{{ photo.name|e }}" class="b-star-childrens__img" />
+                <div class="b-star-childrens__news-title">Звёздные дети: {{ randomKid.name|e }}</div>
             </a>
         </section>
     </div>
@@ -469,74 +379,26 @@
 
 <section class="b-more-column-news clearfix">
     <ul class="b-column-news">
-        <li class="b-grid__g2">
-            <a href="#" class="b-column-news__head">
-                <img src="/st/img/content/phs1.jpg" alt="" />
-            </a>
-            <div class="b-column-news__body">
-                <h2 class="b-column-news__title"><a href="#">Кейт Мосс и Наоми Кэмпбелл выступят на закрытии Олимпийских игр</a></h2>
-                <p class="b-column-news__text">Осталось всего десять дней до начала летних Олимпийских игр в Лондоне. Организаторы постарались, чтобы это спортивное событие запомнилось. К примеру, на закрытии Олимпиады ожидается модное шоу с участием знаменитейших британских моделей Кейт Мосс, Наоми Кэмпбелл, Роузи Хантингтон-Уайтли, Лили Коул и других.</p>
-                <a href="#" class="b-column-news__comments b-comments-status">
-                    <span class="b-comments-status__num">734</span>
-                    <span class="b-comments-status__title">комменария</span>
-                </a>
-            </div>
-        </li>
-        <li class="b-grid__g2">
-            <a href="#" class="b-column-news__head">
-                <img src="/st/img/content/phs2.jpg" alt="" />
-            </a>
-            <div class="b-column-news__body">
-                <h2 class="b-column-news__title"><a href="#">Алекса Вега подала на развод</a></h2>
-                <p class="b-column-news__text">Звезда фильмов "Дети шпионов" Алекса Вега подала на развод со своим мужем продюсером Шоном Ковелом.</p>
-                <a href="#" class="b-column-news__comments b-comments-status">
-                    <span class="b-comments-status__num">734</span>
-                    <span class="b-comments-status__title">комменария</span>
-                </a>
-            </div>
-        </li>
-        <li class="b-grid__g2">
-            <a href="#" class="b-column-news__head">
-                <img src="/st/img/content/phs3.jpg" alt="" />
-            </a>
-            <div class="b-column-news__body">
-                <h2 class="b-column-news__title"><a href="#">Лейтон Мистер в журнале Vogue Китай. Август 2012</a></h2>
-                <p class="b-column-news__text">Лейтон Мистер приняла участие в фотосессии для китайского Vogue. Она появилась на страницах августовского выпуска.</p>
-                <a href="#" class="b-column-news__comments b-comments-status">
-                    <span class="b-comments-status__num">734</span>
-                    <span class="b-comments-status__title">комменария</span>
-                </a>
-            </div>
-        </li>
-        <li class="b-grid__g2">
-            <a href="#" class="b-column-news__head">
-                <img src="/st/img/content/phs4.jpg" alt="" />
-            </a>
-            <div class="b-column-news__body">
-                <h2 class="b-column-news__title"><a href="#">Линия пижам с изображением Джастина Бибера изъята из продажи</a></h2>
-                <p class="b-column-news__text">Миллионы девушек сгорают от любви к Джастину Биберу, но, надевая пижаму с изображением любимого певца, они рискуют сгореть по-настоящему.</p>
-                <a href="#" class="b-column-news__comments b-comments-status">
-                    <span class="b-comments-status__num">734</span>
-                    <span class="b-comments-status__title">комменария</span>
-                </a>
-            </div>
-        </li>
-        <li class="b-grid__g2">
-            <a href="#" class="b-column-news__head">
-                <img src="/st/img/content/phs5.jpg" alt="" />
-            </a>
-            <div class="b-column-news__body">
-                <h2 class="b-column-news__title"><a href="#">Новый аромат Бейонсе Midnight Heat</a></h2>
-                <p class="b-column-news__text">Продолжая свою серию парфюма, Бейонсе выпустила новый аромат Midnight Heat. Он описывается как дразнящий, чувственный и таинственный, необходимый аксессуар, чтобы выделить ваше внутреннее сияние, почувствовать уверенность в себе и сексуальную привлекательность.</p>
-                <a href="#" class="b-column-news__comments b-comments-status">
-                    <span class="b-comments-status__num">734</span>
-                    <span class="b-comments-status__title">комменария</span>
-                </a>
-            </div>
-        </li>
+	    {% for post in lastPosts[12:5] %}
+		    {% set photo = post.mainImageId.thumb('140x') %}
+
+		    <li class="b-grid__g2">
+			    <a href="/news/{{ post.id }}" title="{{ post.name|e }}" class="b-column-news__head">
+				    <img src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}" alt="{{ post.name|e }}" />
+			    </a>
+			    <div class="b-column-news__body">
+				    <h2 class="b-column-news__title"><a href="/news/{{ post.id }}">{{ post.name|e }}</a></h2>
+				    <p class="b-column-news__text">{{ post.announceFriendly(100) }}</p>
+				    <a href="/news/{{ post.id }}#comments" title="{{ post.name|e }}" class="b-column-news__comments b-comments-status">
+					    <span class="b-comments-status__num">{{ post.comments }}</span>
+					    <span class="b-comments-status__title">{{ post.comments|ruNumber('%s',['комментарий','комментария','комментариев','нет комментариев']) }}</span>
+				    </a>
+			    </div>
+		    </li>
+	    {% endfor %}
         <li class="b-grid__g2">
             <div class="b-column-news__head"></div>
-            <a href="#" class="b-column-news__more-news">ещё <br />новости</a>
+            <a href="/news/page2" class="b-column-news__more-news">ещё <br />новости</a>
         </li>
     </ul>
 </section>

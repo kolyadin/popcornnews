@@ -6,6 +6,7 @@ use popcorn\app\controllers\ControllerInterface;
 use popcorn\app\controllers\GenericController;
 use popcorn\model\dataMaps\PersonDataMap;
 use popcorn\model\dataMaps\TagDataMap;
+use popcorn\model\persons\KidFactory;
 use popcorn\model\posts\PostFactory;
 
 /**
@@ -29,14 +30,27 @@ class MainPageController extends GenericController implements ControllerInterfac
 		$this->buildPersons();
 		$this->buildTags();
 		$this->buildTopPosts();
+		$this->buildLastPosts();
+		$this->buildRandomKid();
+
 
 		$this->twigData['showSidebar'] = false;
 
-		$this->getTwig()->display('/MainPage.twig',$this->twigData);
+		$this->getTwig()->display('/MainPage.twig', $this->twigData);
 
 	}
 
-	private function buildTopPosts(){
+	private function buildRandomKid() {
+		$kid = KidFactory::getRandomKid();
+		$this->twigData['randomKid'] = $kid;
+	}
+
+	private function buildLastPosts() {
+		$lastPosts = PostFactory::getPosts(0, 17);
+		$this->twigData['lastPosts'] = $lastPosts;
+	}
+
+	private function buildTopPosts() {
 		$topPosts = PostFactory::getTopPosts(10);
 		$this->twigData['topPosts'] = $topPosts;
 	}
