@@ -188,7 +188,13 @@ class PostController extends GenericController implements ControllerInterface {
 		$post->setName($request->post('name'));
 
 		$createDate = strtotime(vsprintf('%3$04u-%2$02u-%1$02u %4$02u:%5$02u:00', sscanf($request->post('createDate'), '%02u.%02u.%04u %02u:%02u')));
+
+
+
+
 		$post->setCreateDate($createDate);
+
+		$post->setStatus($request->post('status'));
 
 		$post->setSource($request->post('source'));
 		$post->setAnnounce($request->post('announce'));
@@ -303,6 +309,10 @@ class PostController extends GenericController implements ControllerInterface {
 		//endregion
 
 		$this->newsDataMap->save($post);
+
+		print '<pre>'.print_r($post,true).'</pre>';
+
+		print '<pre>'.print_r($_POST,true).'</pre>';die;
 
 		if ($post->getId()){
 			$this->getSlim()->redirect(sprintf('/office/post%u?status=updated',$post->getId()));

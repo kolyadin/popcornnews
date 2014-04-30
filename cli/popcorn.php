@@ -9,6 +9,7 @@ use popcorn\cli\entity\KidEntity;
 use popcorn\cli\entity\PersonEntity;
 use popcorn\cli\entity\PollEntity;
 use popcorn\cli\entity\PostEntity;
+use popcorn\cli\entity\TagEntity;
 use popcorn\cli\entity\UserEntity;
 use Symfony\Component\Console\Application;
 
@@ -28,6 +29,7 @@ class PopcornCliApp extends Application {
 
 $cliApp = new PopcornCliApp();
 
+$cliApp->addCommands(TagEntity::getCommands());
 $cliApp->addCommands(PersonEntity::getCommands());
 $cliApp->addCommands(PostEntity::getCommands());
 $cliApp->addCommands(UserEntity::getCommands());

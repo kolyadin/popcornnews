@@ -42,9 +42,26 @@ class PersonFactory {
 		return $dataMap->findById($person->getId());
 	}
 
-	public static function getPersonPhotosByPersonId($personId){
+	public static function getPersonPhotosByPersonId($personId) {
 		$dataMap = new PersonImageDataMap();
 		return $dataMap->findById($personId);
+	}
+
+
+	public static function getFilmography(Person $person, $from = 0, $count = -1) {
+		self::checkDataMap();
+
+		return self::$dataMap->getFilmography($person->getId(), $from, $count);
+	}
+
+	/**
+	 * @param Person $person
+	 * @return int
+	 */
+	public static function getFilmographyCount(Person $person) {
+		self::checkDataMap();
+
+		return self::$dataMap->getFilmographyCount($person->getId());
 	}
 
 	/**

@@ -334,6 +334,7 @@
 				addSortingDragAndDrop: function(){
 					$('div[data-element=post-images]').sortable({
 						placeholder: 'ui-state-highlight',
+
 						axis : 'y',
 						items : 'div[data-element=image]',
 						handle: 'img',
@@ -840,7 +841,7 @@
 					</div>
 				</div>
 				<div class="portlet-body">
-					<div class="form-group last">
+					<div class="form-group">
 						<label class="control-label col-md-3">Заголовок новости: <span class="required">*</span></label>
 
 						<div class="col-md-9">
@@ -849,7 +850,14 @@
 						</div>
 					</div>
 
-					<div class="form-group last">
+					<div class="form-group">
+						<div class="alert alert-info alert-dismissable">
+							<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+							<p>Указав дату публикации в <strong>будущем времени</strong>, новость будет опубликована <strong>при наступлении</strong> указанной даты и времени</p>
+							<p>Очень удобно для публикации новостей в выходные или каких-то анонсов</p>
+							<p>Реальная дата публикации может отличаться от указанной максимум на 5 минут</p>
+						</div>
+
 						<label class="control-label col-md-3">Дата публикации: <span class="required">*</span></label>
 
 						<div class="col-md-9">
@@ -859,7 +867,25 @@
 						</div>
 					</div>
 
-					<div class="form-group last">
+					<div class="form-group">
+						<div class="alert alert-info alert-dismissable">
+							<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+							<p>Если дата публикации в будущем времени, статус автоматически станет "Запланировано"</p>
+						</div>
+
+						<label class="control-label col-md-3">Статус новости:</label>
+
+						<div class="col-md-9">
+							<select class="form-control" name="status">
+								<option value="0"{% if post.status == constant('popcorn\\model\\posts\\NewsPost::STATUS_NOT_PUBLISHED') %}selected{% endif %}>Не публиковать</option>
+								<option value="1"{% if post.status == constant('popcorn\\model\\posts\\NewsPost::STATUS_PUBLISHED') %}selected{% endif %}>Публиковать</option>
+								<option value="2"{% if post.status == constant('popcorn\\model\\posts\\NewsPost::STATUS_PLANNED') %}selected{% endif %}>Запланировано</option>
+							</select>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+					<div class="form-group">
 						<label class="control-label col-md-3">Основное фото: <span class="required">*</span></label>
 
 						<div class="col-md-9">
@@ -868,7 +894,7 @@
 						</div>
 					</div>
 
-					<div class="form-group last">
+					<div class="form-group">
 						<label class="control-label col-md-3">Анонс (для списков или, если, новость короткая):</label>
 
 						<div class="col-md-9">
@@ -877,7 +903,7 @@
 						</div>
 					</div>
 
-					<div class="form-group last">
+					<div class="form-group">
 						<label class="control-label col-md-3">Подробное описание новости:</label>
 
 						<div class="col-md-9">
@@ -1038,7 +1064,7 @@
 					{% else %}
 						<div class="alert alert-info alert-dismissable">
 							<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-							После создания новости блок Fashion Battle нельзя редактировать
+							Блок Fashion Battle <strong>нельзя редактировать</strong> и <strong>нельзя удалить</strong>
 						</div>
 					{% endif %}
 

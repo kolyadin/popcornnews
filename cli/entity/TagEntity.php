@@ -9,9 +9,7 @@ class TagEntity {
 	static function getCommands() {
 
 		return array(
-			new command\post\RemoveAll(),
-			new command\post\Import(),
-			new command\post\ImportComments()
+			new command\tag\ImportMovies(),
 		);
 
 	}

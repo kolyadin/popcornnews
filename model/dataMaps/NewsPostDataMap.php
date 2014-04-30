@@ -46,9 +46,9 @@ class NewsPostDataMap extends DataMap {
 
 	private function initStatements() {
 		$this->insertStatement =
-			$this->prepare("INSERT INTO pn_news (announce, source, sent, uploadRSS, mainImageId, name, updateDate, createDate, editDate, content, allowComment, published, views, comments, type) VALUES (:announce, :source, :sent, :uploadRSS, :mainImageId, :name, :updateDate, :createDate, :editDate, :content, :allowComment, :published, :views, :comments, :type)");
+			$this->prepare("INSERT INTO pn_news (announce, source, sent, uploadRSS, mainImageId, name, updateDate, createDate, editDate, content, allowComment, status, views, comments, type) VALUES (:announce, :source, :sent, :uploadRSS, :mainImageId, :name, :updateDate, :createDate, :editDate, :content, :allowComment, :status, :views, :comments, :type)");
 		$this->updateStatement =
-			$this->prepare("UPDATE pn_news SET announce=:announce, source=:source, sent=:sent, uploadRSS=:uploadRSS, mainImageId=:mainImageId, name=:name, updateDate=:updateDate, createDate=:createDate, content=:content, allowComment=:allowComment, published=:published, views=:views, comments=:comments, type=:type WHERE id=:id");
+			$this->prepare("UPDATE pn_news SET announce=:announce, source=:source, sent=:sent, uploadRSS=:uploadRSS, mainImageId=:mainImageId, name=:name, updateDate=:updateDate, createDate=:createDate, content=:content, allowComment=:allowComment, status=:status, views=:views, comments=:comments, type=:type WHERE id=:id");
 		$this->deleteStatement = $this->prepare("DELETE FROM pn_news WHERE id=:id");
 		$this->findOneStatement = $this->prepare("SELECT * FROM pn_news WHERE id=:id");
 	}
@@ -68,7 +68,7 @@ class NewsPostDataMap extends DataMap {
 		$this->insertStatement->bindValue(":editDate", $item->getEditDate());
 		$this->insertStatement->bindValue(":content", $item->getContent());
 		$this->insertStatement->bindValue(":allowComment", $item->getAllowComment());
-		$this->insertStatement->bindValue(":published", $item->isPublished());
+		$this->insertStatement->bindValue(":status", $item->getStatus());
 		$this->insertStatement->bindValue(":views", $item->getViews());
 		$this->insertStatement->bindValue(":comments", $item->getComments());
 		$this->insertStatement->bindValue(":type", $item->getType());
@@ -88,7 +88,7 @@ class NewsPostDataMap extends DataMap {
 		$this->updateStatement->bindValue(":createDate", $item->getCreateDate());
 		$this->updateStatement->bindValue(":content", $item->getContent());
 		$this->updateStatement->bindValue(":allowComment", $item->getAllowComment());
-		$this->updateStatement->bindValue(":published", $item->isPublished());
+		$this->updateStatement->bindValue(":status", $item->getStatus());
 		$this->updateStatement->bindValue(":views", $item->getViews());
 		$this->updateStatement->bindValue(":comments", $item->getComments());
 		$this->updateStatement->bindValue(":type", $item->getType());

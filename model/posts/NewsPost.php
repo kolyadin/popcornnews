@@ -20,6 +20,17 @@ use Stringy\Stringy as S;
  */
 class NewsPost extends Model {
 
+	//Новость не опубликована, невозможно найти на сайте
+	const STATUS_NOT_PUBLISHED = 0;
+
+	//Новость опубликована и доступна везде на сайте
+	const STATUS_PUBLISHED = 1;
+
+	//Новость запланирована (дата в будущем)
+	const STATUS_PLANNED = 2;
+
+
+
 	private $encoding = 'utf-8';
 
 	//region Fields
@@ -96,7 +107,7 @@ class NewsPost extends Model {
 	 * @var int
 	 * @export
 	 */
-	protected $published = 0;
+	protected $status = self::STATUS_PUBLISHED;
 	/**
 	 * @var int
 	 * @export
@@ -182,11 +193,11 @@ class NewsPost extends Model {
 	}
 
 	/**
-	 * @return bool
+	 * @return int
 	 * @get published
 	 */
-	public function isPublished() {
-		return $this->published;
+	public function getStatus() {
+		return $this->status;
 	}
 
 	/**
@@ -356,10 +367,10 @@ class NewsPost extends Model {
 	}
 
 	/**
-	 * @param int $published
+	 * @param int $status
 	 */
-	public function setPublished($published) {
-		$this->published = $published;
+	public function setStatus($status) {
+		$this->status = $status;
 		$this->changed();
 	}
 

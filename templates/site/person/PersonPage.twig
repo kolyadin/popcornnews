@@ -194,102 +194,36 @@
 			{% endif %}
 		</div>
 		<div class="b-grid__g4 b-grid__z">
-			<section class="b-person__films">
-				<div class="b-person__films__title-cont">
-					<h1 class="b-person__films__title b-rubrics-title b-rubrics-title_s24">
-						<a rel="nofollow" href="#">фильмография</a>
-					</h1>
-					<span class="b-person__films__counter b-counter b-counter-section"><a rel="nofollow" href="#">35</a></span>
-				</div>
-				<div class="b-person__films__block">
-					<ul class="b-person__films__list">
-						<li>
-							<div class="b-person__films__item-name">
-								<noindex>
-									<a rel="nofollow" href="#">Малефисента</a>
-									<span>Maleficent</span>
-								</noindex>
-							</div>
-							<div class="b-person__films__item-year">
-								<span class="b-person__films__item-year-val">2014</span>
-								<span>год</span>
-							</div>
-						</li>
-						<li>
-							<div class="b-person__films__item-name">
-								<noindex>
-									<a rel="nofollow" href="#">Малефисента</a>
-									<span>Maleficent</span>
-								</noindex>
-							</div>
-							<div class="b-person__films__item-year">
-								<span class="b-person__films__item-year-val">2014</span>
-								<span>год</span>
-							</div>
-						</li>
-						<li>
-							<div class="b-person__films__item-name">
-								<noindex>
-									<a rel="nofollow" href="#">Малефисента</a>
-									<span>Maleficent</span>
-								</noindex>
-							</div>
-							<div class="b-person__films__item-year">
-								<span class="b-person__films__item-year-val">2014</span>
-								<span>год</span>
-							</div>
-						</li>
-						<li>
-							<div class="b-person__films__item-name">
-								<noindex>
-									<a rel="nofollow" href="#">Путешествие Джейн</a>
-									<span>Jane's Journey</span>
-								</noindex>
-							</div>
-							<div class="b-person__films__item-year">
-								<span class="b-person__films__item-year-val">2014</span>
-								<span>год</span>
-							</div>
-						</li>
-						<li>
-							<div class="b-person__films__item-name">
-								<noindex>
-									<a rel="nofollow" href="#">Кунг-Фу Панда 2 IMAX 3D</a>
-									<span>Kung Fu Panda 2</span>
-								</noindex>
-							</div>
-							<div class="b-person__films__item-year">
-								<span class="b-person__films__item-year-val">2014</span>
-								<span>год</span>
-							</div>
-						</li>
-						<li>
-							<div class="b-person__films__item-name">
-								<noindex>
-									<a rel="nofollow" href="#">Малефисента</a>
-									<span>Maleficent</span>
-								</noindex>
-							</div>
-							<div class="b-person__films__item-year">
-								<span class="b-person__films__item-year-val">2014</span>
-								<span>год</span>
-							</div>
-						</li>
-						<li>
-							<div class="b-person__films__item-name">
-								<noindex>
-									<a rel="nofollow" href="#">Кунг-Фу Панда 2 IMAX 3D</a>
-									<span>Kung Fu Panda 2</span>
-								</noindex>
-							</div>
-							<div class="b-person__films__item-year">
-								<span class="b-person__films__item-year-val">2014</span>
-								<span>год</span>
-							</div>
-						</li>
-					</ul>
-				</div>
-			</section>
+			{% if filmography %}
+				<section class="b-person__films">
+					<div class="b-person__films__title-cont">
+						<h1 class="b-person__films__title b-rubrics-title b-rubrics-title_s24">
+							<a rel="nofollow" href="/persons/{{ person.urlName }}/kino">фильмография</a>
+						</h1>
+						<span class="b-person__films__counter b-counter b-counter-section"><a rel="nofollow" href="/persons/{{ person.urlName }}/kino">{{ filmographyTotal }}</a></span>
+					</div>
+					<div class="b-person__films__block">
+						<ul class="b-person__films__list">
+							{% for film in filmography %}
+								<li>
+									<div class="b-person__films__item-name">
+										<noindex>
+											<a rel="nofollow" href="http://www.kinoafisha.info/movies/{{ film.id }}/">{{ film.name|e }}</a>
+											{% if film.originalName %}
+												<span>{{ film.originalName|e }}</span>
+											{% endif %}
+										</noindex>
+									</div>
+									<div class="b-person__films__item-year">
+										<span class="b-person__films__item-year-val">{{ film.year }}</span>
+										<span>год</span>
+									</div>
+								</li>
+							{% endfor %}
+						</ul>
+					</div>
+				</section>
+			{% endif %}
 		</div>
 	</section>
 

@@ -53,9 +53,9 @@ class PersonController extends GenericController implements ControllerInterface 
 		$isFan = function (Route $route) use ($slim) {
 
 			$dataMap = new PersonFanDataMap();
-			$fan = $dataMap->isFan(UserFactory::getCurrentUser(),PersonFactory::getPerson(self::$personId));
+			$fan = $dataMap->isFan(UserFactory::getCurrentUser(), PersonFactory::getPerson(self::$personId));
 
-			$this->getTwig()->addGlobal('isFan',$fan);
+			$this->getTwig()->addGlobal('isFan', $fan);
 
 		};
 
@@ -155,9 +155,9 @@ class PersonController extends GenericController implements ControllerInterface 
 				$slim->get('/topic/:topicId', [new PersonTalksController(), 'topicPage']);
 
 				$slim
-					->map('/post', function(){
+					->map('/post', function () {
 
-						if (UserFactory::getCurrentUser() instanceof GuestUser){
+						if (UserFactory::getCurrentUser() instanceof GuestUser) {
 							$this->getSlim()->error(new NotAuthorizedException());
 						}
 
@@ -187,7 +187,7 @@ class PersonController extends GenericController implements ControllerInterface 
 		$person = PersonFactory::getPerson($personId);
 
 		return [
-			'person' => $person,
+			'person'     => $person,
 			'personLink' => sprintf('/persons/%s', $person->getUrlName())
 		];
 	}
@@ -229,7 +229,7 @@ class PersonController extends GenericController implements ControllerInterface 
 			]);
 
 			$dataMap = new NewsTagDataMap($dataMapHelper);
-			$news['paginator'] = [0,6];
+			$news['paginator'] = [0, 6];
 			$news['posts'] = $dataMap->findByPerson($person, $news['paginator']);
 		}
 
@@ -252,19 +252,27 @@ class PersonController extends GenericController implements ControllerInterface 
 		{
 			$dataMap = new PersonFanDataMap();
 
-			$fans['paginator'] = [0,9];
-			$fans['fans'] = $dataMap->findById(self::$personId,['id'=>'desc'],$fans['paginator']);
+			$fans['paginator'] = [0, 9];
+			$fans['fans'] = $dataMap->findById(self::$personId, ['id' => 'desc'], $fans['paginator']);
+		}
+
+		//Фильмография
+		{
+			$filmography = PersonFactory::getFilmography($person, 0, 7);
+			$filmographyCount = PersonFactory::getFilmographyCount($person);
 		}
 
 		$this
 			->getTwig()
 			->display('/person/PersonPage.twig', [
-				'person' => $person,
-				'posts' => $news['posts'],
-				'postsTotal' => $news['paginator']['overall'],
-				'fans' => $fans['fans'],
-				'fansTotal' => $fans['paginator']['overall'],
-				'links' => $links
+				'person'           => $person,
+				'posts'            => $news['posts'],
+				'postsTotal'       => $news['paginator']['overall'],
+				'fans'             => $fans['fans'],
+				'fansTotal'        => $fans['paginator']['overall'],
+				'links'            => $links,
+				'filmography'      => $filmography,
+				'filmographyTotal' => $filmographyCount
 			]);
 	}
 
@@ -306,8 +314,8 @@ class PersonController extends GenericController implements ControllerInterface 
 
 		foreach ($persons as $person) {
 			$allPersons[] = [
-				'urlName' => $person->getUrlName(),
-				'name' => $person->getName(),
+				'urlName'   => $person->getUrlName(),
+				'name'      => $person->getName(),
 				'newsCount' => $person->getNewsCount()
 			];
 		}
@@ -363,8 +371,8 @@ class PersonController extends GenericController implements ControllerInterface 
 			$dataMapHelper = new DataMapHelper();
 			$dataMapHelper->setRelationship([
 				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_TAGS,
-				'popcorn\\model\\dataMaps\\TagDataMap' => TagDataMap::WITH_ENTITY,
-				'popcorn\\model\\dataMaps\\PersonDataMap' => PersonDataMap::WITH_NONE
+				'popcorn\\model\\dataMaps\\TagDataMap'      => TagDataMap::WITH_ENTITY,
+				'popcorn\\model\\dataMaps\\PersonDataMap'   => PersonDataMap::WITH_NONE
 			]);
 
 			$dataMap = new NewsTagDataMap($dataMapHelper);
@@ -374,7 +382,7 @@ class PersonController extends GenericController implements ControllerInterface 
 			$posts = $dataMap->findByPerson($person, $paginator);
 		}
 
-		if ($page > $paginator['pages']){
+		if ($page > $paginator['pages']) {
 			$this->getSlim()->notFound();
 		}
 
@@ -392,11 +400,11 @@ class PersonController extends GenericController implements ControllerInterface 
 		$this
 			->getTwig()
 			->display('/person/PersonNews.twig', [
-				'person' => $person,
-				'posts' => $posts,
+				'person'     => $person,
+				'posts'      => $posts,
 				'postsSmall' => $postsSmall,
-				'paginator' => [
-					'pages' => $paginator['pages'],
+				'paginator'  => [
+					'pages'  => $paginator['pages'],
 					'active' => $page
 				]
 			]);
@@ -433,7 +441,7 @@ class PersonController extends GenericController implements ControllerInterface 
 		$dataMap = new PersonFanDataMap($dataMapHelper);
 		$users = $dataMap->findById(self::$personId, ['id' => 'asc'], $paginator);
 
-		if ($page > $paginator['pages']){
+		if ($page > $paginator['pages']) {
 			$this->getSlim()->notFound();
 		}
 
@@ -447,11 +455,11 @@ class PersonController extends GenericController implements ControllerInterface 
 		}
 
 		$this->getTwig()->display('/person/fans/PersonFans.twig', [
-			'person' => $person,
-			'fans' => $users,
+			'person'    => $person,
+			'fans'      => $users,
 			'customNum' => 1,
 			'paginator' => [
-				'pages' => $paginator['pages'],
+				'pages'  => $paginator['pages'],
 				'active' => $page
 			]
 		]);
@@ -486,8 +494,8 @@ class PersonController extends GenericController implements ControllerInterface 
 		}
 
 		$this->getTwig()->display('/person/fans/PersonNewFans.twig', [
-			'person' => $person,
-			'fans' => $users,
+			'person'    => $person,
+			'fans'      => $users,
 			'customNum' => 1,
 		]);
 
@@ -517,7 +525,7 @@ class PersonController extends GenericController implements ControllerInterface 
 		$dataMap = new PersonFanDataMap($dataMapHelper);
 		$users = $dataMap->find(self::$personId, ['info.cityId' => UserFactory::getCurrentUser()->getUserInfo()->getCityId()], ['id' => 'asc'], $paginator);
 
-		if ($page > $paginator['pages']){
+		if ($page > $paginator['pages']) {
 			$this->getSlim()->notFound();
 		}
 
@@ -530,11 +538,11 @@ class PersonController extends GenericController implements ControllerInterface 
 		}
 
 		$this->getTwig()->display('/person/fans/PersonLocalFans.twig', [
-			'person' => $person,
-			'fans' => $users,
+			'person'    => $person,
+			'fans'      => $users,
 			'customNum' => 1,
 			'paginator' => [
-				'pages' => $paginator['pages'],
+				'pages'  => $paginator['pages'],
 				'active' => $page
 			]
 		]);
@@ -550,8 +558,8 @@ class PersonController extends GenericController implements ControllerInterface 
 
 		$dataMap = new PersonFanDataMap();
 
-		if ($dataMap->isFan(UserFactory::getCurrentUser(),$person)){
-			$this->getSlim()->redirect(sprintf('/persons/%s/fans/unsubscribe',$person->getUrlName()));
+		if ($dataMap->isFan(UserFactory::getCurrentUser(), $person)) {
+			$this->getSlim()->redirect(sprintf('/persons/%s/fans/unsubscribe', $person->getUrlName()));
 		}
 
 		$this->getTwig()->display('/person/fans/PersonFansSubscribe.twig', [
@@ -569,8 +577,8 @@ class PersonController extends GenericController implements ControllerInterface 
 
 		$dataMap = new PersonFanDataMap();
 
-		if (!$dataMap->isFan(UserFactory::getCurrentUser(),$person)){
-			$this->getSlim()->redirect(sprintf('/persons/%s/fans/subscribe',$person->getUrlName()));
+		if (!$dataMap->isFan(UserFactory::getCurrentUser(), $person)) {
+			$this->getSlim()->redirect(sprintf('/persons/%s/fans/subscribe', $person->getUrlName()));
 		}
 
 		$this->getTwig()->display('/person/fans/PersonFansUnSubscribe.twig', [

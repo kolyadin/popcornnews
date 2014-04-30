@@ -113,7 +113,7 @@ class PostFactory {
 	public static function getTopPosts($count) {
 		self::checkDataMap();
 
-		return self::$dataMap->findRaw("published = 1 AND createDate > " . strtotime("-2 week"),
+		return self::$dataMap->findRaw("status = ".NewsPost::STATUS_PUBLISHED." AND createDate > " . strtotime("-2 week"),
 			array('comments' => DataMap::DESC, 'createDate' => DataMap::DESC),
 			0, $count);
 	}

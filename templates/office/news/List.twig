@@ -55,6 +55,12 @@
 		});
 	</script>
 
+	<script type="text/javascript">
+		$(function () {
+			$('#spinner-comments-count').spinner({value:0, step: 1, min: 0, max: 200});
+		})
+	</script>
+
 {% endblock %}
 
 {% block PageTop %}
@@ -111,14 +117,74 @@
 			{{ html.paginator(paginator.pages,paginator.active,'/office/posts/page%u') }}
 		</div>
 
+		<div class="portlet">
+			<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-reorder"></i>Фильтровать по
+				</div>
+				<div class="tools">
+					<a href="javascript:;" class="collapse"></a>
+				</div>
+			</div>
+			<div class="portlet-body">
+
+				<div class="form-group">
+					<label class="control-label col-md-3" style="padding-top:7px;">статусу:</label>
+
+					<div class="col-md-9">
+						<select class="form-control" name="" id="">
+							<option value="">Все новости</option>
+							<option value="0">Неопубликованные новости</option>
+							<option value="1">Опубликованные новости</option>
+							<option value="2">Запланированные новости</option>
+						</select>
+						<span class="help-block"></span>
+					</div>
+				</div>
+
+
+				<div class="form-group">
+					<label class="control-label col-md-3" style="padding-top:7px;">кол-ву комментов:</label>
+
+					<div class="col-md-9">
+						<select class="form-control input-small" id="filter-comments" style="float: left;margin-right: 10px;">
+							<option value="">не важно</option>
+							<option value="0">меньше</option>
+							<option value="1">равно</option>
+							<option value="2">больше</option>
+						</select>
+
+						<div id="spinner-comments-count" class="hide">
+							<div class="input-group input-small">
+								<input type="text" class="spinner-input form-control" maxlength="3" readonly>
+								<div class="spinner-buttons input-group-btn btn-group-vertical">
+									<button type="button" class="btn spinner-up btn-xs btn-info">
+										<i class="fa fa-angle-up"></i>
+									</button>
+									<button type="button" class="btn spinner-down btn-xs btn-info">
+										<i class="fa fa-angle-down"></i>
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+				<div class="clearfix"></div>
+			</div>
+		</div>
+
 		<div class="table-responsive">
 			<table class="table table-hover table-items">
 				<thead>
-				<tr>
-					<th></th>
-					<th>Дата и время создания</th>
-					<th>Название</th>
-				</tr>
+					<tr>
+						<th></th>
+						<th>Дата публикации</th>
+						<th></th>
+						<th></th>
+						<th>Название</th>
+					</tr>
 				</thead>
 				<tbody>
 				{% for post in posts %}
@@ -131,7 +197,17 @@
 							   href="#modal-remove"><i class="fa fa-trash-o"></i></a>
 						</td>
 						<td>{{ post.createDate|date('d.m.Y H:i') }}</td>
-						<td style=""><a href="/office/post{{ post.id }}">{{ post.name|e }}</a></td>
+						<td>
+							{% if post.status == constant('popcorn\\model\\posts\\NewsPost::STATUS_PUBLISHED') %}
+								<span style="width:30px;" class="btn btn-xs btn-success tooltips" data-original-title="Новость опубликована" data-placement="top"><i class="fa fa-check"></i></span>
+							{% elseif post.status == constant('popcorn\\model\\posts\\NewsPost::STATUS_NOT_PUBLISHED') %}
+								<span style="width:30px;" class="btn btn-xs btn-danger tooltips" data-original-title="Новость неопубликована" data-placement="top"><i class="fa fa-times"></i></span>
+							{% elseif post.status == constant('popcorn\\model\\posts\\NewsPost::STATUS_PLANNED') %}
+								<span style="width:30px;" class="btn btn-xs btn-warning tooltips" data-original-title="Новость запланирована" data-placement="top"><i class="fa fa-calendar"></i></span>
+							{% endif %}
+						</td>
+						<td><span class="badge badge-info tooltips" data-original-title="{{ post.comments|ruNumber('%s',['комментарий','комментария','комментариев']) }}">{{ post.comments }}</span></td>
+						<td><a href="/office/post{{ post.id }}">{{ post.name|e }}</a></td>
 					</tr>
 				{% endfor %}
 				</tbody>
