@@ -1,4 +1,12 @@
-{% extends '/Generic.twig' %}
+{% extends '/news/PostGeneric.twig' %}
+
+{% block HeadEnd %}
+
+	<style type="text/css">
+		.ui-state-highlight { height: 45px; border: 3px dashed #aaa; background: #ccc; }
+	</style>
+
+{% endblock %}
 
 {% block BodyEnd %}
 
@@ -55,8 +63,8 @@
 
 	<script id="tmpl-image-box" type="x-tmpl-mustache">
 		<div class="form-group last" data-element="image">
-			<input type="hidden" name="image[]" value="{{ imageId }}"/>
-			<label class="control-label col-md-1"></label>
+			<input type="hidden" name="images[]" value="{{ imageId }}"/>
+			<label class="control-label col-md-1">&nbsp;</label>
 			<div class="col-md-10">
 
 				<div style="float:left;margin-right: 20px;">
@@ -65,8 +73,8 @@
 					</a>
 				</div>
 				<div style="float:left;">
-					<p><input class="form-control" style="width:450px;" name="title[{{ imageId }}]" type="text" placeholder="Название фото" value=""/></p>
-					<p><input class="form-control" style="width:450px;" name="caption[{{ imageId }}]" type="text" placeholder="Подпись к фото" value=""/></p>
+					<p><input class="form-control" style="width:450px;" name="imagesTitle[{{ imageId }}]" type="text" placeholder="Название фото" value="{{ title }}"/></p>
+					<p><input class="form-control" style="width:450px;" name="imagesCaption[{{ imageId }}]" type="text" placeholder="Подпись к фото" value="{{ caption }}"/></p>
 					<p><input class="btn btn-danger" type="button" value="убрать" data-action="remove-image"/></p>
 				</div>
 
@@ -80,7 +88,7 @@
 			<label class="control-label col-md-3">Ответ: <span class="required">*</span></label>
 			<div class="col-md-9">
 				<div class="input-group input-xlarge">
-					<input name="opinion[]" class="form-control" type="text" required="true"/>
+					<input name="opinion[]" class="form-control" type="text" required="true" placeholder="Вариант ответа"/>
 					<span class="input-group-btn">
 						<button class="btn btn-info" type="button" data-action="poll-remove-answer">убрать</button>
 					</span>
@@ -95,6 +103,7 @@
 
 	</script>
 
+	{#Fashion Battle#}
 	<script type="text/javascript">
 		$(function () {
 			//Добавляем fashion battle к новости
@@ -127,7 +136,7 @@
 				handler: function(){
 					this.checkParent();
 
-					$this = this;
+					var $this = this;
 
 					$this.fbAddButton.removeClass('hide');
 
@@ -240,6 +249,125 @@
 		})
 	</script>
 
+	{#Приложенные фотки#}
+	<script type="text/javascript">
+		$(function () {
+			var images = {
+				handler: function(){
+
+					$this = this;
+
+					var uploaderImages = new plupload.Uploader({
+						runtimes: 'html5,flash,silverlight,html4',
+						browse_button: 'add-images',
+						max_file_size: '10mb',
+						unique_names: true,
+						max_file_count: 1,
+
+						multipart_params : {
+							'resize' : '200x'
+						},
+
+						url: "/office/ajax/upload-attach",
+
+						flash_swf_url: '/office/assets/plugins/plupload-2.1.1/js/Moxie.swf',
+						silverlight_xap_url: '/office/assets/plugins/plupload-2.1.1/js/Moxie.xap',
+
+						filters: [
+							{title: "Фотографии", extensions: "jpg,jpeg,gif,png"}
+						],
+
+						init: {
+							PostInit: function () {
+
+							},
+							UploadComplete: function (up, files) {
+								$this.addSortingDragAndDrop();
+							},
+							BeforeUpload: function (up, file) {
+							},
+							FilesAdded: function (up, files) {
+								up.start();
+							},
+							FileUploaded: function (upldir, file, object) {
+
+								var data = $.parseJSON(object.response);
+
+								$this.addImage({
+									imageId: data.id,
+									url: data.url,
+									thumbUrl: data.thumb.url,
+									title: '',
+									caption: ''
+								});
+
+							},
+
+							UploadProgress: function (up, file) {
+
+							},
+
+							Error: function (up, err) {
+
+							}
+						}
+
+					});
+					uploaderImages.init();
+
+					this.applyRemoveAbility();
+				},
+				addImage: function(params){
+					var $html = Mustache.render($('#tmpl-image-box').html(),params);
+
+					$('#add-images').closest('.form-group').before($html);
+				},
+				applyRemoveAbility: function(){
+					//Событие на кнопку убрать у приложенных фотографий
+					$('body').on('click','input[data-action=remove-image]',function(){
+						var $formGroup = $(this).closest('.form-group');
+						$formGroup.fadeOut('fast',function(){
+							$(this).remove();
+						});
+					});
+				},
+				addSortingDragAndDrop: function(){
+					$('div[data-element=post-images]').sortable({
+						placeholder: 'ui-state-highlight',
+						axis : 'y',
+						items : 'div[data-element=image]',
+						handle: 'img',
+						opacity : 0.2,
+						cursor: 'move',
+						stop : function(event,ui)
+						{
+
+						}
+					});
+				}
+			};
+
+			images.handler();
+
+			{% if post.images %}
+				{% for image in post.images %}
+
+					images.addImage({
+						imageId: {{ image.id }},
+						url: '{{ image.url }}',
+						thumbUrl: '{{ image.thumb('200x').url }}',
+						title: '{{ image.title|e }}',
+						caption: '{{ image.description|e }}'
+					});
+
+				{% endfor %}
+
+				images.addSortingDragAndDrop();
+
+			{% endif %}
+		})
+	</script>
+
 	<script type="text/javascript">
 
 		$(function(){
@@ -334,13 +462,7 @@
 
 			});
 
-			//Событие на кнопку убрать у приложенных фотографий
-			$('body').on('click','input[data-action=remove-image]',function(){
-				var $formGroup = $(this).closest('.form-group');
-				$formGroup.fadeOut('fast',function(){
-					$(this).remove();
-				});
-			});
+
 
 			//Событие на кнопку "выбрать другое фото" у основного фото
 			$('body').on('click','input[data-action=remove-main-image]',function(){
@@ -604,76 +726,6 @@
 			});
 			uploaderMainImage.init();
 
-			//Куча приложенных фоток
-			var uploaderImages = new plupload.Uploader({
-				runtimes: 'html5,flash,silverlight,html4',
-				browse_button: 'add-images',
-				max_file_size: '10mb',
-				unique_names: true,
-				max_file_count: 1,
-				multi: false,
-
-				multipart_params : {
-					'resize' : '200x'
-				},
-
-				url: "/office/ajax/upload-attach",
-
-				flash_swf_url: '/office/assets/plugins/plupload-2.1.1/js/Moxie.swf',
-				silverlight_xap_url: '/office/assets/plugins/plupload-2.1.1/js/Moxie.xap',
-
-				filters: [
-					{title: "Фотографии", extensions: "jpg,jpeg,gif,png"}
-				],
-
-				init: {
-					PostInit: function () {
-
-					},
-					UploadComplete: function (up, files) {
-						$('div[data-element=post-images]').sortable({
-							axis : 'y',
-							items : 'div[data-element=image]',
-							handle: 'img',
-//							grid: [ 0, 30 ],
-							opacity : 0.2,
-							cursor: 'move',
-							stop : function(event,ui)
-							{
-
-							}
-						}).disableSelection();
-					},
-					BeforeUpload: function (up, file) {
-					},
-					FilesAdded: function (up, files) {
-						up.start();
-					},
-					FileUploaded: function (upldir, file, object) {
-
-						var data = $.parseJSON(object.response);
-
-						var $html = Mustache.render($('#tmpl-image-box').html(),{
-							imageId: data.id,
-							url: data.url,
-							thumbUrl: data.thumb.url
-						});
-
-						$('#add-images').closest('.form-group').before($html);
-
-					},
-
-					UploadProgress: function (up, file) {
-
-					},
-
-					Error: function (up, err) {
-
-					}
-				}
-
-			});
-			uploaderImages.init();
 
 
 			{% if post.mainImageId %}
@@ -687,6 +739,8 @@
 				});
 
 			{% endif %}
+
+
 		});
 
 	</script>
@@ -716,10 +770,18 @@
 			<a href="/office/posts">Новости</a>
 			<i class="fa fa-angle-right"></i>
 		</li>
-		<li>
-			<a href="/office/post_create">Создание новости</a>
-		</li>
+		{% if post %}
+			<li>
+				<a href="/office/post{{ post.id }}">Редактирование</a>
+			</li>
+		{% else %}
+			<li>
+				<a href="/office/post_create">Создание новости</a>
+			</li>
+		{% endif %}
 	</ul>
+
+	{{ parent() }}
 
 {% endblock %}
 
@@ -853,7 +915,7 @@
 						<div class="col-md-9">
 							<select class="form-control" name="rssPosting">
 								<option value="">НЕ выгружать в RSS</option>
-								<option value="1">Выгружать в RSS</option>
+								<option value="1"{% if post.uploadRSS == 1 %}selected{% endif %}>Выгружать в RSS</option>
 							</select>
 							<span class="help-block"></span>
 						</div>
@@ -865,7 +927,7 @@
 						<div class="col-md-9">
 							<select class="form-control" name="commentsOff">
 								<option value="">ВКЛючить комментарии</option>
-								<option value="1">ВЫКЛючить комментарии</option>
+								<option value="1"{% if post.allowComment == 1 %}selected="" {% endif %}>ВЫКЛючить комментарии</option>
 							</select>
 							<span class="help-block"></span>
 						</div>
@@ -967,6 +1029,18 @@
 					</div>
 				</div>
 				<div class="portlet-body">
+
+					{% if post and not post.fashionBattle %}
+						<div class="alert alert-info alert-dismissable">
+							<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+							В существующую новость нельзя добавить Fashion Battle
+						</div>
+					{% else %}
+						<div class="alert alert-info alert-dismissable">
+							<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+							После создания новости блок Fashion Battle нельзя редактировать
+						</div>
+					{% endif %}
 
 					<div class="hide" data-element="fashion-battle">
 						<input type="hidden" name="fashionBattle" value="0" />
