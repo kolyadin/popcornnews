@@ -3,6 +3,7 @@ namespace popcorn\app\controllers\office;
 
 use popcorn\app\controllers\ControllerInterface;
 use popcorn\app\controllers\GenericController;
+use popcorn\model\content\ImageFactory;
 use popcorn\model\dataMaps\DataMapHelper;
 use popcorn\model\dataMaps\FashionBattleDataMap;
 use popcorn\model\dataMaps\NewsPostDataMap;
@@ -63,6 +64,7 @@ class PostController extends GenericController implements ControllerInterface {
 			->map('/post:postId', function ($postId) {
 				switch ($this->getSlim()->request->getMethod()) {
 					case 'GET':
+						$this->getTwig()->addGlobal('tab1',true);
 						$this->postEditGet($postId);
 						break;
 					case 'POST':
@@ -175,28 +177,42 @@ class PostController extends GenericController implements ControllerInterface {
 
 		$request = $this->getSlim()->request;
 
-		print '<pre>'.print_r($_POST,true).'</pre>';
-
-
 		$postId = $request->post('postId');
 
 		if ($postId > 0) {
 			$post = $this->newsDataMap->findById($postId);
 		} else {
 			$post = new NewsPost();
-//			$post->setCreatedAt(new \DateTime());
 		}
 
+		$post->setName($request->post('name'));
 
 		$createDate = strtotime(vsprintf('%3$04u-%2$02u-%1$02u %4$02u:%5$02u:00', sscanf($request->post('createDate'), '%02u.%02u.%04u %02u:%02u')));
-
-		$post->setName($request->post('name'));
 		$post->setCreateDate($createDate);
+
 		$post->setSource($request->post('source'));
 		$post->setAnnounce($request->post('announce'));
 		$post->setContent($request->post('content'));
 
+		//Основное фото
+		$mainImage = ImageFactory::getImage($request->post('mainImageId'));
+		$post->setMainImageId($mainImage);
 
+		//region Опции
+		if ($request->post('rssPosting') == 1) {
+			$post->setUploadRSS(1);
+		} else {
+			$post->setUploadRSS(0);
+		}
+
+		if ($request->post('commentsOff') == 1){
+			$post->setAllowComment(0);
+		}else{
+			$post->setAllowComment(1);
+		}
+		//endregion
+
+		//region Теги
 		if ($request->post('articles')) {
 			$articles = explode(',', $request->post('articles'));
 
@@ -237,31 +253,62 @@ class PostController extends GenericController implements ControllerInterface {
 				$post->addTag($tag);
 			}
 		}
+		//endregion
+
+		//region Приложенные фотографии
+		$post->clearImages();
 
 
+		if ($images = $request->post('images')) {
+			foreach ($images as $imageId) {
 
+				$image = ImageFactory::getImage($imageId);
+
+				$imageTitles = $request->post('imagesTitle');
+				$imageCaptions = $request->post('imagesCaption');
+
+				if (isset($imageTitles[$imageId])){
+					$image->setTitle($imageTitles[$imageId]);
+				}
+
+				if (isset($imageCaptions[$imageId])){
+					$image->setDescription($imageCaptions[$imageId]);
+				}
+
+				ImageFactory::save($image);
+
+				$post->addImage($image);
+
+			}
+		}
+		//endregion
 
 		//region Fashion Battle
-		if ($request->post('fashionBattle') == 1 && $request->post('fbFirstPerson') > 0  && $request->post('fbSecondPerson') > 0 ) {
+		if (
+			$request->post('fashionBattle') == 1 &&
+			$request->post('fbFirstPerson') > 0 &&
+			$request->post('fbSecondPerson') > 0
+		) {
 
-			//Только для нового поста, редактировать fashion battle в существующем посте нелья
-			if (!$postId) {
+			$firstPerson = PersonFactory::getPerson($request->post('fbFirstPerson'));
+			$secondPerson = PersonFactory::getPerson($request->post('fbSecondPerson'));
 
-				$firstPerson = PersonFactory::getPerson($request->post('fbFirstPerson'));
-				$secondPerson = PersonFactory::getPerson($request->post('fbSecondPerson'));
+			$fashionBattle = new FashionBattle();
+			$fashionBattle->setFirstPerson($firstPerson);
+			$fashionBattle->setSecondPerson($secondPerson);
 
-				$fashionBattle = new FashionBattle();
-				$fashionBattle->setFirstPerson($firstPerson);
-				$fashionBattle->setSecondPerson($secondPerson);
-
-				$post->addFashionBattle($fashionBattle);
-			}
-
+			$post->addFashionBattle($fashionBattle);
 
 		}
 		//endregion
 
 		$this->newsDataMap->save($post);
+
+		if ($post->getId()){
+			$this->getSlim()->redirect(sprintf('/office/post%u?status=updated',$post->getId()));
+		}else{
+			$this->getSlim()->redirect(sprintf('/office/post%u?status=created',$post->getId()));
+		}
 
 		/*
 		$poll->setQuestion($request->post('question'));

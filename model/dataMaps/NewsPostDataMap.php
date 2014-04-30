@@ -177,6 +177,7 @@ class NewsPostDataMap extends DataMap {
 	 */
 	private function attachImages($item) {
 		$this->imagesDataMap->save($item->getImages(), $item->getId());
+
 	}
 
 	private function getAttachedImages($id) {
@@ -190,9 +191,9 @@ class NewsPostDataMap extends DataMap {
 
 		if ($item->getFashionBattle() instanceof FashionBattle){
 			$this->fashionBattleDataMap->saveWithPost($item);
-		}else{
+		}/*else{
 			$this->fashionBattleDataMap->deleteWithPost($item);
-		}
+		}*/
 	}
 
 	private function getFashionBattle($id) {
