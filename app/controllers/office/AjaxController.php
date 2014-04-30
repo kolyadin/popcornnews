@@ -22,6 +22,10 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 		$this
 			->getSlim()
+			->get('/ajax/find/movies', [$this, 'findMovies']);
+
+		$this
+			->getSlim()
 			->get('/ajax/post/tags', [$this, 'postTags']);
 
 		$this
@@ -65,6 +69,21 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 		$this->getApp()->exitWithJsonSuccessMessage();
 
+	}
+
+	public function findMovies() {
+		$term = $this->getSlim()->request->get('term');
+
+		$stmt = PDOHelper::getPDO()->prepare('SELECT id,name,year FROM ka_movies WHERE (name LIKE :query OR originalName LIKE :query) ORDER BY name ASC,year DESC LIMIT 50');
+		$stmt->execute([
+			':query' => '%' . $term . '%'
+		]);
+
+		$movies = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+		$this->getApp()->exitWithJsonSuccessMessage([
+			'movies' => $movies
+		]);
 	}
 
 	public function getPerson() {

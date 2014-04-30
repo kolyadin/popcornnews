@@ -639,17 +639,16 @@
 
 				},
 				ajax: {
-					url: 'http://api.kinoafisha.info/p/moviesSuggest.php?callback=?',
-					dataType: 'jsonp',
+					url: '/office/ajax/find/movies',
+					dataType: 'json',
 					data: function (term,page) {
 						return {
-							q: term
+							term: term
 						};
 					},
 					results: function (data) {
-
 						var results = [];
-						$.each(data, function (index, film) {
+						$.each(data.movies, function (index, film) {
 							results.push({
 								id: film.id,
 								text: sprintf('%s / %u',film.name,film.year)
@@ -853,7 +852,7 @@
 					<div class="form-group">
 						<div class="alert alert-info alert-dismissable">
 							<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-							<p>Указав дату публикации в <strong>будущем времени</strong>, новость будет опубликована <strong>при наступлении</strong> указанной даты и времени</p>
+							<p>Указав дату публикации в <strong>будущем времени</strong>, новость будет опубликована <strong>при наступлении</strong> указанной дате и времени</p>
 							<p>Очень удобно для публикации новостей в выходные или каких-то анонсов</p>
 							<p>Реальная дата публикации может отличаться от указанной максимум на 5 минут</p>
 						</div>

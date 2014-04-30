@@ -7,6 +7,8 @@
 
 namespace popcorn\app;
 
+use Assetic\Extension\Twig\AsseticExtension;
+use Assetic\Factory\AssetFactory;
 use popcorn\lib\twigExtensions\TwigExtensionRuAge;
 use popcorn\lib\twigExtensions\TwigExtensionRuDate;
 use popcorn\lib\twigExtensions\TwigExtensionRuDateFriendly;
