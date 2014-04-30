@@ -350,7 +350,12 @@ EOL;
 			$paginator['overall'] = $stmt->fetchColumn();
 			$paginator['pages'] = ceil($paginator['overall'] / $offset[1]);
 
-			$sql .= $this->getOrderString(['id' => 'desc']);
+			if (isset($options['order'])){
+				$sql .= $this->getOrderString($options['order']);
+			}else{
+				$sql .= $this->getOrderString(['id' => 'desc']);
+			}
+
 			$sql .= $this->getLimitString($offset[0], $offset[1]);
 
 			return $this->fetchAll(sprintf($sql, '*'));

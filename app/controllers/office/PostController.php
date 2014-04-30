@@ -64,7 +64,7 @@ class PostController extends GenericController implements ControllerInterface {
 			->map('/post:postId', function ($postId) {
 				switch ($this->getSlim()->request->getMethod()) {
 					case 'GET':
-						$this->getTwig()->addGlobal('tab1',true);
+						$this->getTwig()->addGlobal('tab1', true);
 						$this->postEditGet($postId);
 						break;
 					case 'POST':
@@ -99,7 +99,7 @@ class PostController extends GenericController implements ControllerInterface {
 		$onPage = 50;
 		$paginator = [];
 
-		$posts = $newsDataMap->find([],
+		$posts = $newsDataMap->find(['order' => ['createDate' => 'desc']],
 			[($page - 1) * $onPage, $onPage],
 			$paginator
 		);
@@ -107,9 +107,9 @@ class PostController extends GenericController implements ControllerInterface {
 		$this
 			->getTwig()
 			->display('news/List.twig', [
-				'posts'     => $posts,
+				'posts' => $posts,
 				'paginator' => [
-					'pages'  => $paginator['pages'],
+					'pages' => $paginator['pages'],
 					'active' => $page
 				]
 			]);
@@ -190,8 +190,6 @@ class PostController extends GenericController implements ControllerInterface {
 		$createDate = strtotime(vsprintf('%3$04u-%2$02u-%1$02u %4$02u:%5$02u:00', sscanf($request->post('createDate'), '%02u.%02u.%04u %02u:%02u')));
 
 
-
-
 		$post->setCreateDate($createDate);
 
 		$post->setStatus($request->post('status'));
@@ -211,9 +209,9 @@ class PostController extends GenericController implements ControllerInterface {
 			$post->setUploadRSS(0);
 		}
 
-		if ($request->post('commentsOff') == 1){
+		if ($request->post('commentsOff') == 1) {
 			$post->setAllowComment(0);
-		}else{
+		} else {
 			$post->setAllowComment(1);
 		}
 		//endregion
@@ -273,11 +271,11 @@ class PostController extends GenericController implements ControllerInterface {
 				$imageTitles = $request->post('imagesTitle');
 				$imageCaptions = $request->post('imagesCaption');
 
-				if (isset($imageTitles[$imageId])){
+				if (isset($imageTitles[$imageId])) {
 					$image->setTitle($imageTitles[$imageId]);
 				}
 
-				if (isset($imageCaptions[$imageId])){
+				if (isset($imageCaptions[$imageId])) {
 					$image->setDescription($imageCaptions[$imageId]);
 				}
 
@@ -310,14 +308,15 @@ class PostController extends GenericController implements ControllerInterface {
 
 		$this->newsDataMap->save($post);
 
-		print '<pre>'.print_r($post,true).'</pre>';
+		print '<pre>' . print_r($post, true) . '</pre>';
 
-		print '<pre>'.print_r($_POST,true).'</pre>';die;
+		print '<pre>' . print_r($_POST, true) . '</pre>';
+		die;
 
-		if ($post->getId()){
-			$this->getSlim()->redirect(sprintf('/office/post%u?status=updated',$post->getId()));
-		}else{
-			$this->getSlim()->redirect(sprintf('/office/post%u?status=created',$post->getId()));
+		if ($post->getId()) {
+			$this->getSlim()->redirect(sprintf('/office/post%u?status=updated', $post->getId()));
+		} else {
+			$this->getSlim()->redirect(sprintf('/office/post%u?status=created', $post->getId()));
 		}
 
 		/*
