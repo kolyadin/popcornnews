@@ -1,0 +1,298 @@
+//Events Calendar
+
+.b-calendar__menu {
+	margin-bottom: 26px;
+}
+
+.b-calendar {
+
+}
+
+.b-calendar__nav {
+	position: relative;
+	margin-bottom: 22px;
+}
+
+.b-calendar__nav__btn {
+	position: absolute;
+	top: 11px;
+	.ib;
+	text-decoration: none;
+}
+
+.b-calendar__nav__btn_prev {
+	left: 0;
+}
+
+.b-calendar__nav__btn_next {
+	right: 0;
+}
+
+.b-calendar__nav__btn_disable {
+	display: none;
+}
+
+.b-calendar__nav__btn-icon {
+	.ib;
+	width: 22px;
+	height: 22px;
+	line-height: 22px;
+	text-align: center;
+	margin: 0 5px;
+	color: #fff;
+	font-size: 18px;
+	border-radius: 50%;
+	font-weight: bold;
+}
+
+.b-calendar__nav__btn-name {
+	font-size: 18px;
+	line-height: 22px;
+	color: #000;
+	font-weight: bold;
+	.ib;
+
+	.b-calendar__nav__btn_prev & {
+
+	}
+
+	.b-calendar__nav__btn_next & {
+
+	}
+}
+
+.b-calendar__nav__now {
+	width: 320px;
+	margin: 0 auto;
+	font-size: 30px;
+	line-height: 34px;
+	color: #000;
+	font-weight: bold;
+	text-align: center;
+}
+
+.b-calendar__body {
+	position: relative;
+}
+
+.b-calendar__list {
+	border-top: 1px solid #e5e5e5;
+}
+
+.b-calendar__item {
+	width: 14.28%;
+	.ib;
+	height: 119px;
+	border-bottom: 1px solid #e5e5e5;
+	cursor: pointer;
+	position: relative;
+	transition: margin-bottom .4s ease 0s;
+
+}
+
+.b-calendar__item_disabled {
+	cursor: default;
+}
+
+.b-calendar__item-end {
+	background: #f7f7f7;
+}
+
+.b-calendar__item_active {
+
+	.cssgradients & {
+		.b-firm-grad_inverse;
+
+	}
+
+	.no-cssgradients & {
+		background: #D70D97;
+	}
+
+	&:before {
+		content: "";
+		width: 0;
+		height: 0;
+		border-left: 21px solid transparent;
+		border-right: 21px solid transparent;
+		border-top: 20px solid #D70D97;
+		position: absolute;
+		top: 100%;
+		left: 50%;
+		margin-left: -20px;
+		z-index: 2;
+	}
+}
+
+.b-calendar__item-day {
+	padding: 9px 0 0 6px;
+	font-size: 18px;
+	color: #000;
+	margin-bottom: 10px;
+
+	.b-calendar__item_disabled & {
+		color: #c7c7c7;
+	}
+}
+
+.b-calendar__item-events {
+	.clearfix;
+	padding-left: 4px;
+
+
+}
+
+.b-calendar__item-events__elem {
+	float: left;
+	margin: 0 0 2px 2px;
+	width: 29px;
+	height: 29px;
+	overflow: hidden;
+
+	img {
+		width: 29px;
+		height: 29px;
+		position: relative;
+	}
+}
+
+.b-calendar__item-events_1 {
+	.b-calendar__item-events__elem {
+		width: 60px;
+		height: 60px;
+
+		img {
+			width: 60px;
+			height: 60px;
+		}
+	}
+}
+
+.b-calendar__item-events_2 {
+	.b-calendar__item-events__elem:first-child {
+		width: 42px;
+		height: 60px;
+
+		img {
+			width: 60px;
+			height: 60px;
+			left: -9px;
+		}
+	}
+}
+
+.b-calendar__item-events_3 {
+	.b-calendar__item-events__elem:first-child {
+		width: 42px;
+		height: 60px;
+
+		img {
+			width: 60px;
+			height: 60px;
+			left: -9px;
+		}
+	}
+}
+
+.b-calendar__item-events_4 {
+
+}
+
+.b-calendar__item-events_more-num {
+	.b-firm-grad_inverse;
+	color: #fff;
+	border-radius: 0 0 2px 0;
+	line-height: 29px;
+	text-align: center;
+	font-size: 12px;
+}
+
+.b-calendar__day-events-wrap {
+	border-bottom: 1px solid #e5e5e5;
+	position: absolute;
+	margin-top: 1px;
+	left: -99999px;
+	top: 0;
+	.opacity(0);
+
+	.csstransitions  & {
+		transition: opacity .4s ease 0s;
+	}
+
+	&.b-calendar__day-events-wrap_shown {
+		.opacity(1);
+		left: 0;
+	}
+}
+
+.b-calendar__day-events {
+	border-top: 5px solid #d8d8d8;
+	border-bottom: 5px solid #d8d8d8;
+	background: #f0f0f0;
+}
+
+.b-calendar__day-events-inner {
+	padding: 28px 0;
+}
+
+.b-calendar__day-events__date {
+	text-align: center;
+}
+
+.b-calendar__day-events__date-num {
+	font-size: 60px;
+	font-weight: bold;
+	line-height: 60px;
+	color: #000;
+}
+
+.b-calendar__day-events__date-month {
+	font-size: 24px;
+	line-height: 24px;
+	color: #000;
+}
+
+.b-calendar__day-events__list {
+	padding-top: 5px;
+}
+
+.b-calendar__day-events__item {
+	margin-bottom: 16px;
+	padding-left: 11px;
+}
+
+.b-calendar__day-events__item-img {
+	.ib;
+	vertical-align: middle;
+	text-align: center;
+	width: 29px;
+
+	img {
+		height: 29px;
+		max-width: 29px;
+	}
+}
+
+.b-calendar__day-events__item-text {
+	.ib;
+	vertical-align: middle;
+	margin-left: 6px;
+}
+
+.b-calendar__day-events__item-place {
+	color: #000;
+	font-size: 12px;
+	line-height: 14px;
+}
+
+.b-calendar__day-events__item-name {
+	color: #000;
+	font-size: 18px;
+	line-height: 20px;
+
+	a {
+		font-weight: bold;
+		font-size: 16px;
+		text-decoration: none;
+	}
+}
