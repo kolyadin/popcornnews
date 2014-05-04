@@ -1,13 +1,8 @@
 <?php
-/**
- * User: anubis
- * Date: 08.10.13 17:31
- */
 
 namespace popcorn\model\tags;
 
 use popcorn\model\Model;
-use popcorn\model\persons\Person;
 
 /**
  * Class Tag
@@ -16,12 +11,8 @@ use popcorn\model\persons\Person;
  */
 class Tag extends Model {
 
-    const EVENT     = 0;
-    const PERSON    = 1;
-    const FILM      = 2;
-    const ARTICLE   = 3;
-
-	const FILM_EXTRA_NAME = 21;
+    const EVENT     = 1;//Обычный тег
+    const ARTICLE   = 2;//Категория
 
 	private $id;
 
@@ -35,9 +26,6 @@ class Tag extends Model {
      * @export
      */
     private $type = self::EVENT;
-
-
-	private $entity;
 
     function __construct($name = '', $type = self::EVENT) {
         if(!empty($name))
@@ -69,17 +57,4 @@ class Tag extends Model {
         $this->name = $name;
         $this->changed();
     }
-
-	public function setEntity(Model $entity){
-		$this->entity = $entity;
-	}
-
-	public function getEntity(){
-		return $this->entity;
-	}
-
-	public function isPerson(){
-		return ($this->entity instanceof Person);
-	}
-
 }

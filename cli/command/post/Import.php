@@ -273,7 +273,7 @@ VALUES (
 			$this->insert->bindValue(':editDate', $ed->format('U'));
 			$this->insert->bindValue(':content', $item['pole2']);
 			$this->insert->bindValue(':allowComment', $item['pole37'] != 'Yes');
-			$this->insert->bindValue(':published', 1);
+			$this->insert->bindValue(':status', 1);
 			$this->insert->bindValue(':views', $views);
 			$this->insert->bindValue(':comments', $item['pole16']);
 			$this->insert->bindValue(':type', $type);

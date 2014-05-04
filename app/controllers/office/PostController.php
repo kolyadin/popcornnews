@@ -8,11 +8,14 @@ use popcorn\model\dataMaps\DataMapHelper;
 use popcorn\model\dataMaps\FashionBattleDataMap;
 use popcorn\model\dataMaps\NewsPostDataMap;
 use popcorn\model\dataMaps\TagDataMap;
+use popcorn\model\persons\Person;
 use popcorn\model\persons\PersonFactory;
 use popcorn\model\posts\fashionBattle\FashionBattle;
 use popcorn\model\posts\fashionBattle\FashionBattleFactory;
+use popcorn\model\posts\MovieFactory;
 use popcorn\model\posts\NewsPost;
 use popcorn\model\tags\Tag;
+use popcorn\model\tags\TagFactory;
 
 class PostController extends GenericController implements ControllerInterface {
 
@@ -216,17 +219,51 @@ class PostController extends GenericController implements ControllerInterface {
 		}
 		//endregion
 
-		//region Теги
+
+		$movie = MovieFactory::getMovie(8117383);
+		$person = PersonFactory::getPerson(100);
+		$tag = TagFactory::get(12);
+
+		print '<pre>'.print_r($movie,true).'</pre>';
+
+
+
 		if ($request->post('articles')) {
 			$articles = explode(',', $request->post('articles'));
 
 			foreach ($articles as $articleId) {
+
+
+
+
 				$tag = new Tag($articleId, Tag::ARTICLE);
 				$this->tagDataMap->save($tag);
 				$post->addTag($tag);
 			}
 
 		}
+
+		if ($request->post('persons')) {
+			$persons = explode(',', $request->post('persons'));
+
+			foreach ($persons as $personId) {
+				$person = PersonFactory::getPerson($personId);
+				$post->addTag($person);
+			}
+		}
+
+		print '<pre>'.print_r($post,true).'</pre>';
+
+		die;
+
+
+
+
+
+//		$post->addTag();
+
+		//region Теги
+
 
 		if ($request->post('tags')) {
 			$tags = explode(',', $request->post('tags'));
@@ -238,15 +275,7 @@ class PostController extends GenericController implements ControllerInterface {
 			}
 		}
 
-		if ($request->post('persons')) {
-			$persons = explode(',', $request->post('persons'));
 
-			foreach ($persons as $personId) {
-				$tag = new Tag($personId, Tag::PERSON);
-				$this->tagDataMap->save($tag);
-				$post->addTag($tag);
-			}
-		}
 
 		if ($request->post('movies')) {
 			$movies = explode(',', $request->post('movies'));

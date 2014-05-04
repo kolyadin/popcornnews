@@ -25,12 +25,14 @@
         "danielstjules/stringy": "dev-master",
         "phpmailer/phpmailer": "v5.2.7",
         "kolyadin/twig-ru-number-extension": "dev-master",
-        "mobiledetect/mobiledetectlib": "2.7.8",
-        "kriswallsmith/assetic": "1.1.*@dev"
+        "mobiledetect/mobiledetectlib": "2.7.8"
     },
     "autoload": {
         "psr-4": {
             "popcorn\\": ""
         }
+    },
+    "scripts": {
+        "post-update-cmd": "scripts/setupEnvironment.sh"
     }
 }

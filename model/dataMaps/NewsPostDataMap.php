@@ -37,6 +37,7 @@ class NewsPostDataMap extends DataMap {
 		}
 
 		parent::__construct();
+
 		$this->class = "popcorn\\model\\posts\\NewsPost";
 		$this->initStatements();
 		$this->imagesDataMap = new NewsImageDataMap();
@@ -46,9 +47,13 @@ class NewsPostDataMap extends DataMap {
 
 	private function initStatements() {
 		$this->insertStatement =
-			$this->prepare("INSERT INTO pn_news (announce, source, sent, uploadRSS, mainImageId, name, updateDate, createDate, editDate, content, allowComment, status, views, comments, type) VALUES (:announce, :source, :sent, :uploadRSS, :mainImageId, :name, :updateDate, :createDate, :editDate, :content, :allowComment, :status, :views, :comments, :type)");
+			$this->prepare("INSERT INTO pn_news
+			(announce, source, sent, uploadRSS, mainImageId, name, updateDate, createDate, editDate, content, allowComment, status, views, comments, type)
+				VALUES
+			(:announce, :source, :sent, :uploadRSS, :mainImageId, :name, :updateDate, :createDate, :editDate, :content, :allowComment, :status, :views, :comments, :type)");
 		$this->updateStatement =
-			$this->prepare("UPDATE pn_news SET announce=:announce, source=:source, sent=:sent, uploadRSS=:uploadRSS, mainImageId=:mainImageId, name=:name, updateDate=:updateDate, createDate=:createDate, content=:content, allowComment=:allowComment, status=:status, views=:views, comments=:comments, type=:type WHERE id=:id");
+			$this->prepare("
+			UPDATE pn_news SET announce=:announce, source=:source, sent=:sent, uploadRSS=:uploadRSS, mainImageId=:mainImageId, name=:name, updateDate=:updateDate, createDate=:createDate, content=:content, allowComment=:allowComment, status=:status, views=:views, comments=:comments, type=:type WHERE id=:id");
 		$this->deleteStatement = $this->prepare("DELETE FROM pn_news WHERE id=:id");
 		$this->findOneStatement = $this->prepare("SELECT * FROM pn_news WHERE id=:id");
 	}
@@ -144,7 +149,7 @@ class NewsPostDataMap extends DataMap {
 	protected function onInsert($item) {
 		$this->attachImages($item);
 		$this->attachFashionBattle($item);
-//		$this->attachTags($item);
+		$this->attachTags($item);
 	}
 
 	/**
@@ -153,7 +158,7 @@ class NewsPostDataMap extends DataMap {
 	protected function onUpdate($item) {
 		$this->attachImages($item);
 		$this->attachFashionBattle($item);
-//		$this->attachTags($item);
+		$this->attachTags($item);
 	}
 
 	/**
@@ -189,11 +194,12 @@ class NewsPostDataMap extends DataMap {
 	 */
 	private function attachFashionBattle($item) {
 
-		if ($item->getFashionBattle() instanceof FashionBattle){
+		if ($item->getFashionBattle() instanceof FashionBattle) {
 			$this->fashionBattleDataMap->saveWithPost($item);
-		}/*else{
-			$this->fashionBattleDataMap->deleteWithPost($item);
-		}*/
+		}
+		/*else{
+					$this->fashionBattleDataMap->deleteWithPost($item);
+				}*/
 	}
 
 	private function getFashionBattle($id) {
@@ -350,9 +356,9 @@ EOL;
 			$paginator['overall'] = $stmt->fetchColumn();
 			$paginator['pages'] = ceil($paginator['overall'] / $offset[1]);
 
-			if (isset($options['order'])){
+			if (isset($options['order'])) {
 				$sql .= $this->getOrderString($options['order']);
-			}else{
+			} else {
 				$sql .= $this->getOrderString(['id' => 'desc']);
 			}
 

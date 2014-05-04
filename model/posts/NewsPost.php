@@ -66,7 +66,7 @@ class NewsPost extends Model {
 	 */
 	protected $images = array();
 	/**
-	 * @var Tag[]
+	 * @var
 	 */
 	protected $tags = array();
 
@@ -441,13 +441,11 @@ class NewsPost extends Model {
 	}
 
 	/**
-	 * @param Tag $tag
+	 * @param popcorn\\model\\persons\\Person | popcorn\\model\\tags\\Tag | popcorn\\model\\posts\\Movie $entity
 	 */
 	public function addTag($tag) {
-		if (array_search($tag, $this->tags) === false) {
-			$this->tags[] = $tag;
-			$this->changed();
-		}
+		$this->tags[] = $tag;
+		$this->changed();
 	}
 
 	/**
