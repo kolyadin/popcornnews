@@ -9,121 +9,19 @@
 
 {% block content %}
 
-	<div class="b-inside clearfix">
-		<div class="b-grid__g8">
-			<article class="b-single-article">
-				<section class="b-single-article__content clearfix">
-					<h1 class="b-single-article__title">
-						Архив новостей
-					</h1>
-					<section class="b-group__menu b-inside__menu">
-						<ul class="b-inside__menu-archive b-inside__menu-archive_y">
-
-							{% for y in curYear..2007 %}
-
-								<li {% if y == year %}class="active"{% endif %}>
-									<a href="/archive/{{ y }}/{{ month }}">{{ y }}</a>
-								</li>
-
-							{% endfor %}
-
-						</ul>
-						<ul class="b-inside__menu-archive b-inside__menu-archive_m">
-
-							{% for m in curMonth..1 %}
-
-								<li {% if m == month %}class="active"{% endif %}>
-									<a href="/archive/{{ year }}/{{ m }}">{{ months[m - 1][0] }}</a>
-								</li>
-
-							{% endfor %}
-
-						</ul>
-						<ul class="b-inside__menu-archive b-inside__menu-archive_d">
-
-							{% for d in dayEnd..1 %}
-
-								<li {% if d == day %}class="active"{% endif %}>
-									<a href="/archive/{{ year }}/{{ month }}/{{ d }}">{{ d }}</a>
-								</li>
-
-							{% endfor %}
-
-						</ul>
-					</section>
-					<div class="b-newsarchive">
-
-						{% if day %}
-
-							<section class="b-center-column clearfix">
-								<ul class="b-column-news js-height-fix">
-
-									{% for post in posts %}
-
-										{% set commentsCount = post.comments %}
-										{% set commentsCountStr = post.comments|ruNumber(['комментарий','комментария','комментариев'])|replace({(post.comments): ''}) %}
-
-										<li class="b-grid__g2 b-grid__a">
-
-											{% if post.mainImageId.id > 0 %}
-												{% set mainPhoto = post.mainImageId.thumb('110x') %}
-
-												<a href="/news/{{ post.id }}" class="b-column-news__head">
-													<img src="{{ mainPhoto.url }}" width="{{ mainPhoto.width }}" height="{{ mainPhoto.height }}" alt="">
-												</a>
-
-											{% endif %}
-
-											<div class="b-column-news__body">
-												<h2 class="b-column-news__title"><a href="/news/{{ post.id }}">{{ post.name }}</a></h2>
-												<p class="b-column-news__text">{{ post.announce }}</p>
-												<a href="#" class="b-column-news__comments b-comments-status">
-													<span class="b-comments-status__num">{{ commentsCount }}</span>
-													<span class="b-comments-status__title">{{ commentsCountStr }}</span>
-												</a>
-											</div>
-										</li>
-
-									{% endfor %}
-
-								</ul>
-							</section>
-
-						{% else %}
-
-							{% for key,items in posts %}
-
-						                <div class="b-newsarchive__block">
-									<h2 class="b-newsarchive__date">
-										{{ key }}
-									</h2>
-									<ul class="b-newsarchive__list">
-
-									{% for post in items %}
-
-										<li class="b-newsarchive__item">
-											<a class="b-newsarchive__link" href="/news/{{ post.id }}">{{ post.name }}</a>
-											<span class="b-newsarchive__num">{{ post.comments }}</span>
-										</li>
-
-									{% endfor %}
-
-									</ul>
-								</div>
-
-							{% endfor %}
-
-						{% endif %}
-
-					</div>
-				</section>
+	<div class="b-grid__g8">
+		<article class="b-single-article">
+			<section class="b-single-article__content clearfix">
+				<h1 class="b-single-article__title">
+					Архив новостей
+				</h1>
 				<section class="b-group__menu b-inside__menu">
-					<ul class="b-inside__menu-archive b-inside__menu-archive_d">
+					<ul class="b-inside__menu-archive b-inside__menu-archive_y">
 
-						{% for d in dayEnd..1 %}
+						{% for y in curYear..2007 %}
 
-							<li {% if d == day %}class="active"{% endif %}>
-								<a href="/archive/{{ year }}/{{ month }}/{{ d }}">{{ d }}</a>
+							<li {% if y == year %}class="active"{% endif %}>
+								<a href="/archive/{{ y }}/{{ month }}">{{ y }}</a>
 							</li>
 
 						{% endfor %}
@@ -140,20 +38,120 @@
 						{% endfor %}
 
 					</ul>
-					<ul class="b-inside__menu-archive b-inside__menu-archive_y">
+					<ul class="b-inside__menu-archive b-inside__menu-archive_d">
 
-						{% for y in curYear..2007 %}
+						{% for d in dayEnd..1 %}
 
-							<li {% if y == year %}class="active"{% endif %}>
-								<a href="/archive/{{ y }}/{{ month }}">{{ y }}</a>
+							<li {% if d == day %}class="active"{% endif %}>
+								<a href="/archive/{{ year }}/{{ month }}/{{ d }}">{{ d }}</a>
 							</li>
 
 						{% endfor %}
 
 					</ul>
 				</section>
-			</article>
-		</div>
+				<div class="b-newsarchive">
+
+					{% if day %}
+
+						<section class="b-center-column clearfix">
+							<ul class="b-column-news js-height-fix">
+
+								{% for post in posts %}
+
+									{% set commentsCount = post.comments %}
+									{% set commentsCountStr = post.comments|ruNumber(['комментарий','комментария','комментариев'])|replace({(post.comments): ''}) %}
+
+									<li class="b-grid__g2 b-grid__a">
+
+										{% if post.mainImageId.id > 0 %}
+											{% set mainPhoto = post.mainImageId.thumb('110x') %}
+
+											<a href="/news/{{ post.id }}" class="b-column-news__head">
+												<img src="{{ mainPhoto.url }}" width="{{ mainPhoto.width }}" height="{{ mainPhoto.height }}" alt="">
+											</a>
+
+										{% endif %}
+
+										<div class="b-column-news__body">
+											<h2 class="b-column-news__title"><a href="/news/{{ post.id }}">{{ post.name }}</a></h2>
+											<p class="b-column-news__text">{{ post.announce }}</p>
+											<a href="#" class="b-column-news__comments b-comments-status">
+												<span class="b-comments-status__num">{{ commentsCount }}</span>
+												<span class="b-comments-status__title">{{ commentsCountStr }}</span>
+											</a>
+										</div>
+									</li>
+
+								{% endfor %}
+
+							</ul>
+						</section>
+
+					{% else %}
+
+						{% for key,items in posts %}
+
+					                <div class="b-newsarchive__block">
+								<h2 class="b-newsarchive__date">
+									{{ key }}
+								</h2>
+								<ul class="b-newsarchive__list">
+
+								{% for post in items %}
+
+									<li class="b-newsarchive__item">
+										<a class="b-newsarchive__link" href="/news/{{ post.id }}">{{ post.name }}</a>
+										<span class="b-newsarchive__num">{{ post.comments }}</span>
+									</li>
+
+								{% endfor %}
+
+								</ul>
+							</div>
+
+						{% endfor %}
+
+					{% endif %}
+
+				</div>
+			</section>
+			<section class="b-group__menu b-inside__menu">
+				<ul class="b-inside__menu-archive b-inside__menu-archive_d">
+
+					{% for d in dayEnd..1 %}
+
+						<li {% if d == day %}class="active"{% endif %}>
+							<a href="/archive/{{ year }}/{{ month }}/{{ d }}">{{ d }}</a>
+						</li>
+
+					{% endfor %}
+
+				</ul>
+				<ul class="b-inside__menu-archive b-inside__menu-archive_m">
+
+					{% for m in curMonth..1 %}
+
+						<li {% if m == month %}class="active"{% endif %}>
+							<a href="/archive/{{ year }}/{{ m }}">{{ months[m - 1][0] }}</a>
+						</li>
+
+					{% endfor %}
+
+				</ul>
+				<ul class="b-inside__menu-archive b-inside__menu-archive_y">
+
+					{% for y in curYear..2007 %}
+
+						<li {% if y == year %}class="active"{% endif %}>
+							<a href="/archive/{{ y }}/{{ month }}">{{ y }}</a>
+						</li>
+
+					{% endfor %}
+
+				</ul>
+			</section>
+		</article>
 	</div>
 
 {% endblock %}
