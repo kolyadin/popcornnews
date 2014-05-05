@@ -5073,10 +5073,12 @@ a.pink:hover,
   border-bottom: 1px solid #f0f0f0;
 }
 .b-meets .meet h2 {
-  font: size: 24px;
-  weight: bold;
   line-height: 27px;
   margin-bottom: 15px;
+}
+.b-meets .meet h2 font {
+  size: 24px;
+  weight: bold;
 }
 .b-meets .meet h2 a {
   color: #000;
