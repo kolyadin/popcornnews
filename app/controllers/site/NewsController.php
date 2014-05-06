@@ -92,6 +92,9 @@ class NewsController extends GenericController implements ControllerInterface {
 				'day' => '[0-9]*',
 			]);
 
+		$this
+			->getSlim()
+			->get('/news/search/', [$this, 'search']);
 
 	}
 
@@ -265,6 +268,25 @@ class NewsController extends GenericController implements ControllerInterface {
 				'day' => $day,
 				'dayEnd' => $dayEnd,
 				'months' => RuHelper::$ruMonth,
+			]);
+
+	}
+
+	public function search() {
+
+		$helper = new DataMapHelper();
+		$helper->setRelationship([
+			'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_MAIN_IMAGE
+		]);
+
+		PostFactory::setDataMap(new NewsPostDataMap($helper));
+		$foundNews = PostFactory::searchPosts($this->getRequest()->get('word'), 0, 50);
+
+		$this
+			->getTwig()
+			->display('/news/SearchList.twig', [
+				'posts' => $foundNews,
+				'title' => 'Результаты поиска'
 			]);
 
 	}
