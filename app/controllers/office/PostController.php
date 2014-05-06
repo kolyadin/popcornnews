@@ -12,6 +12,7 @@ use popcorn\model\persons\Person;
 use popcorn\model\persons\PersonFactory;
 use popcorn\model\posts\fashionBattle\FashionBattle;
 use popcorn\model\posts\fashionBattle\FashionBattleFactory;
+use popcorn\model\posts\Movie;
 use popcorn\model\posts\MovieFactory;
 use popcorn\model\posts\NewsPost;
 use popcorn\model\tags\Tag;
@@ -110,9 +111,9 @@ class PostController extends GenericController implements ControllerInterface {
 		$this
 			->getTwig()
 			->display('news/List.twig', [
-				'posts' => $posts,
+				'posts'     => $posts,
 				'paginator' => [
-					'pages' => $paginator['pages'],
+					'pages'  => $paginator['pages'],
 					'active' => $page
 				]
 			]);
@@ -142,33 +143,29 @@ class PostController extends GenericController implements ControllerInterface {
 
 			$twigData['post'] = $post;
 
-			$events = $post->getTags(Tag::EVENT);
-			$articles = $post->getTags(Tag::ARTICLE);
-
-			if ($events) {
-				foreach ($events as $tag) {
-					$twigData['tags']['events'][] = $tag->getId();
+			foreach ($post->getTags() as $tag) {
+				if ($tag instanceof Person) {
+					$twigData['tags']['persons'][] = $tag;
+					$twigData['tags']['personsString'][] = $tag->getId();
+				} elseif ($tag instanceof Movie) {
+					$twigData['tags']['movies'][] = $tag;
+					$twigData['tags']['moviesString'][] = $tag->getId();
+				} elseif ($tag instanceof Tag) {
+					if ($tag->getType() == Tag::ARTICLE) {
+						$twigData['tags']['articles'][] = $tag;
+						$twigData['tags']['articlesString'][] = $tag->getId();
+					} elseif ($tag->getType() == Tag::EVENT) {
+						$twigData['tags']['events'][] = $tag;
+						$twigData['tags']['eventsString'][] = $tag->getId();
+					}
 				}
 			}
-
-			if ($articles) {
-				foreach ($articles as $tag) {
-					$twigData['tags']['articles'][] = $tag->getName();
-				}
-			}
-
-
-//			print '<pre>'.print_r($post->getTags(0),true).'</pre>';
-
-//			print '<pre>'.print_r($post,true).'</pre>';
-
 		}
-
 
 		if ($postId > 0 && $request->get('action') == 'remove') {
 			$this
 				->getTwig()
-				->display('news/NewsRemove.twig', $twigData);
+				->display('news/PostRemove.twig', $twigData);
 		} else {
 			$this
 				->getTwig()
@@ -219,28 +216,22 @@ class PostController extends GenericController implements ControllerInterface {
 		}
 		//endregion
 
-
-		$movie = MovieFactory::getMovie(8117383);
-		$person = PersonFactory::getPerson(100);
-		$tag = TagFactory::get(12);
-
-		print '<pre>'.print_r($movie,true).'</pre>';
-
-
-
 		if ($request->post('articles')) {
 			$articles = explode(',', $request->post('articles'));
 
 			foreach ($articles as $articleId) {
-
-
-
-
-				$tag = new Tag($articleId, Tag::ARTICLE);
-				$this->tagDataMap->save($tag);
+				$tag = TagFactory::get($articleId);
 				$post->addTag($tag);
 			}
+		}
 
+		if ($request->post('tags')) {
+			$tags = explode(',', $request->post('tags'));
+
+			foreach ($tags as $tagId) {
+				$tag = TagFactory::get($tagId);
+				$post->addTag($tag);
+			}
 		}
 
 		if ($request->post('persons')) {
@@ -252,41 +243,14 @@ class PostController extends GenericController implements ControllerInterface {
 			}
 		}
 
-		print '<pre>'.print_r($post,true).'</pre>';
-
-		die;
-
-
-
-
-
-//		$post->addTag();
-
-		//region Теги
-
-
-		if ($request->post('tags')) {
-			$tags = explode(',', $request->post('tags'));
-
-			foreach ($tags as $tagId) {
-				$tag = new Tag($tagId, Tag::EVENT);
-				$this->tagDataMap->save($tag);
-				$post->addTag($tag);
-			}
-		}
-
-
-
 		if ($request->post('movies')) {
 			$movies = explode(',', $request->post('movies'));
 
 			foreach ($movies as $movieId) {
-				$tag = new Tag($movieId, Tag::FILM);
-				$this->tagDataMap->save($tag);
-				$post->addTag($tag);
+				$movie = MovieFactory::getMovie($movieId);
+				$post->addTag($movie);
 			}
 		}
-		//endregion
 
 		//region Приложенные фотографии
 		$post->clearImages();
@@ -319,28 +283,22 @@ class PostController extends GenericController implements ControllerInterface {
 		//region Fashion Battle
 		if (
 			$request->post('fashionBattle') == 1 &&
-			$request->post('fbFirstPerson') > 0 &&
-			$request->post('fbSecondPerson') > 0
+			$request->post('fbFirstOption') &&
+			$request->post('fbSecondOption')
 		) {
 
-			$firstPerson = PersonFactory::getPerson($request->post('fbFirstPerson'));
-			$secondPerson = PersonFactory::getPerson($request->post('fbSecondPerson'));
+			$firstOption = $request->post('fbFirstOption');
+			$secondOption = $request->post('fbSecondOption');
 
 			$fashionBattle = new FashionBattle();
-			$fashionBattle->setFirstPerson($firstPerson);
-			$fashionBattle->setSecondPerson($secondPerson);
+			$fashionBattle->setFirstOption($firstOption);
+			$fashionBattle->setSecondOption($secondOption);
 
 			$post->addFashionBattle($fashionBattle);
-
 		}
 		//endregion
 
 		$this->newsDataMap->save($post);
-
-		print '<pre>' . print_r($post, true) . '</pre>';
-
-		print '<pre>' . print_r($_POST, true) . '</pre>';
-		die;
 
 		if ($post->getId()) {
 			$this->getSlim()->redirect(sprintf('/office/post%u?status=updated', $post->getId()));

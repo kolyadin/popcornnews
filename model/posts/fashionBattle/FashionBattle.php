@@ -22,14 +22,14 @@ class FashionBattle extends Model {
 	private $newsId;
 
 	/**
-	 * @var Person
+	 * @var string
 	 */
-	private $firstPerson;
+	private $firstOption;
 
 	/**
-	 * @var Person
+	 * @var string
 	 */
-	private $secondPerson;
+	private $secondOption;
 
 
 	//endregion
@@ -50,15 +50,15 @@ class FashionBattle extends Model {
 	/**
 	 * @return Person
 	 */
-	public function getFirstPerson(){
-		return $this->firstPerson;
+	public function getFirstOption(){
+		return $this->firstOption;
 	}
 
 	/**
 	 * @return Person
 	 */
-	public function getSecondPerson(){
-		return $this->secondPerson;
+	public function getSecondOption(){
+		return $this->secondOption;
 	}
 
 	//endregion
@@ -69,12 +69,12 @@ class FashionBattle extends Model {
 		$this->newsId = $id;
 	}
 
-	public function setFirstPerson($personId){
-		$this->firstPerson = $personId;
+	public function setFirstOption($option){
+		$this->firstOption = $option;
 	}
 
-	public function setSecondPerson($personId){
-		$this->secondPerson = $personId;
+	public function setSecondOption($option){
+		$this->secondOption = $option;
 	}
 
 	//endregion

@@ -28,8 +28,8 @@ class NewsController extends GenericController implements ControllerInterface {
 			->getSlim()
 			->get('/category/:category/page/:page', function ($category, $page) {
 				$this->getSlim()->redirect(sprintf('/category/%s/page%u', $category, $page), 301);
-			})
-			->conditions(['category' => '(' . implode('|', array_keys(PostCategory::$category)) . ')']);
+			});
+			//->conditions(['category' => '(' . implode('|', array_keys(PostCategory::$category)) . ')']);
 	}
 
 	public function getRoutes() {
@@ -64,7 +64,7 @@ class NewsController extends GenericController implements ControllerInterface {
 				$this->newsList(['category' => $category, 'page' => $page]);
 			})
 			->conditions([
-				'category' => implode('|', array_keys(PostCategory::$category)),
+				//'category' => implode('|', array_keys(PostCategory::$category)),
 				'page' => '[1-9][0-9]*'
 			]);
 
@@ -133,13 +133,11 @@ class NewsController extends GenericController implements ControllerInterface {
 			$this->getSlim()->notFound();
 		}
 
-		$postsSmall = $dataMap->findByDate(0, 10);
 
 		$this
 			->getTwig()
 			->display('/news/NewsList.twig', array_merge([
 				'posts' => $posts,
-				'postsSmall' => $postsSmall,
 				'paginator' => [
 					'pages' => $paginator['pages'],
 					'active' => $options['page']

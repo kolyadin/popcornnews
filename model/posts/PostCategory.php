@@ -7,31 +7,31 @@ class PostCategory {
 	private $category = [
 		1 => [
 			'urlName' => 'stars',
-			'name'    => 'звезды'
+			'name'    => 'Звезды'
 		],
 		2 => [
 			'urlName' => 'fashion',
-			'name'    => 'мода'
+			'name'    => 'Мода'
 		],
 		3 => [
 			'urlName' => 'beauty',
-			'name'    => 'красота'
+			'name'    => 'Красота'
 		],
 		4 => [
 			'urlName' => 'movie',
-			'name'    => 'кино'
+			'name'    => 'Кино'
 		],
 		5 => [
 			'urlName' => 'tvshow',
-			'name'    => 'тв и сериалы'
+			'name'    => 'ТВ и сериалы'
 		],
 		6 => [
 			'urlName' => 'music',
-			'name'    => 'музыка'
+			'name'    => 'Музыка'
 		],
 		7 => [
 			'urlName' => 'gadget',
-			'name'    => 'гаджеты'
+			'name'    => 'Гаджеты'
 		],
 	];
 

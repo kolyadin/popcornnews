@@ -12,7 +12,9 @@ use popcorn\model\Model;
 class Tag extends Model {
 
     const EVENT     = 1;//Обычный тег
-    const ARTICLE   = 2;//Категория
+	const PERSON    = 2;//Персоны
+	const ARTICLE   = 3;//Категория
+	const MOVIE     = 4;//Фильм
 
 	private $id;
 

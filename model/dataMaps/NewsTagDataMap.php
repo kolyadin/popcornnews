@@ -9,8 +9,11 @@ namespace popcorn\model\dataMaps;
 use popcorn\lib\mmc\MMC;
 use popcorn\model\persons\Person;
 use popcorn\model\persons\PersonFactory;
+use popcorn\model\posts\Movie;
+use popcorn\model\posts\MovieFactory;
 use popcorn\model\posts\NewsPost;
 use popcorn\model\tags\Tag;
+use popcorn\model\tags\TagFactory;
 
 class NewsTagDataMap extends CrossLinkedDataMap {
 
@@ -26,9 +29,22 @@ class NewsTagDataMap extends CrossLinkedDataMap {
 
 		$this->findLinkedStatement =
 			$this->prepare("
-                SELECT t.* FROM pn_tags AS t
-                LEFT JOIN pn_news_tags AS l ON (l.entityId = t.id)
-                WHERE l.newsId = :id ORDER BY t.id ASC");
+                SELECT t.id,t.name,t.type FROM pn_tags AS t
+				JOIN pn_news_tags AS l ON (l.entityId = t.id and (l.type = " . Tag::ARTICLE . " or l.type = " . Tag::EVENT . "))
+				WHERE l.newsId = :id
+
+				union all
+
+				SELECT p.id,p.name," . Tag::PERSON . " type FROM pn_persons AS p
+				JOIN pn_news_tags AS l ON (l.entityId = p.id and l.type = " . Tag::PERSON . ")
+				WHERE l.newsId = :id
+
+				union all
+
+				SELECT m.id,m.name," . Tag::MOVIE . " type FROM ka_movies AS m
+				JOIN pn_news_tags AS l ON (l.entityId = m.id and l.type = " . Tag::MOVIE . ")
+				WHERE l.newsId = :id");
+
 		$this->cleanStatement = $this->prepare("DELETE FROM pn_news_tags WHERE newsId = :id");
 		$this->insertStatement = $this->prepare("INSERT INTO pn_news_tags (newsId, type, entityId) VALUES (:id, :type, :entityId)");
 		$this->fidnByLinkStatement = $this->prepare("
@@ -36,6 +52,31 @@ class NewsTagDataMap extends CrossLinkedDataMap {
             INNER JOIN pn_news_tags AS t ON (n.id = t.newsId)
             WHERE t.tagId = :id
         ");
+	}
+
+	/**
+	 * @param $id
+	 *
+	 * @return Model[]
+	 */
+	public function findById($id) {
+
+		$this->checkStatement($this->findLinkedStatement);
+		$this->findLinkedStatement->bindValue(':id', $id);
+		$this->findLinkedStatement->execute();
+		$items = $this->findLinkedStatement->fetchAll(\PDO::FETCH_ASSOC);
+
+		foreach ($items as &$item) {
+			if ($item['type'] == Tag::PERSON) {
+				$item = PersonFactory::getPerson($item['id']);
+			} elseif (in_array($item['type'], [Tag::EVENT, Tag::ARTICLE])) {
+				$item = TagFactory::get($item['id']);
+			} elseif ($item['type'] == Tag::MOVIE) {
+				$item = MovieFactory::getMovie($item['id']);
+			}
+		}
+
+		return $items;
 	}
 
 	/**
@@ -63,7 +104,7 @@ class NewsTagDataMap extends CrossLinkedDataMap {
 		$this->cleanStatement->bindValue(':id', $postId);
 		$this->cleanStatement->execute();
 
-		if (empty($items)) {
+		if (empty($tags)) {
 			return;
 		}
 
@@ -79,6 +120,11 @@ class NewsTagDataMap extends CrossLinkedDataMap {
 			} elseif ($tag instanceof Tag) {
 				$this->insertStatement->bindValue(':type', $tag->getType());
 				$this->insertStatement->bindValue(':entityId', $tag->getId());
+			} elseif ($tag instanceof Movie) {
+				$movie = $tag;
+
+				$this->insertStatement->bindValue(':type', Tag::MOVIE);
+				$this->insertStatement->bindValue(':entityId', $movie->getId());
 			}
 
 			$this->insertStatement->execute();

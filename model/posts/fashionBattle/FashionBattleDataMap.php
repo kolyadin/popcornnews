@@ -14,10 +14,10 @@ class FashionBattleDataMap extends DataMap {
 		$this->class = "popcorn\\model\\posts\\fashionBattle\\FashionBattle";
 		$this->insertStatement =
 			$this->prepare("
-                INSERT INTO pn_news_fashion_battle (newsId, firstPerson, secondPerson)
-                VALUES (:newsId, :firstPerson, :secondPerson)");
+                INSERT INTO pn_news_fashion_battle (newsId, firstOption, secondOption)
+                VALUES (:newsId, :firstOption, :secondOption)");
 		$this->updateStatement =
-			$this->prepare("UPDATE pn_news_fashion_battle SET newsId=:newsId, firstPerson=:firstPerson, secondPerson=:secondPerson WHERE id=:id");
+			$this->prepare("UPDATE pn_news_fashion_battle SET newsId=:newsId, firstOption=:firstOption, secondOption=:secondOption WHERE id=:id");
 		$this->deleteStatement = $this->prepare("DELETE FROM pn_news_fashion_battle WHERE id=:id");
 		$this->findOneStatement = $this->prepare("SELECT * FROM pn_news_fashion_battle WHERE id=:id");
 
@@ -29,26 +29,18 @@ class FashionBattleDataMap extends DataMap {
 	 */
 	protected function insertBindings($item) {
 		$this->insertStatement->bindValue(":newsId", $item->getNewsId());
-		$this->insertStatement->bindValue(":firstPerson", $item->getFirstPerson()->getId());
-		$this->insertStatement->bindValue(":secondPerson", $item->getSecondPerson()->getId());
+		$this->insertStatement->bindValue(":firstOption", $item->getFirstOption());
+		$this->insertStatement->bindValue(":secondOption", $item->getSecondOption());
 	}
 
 	/**
 	 * @param FashionBattle $item
 	 */
 	protected function updateBindings($item) {
-		$this->updateStatement->bindValue(":newsId", $item->getTitle());
-		$this->updateStatement->bindValue(":firstPerson", $item->getFirstPerson());
-		$this->updateStatement->bindValue(":secondPerson", $item->getSecondPerson());
-	}
-
-	/**
-	 * @param FashionBattle $item
-	 */
-	protected function itemCallback($item) {
-        $item->setFirstPerson(PersonFactory::getPerson($item->getFirstPerson()));
-		$item->setSecondPerson(PersonFactory::getPerson($item->getSecondPerson()));
-		parent::itemCallback($item);
+		$this->updateStatement->bindValue(":newsId", $item->getNewsId());
+		$this->updateStatement->bindValue(":firstOption", $item->getFirstOption());
+		$this->updateStatement->bindValue(":secondOption", $item->getSecondOption());
+		$this->updateStatement->bindValue(":id", $item->getId());
 	}
 
 	public function getByNewsId($newsId) {
@@ -70,8 +62,6 @@ class FashionBattleDataMap extends DataMap {
 	 */
 	public function saveWithPost($item){
 		$item->getFashionBattle()->setNewsId($item->getId());
-
-
 		parent::save($item->getFashionBattle());
 	}
 

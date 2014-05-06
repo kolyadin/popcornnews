@@ -12,6 +12,7 @@ use popcorn\model\persons\KidFactory;
 use popcorn\model\persons\PersonFactory;
 use popcorn\model\poll\PollDataMap;
 use popcorn\model\posts\PostFactory;
+use popcorn\model\tags\Tag;
 
 class AjaxController extends GenericController implements ControllerInterface {
 	public function getRoutes() {
@@ -123,7 +124,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 	public function postTags() {
 		$term = $this->getSlim()->request->get('term');
 
-		$stmt = PDOHelper::getPDO()->prepare('SELECT id,name FROM pn_tags WHERE name LIKE :query AND type = 0 ORDER BY name ASC LIMIT 30');
+		$stmt = PDOHelper::getPDO()->prepare('SELECT id,name FROM pn_tags WHERE name LIKE :query AND type = '.Tag::EVENT.' ORDER BY name ASC LIMIT 30');
 		$stmt->execute([
 			':query' => '%' . $term . '%'
 		]);

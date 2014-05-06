@@ -63,7 +63,7 @@ VALUES (
 	protected function execute(InputInterface $input, OutputInterface $output) {
 
 		PDOHelper::truncate([
-			'pn_news','pn_news_images','pn_news_tags','pn_tags'
+			'pn_news','pn_news_fashion_battle','pn_news_images','pn_news_poll','pn_news_tags','pn_news_voting','pn_tags'
 		]);
 
 		$output->writeln('<info>Импорт всех тегов для всех новостей...</info>');

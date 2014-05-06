@@ -48,12 +48,12 @@ class NewsPostDataMap extends DataMap {
 	private function initStatements() {
 		$this->insertStatement =
 			$this->prepare("INSERT INTO pn_news
-			(announce, source, sent, uploadRSS, mainImageId, name, updateDate, createDate, editDate, content, allowComment, status, views, comments, type)
+			(announce, source, sent, uploadRSS, mainImageId, name, updateDate, createDate, editDate, content, allowComment, status, views, comments)
 				VALUES
-			(:announce, :source, :sent, :uploadRSS, :mainImageId, :name, :updateDate, :createDate, :editDate, :content, :allowComment, :status, :views, :comments, :type)");
+			(:announce, :source, :sent, :uploadRSS, :mainImageId, :name, :updateDate, :createDate, :editDate, :content, :allowComment, :status, :views, :comments)");
 		$this->updateStatement =
 			$this->prepare("
-			UPDATE pn_news SET announce=:announce, source=:source, sent=:sent, uploadRSS=:uploadRSS, mainImageId=:mainImageId, name=:name, updateDate=:updateDate, createDate=:createDate, content=:content, allowComment=:allowComment, status=:status, views=:views, comments=:comments, type=:type WHERE id=:id");
+			UPDATE pn_news SET announce=:announce, source=:source, sent=:sent, uploadRSS=:uploadRSS, mainImageId=:mainImageId, name=:name, updateDate=:updateDate, createDate=:createDate, content=:content, allowComment=:allowComment, status=:status, views=:views, comments=:comments WHERE id=:id");
 		$this->deleteStatement = $this->prepare("DELETE FROM pn_news WHERE id=:id");
 		$this->findOneStatement = $this->prepare("SELECT * FROM pn_news WHERE id=:id");
 	}
@@ -76,7 +76,6 @@ class NewsPostDataMap extends DataMap {
 		$this->insertStatement->bindValue(":status", $item->getStatus());
 		$this->insertStatement->bindValue(":views", $item->getViews());
 		$this->insertStatement->bindValue(":comments", $item->getComments());
-		$this->insertStatement->bindValue(":type", $item->getType());
 	}
 
 	/**
@@ -96,7 +95,6 @@ class NewsPostDataMap extends DataMap {
 		$this->updateStatement->bindValue(":status", $item->getStatus());
 		$this->updateStatement->bindValue(":views", $item->getViews());
 		$this->updateStatement->bindValue(":comments", $item->getComments());
-		$this->updateStatement->bindValue(":type", $item->getType());
 		$this->updateStatement->bindValue(":id", $item->getId());
 	}
 
@@ -108,6 +106,12 @@ class NewsPostDataMap extends DataMap {
 	protected function prepareItem($item) {
 		if (!is_object($item->getMainImageId())) {
 			$item->setMainImageId(ImageFactory::getImage($item->getMainImageId()));
+		}
+
+		if ($item->getFashionBattle() instanceof FashionBattle) {
+			if ($item->getFashionBattle()->getId() > 0){
+				$item->addFashionBattle($this->getFashionBattle($item->getId()));
+			}
 		}
 
 		return parent::prepareItem($item);
@@ -137,10 +141,7 @@ class NewsPostDataMap extends DataMap {
 			$item->setImages($this->getAttachedImages($item->getId()));
 		}
 
-
 		$item->addFashionBattle($this->getFashionBattle($item->getId()));
-
-
 	}
 
 	/**
@@ -148,8 +149,8 @@ class NewsPostDataMap extends DataMap {
 	 */
 	protected function onInsert($item) {
 		$this->attachImages($item);
-		$this->attachFashionBattle($item);
 		$this->attachTags($item);
+		$this->attachFashionBattle($item);
 	}
 
 	/**
@@ -157,8 +158,8 @@ class NewsPostDataMap extends DataMap {
 	 */
 	protected function onUpdate($item) {
 		$this->attachImages($item);
-		$this->attachFashionBattle($item);
 		$this->attachTags($item);
+		$this->attachFashionBattle($item);
 	}
 
 	/**
@@ -193,17 +194,15 @@ class NewsPostDataMap extends DataMap {
 	 * @param NewsPost $item
 	 */
 	private function attachFashionBattle($item) {
-
 		if ($item->getFashionBattle() instanceof FashionBattle) {
 			$this->fashionBattleDataMap->saveWithPost($item);
 		}
-		/*else{
-					$this->fashionBattleDataMap->deleteWithPost($item);
-				}*/
 	}
 
 	private function getFashionBattle($id) {
-		return $this->fashionBattleDataMap->getByNewsId($id);
+		$item = $this->fashionBattleDataMap->getByNewsId($id);
+
+		return $item;
 	}
 
 	public function findByDate($from = 0, $count = -1) {
@@ -299,7 +298,7 @@ from
 	join pn_news_tags newsTags on (newsTags.newsId = news.id)
 	join pn_tags      tags     on (tags.id = newsTags.tagId)
 where
-	tags.type = :tagType and tags.name = :category
+	tags.type = :tagType and tags.name = :category and news.mainImageId <> 0
 EOL;
 
 			$binds = [
@@ -328,7 +327,7 @@ from
 	join pn_news_tags newsTags on (newsTags.newsId = news.id)
 	join pn_tags      tags     on (tags.id = newsTags.tagId)
 where
-	tags.type = :tagType and tags.id = :tag
+	tags.type = :tagType and tags.id = :tag and news.mainImageId <> 0
 EOL;
 
 			$binds = [

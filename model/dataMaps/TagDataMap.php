@@ -34,38 +34,6 @@ class TagDataMap extends DataMap {
 		$this->findOneStatement = $this->prepare("SELECT * FROM pn_tags WHERE id = :id");
 	}
 
-	/**
-	 * @param Tag $item
-	 * @param int $modifier
-	 */
-	public function itemCallback($item, $modifier = self::WITH_ALL) {
-
-		$modifier = $this->getModifier($this, $modifier);
-
-		switch ($item->getType()) {
-			case Tag::PERSON:
-				if ($modifier & self::WITH_ENTITY) {
-
-					$person = PersonFactory::getPerson($item->getName());
-
-					if ($person){
-						$item->setEntity($person);
-					}
-				}
-				break;
-			case Tag::FILM:
-				if ($modifier & self::WITH_ENTITY) {
-
-					$person = PersonFactory::getPerson($item->getName());
-
-					if ($person){
-						$item->setEntity($person);
-					}
-				}
-				break;
-		}
-
-	}
 
 	/**
 	 * @param $ids
@@ -161,13 +129,13 @@ class TagDataMap extends DataMap {
 		$sql = <<<SQL
 SELECT
 	count(*) overall,
-	pnt.tagId,
-	pt.name
+	t_nt.entityId,
+	t_t.name
 FROM
-	     pn_news_tags pnt
-	JOIN pn_tags       pt ON (pnt.tagId = pt.id AND pt.type = 0)
+	     pn_news_tags t_nt
+	JOIN pn_tags      t_t ON (t_t.id = t_nt.entityId AND t_t.type = 1)
 GROUP BY
-	pnt.tagId
+	t_nt.entityId
 ORDER BY
 	overall DESC
 LIMIT

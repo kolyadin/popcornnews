@@ -251,27 +251,9 @@ class NewsPost extends Model {
 	}
 
 	/**
-	 * @param null $type
 	 * @return \popcorn\model\tags\Tag[]
 	 */
-	public function getTags($type = null) {
-
-		if ($type !== null) {
-			foreach ([Tag::ARTICLE, Tag::EVENT, Tag::FILM, Tag::PERSON] as $tagType) {
-				if ($type === $tagType) {
-					$tags = [];
-					foreach ($this->tags as $tag) {
-						if ($tag->getType() == $tagType) {
-							$tags[] = $tag;
-						}
-					}
-
-					return $tags;
-					break;
-				}
-			}
-		}
-
+	public function getTags() {
 		return $this->tags;
 	}
 
@@ -432,8 +414,11 @@ class NewsPost extends Model {
 		return $this->fashionBattle;
 	}
 
-	public function addFashionBattle($id) {
-		$this->fashionBattle = $id;
+	/**
+	 * @param FashionBattle $fb
+	 */
+	public function addFashionBattle($fb) {
+		$this->fashionBattle = $fb;
 	}
 
 	public function removeFashionBattle() {
@@ -525,35 +510,3 @@ class NewsPost extends Model {
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

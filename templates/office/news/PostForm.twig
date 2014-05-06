@@ -172,78 +172,13 @@
 
 			fashionBattle.handler();
 
-			//Первая персона
-			$('input[name=fbFirstPerson]').select2({
-				width: '480px',
-				multiple: false,
-				placeholder: "Начни вводить имя персоны...",
-				initSelection: function (element, callback) {
-					{% if post.fashionBattle %}
-
-						var data = [];
-
-						data.push({'id': {{ post.fashionBattle.firstPerson.id }}, 'text': '{{ post.fashionBattle.firstPerson.name|e }}'});
-
-						callback(data[0]);
-					{% endif %}
-				},
-				ajax: {
-					url: '/office/ajax/post/persons',
-					dataType: 'json',
-					data: function (term) {
-						return {
-							term: term
-						};
-					},
-					results: function (data) {
-						return {
-							results: data.persons
-						};
-					}
-				}
-			});
-
-			//Вторая персона
-			$('input[name=fbSecondPerson]').select2({
-				width: '480px',
-				multiple: false,
-				{% if post.fashionBattle %}readonly: true,{% endif %}
-				placeholder: "Начни вводить имя персоны...",
-				initSelection: function (element, callback) {
-					{% if post.fashionBattle %}
-
-						var data = [];
-
-						data.push({'id': {{ post.fashionBattle.secondPerson.id }}, 'text': '{{ post.fashionBattle.secondPerson.name|e }}'});
-
-						callback(data[0]);
-					{% endif %}
-				},
-				ajax: {
-					url: '/office/ajax/post/persons',
-					dataType: 'json',
-					data: function (term) {
-						return {
-							term: term
-						};
-					},
-					results: function (data) {
-						return {
-							results: data.persons
-						};
-					}
-				}
-			});
-
-			{% if post.fashionBattle %}
-				//Активируем панель fashion battle
-				//покажем только выбранные персоны
-				fashionBattle.activate();
-
-				//Уберем возможность любых манипуляция с УЖЕ добавленным fashion battle
-				fashionBattle.hideButtons();
-				$('input[name=fbFirstPerson]').select2('enable',false);
-				$('input[name=fbSecondPerson]').select2('enable',false);
+			{% if post %}
+				{% if not post.fashionBattle %}
+					fashionBattle.hideButtons();
+				{% elseif post.fashionBattle %}
+					fashionBattle.activate();
+					fashionBattle.hideButtons();
+				{% endif %}
 			{% endif %}
 
 		})
@@ -552,20 +487,15 @@
 				placeholder: "Начни вводить название рубрики...",
 				initSelection: function (element, callback) {
 
-					{% if post.tags(3)|length %}
+					{% if tags.articles|length %}
 
-						  var data = [];
+						var data = [];
 
-						{% for tag in post.tags(3) %}
-							  data.push({'id': {{ tag.name }}, 'text': getArticle({{ tag.name|e }})});
+						{% for tag in tags.articles %}
+							  data.push({'id': {{ tag.id }}, 'text': '{{ tag.name|e }}'});
 						{% endfor %}
 
-
-						  $(element.val().split(';')).each(function () {
-							  data.push({id: this, text: this});
-						  });
-
-						  callback(data);
+						callback(data);
 				    {% endif %}
 				}
 			});
@@ -576,20 +506,15 @@
 				placeholder: "Начни вводить название тега...",
 				initSelection: function (element, callback) {
 
-					{% if post.tags(0)|length %}
+					{% if tags.events|length %}
 
-						var data = [];
+					var data = [];
 
-						{% for tag in post.tags(0) %}
-							data.push({'id': {{ tag.id }}, 'text': '{{ tag.name|e }}'});
-						{% endfor %}
+					{% for tag in tags.events %}
+						data.push({'id': {{ tag.id }}, 'text': '{{ tag.name|e }}'});
+					{% endfor %}
 
-
-						$(element.val().split(';')).each(function () {
-							data.push({id: this, text: this});
-						});
-
-						callback(data);
+					callback(data);
 					{% endif %}
 				},
 				ajax: {
@@ -613,7 +538,16 @@
 				multiple: true,
 				placeholder: "Начни вводить имя персоны...",
 				initSelection: function (element, callback) {
+					{% if tags.persons|length %}
 
+					var data = [];
+
+					{% for person in tags.persons %}
+						data.push({'id': {{ person.id }}, 'text': '{{ person.name|e }}'});
+					{% endfor %}
+
+					callback(data);
+					{% endif %}
 				},
 				ajax: {
 					url: '/office/ajax/post/persons',
@@ -636,7 +570,16 @@
 				multiple: true,
 				placeholder: "Начни вводить название фильма...",
 				initSelection: function (element, callback) {
+					{% if tags.movies|length %}
 
+					var data = [];
+
+					{% for movie in tags.movies %}
+						data.push({'id': {{ movie.id }}, 'text': '{{ movie.name }}'});
+					{% endfor %}
+
+					callback(data);
+					{% endif %}
 				},
 				ajax: {
 					url: '/office/ajax/find/movies',
@@ -976,7 +919,7 @@
 						<label class="control-label col-md-3">Рубрики: <span class="required">*</span></label>
 
 						<div class="col-md-9">
-							<input type="hidden" name="articles" value="{{ tags.articles|join(';') }}"/>
+							<input type="hidden" name="articles" value="{{ tags.articlesString|join(';') }}"/>
 							<span class="help-block"></span>
 						</div>
 					</div>
@@ -985,7 +928,7 @@
 						<label class="control-label col-md-3">Теги:</label>
 
 						<div class="col-md-9">
-							<input type="hidden" name="tags" value="{{ tags.events|join(';') }}"/>
+							<input type="hidden" name="tags" value="{{ tags.eventsString|join(';') }}"/>
 							<span class="help-block"></span>
 						</div>
 					</div>
@@ -994,7 +937,7 @@
 						<label class="control-label col-md-3">Персоны:</label>
 
 						<div class="col-md-9">
-							<input type="hidden" name="persons"/>
+							<input type="hidden" name="persons" value="{{ tags.personsString|join(';') }}"/>
 							<span class="help-block"></span>
 						</div>
 					</div>
@@ -1003,7 +946,7 @@
 						<label class="control-label col-md-3">Фильмы:</label>
 
 						<div class="col-md-9">
-							<input type="hidden" name="movies"/>
+							<input type="hidden" name="movies" value="{{ tags.moviesString|join(';') }}"/>
 							<span class="help-block"></span>
 						</div>
 					</div>
@@ -1071,16 +1014,16 @@
 						<input type="hidden" name="fashionBattle" value="0" />
 
 						<div class="form-group last">
-							<label class="control-label col-md-3">#1 персона: <span class="required">*</span></label>
+							<label class="control-label col-md-3">#1 вариант: <span class="required">*</span></label>
 							<div class="col-md-9 right">
-								<input type="hidden" name="fbFirstPerson" value="{{ post.fashionBattle.firstPerson.id }}"/>
+								<input type="text" class="form-control" {% if post.fashionBattle %}readonly="true"{% endif %} name="fbFirstOption" value="{{ post.fashionBattle.firstOption }}"/>
 							</div>
 						</div>
 
 						<div class="form-group last">
-							<label class="control-label col-md-3">#2 персона: <span class="required">*</span></label>
+							<label class="control-label col-md-3">#2 вариант: <span class="required">*</span></label>
 							<div class="col-md-9 right">
-								<input type="hidden" name="fbSecondPerson" value="{{ post.fashionBattle.secondPerson.id }}"/>
+								<input type="text" class="form-control" {% if post.fashionBattle %}readonly="true"{% endif %} name="fbSecondOption" value="{{ post.fashionBattle.secondOption }}"/>
 							</div>
 						</div>
 					</div>
