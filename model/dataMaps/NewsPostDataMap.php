@@ -109,7 +109,7 @@ class NewsPostDataMap extends DataMap {
 		}
 
 		if ($item->getFashionBattle() instanceof FashionBattle) {
-			if ($item->getFashionBattle()->getId() > 0){
+			if ($item->getFashionBattle()->getId() > 0) {
 				$item->addFashionBattle($this->getFashionBattle($item->getId()));
 			}
 		}
@@ -204,6 +204,7 @@ class NewsPostDataMap extends DataMap {
 
 		return $item;
 	}
+
 
 	public function findByDate($from = 0, $count = -1) {
 		$sql = "SELECT * FROM pn_news ORDER BY createDate DESC";

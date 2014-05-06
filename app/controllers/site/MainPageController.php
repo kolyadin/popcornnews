@@ -32,12 +32,18 @@ class MainPageController extends GenericController implements ControllerInterfac
 		$this->buildTopPosts();
 		$this->buildLastPosts();
 		$this->buildRandomKid();
+		$this->buildStopShot();
 
 
 		$this->twigData['showSidebar'] = false;
 
 		$this->getTwig()->display('/MainPage.twig', $this->twigData);
 
+	}
+
+	private function buildStopShot() {
+		$post = PostFactory::getStopShot();
+		$this->twigData['stopShots'] = $post;
 	}
 
 	private function buildRandomKid() {

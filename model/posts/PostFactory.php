@@ -65,6 +65,7 @@ class PostFactory {
 		self::checkDataMap();
 
 		$stmt = PDOHelper::getPDO()->prepare('UPDATE pn_news SET views = views+1 WHERE id = :newsId');
+
 		return $stmt->execute([
 			':newsId' => $post->getId()
 		]);
@@ -105,6 +106,14 @@ class PostFactory {
 		}
 	}
 
+	public static function getStopShot($from = 0, $count = 2) {
+		self::checkDataMap();
+
+		return self::$dataMap->findRaw('name like "Стоп-кадр%" and status = ' . NewsPost::STATUS_PUBLISHED,
+			['createDate' => 'desc'], $from, $count
+		);
+	}
+
 	/**
 	 * @param $count
 	 *
@@ -113,7 +122,7 @@ class PostFactory {
 	public static function getTopPosts($count) {
 		self::checkDataMap();
 
-		return self::$dataMap->findRaw("status = ".NewsPost::STATUS_PUBLISHED." AND createDate > " . strtotime("-2 week"),
+		return self::$dataMap->findRaw("status = " . NewsPost::STATUS_PUBLISHED . " AND createDate > " . strtotime("-2 week"),
 			array('comments' => DataMap::DESC, 'createDate' => DataMap::DESC),
 			0, $count);
 	}
@@ -129,6 +138,7 @@ class PostFactory {
 	public static function createFromBuilder($builder) {
 		$post = $builder->build();
 		self::savePost($post);
+
 		return $post;
 	}
 

@@ -1,506 +1,612 @@
 {% extends '/GenericInner.twig' %}
 
 {% block head %}
-    <title>Новостной блог о звездах кино - popcornnews</title>
+	<title>Новостной блог о звездах кино - popcornnews</title>
 
-    <meta name="description" content="Новостной блог" />
-    <meta name="keywords"    content="попкорнньюз, popcornnews, блог звезды, новости звезд, звездные новости" />
+	<meta name="description" content="Новостной блог"/>
+	<meta name="keywords" content="попкорнньюз, popcornnews, блог звезды, новости звезд, звездные новости"/>
 
 	<script type="text/javascript" src="/st/js/jquery.columnizer.js"></script>
 
-    {# Эти js нужны только для главной страницы #}
-    <script type="text/javascript" src="/st/js/news_gallery.js"></script>
-    <script type="text/javascript" src="/st/js/freeze_gallery.js"></script>
-    <script type="text/javascript" src="/st/js/main.js"></script>
+	{# Эти js нужны только для главной страницы #}
+	<script type="text/javascript" src="/st/js/news_gallery.js"></script>
+	<script type="text/javascript" src="/st/js/freeze_gallery.js"></script>
+	<script type="text/javascript" src="/st/js/main.js"></script>
 
-    <script>
-        $.fn.HasScrollBar = function() {
-            //note: clientHeight= height of holder
-            //scrollHeight= we have content till this height
-            var _elm = $(this)[0];
-            var _hasScrollBar = false;
-            if ((_elm.clientHeight < _elm.scrollHeight) || (_elm.clientWidth < _elm.scrollWidth)) {
-                _hasScrollBar = true;
-            }
-            return _hasScrollBar;
-        }
+	<script>
+		$.fn.HasScrollBar = function () {
+			//note: clientHeight= height of holder
+			//scrollHeight= we have content till this height
+			var _elm = $(this)[0];
+			var _hasScrollBar = false;
+			if ((_elm.clientHeight < _elm.scrollHeight) || (_elm.clientWidth < _elm.scrollWidth)) {
+				_hasScrollBar = true;
+			}
+			return _hasScrollBar;
+		}
 
-        $(function(){
+		$(function () {
 
-            // -- Динамически уменьшает блок
+			// -- Динамически уменьшает блок
 
-            var tcBlock   = $('.b-top-corn__large-right-block');
-            var tcBlockH2 = tcBlock.find('h2:eq(0)');
-            var tcBlockA  = tcBlockH2.find('a');
+			var tcBlock = $('.b-top-corn__large-right-block');
+			var tcBlockH2 = tcBlock.find('h2:eq(0)');
+			var tcBlockA = tcBlockH2.find('a');
 
-            var fSize    = 48;
-            var lHeight = 1.08;
-            var iter    = 0;
+			var fSize = 48;
+			var lHeight = 1.08;
+			var iter = 0;
 
-            while (tcBlock.HasScrollBar()){
+			while (tcBlock.HasScrollBar()) {
 
-                if (iter%2 == 0){
-                    fSize-=2;
-                } else {
-                    lHeight-=0.04;
-                }
+				if (iter % 2 == 0) {
+					fSize -= 2;
+				} else {
+					lHeight -= 0.04;
+				}
 
-                tcBlockH2.css('line-height',lHeight);
-                tcBlockA.css('font-size',fSize+'px');
+				tcBlockH2.css('line-height', lHeight);
+				tcBlockA.css('font-size', fSize + 'px');
 
-                iter++;
-            }
+				iter++;
+			}
 
-            // --
+			// --
 
-        })
-    </script>
+		})
+	</script>
 {% endblock %}
 
 {% block content %}
 
-{% set topPost = topPosts[0] %}
+	{% set topPost = topPosts[0] %}
 
-<section class="b-top-corn clearfix b-grid__c12">
-    <div class="b-top-corn__large">
-        <div class="b-top-corn__large-news b-top-corn__large-news_active clearfix" id="b-top-corn__large-news_0">
-            <div class="b-grid__g8">
-                <a href="/news/{{ topPost.id }}" title="{{ topPost.name|e }}" class="b-top-corn__large-photo">
-                    <img src="{{ topPost.mainImageId.thumb('x400').url }}" alt="" />
-                </a>
-            </div>
+	<section class="b-top-corn clearfix b-grid__c12">
+		<div class="b-top-corn__large">
+			<div class="b-top-corn__large-news b-top-corn__large-news_active clearfix" id="b-top-corn__large-news_0">
+				<div class="b-grid__g8">
+					<a href="/news/{{ topPost.id }}" title="{{ topPost.name|e }}" class="b-top-corn__large-photo">
+						<img src="{{ topPost.mainImageId.thumb('x400').url }}" alt=""/>
+					</a>
+				</div>
 
-            <div class="b-grid__g4 b-top-corn__large-right-block">
-                <h1 class="b-top-corn__rubrics-title b-rubrics-title b-rubrics-title_s30">топ-корн</h1>
-                <h2 class="b-top-corn__large-news-title"><a href="/news/{{ topPost.id }}">{{ topPost.name|e }}</a></h2>
-                <h3 class="b-top-corn__large-news-lead">{{ topPost.announceFriendly(100) }}</h3>
-                <div class="b-top-corn__large-news-comments b-comments-status b-comments-status_large">
-                    <a href="/news/{{ topPost.id }}#comments" class="b-comments-status__num">{{ topPost.comments }}</a>
-                    <div class="b-comments-status__title">ком-<br />мента-<br />риев</div>
-                </div>
-            </div>
-        </div>
-    </div>
+				<div class="b-grid__g4 b-top-corn__large-right-block">
+					<h1 class="b-top-corn__rubrics-title b-rubrics-title b-rubrics-title_s30">топ-корн</h1>
+
+					<h2 class="b-top-corn__large-news-title"><a href="/news/{{ topPost.id }}">{{ topPost.name|e }}</a>
+					</h2>
+
+					<h3 class="b-top-corn__large-news-lead">{{ topPost.announceFriendly(100) }}</h3>
+
+					<div class="b-top-corn__large-news-comments b-comments-status b-comments-status_large">
+						<a href="/news/{{ topPost.id }}#comments"
+						   class="b-comments-status__num">{{ topPost.comments }}</a>
+
+						<div class="b-comments-status__title">ком-<br/>мента-<br/>риев</div>
+					</div>
+				</div>
+			</div>
+		</div>
 
 
-    <ul class="b-top-corn__short-news clearfix">
+		<ul class="b-top-corn__short-news clearfix">
 
-        {% for post in topPosts[1:6] %}
+			{% for post in topPosts[1:6] %}
 
-            <li class="b-grid__g2" data-url="./ajax/gallery2.html">
-                <div class="b-top-corn__short-news-container {% if loop.first %} b-top-corn__short-news-container_first {% endif %}" >
-                    <h2 class="b-top-corn__short-news-title"><a href="/news/{{ post.id }}" title="{{ post.name|e }}">{{ post.name|e }}</a></h2>
-                    <a href="#" class="b-top-corn__short-news-comments b-comments-status">
-                        <span class="b-comments-status__num">{{ post.comments }}</span>
-                        <span class="b-comments-status__title">комменария</span>
-                    </a>
-                </div>
-            </li>
+				<li class="b-grid__g2" data-url="./ajax/gallery2.html">
+					<div class="b-top-corn__short-news-container {% if loop.first %} b-top-corn__short-news-container_first {% endif %}">
+						<h2 class="b-top-corn__short-news-title"><a href="/news/{{ post.id }}"
+						                                            title="{{ post.name|e }}">{{ post.name|e }}</a></h2>
+						<a href="#" class="b-top-corn__short-news-comments b-comments-status">
+							<span class="b-comments-status__num">{{ post.comments }}</span>
+							<span class="b-comments-status__title">комменария</span>
+						</a>
+					</div>
+				</li>
 
-        {% endfor %}
+			{% endfor %}
 
-    </ul>
-</section>
+		</ul>
+	</section>
 
-<section class="b-full-width-advert b-grid__g12 clearfix">
-    <a href="#"><img src="/st/img/content/large_advert.jpg" alt="" /></a>
-</section>
+	<section class="b-full-width-advert b-grid__g12 clearfix">
+		<a href="#"><img src="/st/img/content/large_advert.jpg" alt=""/></a>
+	</section>
 
-<section class="b-center-column clearfix">
-    <ul class="b-column-news">
-	    {% for post in lastPosts[:6] %}
-		    {% set photo = post.mainImageId.thumb('140x') %}
+	<section class="b-center-column clearfix">
+		<ul class="b-column-news">
+			{% for post in lastPosts[:6] %}
+				{% set photo = post.mainImageId.thumb('140x') %}
 
-		    <li class="b-grid__g2">
-			    <a href="/news/{{ post.id }}" title="{{ post.name|e }}" class="b-column-news__head">
-				    <img src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}" alt="{{ post.name|e }}" />
-			    </a>
-			    <div class="b-column-news__body">
-				    <h2 class="b-column-news__title"><a href="/news/{{ post.id }}">{{ post.name|e }}</a></h2>
-				    <p class="b-column-news__text">{{ post.announceFriendly(100) }}</p>
-				    <a href="/news/{{ post.id }}#comments" title="{{ post.name|e }}" class="b-column-news__comments b-comments-status">
-					    <span class="b-comments-status__num">{{ post.comments }}</span>
-					    <span class="b-comments-status__title">{{ post.comments|ruNumber('%s',['комментарий','комментария','комментариев','нет комментариев']) }}</span>
-				    </a>
-			    </div>
-		    </li>
-	    {% endfor %}
-    </ul>
-</section>
+				<li class="b-grid__g2">
+					<a href="/news/{{ post.id }}" title="{{ post.name|e }}" class="b-column-news__head">
+						<img src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}"
+						     alt="{{ post.name|e }}"/>
+					</a>
 
-<section class="b-freeze-frame">
-    <script type="text/javascript">
-        var freezeList = [{"header":"Зак Эфрон, Кайли Миноуг, Крис Хемсворт, Кэти Перри и другие","photos":[{"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t1.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t2.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t3.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t4.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t5.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t6.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t7.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t8.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t9.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t10.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t11.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t12.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t1.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t2.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t3.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t4.jpg","link":"#"}]}, {"header":"Знаменитости, изменившие свое имя","photos":[{"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t1.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t2.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t3.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t4.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t5.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t6.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t7.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t8.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t9.jpg","link":"#"}]}, {"header":"Эволюция волос Майли Сайрус","photos":[{"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t1.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t2.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t3.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t4.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t5.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t6.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t7.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t8.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t9.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t10.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t11.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t12.jpg","link":"#"}]}, {"header":"Фото знаменитостей из полицейских участков","photos":[{"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t12.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t7.jpg","link":"#"}, {"img":"http:\/\/popcorn-html.demo.traf.spb.ru\/img\/tmp\/t8.jpg","link":"#"}]}],
-                currentFreezeInList = 0;
-    </script>
-    <div class="b-freeze-frame__top clearfix loaded">
-        <div class="b-grid__g4">
-            <div class="b-freeze-frame__title-cont">
-                <h1 class="b-freeze-frame__rubrics-title b-rubrics-title b-rubrics-title_s24">Стоп-кадр</h1>
-                <div class="b-freeze-frame__title-arrows-cont b-title-arrows">
-                    <div class="b-title-arrows__arrow b-title-arrows__arrow_left"></div>
-                    <div class="b-title-arrows__arrow b-title-arrows__arrow_right"></div>
-                </div>
-            </div>
-            <h2 class="b-freeze-frame__news-title"></h2>
-        </div>
-        <div class="b-grid__g8">
-            <section class="b-freeze-frame__gallery">
-                <ul>
-                    <!--<li><a href="#"><img src="/st/img/tmp/t1.jpg" alt="" /></a></li>
-                    <li><a href="#"><img src="/st/img/tmp/t2.jpg" alt="" /></a></li>
-                    <li><a href="#"><img src="/st/img/tmp/t3.jpg" alt="" /></a></li>
-                    <li><a href="#"><img src="/st/img/tmp/t4.jpg" alt="" /></a></li>
-                    <li><a href="#"><img src="/st/img/tmp/t5.jpg" alt="" /></a></li>
-                    <li><a href="#"><img src="/st/img/tmp/t6.jpg" alt="" /></a></li>
-                    <li><a href="#"><img src="/st/img/tmp/t7.jpg" alt="" /></a></li>
-                    <li><a href="#"><img src="/st/img/tmp/t8.jpg" alt="" /></a></li>
-                    <li><a href="#"><img src="/st/img/tmp/t9.jpg" alt="" /></a></li>
-                    <li><a href="#"><img src="/st/img/tmp/t10.jpg" alt="" /></a></li>
-                    <li><a href="#"><img src="/st/img/tmp/t11.jpg" alt="" /></a></li>
-                    <li><a href="#"><img src="/st/img/tmp/t12.jpg" alt="" /></a></li>
-                    <li><a href="#"><img src="/st/img/tmp/t1.jpg" alt="" /></a></li>
-                    <li><a href="#"><img src="/st/img/tmp/t2.jpg" alt="" /></a></li>
-                    <li><a href="#"><img src="/st/img/tmp/t3.jpg" alt="" /></a></li>
-                    <li><a href="#"><img src="/st/img/tmp/t4.jpg" alt="" /></a></li>
-                    <li><a href="#"><img src="/st/img/tmp/t5.jpg" alt="" /></a></li>
-                    <li><a href="#"><img src="/st/img/tmp/t6.jpg" alt="" /></a></li>
-                    <li><a href="#"><img src="/st/img/tmp/t7.jpg" alt="" /></a></li>
-                    <li><a href="#"><img src="/st/img/tmp/t8.jpg" alt="" /></a></li>
-                    <li><a href="#"><img src="/st/img/tmp/t9.jpg" alt="" /></a></li>
-                    <li><a href="#"><img src="/st/img/tmp/t10.jpg" alt="" /></a></li>
-                    <li><a href="#"><img src="/st/img/tmp/t11.jpg" alt="" /></a></li>
-                    <li><a href="#"><img src="/st/img/tmp/t12.jpg" alt="" /></a></li>  -->
-                </ul>
+					<div class="b-column-news__body">
+						<h2 class="b-column-news__title"><a href="/news/{{ post.id }}">{{ post.name|e }}</a></h2>
 
-                <a href="#" class="b-freeze-frame__gallery-link">&gt;</a>
-            </section>
-        </div>
-    </div>
-    <div class="b-freeze-frame__body clearfix">
-        <div class="b-grid__g4">
-            <section class="b-freeze-frame__persons clearfix">
-                <div class="b-freeze-frame__rubrics-title-cont">
-                    <div class="b-freeze-frame__persons-rubrics-title b-rubrics-title b-rubrics-title_s18">персоны</div>
-                    <span class="b-freeze-frame__rubrics-counter b-counter">{{ personsCount }}</span>
-                </div>
-                <div class="b-grid__g2 b-grid__a">
-                    <ul class="b-freeze-frame__list">
-						{% for person in sidebar.persons[:10] %}
-							<li class="b-freeze-frame__item"><a href="/persons/{{ person.urlName }}" class="b-freeze-frame__link b-freeze-frame__link_color{{ person.color }}">{{ person.name|e }}</a></li>
-						{% endfor %}
-                    </ul>
-                </div>
-                <div class="b-grid__g2 b-grid__z">
-                    <ul class="b-freeze-frame__list">
-	                    {% for person in sidebar.persons[10:10] %}
-		                    <li class="b-freeze-frame__item"><a href="/persons/{{ person.urlName }}" class="b-freeze-frame__link b-freeze-frame__link_color{{ person.color }}">{{ person.name|e }}</a></li>
-	                    {% endfor %}
-                    </ul>
-                </div>
-            </section>
-        </div>
-        <div class="b-grid__g4">
-            <section class="b-freeze-frame__tags">
-                <div class="b-freeze-frame__rubrics-title-cont">
-                    <div class="b-freeze-frame__tags-rubrics-title b-rubrics-title b-rubrics-title_s18">теги</div>
-                </div>
-                <div class="b-grid__g2 b-grid__a">
-                    <ul class="b-freeze-frame__list">
-	                    {% for tag in sidebar.tags[:10] %}
-		                    <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;{{ tag.name|e }}&quot;" href="/tag/{{ tag.tagId }}" class="b-freeze-frame__link b-freeze-frame__link_color{{ tag.color }}">{{ tag.name|e }}</a></li>
-	                    {% endfor %}
-                    </ul>
-                </div>
-                <div class="b-grid__g2 b-grid__z">
-                    <ul class="b-freeze-frame__list">
-	                    {% for tag in sidebar.tags[10:10] %}
-		                    <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;{{ tag.name|e }}&quot;" href="/tag/{{ tag.tagId }}" class="b-freeze-frame__link b-freeze-frame__link_color{{ tag.color }}">{{ tag.name|e }}</a></li>
-	                    {% endfor %}
-                    </ul>
-                </div>
-            </section>
-        </div>
-        <div class="b-grid__g4">
-            <section class="b-freeze-frame__groups">
-                <div class="b-freeze-frame__rubrics-title-cont">
-                    <div class="b-freeze-frame__groups-rubrics-title b-rubrics-title b-rubrics-title_s18">группы</div>
-                    <span class="b-freeze-frame__rubrics-counter b-counter">889</span>
-                    <a href="#" class="b-freeze-frame__rubrics-create-button b-create-button"><b>+</b>создать</a>
-                </div>
-                <div class="b-grid__g2 b-grid__a">
-                    <ul class="b-freeze-frame__list">
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color1">Harry Potter</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Jared Leto</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color6">Kristen Stewart</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color8">Nina Dobrev</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Taylor Lautner</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color2">The Best Vampire and Jared Leto</a></li>
-                    </ul>
-                </div>
-                <div class="b-grid__g2 b-grid__z">
-                    <ul class="b-freeze-frame__list">
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color1">The Vampire Diaries</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Twilight</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color5">СЕРИАЛЫ 2000-х ГОДОВ</a></li>
-                        <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color3">Самые красивые актеры и певцы</a></li>
-                    </ul>
-                </div>
-            </section>
-        </div>
-    </div>
+						<p class="b-column-news__text">{{ post.announceFriendly(100) }}</p>
+						<a href="/news/{{ post.id }}#comments" title="{{ post.name|e }}"
+						   class="b-column-news__comments b-comments-status">
+							<span class="b-comments-status__num">{{ post.comments }}</span>
+							<span class="b-comments-status__title">{{ post.comments|ruNumber('%s',['комментарий','комментария','комментариев','нет комментариев']) }}</span>
+						</a>
+					</div>
+				</li>
+			{% endfor %}
+		</ul>
+	</section>
 
-</section>
+	<section class="b-freeze-frame">
+		<script type="text/javascript">
+			var freezeList = [
+					  {% for post in stopShots %}
 
-<section class="b-photo-articles clearfix">
-    <div class="b-photo-articles__title-cont b-grid__g12">
-        <h1 class="b-photo-articles__title b-rubrics-title b-rubrics-title_s24">Фото-статьи</h1>
-        <span class="b-photo-articles__counter b-counter">5941</span>
-    </div>
+						  {
+							  "header": "{{ post.name|e }}",
+							  "photos": [
+								  {% for image in post.images %}
+								        {"img": "{{ image.thumb('60x').url }}", "link": "#"},
+								  {% endfor %}
+							  ]
+						  },
 
-    <div class="b-grid__g4">
-        <a href="#" class="b-photo-articles__photo-cont"><img src="/st/img/content/large_front.jpg" alt="" /></a>
-        <div class="b-photo-articles__photo-count">3 фотографии</div>
-        <h2 class="b-photo-articles__news-title"><a href="#">Голлисвудский роман Николь Кидман и Тома Круза</a></h2>
-    </div>
-    <div class="b-grid__g4">
-        <a href="#" class="b-photo-articles__photo-cont"><img src="/st/img/content/large_front.jpg" alt="" /></a>
-        <div class="b-photo-articles__photo-count">17 фотографий</div>
-        <h2 class="b-photo-articles__news-title"><a href="#">Миллионы Тэйлор Свифт</a></h2>
-    </div>
-    <div class="b-grid__g4">
-        <a href="#" class="b-photo-articles__photo-cont"><img src="/st/img/content/large_front.jpg" alt="" /></a>
-        <div class="b-photo-articles__photo-count">67 фотографий</div>
-        <h2 class="b-photo-articles__news-title"><a href="#">Эволюция тела Майкла Фелпса</a></h2>
-    </div>
+					  {% endfor %}
 
-</section>
+				  ],
+				  currentFreezeInList = 0;
+		</script>
+		<div class="b-freeze-frame__top clearfix loaded">
+			<div class="b-grid__g4">
+				<div class="b-freeze-frame__title-cont">
+					<h1 class="b-freeze-frame__rubrics-title b-rubrics-title b-rubrics-title_s24">Стоп-кадр</h1>
 
-<div class="b-grid__c12 b-fashion-line clearfix">
-    <div class="b-grid__g6">
-        <ul class="b-column-news clearfix">
-	        {% for post in lastPosts[6:3] %}
-		        {% set photo = post.mainImageId.thumb('x163') %}
-		        {% set addClass = '' %}
+					<div class="b-freeze-frame__title-arrows-cont b-title-arrows">
+						<div class="b-title-arrows__arrow b-title-arrows__arrow_left"></div>
+						<div class="b-title-arrows__arrow b-title-arrows__arrow_right"></div>
+					</div>
+				</div>
+				<h2 class="b-freeze-frame__news-title"></h2>
+			</div>
+			<div class="b-grid__g8">
+				<section class="b-freeze-frame__gallery">
+					<ul>
+						<!--<li><a href="#"><img src="/st/img/tmp/t1.jpg" alt="" /></a></li>
+						<li><a href="#"><img src="/st/img/tmp/t2.jpg" alt="" /></a></li>
+						<li><a href="#"><img src="/st/img/tmp/t3.jpg" alt="" /></a></li>
+						<li><a href="#"><img src="/st/img/tmp/t4.jpg" alt="" /></a></li>
+						<li><a href="#"><img src="/st/img/tmp/t5.jpg" alt="" /></a></li>
+						<li><a href="#"><img src="/st/img/tmp/t6.jpg" alt="" /></a></li>
+						<li><a href="#"><img src="/st/img/tmp/t7.jpg" alt="" /></a></li>
+						<li><a href="#"><img src="/st/img/tmp/t8.jpg" alt="" /></a></li>
+						<li><a href="#"><img src="/st/img/tmp/t9.jpg" alt="" /></a></li>
+						<li><a href="#"><img src="/st/img/tmp/t10.jpg" alt="" /></a></li>
+						<li><a href="#"><img src="/st/img/tmp/t11.jpg" alt="" /></a></li>
+						<li><a href="#"><img src="/st/img/tmp/t12.jpg" alt="" /></a></li>
+						<li><a href="#"><img src="/st/img/tmp/t1.jpg" alt="" /></a></li>
+						<li><a href="#"><img src="/st/img/tmp/t2.jpg" alt="" /></a></li>
+						<li><a href="#"><img src="/st/img/tmp/t3.jpg" alt="" /></a></li>
+						<li><a href="#"><img src="/st/img/tmp/t4.jpg" alt="" /></a></li>
+						<li><a href="#"><img src="/st/img/tmp/t5.jpg" alt="" /></a></li>
+						<li><a href="#"><img src="/st/img/tmp/t6.jpg" alt="" /></a></li>
+						<li><a href="#"><img src="/st/img/tmp/t7.jpg" alt="" /></a></li>
+						<li><a href="#"><img src="/st/img/tmp/t8.jpg" alt="" /></a></li>
+						<li><a href="#"><img src="/st/img/tmp/t9.jpg" alt="" /></a></li>
+						<li><a href="#"><img src="/st/img/tmp/t10.jpg" alt="" /></a></li>
+						<li><a href="#"><img src="/st/img/tmp/t11.jpg" alt="" /></a></li>
+						<li><a href="#"><img src="/st/img/tmp/t12.jpg" alt="" /></a></li>  -->
+					</ul>
 
-		        {% if loop.first %}
-			        {% set addClass = 'b-grid__a' %}
-		        {% elseif loop.last %}
-			        {% set addClass = 'b-grid__z' %}
-		        {% endif %}
+					<a href="#" class="b-freeze-frame__gallery-link">&gt;</a>
+				</section>
+			</div>
+		</div>
+		<div class="b-freeze-frame__body clearfix">
+			<div class="b-grid__g4">
+				<section class="b-freeze-frame__persons clearfix">
+					<div class="b-freeze-frame__rubrics-title-cont">
+						<div class="b-freeze-frame__persons-rubrics-title b-rubrics-title b-rubrics-title_s18">персоны
+						</div>
+						<span class="b-freeze-frame__rubrics-counter b-counter">{{ personsCount }}</span>
+					</div>
+					<div class="b-grid__g2 b-grid__a">
+						<ul class="b-freeze-frame__list">
+							{% for person in sidebar.persons[:10] %}
+								<li class="b-freeze-frame__item"><a href="/persons/{{ person.urlName }}"
+								                                    class="b-freeze-frame__link b-freeze-frame__link_color{{ person.color }}">{{ person.name|e }}</a>
+								</li>
+							{% endfor %}
+						</ul>
+					</div>
+					<div class="b-grid__g2 b-grid__z">
+						<ul class="b-freeze-frame__list">
+							{% for person in sidebar.persons[10:10] %}
+								<li class="b-freeze-frame__item"><a href="/persons/{{ person.urlName }}"
+								                                    class="b-freeze-frame__link b-freeze-frame__link_color{{ person.color }}">{{ person.name|e }}</a>
+								</li>
+							{% endfor %}
+						</ul>
+					</div>
+				</section>
+			</div>
+			<div class="b-grid__g4">
+				<section class="b-freeze-frame__tags">
+					<div class="b-freeze-frame__rubrics-title-cont">
+						<div class="b-freeze-frame__tags-rubrics-title b-rubrics-title b-rubrics-title_s18">теги</div>
+					</div>
+					<div class="b-grid__g2 b-grid__a">
+						<ul class="b-freeze-frame__list">
+							{% for tag in sidebar.tags[:10] %}
+								<li class="b-freeze-frame__item"><a
+										  title="Посмотреть новости с меткой &quot;{{ tag.name|e }}&quot;"
+										  href="/tag/{{ tag.tagId }}"
+										  class="b-freeze-frame__link b-freeze-frame__link_color{{ tag.color }}">{{ tag.name|e }}</a>
+								</li>
+							{% endfor %}
+						</ul>
+					</div>
+					<div class="b-grid__g2 b-grid__z">
+						<ul class="b-freeze-frame__list">
+							{% for tag in sidebar.tags[10:10] %}
+								<li class="b-freeze-frame__item"><a
+										  title="Посмотреть новости с меткой &quot;{{ tag.name|e }}&quot;"
+										  href="/tag/{{ tag.tagId }}"
+										  class="b-freeze-frame__link b-freeze-frame__link_color{{ tag.color }}">{{ tag.name|e }}</a>
+								</li>
+							{% endfor %}
+						</ul>
+					</div>
+				</section>
+			</div>
+			<div class="b-grid__g4">
+				<section class="b-freeze-frame__groups">
+					<div class="b-freeze-frame__rubrics-title-cont">
+						<div class="b-freeze-frame__groups-rubrics-title b-rubrics-title b-rubrics-title_s18">группы
+						</div>
+						<span class="b-freeze-frame__rubrics-counter b-counter">889</span>
+						<a href="#" class="b-freeze-frame__rubrics-create-button b-create-button"><b>+</b>создать</a>
+					</div>
+					<div class="b-grid__g2 b-grid__a">
+						<ul class="b-freeze-frame__list">
+							<li class="b-freeze-frame__item"><a href="#"
+							                                    class="b-freeze-frame__link b-freeze-frame__link_color1">Harry
+									Potter</a></li>
+							<li class="b-freeze-frame__item"><a href="#"
+							                                    class="b-freeze-frame__link b-freeze-frame__link_color3">Jared
+									Leto</a></li>
+							<li class="b-freeze-frame__item"><a href="#"
+							                                    class="b-freeze-frame__link b-freeze-frame__link_color6">Kristen
+									Stewart</a></li>
+							<li class="b-freeze-frame__item"><a href="#"
+							                                    class="b-freeze-frame__link b-freeze-frame__link_color8">Nina
+									Dobrev</a></li>
+							<li class="b-freeze-frame__item"><a href="#"
+							                                    class="b-freeze-frame__link b-freeze-frame__link_color3">Taylor
+									Lautner</a></li>
+							<li class="b-freeze-frame__item"><a href="#"
+							                                    class="b-freeze-frame__link b-freeze-frame__link_color2">The
+									Best Vampire and Jared Leto</a></li>
+						</ul>
+					</div>
+					<div class="b-grid__g2 b-grid__z">
+						<ul class="b-freeze-frame__list">
+							<li class="b-freeze-frame__item"><a href="#"
+							                                    class="b-freeze-frame__link b-freeze-frame__link_color1">The
+									Vampire Diaries</a></li>
+							<li class="b-freeze-frame__item"><a href="#"
+							                                    class="b-freeze-frame__link b-freeze-frame__link_color3">Twilight</a>
+							</li>
+							<li class="b-freeze-frame__item"><a href="#"
+							                                    class="b-freeze-frame__link b-freeze-frame__link_color5">СЕРИАЛЫ
+									2000-х ГОДОВ</a></li>
+							<li class="b-freeze-frame__item"><a href="#"
+							                                    class="b-freeze-frame__link b-freeze-frame__link_color3">Самые
+									красивые актеры и певцы</a></li>
+						</ul>
+					</div>
+				</section>
+			</div>
+		</div>
 
-		        <li class="b-grid__g2 {{ addClass }}">
-			        <a href="/news/{{ post.id }}" class="b-column-news__head" title="{{ post.name|e }}">
-				        <img src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}" alt="{{ post.name|e }}" />
-			        </a>
-			        <div class="b-column-news__body">
-				        <h2 class="b-column-news__title"><a href="/news/{{ post.id }}" title="{{ post.name|e }}">{{ post.name|e }}</a></h2>
-				        <p class="b-column-news__text">{{ post.announceFriendly(180) }}</p>
-				        <a href="/news/{{ post.id }}#comments" class="b-column-news__comments b-comments-status">
-					        <span class="b-comments-status__num">{{ post.comments }}</span>
-					        <span class="b-comments-status__title">{{ post.comments|ruNumber('%s',['комментарий','комментария','комментариев','нет комментариев']) }}</span>
-				        </a>
-			        </div>
-		        </li>
-	        {% endfor %}
-        </ul>
+	</section>
 
-        <ul class="b-column-news clearfix">
-	        {% for post in lastPosts[9:3] %}
-		        {% set photo = post.mainImageId.thumb('x163') %}
-		        {% set addClass = '' %}
+	<section class="b-photo-articles clearfix">
+		<div class="b-photo-articles__title-cont b-grid__g12">
+			<h1 class="b-photo-articles__title b-rubrics-title b-rubrics-title_s24">Фото-статьи</h1>
+			<span class="b-photo-articles__counter b-counter">5941</span>
+		</div>
 
-		        {% if loop.first %}
-			        {% set addClass = 'b-grid__a' %}
-		        {% elseif loop.last %}
-			        {% set addClass = 'b-grid__z' %}
-		        {% endif %}
+		<div class="b-grid__g4">
+			<a href="#" class="b-photo-articles__photo-cont"><img src="/st/img/content/large_front.jpg" alt=""/></a>
 
-		        <li class="b-grid__g2 {{ addClass }}">
-			        <a href="/news/{{ post.id }}" class="b-column-news__head" title="{{ post.name|e }}">
-				        <img src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}" alt="{{ post.name|e }}" />
-			        </a>
-			        <div class="b-column-news__body">
-				        <h2 class="b-column-news__title"><a href="/news/{{ post.id }}" title="{{ post.name|e }}">{{ post.name|e }}</a></h2>
-				        <p class="b-column-news__text">{{ post.announceFriendly(180) }}</p>
-				        <a href="/news/{{ post.id }}#comments" class="b-column-news__comments b-comments-status">
-					        <span class="b-comments-status__num">{{ post.comments }}</span>
-					        <span class="b-comments-status__title">{{ post.comments|ruNumber('%s',['комментарий','комментария','комментариев','нет комментариев']) }}</span>
-				        </a>
-			        </div>
-		        </li>
-	        {% endfor %}
-        </ul>
-    </div>
-    <div class="b-grid__g6 clearfix">
-        <section class="b-fashion-battle">
-            <div class="b-fashion-battle__title-cont">
-                <h1 class="b-fashion-battle__rubrics-title b-rubrics-title b-rubrics-title_s30">Fashion battle <span class="b-fashion-battle__rubrics-number">№273</span></h1>
-                <div class="b-fashion-battle__title-arrows-cont b-title-arrows">
-                    <div class="b-title-arrows__arrow b-title-arrows__arrow_left"></div>
-                    <div class="b-title-arrows__arrow b-title-arrows__arrow_right"></div>
-                </div>
-            </div>
-            <h2 class="b-fashion-battle__news-title"><a href="#">Моника Беллуччи и Мадонна</a></h2>
-            <h3 class="b-fashion-battle__news-description">Кто лучше в этом платье?</h3>
-            <div class="b-fashion-battle__photo-cont clearfix">
-                <img src="/st/img/content/compare_img.jpg" alt="" class="b-fashion-battle__img" />
-            </div>
-        </section>
-    </div>
-</div>
+			<div class="b-photo-articles__photo-count">3 фотографии</div>
+			<h2 class="b-photo-articles__news-title"><a href="#">Голлисвудский роман Николь Кидман и Тома Круза</a></h2>
+		</div>
+		<div class="b-grid__g4">
+			<a href="#" class="b-photo-articles__photo-cont"><img src="/st/img/content/large_front.jpg" alt=""/></a>
 
-<div class="b-poll-line clearfix">
-    <div class="b-grid__g4">
-        <section class="b-create-your-style">
-            <div class="b-create-your-style__rubrics-title b-rubrics-title b-rubrics-title_s24">cоздай свой стиль</div>
-            <div class="b-create-your-style__body clearfix">
-                <div class="b-create-your-style__text">Смешивай и комбинируй различные вещи, чтобы создать свой собственный и неповторимый стиль</div>
-                <a href="#" class="b-create-your-style__link b-firm-grad">&gt;</a>
-            </div>
-        </section>
-    </div>
-    <div class="b-grid__g4">
-        <section class="b-star-childrens">
-	        {% set photo = randomKid.photo.thumb('287x') %}
-            <a href="/kid/{{ randomKid.id }}" class="b-star-childrens__link">
-                <img src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}" alt="{{ photo.name|e }}" class="b-star-childrens__img" />
-                <div class="b-star-childrens__news-title">Звёздные дети: {{ randomKid.name|e }}</div>
-            </a>
-        </section>
-    </div>
-    <div class="b-grid__g4">
-	    {% include '/Poll.twig' %}
-    </div>
-</div>
+			<div class="b-photo-articles__photo-count">17 фотографий</div>
+			<h2 class="b-photo-articles__news-title"><a href="#">Миллионы Тэйлор Свифт</a></h2>
+		</div>
+		<div class="b-grid__g4">
+			<a href="#" class="b-photo-articles__photo-cont"><img src="/st/img/content/large_front.jpg" alt=""/></a>
 
-<section class="b-more-column-news clearfix">
-    <ul class="b-column-news">
-	    {% for post in lastPosts[12:5] %}
-		    {% set photo = post.mainImageId.thumb('140x') %}
+			<div class="b-photo-articles__photo-count">67 фотографий</div>
+			<h2 class="b-photo-articles__news-title"><a href="#">Эволюция тела Майкла Фелпса</a></h2>
+		</div>
 
-		    <li class="b-grid__g2">
-			    <a href="/news/{{ post.id }}" title="{{ post.name|e }}" class="b-column-news__head">
-				    <img src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}" alt="{{ post.name|e }}" />
-			    </a>
-			    <div class="b-column-news__body">
-				    <h2 class="b-column-news__title"><a href="/news/{{ post.id }}">{{ post.name|e }}</a></h2>
-				    <p class="b-column-news__text">{{ post.announceFriendly(100) }}</p>
-				    <a href="/news/{{ post.id }}#comments" title="{{ post.name|e }}" class="b-column-news__comments b-comments-status">
-					    <span class="b-comments-status__num">{{ post.comments }}</span>
-					    <span class="b-comments-status__title">{{ post.comments|ruNumber('%s',['комментарий','комментария','комментариев','нет комментариев']) }}</span>
-				    </a>
-			    </div>
-		    </li>
-	    {% endfor %}
-        <li class="b-grid__g2">
-            <div class="b-column-news__head"></div>
-            <a href="/news/page2" class="b-column-news__more-news">ещё <br />новости</a>
-        </li>
-    </ul>
-</section>
+	</section>
 
-<section class="b-conversation clearfix">
-    <h1 class="b-conversation__rubrics-title b-rubrics-title b-rubrics-title_s48">общение <span class="b-conversation__rubrics-title-selection">:)</span></h1>
+	<div class="b-grid__c12 b-fashion-line clearfix">
+		<div class="b-grid__g6">
+			<ul class="b-column-news clearfix">
+				{% for post in lastPosts[6:3] %}
+					{% set photo = post.mainImageId.thumb('x163') %}
+					{% set addClass = '' %}
 
-    <div class="b-grid__g4">
-        <div class="b-conversation__top">
-            <div class="b-conversation__user-counter">
-                <div class="b-conversation__user-count">462</div>
-                <div class="b-conversation__user-title">пользователя</div>
-                <a href="#" class="b-conversation__user-online b-firm-grad">online</a>
-            </div>
-        </div>
-        <div class="b-conversation__about-rubrics-title b-rubrics-title b-rubrics-title_s24">обсуждения звёзд</div>
-        <ul class="b-conversation__about-list">
-            <li class="b-conversation__about-item">
-                <div class="b-conversation__about-hero">Брэд Питт:</div>
-                <a href="#" class="b-conversation__about-hero-room">Посиделки у Брэда <span class="b-conversation__about-hero-counter b-counter">204957</span></a>
-            </li>
-            <li class="b-conversation__about-item">
-                <div class="b-conversation__about-hero">Роберт Паттинсон:</div>
-                <a href="#" class="b-conversation__about-hero-room">"Мой личный сорт героина" <span class="b-conversation__about-hero-counter b-counter">5941</span></a>
-            </li>
-            <li class="b-conversation__about-item">
-                <div class="b-conversation__about-hero">Роберт Паттинсон:</div>
-                <a href="#" class="b-conversation__about-hero-room">Интерактивная фото-развлекуха <span class="b-conversation__about-hero-counter b-counter">292</span></a>
-            </li>
-            <li class="b-conversation__about-item">
-                <div class="b-conversation__about-hero">Джеймс МакЭвой:</div>
-                <a href="#" class="b-conversation__about-hero-room">Фильм "Пенелопа" <span class="b-conversation__about-hero-counter b-counter">224792</span></a>
-            </li>
-            <li class="b-conversation__about-item">
-                <div class="b-conversation__about-hero">Йен Сомерхалдер:</div>
-                <a href="#" class="b-conversation__about-hero-room">Самые свежие новости "ДВ" <span class="b-conversation__about-hero-counter b-counter">4114</span></a>
-            </li>
-        </ul>
-    </div>
-    <div class="b-grid__g8">
-        <div class="b-conversation__top">
-            <div class="b-conversation__flood-rubrics-title b-rubrics-title b-rubrics-title_s24">болталка</div>
-        </div>
-        <ul class="b-conversation__flood-list clearfix">
-            <li class="b-conversation__flood-item b-grid__g2 b-grid__a">
-                <a href="#" class="b-conversation__flood-user-cont">
-                    <img src="/st/img/content/large_front.jpg" alt="" class="b-conversation__flood-user-avatar" />
-                    <div class="b-conversation__flood-user-name">nastem</div>
-                </a>
-                <a href="#" class="b-conversation__flood-post-link">Куда бы вы поехали..если бы знали что скоро умрёте <span class="b-conversation__flood-post-counter b-counter">56</span></a>
-            </li>
-            <li class="b-conversation__flood-item b-grid__g2">
-                <a href="#" class="b-conversation__flood-user-cont">
-                    <img src="/st/img/content/large_front.jpg" alt="" class="b-conversation__flood-user-avatar" />
-                    <div class="b-conversation__flood-user-name">smie</div>
-                </a>
-                <a href="#" class="b-conversation__flood-post-link">Что же такого сказала Перри о России??? <span class="b-conversation__flood-post-counter b-counter">3</span></a>
-            </li>
-            <li class="b-conversation__flood-item b-grid__g2">
-                <a href="#" class="b-conversation__flood-user-cont">
-                    <img src="/st/img/content/large_front.jpg" alt="" class="b-conversation__flood-user-avatar" />
-                    <div class="b-conversation__flood-user-name">Mr.GaGa</div>
-                </a>
-                <a href="#" class="b-conversation__flood-post-link">Когда деревья были большими... <span class="b-conversation__flood-post-counter b-counter">235</span></a>
-            </li>
-            <li class="b-conversation__flood-item b-grid__g2  b-grid__z">
-                <a href="#" class="b-conversation__flood-user-cont">
-                    <img src="/st/img/content/large_front.jpg" alt="" class="b-conversation__flood-user-avatar" />
-                    <div class="b-conversation__flood-user-name">Black & White</div>
-                </a>
-                <a href="#" class="b-conversation__flood-post-link">Выражения учителей <span class="b-conversation__flood-post-counter b-counter">6</span></a>
-            </li>
-        </ul>
-        <ul class="b-conversation__flood-list clearfix">
-            <li class="b-conversation__flood-item b-grid__g2  b-grid__a">
-                <a href="#" class="b-conversation__flood-user-cont">
-                    <img src="/st/img/content/large_front.jpg" alt="" class="b-conversation__flood-user-avatar" />
-                    <div class="b-conversation__flood-user-name">nastem</div>
-                </a>
-                <a href="#" class="b-conversation__flood-post-link">Куда бы вы поехали..если бы знали что скоро умрёте <span class="b-conversation__flood-post-counter b-counter">56</span></a>
-            </li>
-            <li class="b-conversation__flood-item b-grid__g2">
-                <a href="#" class="b-conversation__flood-user-cont">
-                    <img src="/st/img/content/large_front.jpg" alt="" class="b-conversation__flood-user-avatar" />
-                    <div class="b-conversation__flood-user-name">smie</div>
-                </a>
-                <a href="#" class="b-conversation__flood-post-link">Что же такого сказала Перри о России??? <span class="b-conversation__flood-post-counter b-counter">3</span></a>
-            </li>
-            <li class="b-conversation__flood-item b-grid__g2">
-                <a href="#" class="b-conversation__flood-user-cont">
-                    <img src="/st/img/content/large_front.jpg" alt="" class="b-conversation__flood-user-avatar" />
-                    <div class="b-conversation__flood-user-name">Mr.GaGa</div>
-                </a>
-                <a href="#" class="b-conversation__flood-post-link">Когда деревья были большими... <span class="b-conversation__flood-post-counter b-counter">235</span></a>
-            </li>
-            <li class="b-conversation__flood-item b-grid__g2 b-grid__z">
-                <a href="#" class="b-conversation__flood-user-cont">
-                    <img src="/st/img/content/large_front.jpg" alt="" class="b-conversation__flood-user-avatar" />
-                    <div class="b-conversation__flood-user-name">Black & White</div>
-                </a>
-                <a href="#" class="b-conversation__flood-post-link">Выражения учителей <span class="b-conversation__flood-post-counter b-counter">6</span></a>
-            </li>
+					{% if loop.first %}
+						{% set addClass = 'b-grid__a' %}
+					{% elseif loop.last %}
+						{% set addClass = 'b-grid__z' %}
+					{% endif %}
 
-        </ul>
-    </div>
-</section>
+					<li class="b-grid__g2 {{ addClass }}">
+						<a href="/news/{{ post.id }}" class="b-column-news__head" title="{{ post.name|e }}">
+							<img src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}"
+							     alt="{{ post.name|e }}"/>
+						</a>
+
+						<div class="b-column-news__body">
+							<h2 class="b-column-news__title"><a href="/news/{{ post.id }}"
+							                                    title="{{ post.name|e }}">{{ post.name|e }}</a></h2>
+
+							<p class="b-column-news__text">{{ post.announceFriendly(180) }}</p>
+							<a href="/news/{{ post.id }}#comments" class="b-column-news__comments b-comments-status">
+								<span class="b-comments-status__num">{{ post.comments }}</span>
+								<span class="b-comments-status__title">{{ post.comments|ruNumber('%s',['комментарий','комментария','комментариев','нет комментариев']) }}</span>
+							</a>
+						</div>
+					</li>
+				{% endfor %}
+			</ul>
+
+			<ul class="b-column-news clearfix">
+				{% for post in lastPosts[9:3] %}
+					{% set photo = post.mainImageId.thumb('x163') %}
+					{% set addClass = '' %}
+
+					{% if loop.first %}
+						{% set addClass = 'b-grid__a' %}
+					{% elseif loop.last %}
+						{% set addClass = 'b-grid__z' %}
+					{% endif %}
+
+					<li class="b-grid__g2 {{ addClass }}">
+						<a href="/news/{{ post.id }}" class="b-column-news__head" title="{{ post.name|e }}">
+							<img src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}"
+							     alt="{{ post.name|e }}"/>
+						</a>
+
+						<div class="b-column-news__body">
+							<h2 class="b-column-news__title"><a href="/news/{{ post.id }}"
+							                                    title="{{ post.name|e }}">{{ post.name|e }}</a></h2>
+
+							<p class="b-column-news__text">{{ post.announceFriendly(180) }}</p>
+							<a href="/news/{{ post.id }}#comments" class="b-column-news__comments b-comments-status">
+								<span class="b-comments-status__num">{{ post.comments }}</span>
+								<span class="b-comments-status__title">{{ post.comments|ruNumber('%s',['комментарий','комментария','комментариев','нет комментариев']) }}</span>
+							</a>
+						</div>
+					</li>
+				{% endfor %}
+			</ul>
+		</div>
+		<div class="b-grid__g6 clearfix">
+			<section class="b-fashion-battle">
+				<div class="b-fashion-battle__title-cont">
+					<h1 class="b-fashion-battle__rubrics-title b-rubrics-title b-rubrics-title_s30">Fashion battle <span
+							  class="b-fashion-battle__rubrics-number">№273</span></h1>
+
+					<div class="b-fashion-battle__title-arrows-cont b-title-arrows">
+						<div class="b-title-arrows__arrow b-title-arrows__arrow_left"></div>
+						<div class="b-title-arrows__arrow b-title-arrows__arrow_right"></div>
+					</div>
+				</div>
+				<h2 class="b-fashion-battle__news-title"><a href="#">Моника Беллуччи и Мадонна</a></h2>
+
+				<h3 class="b-fashion-battle__news-description">Кто лучше в этом платье?</h3>
+
+				<div class="b-fashion-battle__photo-cont clearfix">
+					<img src="/st/img/content/compare_img.jpg" alt="" class="b-fashion-battle__img"/>
+				</div>
+			</section>
+		</div>
+	</div>
+
+	<div class="b-poll-line clearfix">
+		<div class="b-grid__g4">
+			<section class="b-create-your-style">
+				<div class="b-create-your-style__rubrics-title b-rubrics-title b-rubrics-title_s24">cоздай свой стиль
+				</div>
+				<div class="b-create-your-style__body clearfix">
+					<div class="b-create-your-style__text">Смешивай и комбинируй различные вещи, чтобы создать свой
+						собственный и неповторимый стиль
+					</div>
+					<a href="#" class="b-create-your-style__link b-firm-grad">&gt;</a>
+				</div>
+			</section>
+		</div>
+		<div class="b-grid__g4">
+			<section class="b-star-childrens">
+				{% set photo = randomKid.photo.thumb('287x') %}
+				<a href="/kid/{{ randomKid.id }}" class="b-star-childrens__link">
+					<img src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}"
+					     alt="{{ photo.name|e }}" class="b-star-childrens__img"/>
+
+					<div class="b-star-childrens__news-title">Звёздные дети: {{ randomKid.name|e }}</div>
+				</a>
+			</section>
+		</div>
+		<div class="b-grid__g4">
+			{% include '/Poll.twig' %}
+		</div>
+	</div>
+
+	<section class="b-more-column-news clearfix">
+		<ul class="b-column-news">
+			{% for post in lastPosts[12:5] %}
+				{% set photo = post.mainImageId.thumb('140x') %}
+
+				<li class="b-grid__g2">
+					<a href="/news/{{ post.id }}" title="{{ post.name|e }}" class="b-column-news__head">
+						<img src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}"
+						     alt="{{ post.name|e }}"/>
+					</a>
+
+					<div class="b-column-news__body">
+						<h2 class="b-column-news__title"><a href="/news/{{ post.id }}">{{ post.name|e }}</a></h2>
+
+						<p class="b-column-news__text">{{ post.announceFriendly(100) }}</p>
+						<a href="/news/{{ post.id }}#comments" title="{{ post.name|e }}"
+						   class="b-column-news__comments b-comments-status">
+							<span class="b-comments-status__num">{{ post.comments }}</span>
+							<span class="b-comments-status__title">{{ post.comments|ruNumber('%s',['комментарий','комментария','комментариев','нет комментариев']) }}</span>
+						</a>
+					</div>
+				</li>
+			{% endfor %}
+			<li class="b-grid__g2">
+				<div class="b-column-news__head"></div>
+				<a href="/news/page2" class="b-column-news__more-news">ещё <br/>новости</a>
+			</li>
+		</ul>
+	</section>
+
+	<section class="b-conversation clearfix">
+		<h1 class="b-conversation__rubrics-title b-rubrics-title b-rubrics-title_s48">общение <span
+				  class="b-conversation__rubrics-title-selection">:)</span></h1>
+
+		<div class="b-grid__g4">
+			<div class="b-conversation__top">
+				<div class="b-conversation__user-counter">
+					<div class="b-conversation__user-count">462</div>
+					<div class="b-conversation__user-title">пользователя</div>
+					<a href="#" class="b-conversation__user-online b-firm-grad">online</a>
+				</div>
+			</div>
+			<div class="b-conversation__about-rubrics-title b-rubrics-title b-rubrics-title_s24">обсуждения звёзд</div>
+			<ul class="b-conversation__about-list">
+				<li class="b-conversation__about-item">
+					<div class="b-conversation__about-hero">Брэд Питт:</div>
+					<a href="#" class="b-conversation__about-hero-room">Посиделки у Брэда <span
+							  class="b-conversation__about-hero-counter b-counter">204957</span></a>
+				</li>
+				<li class="b-conversation__about-item">
+					<div class="b-conversation__about-hero">Роберт Паттинсон:</div>
+					<a href="#" class="b-conversation__about-hero-room">"Мой личный сорт героина" <span
+							  class="b-conversation__about-hero-counter b-counter">5941</span></a>
+				</li>
+				<li class="b-conversation__about-item">
+					<div class="b-conversation__about-hero">Роберт Паттинсон:</div>
+					<a href="#" class="b-conversation__about-hero-room">Интерактивная фото-развлекуха <span
+							  class="b-conversation__about-hero-counter b-counter">292</span></a>
+				</li>
+				<li class="b-conversation__about-item">
+					<div class="b-conversation__about-hero">Джеймс МакЭвой:</div>
+					<a href="#" class="b-conversation__about-hero-room">Фильм "Пенелопа" <span
+							  class="b-conversation__about-hero-counter b-counter">224792</span></a>
+				</li>
+				<li class="b-conversation__about-item">
+					<div class="b-conversation__about-hero">Йен Сомерхалдер:</div>
+					<a href="#" class="b-conversation__about-hero-room">Самые свежие новости "ДВ" <span
+							  class="b-conversation__about-hero-counter b-counter">4114</span></a>
+				</li>
+			</ul>
+		</div>
+		<div class="b-grid__g8">
+			<div class="b-conversation__top">
+				<div class="b-conversation__flood-rubrics-title b-rubrics-title b-rubrics-title_s24">болталка</div>
+			</div>
+			<ul class="b-conversation__flood-list clearfix">
+				<li class="b-conversation__flood-item b-grid__g2 b-grid__a">
+					<a href="#" class="b-conversation__flood-user-cont">
+						<img src="/st/img/content/large_front.jpg" alt="" class="b-conversation__flood-user-avatar"/>
+
+						<div class="b-conversation__flood-user-name">nastem</div>
+					</a>
+					<a href="#" class="b-conversation__flood-post-link">Куда бы вы поехали..если бы знали что скоро
+						умрёте <span class="b-conversation__flood-post-counter b-counter">56</span></a>
+				</li>
+				<li class="b-conversation__flood-item b-grid__g2">
+					<a href="#" class="b-conversation__flood-user-cont">
+						<img src="/st/img/content/large_front.jpg" alt="" class="b-conversation__flood-user-avatar"/>
+
+						<div class="b-conversation__flood-user-name">smie</div>
+					</a>
+					<a href="#" class="b-conversation__flood-post-link">Что же такого сказала Перри о России??? <span
+							  class="b-conversation__flood-post-counter b-counter">3</span></a>
+				</li>
+				<li class="b-conversation__flood-item b-grid__g2">
+					<a href="#" class="b-conversation__flood-user-cont">
+						<img src="/st/img/content/large_front.jpg" alt="" class="b-conversation__flood-user-avatar"/>
+
+						<div class="b-conversation__flood-user-name">Mr.GaGa</div>
+					</a>
+					<a href="#" class="b-conversation__flood-post-link">Когда деревья были большими... <span
+							  class="b-conversation__flood-post-counter b-counter">235</span></a>
+				</li>
+				<li class="b-conversation__flood-item b-grid__g2  b-grid__z">
+					<a href="#" class="b-conversation__flood-user-cont">
+						<img src="/st/img/content/large_front.jpg" alt="" class="b-conversation__flood-user-avatar"/>
+
+						<div class="b-conversation__flood-user-name">Black & White</div>
+					</a>
+					<a href="#" class="b-conversation__flood-post-link">Выражения учителей <span
+							  class="b-conversation__flood-post-counter b-counter">6</span></a>
+				</li>
+			</ul>
+			<ul class="b-conversation__flood-list clearfix">
+				<li class="b-conversation__flood-item b-grid__g2  b-grid__a">
+					<a href="#" class="b-conversation__flood-user-cont">
+						<img src="/st/img/content/large_front.jpg" alt="" class="b-conversation__flood-user-avatar"/>
+
+						<div class="b-conversation__flood-user-name">nastem</div>
+					</a>
+					<a href="#" class="b-conversation__flood-post-link">Куда бы вы поехали..если бы знали что скоро
+						умрёте <span class="b-conversation__flood-post-counter b-counter">56</span></a>
+				</li>
+				<li class="b-conversation__flood-item b-grid__g2">
+					<a href="#" class="b-conversation__flood-user-cont">
+						<img src="/st/img/content/large_front.jpg" alt="" class="b-conversation__flood-user-avatar"/>
+
+						<div class="b-conversation__flood-user-name">smie</div>
+					</a>
+					<a href="#" class="b-conversation__flood-post-link">Что же такого сказала Перри о России??? <span
+							  class="b-conversation__flood-post-counter b-counter">3</span></a>
+				</li>
+				<li class="b-conversation__flood-item b-grid__g2">
+					<a href="#" class="b-conversation__flood-user-cont">
+						<img src="/st/img/content/large_front.jpg" alt="" class="b-conversation__flood-user-avatar"/>
+
+						<div class="b-conversation__flood-user-name">Mr.GaGa</div>
+					</a>
+					<a href="#" class="b-conversation__flood-post-link">Когда деревья были большими... <span
+							  class="b-conversation__flood-post-counter b-counter">235</span></a>
+				</li>
+				<li class="b-conversation__flood-item b-grid__g2 b-grid__z">
+					<a href="#" class="b-conversation__flood-user-cont">
+						<img src="/st/img/content/large_front.jpg" alt="" class="b-conversation__flood-user-avatar"/>
+
+						<div class="b-conversation__flood-user-name">Black & White</div>
+					</a>
+					<a href="#" class="b-conversation__flood-post-link">Выражения учителей <span
+							  class="b-conversation__flood-post-counter b-counter">6</span></a>
+				</li>
+
+			</ul>
+		</div>
+	</section>
 
 {% endblock %}

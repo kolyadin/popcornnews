@@ -86,8 +86,8 @@ class Import2 extends Command {
 		$this->stmtInsertFashionBattle =
 			$this->pdo->prepare('insert into pn_news_fashion_battle set newsId = :newsId, firstOption = :firstOption, secondOption = :secondOption');
 
-		$this->stmtFindFashionBattleStat =
-			$this->pdo->query('select t_vote.*,t_post.pole34 firstPerson,t_post.pole35 secondPerson from popcornnews.popcornnews_news_votes t_vote join popcornnews.popconnews_goods_ t_post on (t_post.id = t_vote.nid)');
+//		$this->stmtFindFashionBattleStat =
+//			$this->pdo->query('select t_vote.*,t_post.pole34 firstPerson,t_post.pole35 secondPerson from popcornnews.popcornnews_news_votes t_vote join popcornnews.popconnews_goods_ t_post on (t_post.id = t_vote.nid)');
 
 		$this->stmtInsertFashionBattleVoting =
 			$this->pdo->prepare('insert into pn_news_fashion_battle_voting set checksum = :checksum, votedAt = :votedAt, newsId = :newsId, `option` = :option');
