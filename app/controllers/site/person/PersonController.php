@@ -394,7 +394,7 @@ class PersonController extends GenericController implements ControllerInterface 
 			]);
 
 			$dataMap = new NewsPostDataMap($dataMapHelper);
-			$postsSmall = $dataMap->findByDate(0, count($posts) < 10 ? count($posts) * 2 : 18);
+			$postsSmall = $dataMap->findByLimit(0, count($posts) < 10 ? count($posts) * 2 : 18);
 		}
 
 		$this

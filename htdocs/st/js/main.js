@@ -105,10 +105,12 @@ $(document).ready(function() {
 
     /* --------- columnizer --------- */
 
-    $('.celebrities-alphabet').columnize({
-        width: 210,
-        columns: 3
-    });
+	if ($('.celebrities-alphabet').length){
+		$('.celebrities-alphabet').columnize({
+			width: 210,
+			columns: 3
+		});
+	}
 
 });
 
@@ -376,3 +378,40 @@ $(function() {
 
 
 });
+
+
+/* archive_one.html js height fix */
+
+$(function(){
+
+	function alignElems() {
+		var elems = $('.js-height-fix li'),
+			elemsLength = elems.length,
+			trioCount = Math.ceil(elemsLength/4); //сколько рядов
+
+		if (elems.size() < 1){
+			return false;
+		} else {
+
+		}
+
+		for (var trioIndx = 0; trioIndx < trioCount; trioIndx ++) {
+			var elemHeight = 0;
+
+			//Выявляем самый длинный в ряду
+			for (var elemIndx = 0; elemIndx < 4; elemIndx ++) {
+				if (elems.eq(4*trioIndx + elemIndx).length && elems.eq(4*trioIndx + elemIndx).height() - elemHeight > 0) {
+					elemHeight = elems.eq(4*trioIndx + elemIndx).height();
+				}
+			}
+			//Высавляем высоту всем в ряду
+			for (var elemIndx2 = 0; elemIndx2 < 4; elemIndx2 ++) {
+				if (elems.eq(4*trioIndx + elemIndx2).length) {
+					elems.eq(4*trioIndx + elemIndx2).height(elemHeight);
+				}
+			}
+		}
+	}
+
+	alignElems();
+})

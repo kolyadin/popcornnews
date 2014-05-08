@@ -230,9 +230,22 @@ class NewsPostDataMap extends DataMap {
 	}
 
 
-	public function findByDate($from = 0, $count = -1) {
+	public function findByLimit($from = 0, $count = -1) {
 		$sql = "SELECT * FROM pn_news ORDER BY createDate DESC";
 		$sql .= $this->getLimitString($from, $count);
+
+		return $this->fetchAll($sql);
+	}
+
+	public function findByDate($from, $to, $limit = 0) {
+		$sql = "SELECT *
+				FROM pn_news
+				WHERE createDate BETWEEN $from AND $to
+				ORDER BY createDate DESC";
+
+		if ($limit) {
+			$sql .= ' LIMIT ' . (int)$limit;
+		}
 
 		return $this->fetchAll($sql);
 	}

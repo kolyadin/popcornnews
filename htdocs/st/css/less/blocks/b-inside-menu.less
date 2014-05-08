@@ -2,7 +2,7 @@
     margin-bottom: 18px;
 }
 
-.b-inside__menu-firstlist {
+.b-inside__menu-firstlist, .b-inside__menu-archive {
     overflow: hidden;
 
     li {
@@ -32,6 +32,37 @@
     }
 }
 
+.b-inside__menu-archive {
+	margin-top: 10px;
+
+	&:first-child {
+		margin-top: 0;
+	}
+
+
+
+	a {
+		font-size: 12px;
+	}
+
+	&.b-inside__menu-archive_m li, &.b-inside__menu-archive_d li {
+		.ie8 & {
+			padding: 1px 3px;
+
+			a {
+				font-size: 11px;
+			}
+		}
+
+	}
+
+	&.b-inside__menu-archive_y {
+		a {
+			font-size: 15px;
+		}
+	}
+}
+
 .b-inside__menu-secondlist {
     overflow: hidden;
     padding-top: 7px;
@@ -41,7 +72,7 @@
         padding: 0 4px;
 
         &.active {
-            background-color: #fce7f4;
+            background-color: #e5e5e5;
         }
 
         & + li {

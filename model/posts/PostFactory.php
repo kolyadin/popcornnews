@@ -51,10 +51,11 @@ class PostFactory {
 		$cacheKey = MMC::genKey(self::$dataMap->getClass(), __METHOD__, func_get_args());
 
 		return MMC::getSet($cacheKey, strtotime('+1 day'), ['post'], function () use ($from, $count) {
-			return self::$dataMap->findByDate($from, $count);
+			return self::$dataMap->findByLimit($from, $count);
 		});
 
 
+		
 	}
 
 	/**
