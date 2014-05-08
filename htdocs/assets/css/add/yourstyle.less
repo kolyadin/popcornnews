@@ -1,42 +1,18 @@
-/* --------- colors --------- */
 .pinky_color {
   color: #EE2C90;
 }
-/* --------- mixins --------- */
-/* MIXINS */
 .inlineblock {
   display: inline-block;
   vertical-align: top;
   zoom: 1 !ie;
   display: inline !ie;
 }
-.clearfix {
-  *zoom: expression(this.runtimeStyle.zoom='1', this.appendChild(document.createElement('br')).style.cssText='clear:both;font:0/0 serif');
-  zoom: 1 !ie;
-}
-.clearfix:before,
-.clearfix:after {
-  content: "";
-  display: table;
-}
-.clearfix:after {
-  clear: both;
-}
-/* --------- addition.less --------- */
+
 .article-cols {
-  *zoom: expression(this.runtimeStyle.zoom='1', this.appendChild(document.createElement('br')).style.cssText='clear:both;font:0/0 serif');
-  zoom: 1 !ie;
+  .clearfix;
   padding-bottom: 20px;
   border-bottom: 1px solid #e5e5e5;
   margin-bottom: 20px;
-}
-.article-cols:before,
-.article-cols:after {
-  content: "";
-  display: table;
-}
-.article-cols:after {
-  clear: both;
 }
 .article-cols__left {
   float: left;
@@ -59,6 +35,9 @@
 }
 .popular-sets {
   margin-bottom: 30px;
+  .b-search-block {
+	margin-bottom: 20px;
+  }
 }
 .popular-sets__big-image {
   display: block;
@@ -77,9 +56,7 @@
   line-height: 14px;
   color: #000000;
 }
-.popular-sets__big-comments,
-.popular-sets__comments-counter,
-.popular-sets__comments-username {
+.popular-sets__big-comments,.popular-sets__comments-counter,.popular-sets__comments-username {
   color: #EE2C90;
   font-size: 12px;
   line-height: 14px;
@@ -107,21 +84,22 @@
   margin-right: 4px;
 }
 .popular-sets__item {
-  *zoom: expression(this.runtimeStyle.zoom='1', this.appendChild(document.createElement('br')).style.cssText='clear:both;font:0/0 serif');
+  .clearfix;
   zoom: 1 !ie;
   margin-bottom: 10px;
   position: relative;
+  width: 274px;
+  display: inline-block;
+  vertical-align: top;
+  zoom: 1 !ie;
+  display: inline !ie;
+  margin-left: 43px;
+  margin-bottom: 30px;
 }
-.popular-sets__item:before,
-.popular-sets__item:after {
-  content: "";
-  display: table;
-}
-.popular-sets__item:after {
-  clear: both;
-}
-.popular-sets__item:hover .popular-sets__hover {
-  right: 0px;
+.popular-sets__item:hover {
+  .popular-sets__hover {
+	right: 0px;
+  }
 }
 .popular-sets__item-image {
   float: left;
@@ -139,9 +117,9 @@
   width: 152px;
   margin-left: 10px;
   height: 110px;
-}
-.popular-sets__item-data .popular-sets__big-title {
-  padding-top: 7px;
+  .popular-sets__big-title {
+	padding-top: 7px;
+  }
 }
 .popular-sets__big-title {
   margin-bottom: 5px;
@@ -196,18 +174,10 @@
   text-decoration: none;
 }
 .celebrities__stuff-list {
-  *zoom: expression(this.runtimeStyle.zoom='1', this.appendChild(document.createElement('br')).style.cssText='clear:both;font:0/0 serif');
-  zoom: 1 !ie;
+  .clearfix;
   margin-left: -7px;
 }
-.celebrities__stuff-list:before,
-.celebrities__stuff-list:after {
-  content: "";
-  display: table;
-}
-.celebrities__stuff-list:after {
-  clear: both;
-}
+
 .celebrities__stuff-item {
   width: 110px;
   border: 1px solid transparent;
@@ -238,26 +208,17 @@
   padding-bottom: 20px;
   margin-bottom: 20px;
   border-bottom: 1px solid #e5e5e5;
-}
-.new-sets .celebrities__stuff-list {
-  margin-left: -5px;
-}
-.new-sets .celebrities__stuff-item {
-  margin-left: 5px;
-  margin-bottom: 5px;
+  .celebrities__stuff-list {
+	margin-left: -5px;
+  }
+  .celebrities__stuff-item {
+	margin-left: 5px;
+	margin-bottom: 5px;
+  }
 }
 .active-users__list {
-  *zoom: expression(this.runtimeStyle.zoom='1', this.appendChild(document.createElement('br')).style.cssText='clear:both;font:0/0 serif');
-  zoom: 1 !ie;
+  .clearfix;
   margin-left: -10px;
-}
-.active-users__list:before,
-.active-users__list:after {
-  content: "";
-  display: table;
-}
-.active-users__list:after {
-  clear: both;
 }
 .active-users__item {
   margin-left: 10px;
@@ -280,18 +241,8 @@
   float: left;
   margin-left: 5px;
 }
-/* --------- popular sets --------- */
 .popular-sets__list {
   margin-left: -43px;
-}
-.popular-sets__item {
-  width: 274px;
-  display: inline-block;
-  vertical-align: top;
-  zoom: 1 !ie;
-  display: inline !ie;
-  margin-left: 43px;
-  margin-bottom: 30px;
 }
 .select-bar {
   background: #E5E5E5;
@@ -309,8 +260,10 @@
   width: 111px;
   margin: 0 8px;
 }
-.select-bar__item.disabled .select-bar__title {
-  color: #aca899;
+.select-bar__item.disabled {
+  .select-bar__title {
+	color: #aca899;
+  }
 }
 .select-bar__title {
   font-size: 10px;
@@ -318,6 +271,10 @@
   color: #000;
   margin-bottom: 2px;
   text-align: left;
+  display: inline-block;
+  vertical-align: top;
+  zoom: 1 !ie;
+  display: inline !ie;
 }
 .select-bar__select {
   width: 111px;
@@ -325,7 +282,6 @@
 .select-bar__submit {
   margin-top: 14px;
 }
-/* --------- stuff-items --------- */
 .stuff-items__item {
   display: inline-block;
   vertical-align: top;
@@ -338,8 +294,10 @@
   display: block;
   text-decoration: none;
 }
-.stuff-items__link:hover .stuff-items__image {
-  border-color: #e5e5e5;
+.stuff-items__link:hover {
+  .stuff-items__image {
+	border-color: #e5e5e5;
+  }
 }
 .stuff-items__image {
   width: 110px;
@@ -348,14 +306,14 @@
   text-align: center;
   display: block;
   border: 1px solid transparent;
-}
-.stuff-items__image img {
-  max-width: 110px;
-  max-height: 110px;
-  display: inline-block;
-  vertical-align: top;
-  zoom: 1 !ie;
-  display: inline !ie;
+  img {
+	max-width: 110px;
+	max-height: 110px;
+	display: inline-block;
+	vertical-align: top;
+	zoom: 1 !ie;
+	display: inline !ie;
+  }
 }
 .stuff-items__text {
   font-size: 12px;
@@ -365,13 +323,6 @@
   display: block;
   font-weight: bold;
   text-transform: lowercase;
-}
-/* --------- search-bar --------- */
-.select-bar__title {
-  display: inline-block;
-  vertical-align: top;
-  zoom: 1 !ie;
-  display: inline !ie;
 }
 .search-bar__input {
   display: inline-block;
@@ -385,15 +336,16 @@
   color: #ffffff;
   text-transform: uppercase;
 }
-/* --------- celebrities stuff --------- */
-.with-celebrities .article-title {
-  font-weight: bold;
-  display: inline-block;
-  vertical-align: top;
-  zoom: 1 !ie;
-  display: inline !ie;
-  color: #000000;
-  text-decoration: none;
+.with-celebrities {
+  .article-title {
+	font-weight: bold;
+	display: inline-block;
+	vertical-align: top;
+	zoom: 1 !ie;
+	display: inline !ie;
+	color: #000000;
+	text-decoration: none;
+  }
 }
 .with-celebrities__counter {
   display: inline-block;
@@ -406,13 +358,9 @@
   text-decoration: none;
   margin-left: 2px;
 }
-.popular-sets .b-search-block {
-  margin-bottom: 20px;
-}
 .popular-sets__title {
   margin-bottom: 20px;
 }
-/* --------- alphabet --------- */
 .celebrities-alphabet__item {
   padding-left: 15px;
   position: relative;
@@ -444,7 +392,6 @@
 .rules__list {
   padding-left: 17px;
 }
-/* --------- paginator --------- */
 .paginator__title {
   display: inline-block;
   vertical-align: top;
@@ -468,16 +415,15 @@
   display: inline !ie;
   padding: 1px 8px 0;
 }
-.paginator__item.active .paginator__link {
-  color: #000000;
+.paginator__item.active {
+  .paginator__link {
+	color: #000000;
+  }
 }
-.paginator__dots,
-.paginator__next {
+.paginator__dots,.paginator__next {
   padding: 0 8px;
 }
-.paginator__link,
-.paginator__dots,
-.paginator__next {
+.paginator__link,.paginator__dots,.paginator__next {
   color: #EE2C90;
   font-size: 16px;
   line-height: 18px;
@@ -488,7 +434,6 @@
   border-top: 1px solid #E5E5E5;
   padding-top: 20px;
 }
-/* --------- stuff-items --------- */
 .all-stuff__list {
   margin-left: -50px;
 }
