@@ -180,6 +180,7 @@ class PersonDataMap extends DataMap {
 	 * @param Person $item
 	 */
 	protected function onInsert($item) {
+		MMC::delByTag('person');
 //		$this->attachImages($item);
 	}
 
@@ -187,6 +188,7 @@ class PersonDataMap extends DataMap {
 	 * @param Person $item
 	 */
 	protected function onUpdate($item) {
+		MMC::delByTag('person');
 //		$this->attachImages($item);
 	}
 

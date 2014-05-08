@@ -15,10 +15,10 @@ use popcorn\model\tags\TagFactory;
 use popcorn\lib\RuHelper;
 
 /**
- * Class NewsController
+ * Class PostController
  * @package popcorn\app\controllers\site
  */
-class NewsController extends GenericController implements ControllerInterface {
+class PostController extends GenericController implements ControllerInterface {
 
 	/**
 	 * Старые url перекинем на новый движок
@@ -39,7 +39,16 @@ class NewsController extends GenericController implements ControllerInterface {
 
 		$this
 			->getSlim()
-			->get('/news/:id', [$this, 'newsItem'])
+			->get('/archive(/:year(/:month(/:day)))', [$this, 'postsArchive'])
+			->conditions([
+				'year' => '2[0-9]{3}',
+				'month' => '[0-9]+',
+				'day' => '[0-9]+'
+			]);
+
+		$this
+			->getSlim()
+			->get('/news/:id', [$this, 'post'])
 			->conditions(['id' => '[1-9][0-9]*']);
 
 		$this
@@ -49,7 +58,7 @@ class NewsController extends GenericController implements ControllerInterface {
 					$this->getSlim()->redirect('/news', 301);
 				}
 
-				$this->newsList(['page' => $page]);
+				$this->posts(['page' => $page]);
 			})
 			->conditions([
 				'page' => '[1-9][0-9]*'
@@ -62,7 +71,7 @@ class NewsController extends GenericController implements ControllerInterface {
 					$this->getSlim()->redirect(sprintf('/category/%s', $category), 301);
 				}
 
-				$this->newsList(['category' => $category, 'page' => $page]);
+				$this->posts(['category' => $category, 'page' => $page]);
 			})
 			->conditions([
 				//'category' => implode('|', array_keys(PostCategory::$category)),
@@ -76,7 +85,7 @@ class NewsController extends GenericController implements ControllerInterface {
 					$this->getSlim()->redirect(sprintf('/tag/%u', $tag), 301);
 				}
 
-				$this->newsList(['tag' => $tag, 'page' => $page]);
+				$this->posts(['tag' => $tag, 'page' => $page]);
 			})
 			->conditions([
 				'tag' => '[1-9][0-9]*',
@@ -90,7 +99,7 @@ class NewsController extends GenericController implements ControllerInterface {
 	 * Выводим список новостей, общий, по категориям, по тегам
 	 * @param array $params
 	 */
-	public function newsList(array $params) {
+	public function posts(array $params) {
 
 		$options = [
 			'category' => null,
@@ -134,11 +143,9 @@ class NewsController extends GenericController implements ControllerInterface {
 			$this->getSlim()->notFound();
 		}
 
-		$postsSmall = $dataMap->findByLimit(0, 10);
-
 		$this
 			->getTwig()
-			->display('/news/NewsList.twig', array_merge([
+			->display('/news/Posts.twig', array_merge([
 				'posts' => $posts,
 				'paginator' => [
 					'pages' => $paginator['pages'],
@@ -149,9 +156,9 @@ class NewsController extends GenericController implements ControllerInterface {
 	}
 
 	/**
-	 * @param int $newsId
+	 * @param int $postId
 	 */
-	public function newsItem($newsId) {
+	public function post($postId) {
 
 		{
 			$fullHelper = new DataMapHelper();
@@ -160,7 +167,8 @@ class NewsController extends GenericController implements ControllerInterface {
 			]);
 			$fullDataMap = new NewsPostDataMap($fullHelper);
 
-			$post = $fullDataMap->findById($newsId);
+			/** @var NewsPost $post */
+			$post = $fullDataMap->findById($postId);
 		}
 
 		if (!$post){
@@ -190,7 +198,7 @@ class NewsController extends GenericController implements ControllerInterface {
 
 		$this
 			->getTwig()
-			->display('/news/NewsItem.twig', [
+			->display('/news/Post.twig', [
 				'post' => $post,
 				'commentsTree' => $commentsTree,
 				'earlyPosts' => $earlyPosts,
@@ -198,7 +206,7 @@ class NewsController extends GenericController implements ControllerInterface {
 			]);
 	}
 
-	public function newsArchive($year = 0, $month = 0, $day = 0) {
+	public function postsArchive($year = 0, $month = 0, $day = 0) {
 
 		if (empty($year)) {
 			$year = date('Y', time());
@@ -245,7 +253,7 @@ class NewsController extends GenericController implements ControllerInterface {
 
 		$this
 			->getTwig()
-			->display('/news/NewsArcList.twig', [
+			->display('/news/PostsArchive.twig', [
 				'posts' => $posts,
 				'curYear' => date('Y'),
 				'curMonth' => date('m'),
@@ -259,7 +267,7 @@ class NewsController extends GenericController implements ControllerInterface {
 
 	}
 
-	public function search() {
+	public function postSearch() {
 
 		$helper = new DataMapHelper();
 		$helper->setRelationship([
@@ -271,7 +279,7 @@ class NewsController extends GenericController implements ControllerInterface {
 
 		$this
 			->getTwig()
-			->display('/news/SearchList.twig', [
+			->display('/news/PostsSearch.twig', [
 				'posts' => $foundNews,
 				'title' => 'Результаты поиска'
 			]);
