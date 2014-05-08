@@ -1,0 +1,211 @@
+a.pink,
+.b-right-stats .under a {
+  text-decoration: none;
+  border-bottom: 1px solid #ee2c90;
+  font-size: 13px;
+}
+a.pink:hover,
+.b-right-stats .under a:hover {
+  border-bottom: none;
+}
+.b-large-news__text,
+.b-topic-text p {
+  font-size: 14px;
+  line-height: 17px;
+  color: black;
+  margin-bottom: 8px;
+}
+.b-large-news__text a,
+.b-topic-text p a {
+  text-decoration: none;
+  font-weight: bold;
+}
+.b-community .b-community-header {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+.b-community-item {
+  padding: 20px 0;
+  border-bottom: 1px solid #e5e5e5;
+}
+.b-community-item__image {
+  float: left;
+  padding: 0 14px 0 0;
+  width: 130px;
+}
+.b-community-item__image img {
+  max-width: 130px;
+}
+.b-community-item__content {
+  float: left;
+  width: 470px;
+}
+.b-community-item__content h4 {
+  font-size: 18px;
+  font-weight: bold;
+}
+.b-community-item__content p {
+  margin: 7px 0;
+  font-size: 13px;
+}
+.b-community-item__stat {
+  margin-top: 10px;
+}
+.b-community-item__stat-members {
+  font-weight: bold;
+}
+.b-community-item__stat-date {
+  float: right;
+  color: gray;
+}
+.b-group-create-form {
+  font-size: 14px;
+  background-color: #f2f2f2;
+  padding: 10px 15px;
+}
+.b-group-create-form p {
+  margin: 5px 0;
+}
+.b-group-create-form label {
+  display: block;
+  margin: 5px 0;
+}
+.b-group-create-form label input[type=radio] {
+  position: relative;
+  top: 2px;
+}
+.b-group-create-form textarea {
+  height: 150px;
+}
+.b-group-create-form input[type=submit] {
+  border: 0 none;
+  cursor: pointer;
+  border-radius: 4px;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  height: 26px;
+  line-height: 26px;
+  margin: 20px 0 0 0;
+  float: left;
+  outline: 0 none;
+  padding: 0;
+  vertical-align: middle;
+  width: 140px;
+}
+.b-group-create-form input[type=text],
+.b-group-create-form textarea {
+  border: 1px solid #acacac;
+  width: 98%;
+  padding: 5px;
+  font-size: 14px;
+}
+.b-topic-text {
+  width: 470px;
+  float: left;
+}
+.b-topic-text h2 {
+  margin-bottom: 10px;
+}
+.b-right-stats {
+  float: left;
+  width: 120px;
+  margin-left: 20px;
+}
+.b-right-stats .up span {
+  color: #ee2c90;
+}
+.b-right-stats .up div {
+  background: url(/assets/img/kids-vote.gif) top left no-repeat;
+}
+.b-right-stats .down {
+  margin-left: 15px;
+}
+.b-right-stats .down span {
+  color: #acacac;
+}
+.b-right-stats .down div {
+  background: url(/assets/img/kids-vote.gif) bottom left no-repeat;
+}
+.b-right-stats .under {
+  clear: both;
+  padding-top: 15px;
+}
+.b-right-stats .under p {
+  line-height: 20px;
+}
+.b-right-stats .under a {
+  text-decoration: none;
+  border: 0;
+}
+.b-right-stats .vote {
+  display: inline-block;
+  vertical-align: top;
+  height: 46px;
+  line-height: 48px;
+  border-radius: 4px;
+  color: white;
+  font-size: 22px;
+  margin-bottom: 30px;
+}
+.b-right-stats .vote .col {
+  display: inline-block;
+  vertical-align: top;
+  width: 79px;
+  height: 46px;
+  line-height: 48px;
+  text-align: center;
+  border-radius: 4px;
+  color: white;
+  font-size: 22px;
+  margin-bottom: 7px;
+}
+.b-right-stats .vote .btn-wrap {
+  display: inline-block;
+  vertical-align: top;
+  margin-left: 6px;
+}
+.b-right-stats .vote .btn-wrap .btn {
+  cursor: pointer;
+  display: block;
+  color: white;
+  text-decoration: none;
+  line-height: 18px;
+  height: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  width: 20px;
+  border-radius: 50%;
+}
+.b-right-stats .vote .btn-wrap .btn_disable {
+  background: #cccccc;
+  cursor: default;
+  filter: none;
+}
+.b-right-stats .vote .btn-wrap .btn_plus {
+  margin-bottom: 6px;
+}
+.b-right-stats .vote .text {
+  font-size: 12px;
+  line-height: 14px;
+  color: black;
+}
+.b-right-stats .up,
+.b-right-stats .down {
+  float: left;
+  width: 50px;
+}
+.b-right-stats .up span,
+.b-right-stats .down span {
+  text-align: center;
+  display: block;
+}
+.b-right-stats .up div,
+.b-right-stats .down div {
+  width: 51px;
+  height: 51px;
+  margin-top: 5px;
+  cursor: pointer;
+}

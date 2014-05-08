@@ -1,0 +1,122 @@
+.b-person-all__header {
+  margin-bottom: 30px;
+}
+.b-person-all__title {
+  color: #000;
+}
+.b-person-all__subtext {
+  display: block;
+  color: #b2b2b2;
+  font-size: 18px;
+  line-height: 22px;
+}
+.b-person-all__wrapper {
+  overflow: hidden;
+  zoom: 1;
+  margin-bottom: 30px;
+}
+.b-person-all__item {
+  float: left;
+  position: relative;
+  width: 206px;
+  height: 243px;
+}
+.b-person-all__item a {
+  display: block;
+}
+.b-person-all__item img {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  min-width: 100%;
+}
+.b-person-all__item:hover .b-person-all__item__overlay {
+  opacity: 1;
+  visibility: visible;
+}
+.b-person-all__item__overlay {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease 0s;
+  background: url("../img/background/persons-top-stats-bg.gif") repeat-x 0 0;
+  width: 206px;
+  height: 213px;
+  padding-top: 30px;
+  text-align: center;
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.b-person-all__item__num {
+  font-size: 110px;
+  font-weight: bold;
+  color: #fff;
+  display: block;
+  line-height: 1;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.b-person-all__item__name {
+  font-size: 15px;
+  color: #fff;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+.b-person-all__item__popularity {
+  color: #fff;
+  display: block;
+  font-size: 13px;
+}
+.b-person-all__cloud {
+  text-align: center;
+}
+.b-person-all__cloud a {
+  padding: 0 25px 0 0;
+  line-height: 22px;
+  white-space: nowrap;
+}
+.b-person-all__cloud-size_11 {
+  font-size: 11px;
+}
+.b-person-all__cloud-size_12 {
+  font-size: 12px;
+}
+.b-person-all__cloud-size_13 {
+  font-size: 13px;
+}
+.b-person-all__cloud-size_14 {
+  font-size: 14px;
+}
+.b-person-all__cloud-size_15 {
+  font-size: 15px;
+}
+.b-person-all__cloud-size_16 {
+  font-size: 16px;
+  font-weight: bold;
+}
+.b-person-all__cloud-size_17 {
+  font-size: 17px;
+  font-weight: bold;
+}
+.b-person-all__cloud-size_18 {
+  font-size: 18px;
+  font-weight: bold;
+}
+.b-person-all__cloud-size_19 {
+  font-size: 19px;
+  font-weight: bold;
+}
+.b-person-all__cloud-size_20 {
+  font-size: 20px;
+  font-weight: bold;
+}
+.b-person-all__cloud-size_21 {
+  font-size: 21px;
+  font-weight: bold;
+}
+.b-person-all__cloud-size_22 {
+  font-size: 22px;
+  font-weight: bold;
+}

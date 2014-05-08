@@ -1,0 +1,36 @@
+.search-news {
+  padding-top: 9px;
+}
+.search-news__list > li {
+  margin-bottom: 38px;
+}
+.search-news__list img {
+  max-width: 100%;
+}
+.search-news__head {
+  display: block;
+  margin-bottom: 14px;
+}
+.search-news__title {
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 17px;
+  margin-bottom: 4px;
+}
+.search-news__title a {
+  text-decoration: none;
+  color: #000;
+}
+.search-news__text {
+  font-size: 12px;
+  line-height: 15px;
+  margin-bottom: 5px;
+}
+.search-news__image {
+  float: left;
+  padding: 0 14px 0 0;
+  width: 110px;
+}
+.search-news__image img {
+  max-width: 110px;
+}

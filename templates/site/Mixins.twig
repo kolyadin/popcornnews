@@ -34,7 +34,7 @@
         {% if profile.avatar.id %}
             {% set src = profile.avatar.url('profileSmall') %}
         {% else %}
-            {% set src = '/st/img/no-photo/small.png' %}
+            {% set src = '/assets/img/no-photo/small.png' %}
         {% endif %}
         <div class="ava"><a href="/profile/{{ profile.id }}"><img src="{{ src }}" alt=""/></a></div>
 		<div class="nick-rating rating-small rating-{{ profile.rating.rank }}">

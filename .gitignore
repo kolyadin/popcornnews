@@ -10,6 +10,6 @@
 /config/config.ini
 /upload/
 
-/htdocs/st/css/less/*.css
-/htdocs/st/css/less/add/*.css
-/htdocs/st/css/less/blocks/*.css
+/htdocs/assets/css/*.css
+/htdocs/assets/css/add/*.css
+/htdocs/assets/css/blocks/*.css

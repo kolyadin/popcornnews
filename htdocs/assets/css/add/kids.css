@@ -1,0 +1,143 @@
+a.pink,
+.b-kids .kid .stats .under a {
+  text-decoration: none;
+  border-bottom: 1px solid #ee2c90;
+  font-size: 13px;
+}
+a.pink:hover,
+.b-kids .kid .stats .under a:hover {
+  border-bottom: none;
+}
+.b-kids .kid {
+  margin-top: 20px;
+  clear: both;
+  border-bottom: 1px solid #f0f0f0;
+}
+.b-kids .kid h2 {
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 27px;
+  margin-bottom: 15px;
+}
+.b-kids .kid h2 a {
+  color: black;
+  text-decoration: none;
+}
+.b-kids .kid .pics {
+  float: left;
+  width: 402px;
+}
+.b-kids .kid .stats {
+  float: left;
+  width: 180px;
+  margin-left: 20px;
+}
+.b-kids .kid .stats .up span {
+  color: #ee2c90;
+}
+.b-kids .kid .stats .up div {
+  background: url(/assets/img/kids-vote.gif) top left no-repeat;
+}
+.b-kids .kid .stats .down {
+  margin-left: 15px;
+}
+.b-kids .kid .stats .down span {
+  color: #acacac;
+}
+.b-kids .kid .stats .down div {
+  background: url(/assets/img/kids-vote.gif) bottom left no-repeat;
+}
+.b-kids .kid .stats .under {
+  clear: both;
+  padding-top: 15px;
+}
+.b-kids .kid .stats .under p {
+  line-height: 20px;
+}
+.b-kids .kid .stats .under a {
+  text-decoration: none;
+  border: 0;
+}
+.b-kids .kid .stats .vote {
+  display: inline-block;
+  vertical-align: top;
+  height: 46px;
+  line-height: 48px;
+  border-radius: 4px;
+  color: white;
+  font-size: 22px;
+  margin-bottom: 30px;
+}
+.b-kids .kid .stats .vote .col {
+  display: inline-block;
+  vertical-align: top;
+  width: 79px;
+  height: 46px;
+  line-height: 48px;
+  text-align: center;
+  border-radius: 4px;
+  color: white;
+  font-size: 22px;
+  margin-bottom: 7px;
+}
+.b-kids .kid .stats .vote .btn-wrap {
+  display: inline-block;
+  vertical-align: top;
+  margin-left: 6px;
+}
+.b-kids .kid .stats .vote .btn-wrap .btn {
+  cursor: pointer;
+  display: block;
+  color: white;
+  text-decoration: none;
+  line-height: 18px;
+  height: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  width: 20px;
+  border-radius: 50%;
+}
+.b-kids .kid .stats .vote .btn-wrap .btn_disable {
+  background: #cccccc;
+  cursor: default;
+  filter: none;
+}
+.b-kids .kid .stats .vote .btn-wrap .btn_plus {
+  margin-bottom: 6px;
+}
+.b-kids .kid .stats .vote .text {
+  font-size: 12px;
+  line-height: 14px;
+  color: black;
+}
+.b-kids .kid .desc {
+  clear: both;
+  padding: 20px 0 20px 0;
+}
+.b-kids .kid .desc .db {
+  color: #797979;
+  font-size: 13px;
+  font-weight: bold;
+}
+.b-kids .kid .desc .description {
+  margin-top: 10px;
+  font-size: 13px;
+}
+.b-kids .kid .stats .up,
+.b-kids .kid .stats .down {
+  float: left;
+  width: 50px;
+}
+.b-kids .kid .stats .up span,
+.b-kids .kid .stats .down span {
+  text-align: center;
+  display: block;
+}
+.b-kids .kid .stats .up div,
+.b-kids .kid .stats .down div {
+  width: 51px;
+  height: 51px;
+  margin-top: 5px;
+  cursor: pointer;
+}

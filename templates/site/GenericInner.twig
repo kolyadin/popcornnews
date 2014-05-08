@@ -14,38 +14,38 @@
 			{#font-family: 'PT Sans';#}
 			{#font-style: normal;#}
 			{#font-weight: 400;#}
-			{#src: local('PT Sans'), local('PTSans-Regular'), url(/st/res/fonts/pt-sans/regular.woff) format('woff');#}
+			{#src: local('PT Sans'), local('PTSans-Regular'), url(/assets/res/fonts/pt-sans/regular.woff) format('woff');#}
 		{#}#}
 		{#@font-face {#}
 			{#font-family: 'PT Sans';#}
 			{#font-style: normal;#}
 			{#font-weight: 700;#}
-			{#src: local('PT Sans Bold'), local('PTSans-Bold'), url(/st/res/fonts/pt-sans/bold.woff) format('woff');#}
+			{#src: local('PT Sans Bold'), local('PTSans-Bold'), url(/assets/res/fonts/pt-sans/bold.woff) format('woff');#}
 		{#}#}
 	{#</style>#}
 
-	<link rel="stylesheet" href="/st/res/tooltipster/css/tooltipster.css" media="screen, projection, print"/>
-	<link rel="stylesheet" href="/st/res/jquery-ui-1.10.3/css/no-theme/jquery-ui-1.10.3.min.css"/>
+	<link rel="stylesheet" href="/assets/res/tooltipster/css/tooltipster.css" media="screen, projection, print"/>
+	<link rel="stylesheet" href="/assets/res/jquery-ui-1.10.3/css/no-theme/jquery-ui-1.10.3.min.css"/>
     <link  href="http://fotorama.s3.amazonaws.com/4.4.9/fotorama.css" rel="stylesheet">
 
-    <script type="text/javascript" src="/st/js/modernizr-2.6.2.min.js"></script>
-    <script type="text/javascript" src="/st/js/jquery-1.10.2.min.js"></script>
-	<script type="text/javascript" src="/st/res/tooltipster/js/jquery.tooltipster.min.js"></script>
-	<script type="text/javascript" src="/st/js/jquery.waypoints.min.js"></script>
-    <script type="text/javascript" src="/st/js/jquery.stickyMojo.js"></script>
-	<script type="text/javascript" src="/st/res/jquery-ui-1.10.3/js/jquery-ui-1.10.3.min.js"></script>
-	<script type="text/javascript" src="/st/res/plupload-2.1.1/js/plupload.full.min.js"></script>
-	<script type="text/javascript" src="/st/js/jquery.lazyload.min.js"></script>
-    <script type="text/javascript" src="/st/js/jquery.caret.js"></script>
-    <script type="text/javascript" src="/st/js/jquery-gp-gallery.js"></script>
-    <script type="text/javascript" src="/st/js/jsHtmlToText.js"></script>
-    <script type="text/javascript" src="/st/res/emojify.js/emojify.js"></script>
+    <script type="text/javascript" src="/assets/js/modernizr-2.6.2.min.js"></script>
+    <script type="text/javascript" src="/assets/js/jquery-1.10.2.min.js"></script>
+	<script type="text/javascript" src="/assets/res/tooltipster/js/jquery.tooltipster.min.js"></script>
+	<script type="text/javascript" src="/assets/js/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="/assets/js/jquery.stickyMojo.js"></script>
+	<script type="text/javascript" src="/assets/res/jquery-ui-1.10.3/js/jquery-ui-1.10.3.min.js"></script>
+	<script type="text/javascript" src="/assets/res/plupload-2.1.1/js/plupload.full.min.js"></script>
+	<script type="text/javascript" src="/assets/js/jquery.lazyload.min.js"></script>
+    <script type="text/javascript" src="/assets/js/jquery.caret.js"></script>
+    <script type="text/javascript" src="/assets/js/jquery-gp-gallery.js"></script>
+    <script type="text/javascript" src="/assets/js/jsHtmlToText.js"></script>
+    <script type="text/javascript" src="/assets/res/emojify.js/emojify.js"></script>
     <script type="text/javascript" src="http://masonry.desandro.com/masonry.pkgd.min.js"></script>
 
     <script src="http://fotorama.s3.amazonaws.com/4.4.9/fotorama.js"></script>
 
 
-    <script src="/st/res/rangy-1.2.3/rangy-core.js" type="text/javascript"></script>
+    <script src="/assets/res/rangy-1.2.3/rangy-core.js" type="text/javascript"></script>
 
     <script type="text/javascript">
         if((/Opera Mini/.test(navigator.userAgent))) {
@@ -64,7 +64,7 @@
 	    emojify.setConfig({
 		    emojify_tag_type: '.b-comments',
 		    only_crawl_id: null,
-		    img_dir: '/st/res/emojify.js/images/emoji',
+		    img_dir: '/assets/res/emojify.js/images/emoji',
 		    ignored_tags: {
 			    'SCRIPT': 1,
 			    'TEXTAREA': 1,
@@ -273,7 +273,9 @@
 
     </script>
 
-    <link rel="stylesheet" href="/st/css/popcorn.css?{{ "now"|date('YmdHis') }}" media="screen, projection, print"/>
+    <link rel="stylesheet" href="/assets/css/popcorn.css?{{ "now"|date('YmdHis') }}" media="screen, projection, print"/>
+
+    {#<link rel="stylesheet" href="/assets/css/popcorn.css?{{ "now"|date('YmdHis') }}" media="screen, projection, print"/>#}
 </head>
 <body>
 

@@ -1,0 +1,527 @@
+.pink,
+.b-profile .profile .b-inside__menu-firstlist .counter,
+.b-profile .profile .b-profile-persons .persons td label {
+  color: #ee2c90;
+}
+a.pink,
+.b-profile .profile .b-inside__menu-firstlist a.counter,
+.b-profile .profile .info .reg-data li a,
+.b-profile .profile .table-friends th a,
+.b-profile .profile .b-private-messages .message .manage a,
+.b-users .left-col .new-users div a {
+  text-decoration: none;
+  border-bottom: 1px solid #ee2c90;
+  font-size: 13px;
+}
+a.pink:hover,
+.b-profile .profile .b-inside__menu-firstlist a.counter:hover,
+.b-profile .profile .info .reg-data li a:hover,
+.b-profile .profile .table-friends th a:hover,
+.b-profile .profile .b-private-messages .message .manage a:hover,
+.b-users .left-col .new-users div a:hover {
+  border-bottom: none;
+}
+#status-window {
+  top: 0;
+  left: 0;
+  width: 400px;
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: absolute;
+  background-color: white;
+  border: 10px solid #e5e5e5;
+  display: none;
+  z-index: 10;
+  padding: 20px;
+}
+#status-window input {
+  width: 400px;
+}
+#status-window table {
+  width: 400px;
+}
+#status-window table td {
+  width: 300px;
+  padding-top: 10px;
+  font-size: 13px;
+}
+#status-window table td + td {
+  width: 100px;
+  text-align: right;
+  vertical-align: top;
+  color: #b0b0b0;
+}
+#status-window table .hr {
+  border-bottom: 1px solid #e5e5e5;
+  padding-top: 10px;
+}
+.ui-autocomplete {
+  background-color: #f0f0f0;
+  height: auto;
+  padding-bottom: 5px;
+}
+.ui-autocomplete li {
+  padding: 3px 6px;
+}
+.ui-autocomplete li a {
+  font-size: 13px;
+}
+.ui-autocomplete li:hover {
+  background-color: #acacac;
+}
+.b-private-dialogs {
+  margin-top: 20px;
+  border-bottom: 1px solid #cccccc;
+}
+.b-private-dialogs .dialog-not-read {
+  background-color: #f0f0f0;
+}
+.b-private-dialogs .dialog {
+  border-top: 1px solid #cccccc;
+  padding: 10px 0;
+}
+.b-private-dialogs .dialog .user-ava {
+  float: left;
+  margin-left: 5px;
+}
+.b-private-dialogs .dialog .message-box {
+  float: left;
+  width: 400px;
+  margin-left: 10px;
+}
+.b-private-dialogs .dialog .message-box .box-header .user-nick {
+  float: left;
+}
+.b-private-dialogs .dialog .message-box .box-header .user-nick a {
+  font-size: 13px;
+  text-decoration: none;
+  border-bottom: 1px solid;
+}
+.b-private-dialogs .dialog .message-box .box-header .user-nick a:hover {
+  border-bottom: none;
+}
+.b-private-dialogs .dialog .message-box .box-header .timestamp {
+  float: right;
+}
+.b-private-dialogs .dialog .message-box .message {
+  padding-top: 7px;
+  font-size: 13px;
+  clear: both;
+}
+.b-private-dialogs .dialog:hover {
+  background-color: #f0f0f0;
+  cursor: pointer;
+}
+.b-profile .b-inside__menu-firstlist {
+  margin-top: 20px;
+}
+.b-profile .b-inside__menu-firstlist li {
+  margin: 2px 0;
+}
+.b-profile .b-sub-menu {
+  margin-top: 8px;
+}
+.b-profile .left-col {
+  width: 140px;
+  float: left;
+  margin-right: 20px;
+}
+.b-profile .profile {
+  float: left;
+  width: 460px;
+}
+.b-profile .profile h1 {
+  font-weight: bold;
+}
+.b-profile .profile blockquote {
+  margin: 10px 5px;
+  font-size: 13px;
+}
+.b-profile .profile .status {
+  margin-top: 10px;
+}
+.b-profile .profile .status a {
+  color: black;
+  text-decoration: none;
+}
+.b-profile .profile .status a strong {
+  font-weight: normal;
+}
+.b-profile .profile .status a span {
+  color: #acacac;
+}
+.b-profile .profile .status a img {
+  padding-left: 8px;
+  border: 0;
+}
+.b-profile .profile .b-inside__menu-firstlist li {
+  margin-right: 7px;
+  margin-left: 0;
+}
+.b-profile .profile .b-inside__menu-firstlist li.active .counter {
+  color: white;
+}
+.b-profile .profile .b-inside__menu-firstlist .counter {
+  margin-left: 2px;
+}
+.b-profile .profile .credo {
+  border-top: 1px solid #e5e5e5;
+  padding-top: 23px;
+  margin-top: 50px;
+  clear: both;
+  font-size: 16px;
+}
+.b-profile .profile .info {
+  clear: both;
+  border-top: 1px solid #e5e5e5;
+  padding-top: 23px;
+  margin-top: 23px;
+}
+.b-profile .profile .info .reg-data {
+  float: left;
+  width: 238px;
+}
+.b-profile .profile .info .reg-data li {
+  font-size: 13px;
+  line-height: 23px;
+}
+.b-profile .profile .info .rating-awards {
+  float: left;
+}
+.b-profile .profile .info .rating-awards .awards {
+  margin-top: 20px;
+}
+.b-profile .profile .info .rating-awards .awards ul {
+  list-style: none;
+}
+.b-profile .profile .info .rating-awards .awards li {
+  float: left;
+  width: 29px;
+  height: 34px;
+  margin-right: 11px;
+  cursor: help;
+}
+.b-profile .profile .info .rating-awards .awards li .x {
+  text-align: center;
+  color: #cccccc;
+  font-weight: bold;
+  padding-top: 30px;
+}
+.b-profile .profile .info .rating-awards .awards li .multiple {
+  text-align: center;
+  color: #e8305d;
+  font-size: 13px;
+  font-weight: bold;
+}
+.b-profile .profile .info .rating-awards .awards .activist {
+  background-image: url("/assets/img/awards.png");
+  background-repeat: no-repeat;
+  background-position: 0 0;
+}
+.b-profile .profile .info .rating-awards .awards .activist-active {
+  background-position: 0 -34px;
+}
+.b-profile .profile .info .rating-awards .awards .comments {
+  background-image: url("/assets/img/awards.png");
+  background-repeat: no-repeat;
+  background-position: -40px 0;
+}
+.b-profile .profile .info .rating-awards .awards .comments-active {
+  background-position: -40px -34px;
+}
+.b-profile .profile .info .rating-awards .awards .photo {
+  background-image: url("/assets/img/awards.png");
+  background-repeat: no-repeat;
+  background-position: -80px 0;
+}
+.b-profile .profile .info .rating-awards .awards .photo-active {
+  background-position: -80px -34px;
+}
+.b-profile .profile .info .rating-awards .awards .facts {
+  background-image: url("/assets/img/awards.png");
+  background-repeat: no-repeat;
+  background-position: -120px 0;
+}
+.b-profile .profile .info .rating-awards .awards .facts-active {
+  background-position: -120px -34px;
+}
+.b-profile .profile .info .rating-awards .awards .friends {
+  background-image: url("/assets/img/awards.png");
+  background-repeat: no-repeat;
+  background-position: -160px 0;
+}
+.b-profile .profile .info .rating-awards .awards .friends-active {
+  background-position: -160px -34px;
+}
+.b-profile .profile .table-friends {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+.b-profile .profile .table-friends th {
+  text-align: center;
+  font-weight: normal;
+  font-size: 1.1em;
+  border-bottom: 1px solid #e5e5e5;
+  padding-bottom: 10px;
+}
+.b-profile .profile .table-friends th a.active {
+  color: black;
+}
+.b-profile .profile .table-friends td {
+  border-bottom: 1px solid #e5e5e5;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+.b-profile .profile .table-friends td.user {
+  width: 215px;
+  padding-right: 5px;
+  vertical-align: middle;
+}
+.b-profile .profile .table-friends td.rating {
+  text-align: center;
+}
+.b-profile .profile .table-friends td.rating span {
+  font-size: 13px;
+}
+.b-profile .profile .b-profile-persons .persons {
+  width: 100%;
+  margin-top: 20px;
+}
+.b-profile .profile .b-profile-persons .persons tr:hover {
+  background-color: #f0f0f0;
+}
+.b-profile .profile .b-profile-persons .persons td {
+  padding-left: 5px;
+}
+.b-profile .profile .b-profile-persons .persons td label {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+}
+.b-profile .profile .b-profile-persons .persons td div {
+  color: #acacac;
+  font-weight: normal;
+}
+.b-profile .profile .b-profile-persons .persons-counter {
+  margin-top: 10px;
+  font-weight: bold;
+}
+.b-profile .profile .b-new-private-message {
+  margin-top: 15px;
+}
+.b-profile .profile .b-new-private-message textarea {
+  height: 100px;
+}
+.b-profile .profile .b-new-private-message .recipient {
+  height: 30px;
+}
+.b-profile .profile .b-new-private-message .recipient .user-selected {
+  display: inline;
+  background-color: #ee2c90;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+.b-profile .profile .b-new-private-message .recipient .user-selected span {
+  margin-left: 4px;
+  font-size: 13px;
+  position: relative;
+  top: -2px;
+  cursor: pointer;
+}
+.b-profile .profile .b-private-messages {
+  margin-top: 15px;
+}
+.b-profile .profile .b-private-messages .message {
+  margin-bottom: 10px;
+  border: 1px solid #d8d8d8;
+  background-color: #f0f0f0;
+}
+.b-profile .profile .b-private-messages .message .content {
+  font-size: 13px;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+.b-profile .profile .b-private-messages .message .caption {
+  background-color: white;
+  padding: 10px;
+}
+.b-profile .profile .b-private-messages .message .manage a {
+  margin-left: 5px;
+}
+.b-profile .left-col .last-visit div,
+.b-profile .left-col .last-visit span {
+  color: darkgray;
+  font-size: 13px;
+}
+.b-profile .profile .table-friends tr:last-child td,
+.b-profile .profile .table-friends tr.lastChild td {
+  border-bottom: 0;
+}
+.b-profile .profile .table-friends th.city,
+.b-profile .profile .table-friends th.user {
+  text-align: left;
+}
+.b-profile .profile .b-new-private-message .inp,
+.b-profile .profile .b-new-private-message textarea {
+  width: 100%;
+  padding: 3px;
+  font-size: 13px;
+}
+.b-users .b-inside__menu-firstlist {
+  margin-top: 20px;
+}
+.b-users h3 {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+.b-users .left-col {
+  float: left;
+  width: 290px;
+}
+.b-users .left-col .new-users div {
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 5px;
+  padding-bottom: 9px;
+}
+.b-users .left-col .new-users div a {
+  font-weight: bold;
+}
+.b-users .left-col .new-users div a span {
+  font-weight: normal;
+}
+.b-users .month-borders {
+  list-style: none;
+  overflow: hidden;
+  margin-top: 12px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e5e5e5;
+}
+.b-users .month-borders li {
+  float: left;
+  display: inline;
+  width: 106px;
+  height: 145px;
+  margin-right: 60px;
+  padding-top: 15px;
+  text-align: center;
+  background-repeat: no-repeat;
+  background-position: top left;
+}
+.b-users .month-borders li.one {
+  background-image: url(/assets/img/user-pedestal-1st-place.gif);
+}
+.b-users .month-borders li.two {
+  background-image: url(/assets/img/user-pedestal-2st-place.gif);
+}
+.b-users .month-borders li.three {
+  background-image: url(/assets/img/user-pedestal-3st-place.gif);
+}
+.b-users .month-borders li.four {
+  background-image: url(/assets/img/user-pedestal-4st-place.gif);
+  margin-right: 0;
+}
+.b-users .right-col {
+  float: right;
+  width: 310px;
+  margin-left: 20px;
+}
+.b-users .right-col h3 .counter {
+  font-size: 13px;
+  color: #ee2c90;
+}
+.b-users .right-col select {
+  width: 220px;
+  height: 24px;
+}
+.b-users .right-col input {
+  border: 0 none;
+  cursor: pointer;
+  border-radius: 4px;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  height: 26px;
+  line-height: 26px;
+  margin: 0 0 5px 5px;
+  outline: 0 none;
+  padding: 0;
+  vertical-align: middle;
+  width: 80px;
+}
+.b-users .right-col .users {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+}
+.b-users .right-col .users li {
+  float: left;
+  display: inline;
+  margin: 0 19px 20px 0;
+}
+.b-users .right-col .users li img {
+  width: 32px;
+}
+.b-one-search-form {
+  background-color: #f2f2f2;
+  margin-top: 10px;
+  padding: 10px 15px;
+}
+.b-one-search-form input[type=submit] {
+  border: 0 none;
+  cursor: pointer;
+  border-radius: 4px;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  height: 26px;
+  line-height: 26px;
+  margin: 0 0 5px 5px;
+  outline: 0 none;
+  padding: 0;
+  vertical-align: middle;
+  width: 80px;
+}
+.b-one-search-form input,
+.b-one-search-form select {
+  padding: 3px;
+  width: 490px;
+}
+.b-users-table__full {
+  width: 100%;
+}
+.b-users-table__full tr {
+  border-bottom: 1px solid #cccccc;
+}
+.b-users-table__full td {
+  padding: 10px 0;
+}
+.b-users-table__full .num {
+  font-size: 26px;
+  font-weight: bold;
+  color: #cccccc;
+  padding-right: 20px;
+}
+.b-users-table__full .profile {
+  vertical-align: middle;
+}
+.b-users-table__full .profile .user-info__ava-nick-rating {
+  display: block;
+}
+.b-users-table__full .city {
+  font-size: 13px;
+}
+.b-users-table__full .rating {
+  font-size: 15px;
+  font-weight: bold;
+}
+.b-users-top table,
+.b-users-online table,
+.b-users-search table,
+.b-users-city table {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}

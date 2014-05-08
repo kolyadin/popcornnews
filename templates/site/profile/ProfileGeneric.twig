@@ -78,7 +78,7 @@
                     {% if profile.avatar.id %}
                         {% set src = profile.avatar.url('140x') %}
                     {% else %}
-                        {% set src = '/st/img/no-photo/large.png' %}
+                        {% set src = '/assets/img/no-photo/large.png' %}
                     {% endif %}
                     <a href="/profile/{{ profile.id }}"><img src="{{ src }}"/></a>
                 </div>

@@ -1,0 +1,51 @@
+.tooltipster-pink,
+.tooltipster-gray,
+.tooltipster-silver,
+.tooltipster-gold,
+.tooltipster-platinum,
+.tooltipster-diamond,
+.tooltipster-emerald,
+.tooltipster-ruby,
+.tooltipster-sapphire {
+  background-color: #ee2c90;
+  color: white;
+  border-radius: 5px;
+}
+.tooltipster-pink .tooltipster-content,
+.tooltipster-gray .tooltipster-content,
+.tooltipster-silver .tooltipster-content,
+.tooltipster-gold .tooltipster-content,
+.tooltipster-platinum .tooltipster-content,
+.tooltipster-diamond .tooltipster-content,
+.tooltipster-emerald .tooltipster-content,
+.tooltipster-ruby .tooltipster-content,
+.tooltipster-sapphire .tooltipster-content {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 16px;
+  padding: 14px;
+}
+.tooltipster-gray {
+  background-color: #7f7f7f;
+}
+.tooltipster-silver {
+  background-color: #535353;
+}
+.tooltipster-gold {
+  background-color: #b35400;
+}
+.tooltipster-platinum {
+  background-color: #c3ac15;
+}
+.tooltipster-diamond {
+  background-color: #9a9a9a;
+}
+.tooltipster-emerald {
+  background-color: #42a035;
+}
+.tooltipster-ruby {
+  background-color: #e00025;
+}
+.tooltipster-sapphire {
+  background-color: #1e35e0;
+}
