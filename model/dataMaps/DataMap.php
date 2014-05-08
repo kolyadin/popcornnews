@@ -94,7 +94,11 @@ abstract class DataMap {
 		$this->checkStatement($this->deleteStatement);
 		$this->deleteStatement->bindValue(':id', $id);
 
-		return $this->deleteStatement->execute();
+		$removeStatus = $this->deleteStatement->execute();
+
+		$this->onRemove($id);
+
+		return $removeStatus;
 	}
 
 	/**
@@ -238,6 +242,13 @@ abstract class DataMap {
 	 * @param Model $item
 	 */
 	protected function onUpdate($item) {
+	}
+
+	/**
+	 * @param $id
+	 */
+	protected function onRemove($id) {
+
 	}
 
 	protected function fetchAll($sql, $bindings = array(), $asArray = false) {

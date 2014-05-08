@@ -78,7 +78,7 @@
 
 					{% if post.mainImageId.id > 0 %}
 
-						{% set mainPhoto = post.mainImageId.thumb('500x') %}
+						{% set mainPhoto = post.mainImageId.thumb('620x') %}
 
 						<img src="{{ mainPhoto.url }}" width="{{ mainPhoto.width }}" height="{{ mainPhoto.height }}" alt="">
 
@@ -95,8 +95,9 @@
 			{% if post.images|length > 0 %}
 				<section class="b-single-article__attach-images" style="margin-bottom: 22px;" >
 					{% for image in post.images %}
-						{% set photo = image.thumb('x100') %}
-						<img src="{{ photo.url }}" height="{{ photo.height }}" width="{{ photo.width }}"  alt="" />
+						{% set photo = image.thumb('620x') %}
+						<img src="{{ photo.url }}" height="{{ photo.height }}" width="{{ photo.width }}"  alt="{{ photo.title|e }}" />
+						<p>{{ image.description|e }}</p>
 					{% endfor %}
 				</section>
 			{% endif %}

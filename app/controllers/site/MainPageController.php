@@ -4,10 +4,13 @@ namespace popcorn\app\controllers\site;
 
 use popcorn\app\controllers\ControllerInterface;
 use popcorn\app\controllers\GenericController;
+use popcorn\model\dataMaps\DataMapHelper;
+use popcorn\model\dataMaps\NewsPostDataMap;
 use popcorn\model\dataMaps\PersonDataMap;
 use popcorn\model\dataMaps\TagDataMap;
 use popcorn\model\persons\KidFactory;
 use popcorn\model\posts\PostFactory;
+use popcorn\model\posts\PostFactory2;
 
 /**
  * Class PopcornController

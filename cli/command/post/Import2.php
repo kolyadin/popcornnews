@@ -9,6 +9,7 @@ use popcorn\model\content\ImageFactory;
 use popcorn\model\exceptions\Exception;
 use popcorn\model\exceptions\FileNotFoundException;
 use popcorn\model\posts\PostCategory;
+use popcorn\model\posts\PostFactory;
 use popcorn\model\tags\Tag;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -202,7 +203,9 @@ class Import2 extends Command {
 		if ($postsLimit = $input->getOption('posts-limit')) {
 			$this->stmtFindPosts = $this->pdo->prepare('SELECT * FROM popcornnews.popconnews_goods_ WHERE goods_id = 2 ORDER BY id DESC LIMIT ' . $postsLimit);
 		} elseif ($postId = $input->getOption('post-id')) {
-			$this->pdo->exec('delete from pn_news where id = '.$postId);
+
+			PostFactory::removePost($postId);
+
 			$this->stmtFindPosts = $this->pdo->prepare('SELECT * FROM popcornnews.popconnews_goods_ WHERE goods_id = 2 AND id = '.$postId);
 		} else {
 			$this->stmtFindPosts = $this->pdo->prepare('SELECT * FROM popcornnews.popconnews_goods_ WHERE goods_id = 2 ORDER BY id DESC');
@@ -243,12 +246,13 @@ class Import2 extends Command {
 			while ($remotePhoto = $stmt->fetch(\PDO::FETCH_ASSOC)) {
 
 				try {
-					$url = sprintf('http://v1.popcorn-news.ru%s', $remotePhoto['filepath']);
+					$url = sprintf('http://www.popcornnews.ru%s', str_replace('/upload/','/upload1/',$remotePhoto['filepath']));
 
 					$output->write("\t\t<comment>Пытаемся скачать $url");
 
 					$image = ImageFactory::createFromUrl($url);
-					$image->setDescription($remotePhoto['name']);
+					$image->setTitle($remotePhoto['name']);
+					$image->setDescription($remotePhoto['caption']);
 					ImageFactory::save($image);
 
 					$stmt2 = $this->pdo->prepare('INSERT INTO pn_news_images SET newsId = :newsId, imageId = :imageId, seq = :seq');
@@ -259,6 +263,20 @@ class Import2 extends Command {
 					]);
 
 					$output->writeln(" готово</comment>");
+
+					{
+						$output->write("\t\t<info>Генерим мелкую фотку 200x для админки");
+						$image->getThumb('200x'); //Мелкая фотка для админки (все-равно понадобится)
+						$output->writeln(" готово</info>");
+					}
+
+					{
+						$output->write("\t\t<info>Генерим мелкую фотку 620x для новостей");
+						$image->getThumb('620x');//Фотка в подробной новости
+						$output->writeln(" готово</info>");
+					}
+
+
 
 
 				} catch (Exception $e) {

@@ -45,6 +45,7 @@
 					lHeight -= 0.04;
 				}
 
+
 				tcBlockH2.css('line-height', lHeight);
 				tcBlockA.css('font-size', fSize + 'px');
 
@@ -73,8 +74,7 @@
 				<div class="b-grid__g4 b-top-corn__large-right-block">
 					<h1 class="b-top-corn__rubrics-title b-rubrics-title b-rubrics-title_s30">топ-корн</h1>
 
-					<h2 class="b-top-corn__large-news-title"><a href="/news/{{ topPost.id }}">{{ topPost.name|e }}</a>
-					</h2>
+					<h2 class="b-top-corn__large-news-title"><a href="/news/{{ topPost.id }}">{{ topPost.name|e }}</a></h2>
 
 					<h3 class="b-top-corn__large-news-lead">{{ topPost.announceFriendly(100) }}</h3>
 
@@ -95,8 +95,7 @@
 
 				<li class="b-grid__g2" data-url="./ajax/gallery2.html">
 					<div class="b-top-corn__short-news-container {% if loop.first %} b-top-corn__short-news-container_first {% endif %}">
-						<h2 class="b-top-corn__short-news-title"><a href="/news/{{ post.id }}"
-						                                            title="{{ post.name|e }}">{{ post.name|e }}</a></h2>
+						<h2 class="b-top-corn__short-news-title"><a href="/news/{{ post.id }}" title="{{ post.name|e }}">{{ post.name|e }}</a></h2>
 						<a href="#" class="b-top-corn__short-news-comments b-comments-status">
 							<span class="b-comments-status__num">{{ post.comments }}</span>
 							<span class="b-comments-status__title">комменария</span>
@@ -173,30 +172,6 @@
 			<div class="b-grid__g8">
 				<section class="b-freeze-frame__gallery">
 					<ul>
-						<!--<li><a href="#"><img src="/st/img/tmp/t1.jpg" alt="" /></a></li>
-						<li><a href="#"><img src="/st/img/tmp/t2.jpg" alt="" /></a></li>
-						<li><a href="#"><img src="/st/img/tmp/t3.jpg" alt="" /></a></li>
-						<li><a href="#"><img src="/st/img/tmp/t4.jpg" alt="" /></a></li>
-						<li><a href="#"><img src="/st/img/tmp/t5.jpg" alt="" /></a></li>
-						<li><a href="#"><img src="/st/img/tmp/t6.jpg" alt="" /></a></li>
-						<li><a href="#"><img src="/st/img/tmp/t7.jpg" alt="" /></a></li>
-						<li><a href="#"><img src="/st/img/tmp/t8.jpg" alt="" /></a></li>
-						<li><a href="#"><img src="/st/img/tmp/t9.jpg" alt="" /></a></li>
-						<li><a href="#"><img src="/st/img/tmp/t10.jpg" alt="" /></a></li>
-						<li><a href="#"><img src="/st/img/tmp/t11.jpg" alt="" /></a></li>
-						<li><a href="#"><img src="/st/img/tmp/t12.jpg" alt="" /></a></li>
-						<li><a href="#"><img src="/st/img/tmp/t1.jpg" alt="" /></a></li>
-						<li><a href="#"><img src="/st/img/tmp/t2.jpg" alt="" /></a></li>
-						<li><a href="#"><img src="/st/img/tmp/t3.jpg" alt="" /></a></li>
-						<li><a href="#"><img src="/st/img/tmp/t4.jpg" alt="" /></a></li>
-						<li><a href="#"><img src="/st/img/tmp/t5.jpg" alt="" /></a></li>
-						<li><a href="#"><img src="/st/img/tmp/t6.jpg" alt="" /></a></li>
-						<li><a href="#"><img src="/st/img/tmp/t7.jpg" alt="" /></a></li>
-						<li><a href="#"><img src="/st/img/tmp/t8.jpg" alt="" /></a></li>
-						<li><a href="#"><img src="/st/img/tmp/t9.jpg" alt="" /></a></li>
-						<li><a href="#"><img src="/st/img/tmp/t10.jpg" alt="" /></a></li>
-						<li><a href="#"><img src="/st/img/tmp/t11.jpg" alt="" /></a></li>
-						<li><a href="#"><img src="/st/img/tmp/t12.jpg" alt="" /></a></li>  -->
 					</ul>
 
 					<a href="#" class="b-freeze-frame__gallery-link">&gt;</a>

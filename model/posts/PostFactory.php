@@ -7,8 +7,10 @@
 
 namespace popcorn\model\posts;
 
+use popcorn\lib\mmc\MMC;
 use popcorn\lib\PDOHelper;
 use popcorn\model\dataMaps\DataMap;
+use popcorn\model\dataMaps\DataMapHelper;
 use popcorn\model\dataMaps\NewsPostDataMap;
 use popcorn\model\dataMaps\NewsTagDataMap;
 
@@ -46,7 +48,13 @@ class PostFactory {
 	public static function getPosts($from = 0, $count = 10) {
 		self::checkDataMap();
 
-		return self::$dataMap->findByDate($from, $count);
+		$cacheKey = MMC::genKey(self::$dataMap->getClass(), __METHOD__, func_get_args());
+
+		return MMC::getSet($cacheKey, strtotime('+1 day'), ['post'], function () use ($from, $count) {
+			return self::$dataMap->findByDate($from, $count);
+		});
+
+
 	}
 
 	/**
@@ -107,11 +115,21 @@ class PostFactory {
 	}
 
 	public static function getStopShot($from = 0, $count = 2) {
-		self::checkDataMap();
 
-		return self::$dataMap->findRaw('name like "Стоп-кадр%" and status = ' . NewsPost::STATUS_PUBLISHED,
-			['createDate' => 'desc'], $from, $count
-		);
+		$dataMapHelper = new DataMapHelper();
+		$dataMapHelper->setRelationship([
+			'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE ^ NewsPostDataMap::WITH_IMAGES
+		]);
+
+		$newsPostDataMap = new NewsPostDataMap($dataMapHelper);
+
+		$cacheKey = MMC::genKey($newsPostDataMap->getClass(), __METHOD__, func_get_args());
+
+		return MMC::getSet($cacheKey, strtotime('+1 day'), ['post'], function () use ($newsPostDataMap, $from, $count) {
+			return $newsPostDataMap->findRaw('name like "Стоп-кадр%" and status = ' . NewsPost::STATUS_PUBLISHED, ['createDate' => 'desc'], $from, $count);
+		});
+
+
 	}
 
 	/**
@@ -122,9 +140,15 @@ class PostFactory {
 	public static function getTopPosts($count) {
 		self::checkDataMap();
 
-		return self::$dataMap->findRaw("status = " . NewsPost::STATUS_PUBLISHED . " AND createDate > " . strtotime("-2 week"),
-			array('comments' => DataMap::DESC, 'createDate' => DataMap::DESC),
-			0, $count);
+		$cacheKey = MMC::genKey(self::$dataMap->getClass(), __METHOD__, func_get_args());
+
+		return MMC::getSet($cacheKey, strtotime('+1 day'), ['post'], function () use ($count) {
+			return self::$dataMap->findRaw("status = " . NewsPost::STATUS_PUBLISHED . " AND createDate > " . strtotime("-2 week"),
+				array('comments' => DataMap::DESC, 'createDate' => DataMap::DESC),
+				0, $count);
+		});
+
+
 	}
 
 	public static function resetDataMap() {

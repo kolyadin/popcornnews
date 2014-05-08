@@ -2,6 +2,7 @@
 
 namespace popcorn\model\dataMaps;
 
+use popcorn\lib\mmc\MMC;
 use popcorn\model\content\ImageFactory;
 use popcorn\model\posts\fashionBattle\FashionBattle;
 use popcorn\model\posts\fashionBattle\FashionBattleDataMap;
@@ -15,7 +16,8 @@ class NewsPostDataMap extends DataMap {
 	const WITH_MAIN_IMAGE = 2;
 	const WITH_TAGS = 4;
 	const WITH_IMAGES = 8;
-	const WITH_ALL = 15;
+	const WITH_FASHION_BATTLE = 16;
+	const WITH_ALL = 31;
 
 	/**
 	 * @var NewsImageDataMap
@@ -141,7 +143,10 @@ class NewsPostDataMap extends DataMap {
 			$item->setImages($this->getAttachedImages($item->getId()));
 		}
 
-		$item->addFashionBattle($this->getFashionBattle($item->getId()));
+		if ($modifier & self::WITH_FASHION_BATTLE) {
+			$item->addFashionBattle($this->getFashionBattle($item->getId()));
+		}
+
 	}
 
 	/**
@@ -151,6 +156,8 @@ class NewsPostDataMap extends DataMap {
 		$this->attachImages($item);
 		$this->attachTags($item);
 		$this->attachFashionBattle($item);
+
+		MMC::delByTag('post');
 	}
 
 	/**
@@ -160,6 +167,23 @@ class NewsPostDataMap extends DataMap {
 		$this->attachImages($item);
 		$this->attachTags($item);
 		$this->attachFashionBattle($item);
+
+		MMC::delByTag('post');
+	}
+
+	/**
+	 * @param $postId
+	 */
+	protected function onRemove($postId) {
+
+		$this->getPDO()->prepare('
+			delete from pn_news_images where newsId = :postId;
+			delete from pn_news_tags where newsId = :postId;
+			delete from pn_news_poll where newsId = :postId;
+			delete from pn_news_fashion_battle where newsId = :postId
+		')->execute([
+			':postId' => $postId
+		]);
 	}
 
 	/**
