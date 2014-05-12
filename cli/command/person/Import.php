@@ -123,7 +123,6 @@ VALUES (
 					SELECT diskname filepath FROM popcornnews.popconnews_pix where goods_id_ = :personId
 					Limit %u';
 
-
 				$stmt = $this->pdo->prepare(sprintf($sql, $input->getOption('set-images-limit') ? : 999999));
 				$stmt->bindValue(':personId', $table['id'], \PDO::PARAM_INT);
 				$stmt->execute();
@@ -134,11 +133,12 @@ VALUES (
 					try {
 						$url = sprintf('http://www.popcornnews.ru/upload1/%s', $imagePath);
 
-						$output->write("\n\t<comment>Пытаемся скачать $url...</comment>");
-
+						$output->write("\n\t<comment>Пытаемся скачать $url");
 						$images[] = ImageFactory::createFromUrl($url);
+						$output->write(" готово</comment>\n");
+
 					} catch (Exception $e) {
-						$output->write("<comment>неудачно</comment>\n");
+						$output->write(" неудачно</comment>\n");
 						continue;
 					}
 				}
@@ -148,7 +148,6 @@ VALUES (
 					$i = 0;
 
 					foreach ($images as $image) {
-
 						$stmt = $this->pdo->prepare('INSERT INTO pn_persons_images SET personId = :personId, imageId = :imageId, seq = :seq');
 						$stmt->execute([
 							':personId' => $table['id'],
@@ -197,7 +196,6 @@ VALUES (
 		}
 
 		$total = $this->selector->rowCount();
-
 
 		$output->writeln("<info>Импортированно {$count} персон из {$total}</info>");
 		$this->selector->closeCursor();

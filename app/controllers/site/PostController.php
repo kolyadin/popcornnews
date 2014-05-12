@@ -30,7 +30,7 @@ class PostController extends GenericController implements ControllerInterface {
 			->get('/category/:category/page/:page', function ($category, $page) {
 				$this->getSlim()->redirect(sprintf('/category/%s/page%u', $category, $page), 301);
 			});
-			//->conditions(['category' => '(' . implode('|', array_keys(PostCategory::$category)) . ')']);
+		//->conditions(['category' => '(' . implode('|', array_keys(PostCategory::$category)) . ')']);
 	}
 
 	public function getRoutes() {
@@ -41,9 +41,9 @@ class PostController extends GenericController implements ControllerInterface {
 			->getSlim()
 			->get('/archive(/:year(/:month(/:day)))', [$this, 'postsArchive'])
 			->conditions([
-				'year' => '2[0-9]{3}',
+				'year'  => '2[0-9]{3}',
 				'month' => '[0-9]+',
-				'day' => '[0-9]+'
+				'day'   => '[0-9]+'
 			]);
 
 		$this
@@ -71,7 +71,7 @@ class PostController extends GenericController implements ControllerInterface {
 					$this->getSlim()->redirect(sprintf('/category/%s', $category), 301);
 				}
 
-				$this->posts(['category' => $category, 'page' => $page]);
+				$this->postsByCategory($category, $page);
 			})
 			->conditions([
 				//'category' => implode('|', array_keys(PostCategory::$category)),
@@ -88,72 +88,94 @@ class PostController extends GenericController implements ControllerInterface {
 				$this->posts(['tag' => $tag, 'page' => $page]);
 			})
 			->conditions([
-				'tag' => '[1-9][0-9]*',
+				'tag'  => '[1-9][0-9]*',
 				'page' => '[1-9][0-9]*'
 			]);
 
 
 	}
 
-	/**
-	 * Выводим список новостей, общий, по категориям, по тегам
-	 * @param array $params
-	 */
-	public function posts(array $params) {
+	public function postsByCategory($categoryId, $page = null) {
 
-		$options = [
-			'category' => null,
-			'page' => null,
-			'tag' => null
-		];
-
-		$options = array_merge($options, $params);
-
-		if (is_null($options['page'])) {
-			$options['page'] = 1;
+		if (is_null($page)) {
+			$page = 1;
 		}
 
 		$onPage = 6;
-		$paginator = [];
+		$totalFound = 0;
 
-		$mapOptions = $options;
-		$twigAdd = [];
-
-		if ($options['category']) {
-			$mapOptions = ['category' => $options['category']];
-			$twigAdd['category'] = TagFactory::getByName($options['category']);
-		} elseif ($options['tag']) {
-			$mapOptions = ['tag' => $options['tag']];
-			$twigAdd['tag'] = TagFactory::get($options['tag']);
-		}
-
-		$dataMapHelper = new DataMapHelper();
-		$dataMapHelper->setRelationship([
-			'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_TAGS | NewsPostDataMap::WITH_MAIN_IMAGE,
-		]);
-
-		$dataMap = new NewsPostDataMap($dataMapHelper);
-
-		$posts = $dataMap->find($mapOptions,
-			[($options['page'] - 1) * $onPage, $onPage],
-			$paginator
-		);
-
-		if ($options['page'] > $paginator['pages']) {
-			$this->getSlim()->notFound();
-		}
+		$posts = PostFactory::findByCategory($categoryId, ($page - 1) * $onPage, $onPage, $totalFound);
 
 		$this
 			->getTwig()
-			->display('/news/Posts.twig', array_merge([
-				'posts' => $posts,
+			->display('/news/Posts.twig', [
+				'posts'     => $posts,
 				'paginator' => [
-					'pages' => $paginator['pages'],
-					'active' => $options['page']
+					'pages'  => ceil($totalFound / $onPage),
+					'active' => $page
 				]
-			],$twigAdd));
-
+			]);
 	}
+
+	/**
+	 * Выводим список новостей, общий, по категориям, по тегам
+	 * @param array $params
+
+	public function posts(array $params) {
+	 *
+	 * $options = [
+	 * 'category' => null,
+	 * 'page'     => null,
+	 * 'tag'      => null
+	 * ];
+	 *
+	 * $options = array_merge($options, $params);
+	 *
+	 * if (is_null($options['page'])) {
+	 * $options['page'] = 1;
+	 * }
+	 *
+	 * $onPage = 6;
+	 * $paginator = [];
+	 *
+	 * $mapOptions = $options;
+	 * $twigAdd = [];
+	 *
+	 * if ($options['category']) {
+	 * $mapOptions = ['category' => $options['category']];
+	 * $twigAdd['category'] = TagFactory::getByName($options['category']);
+	 * } elseif ($options['tag']) {
+	 * $mapOptions = ['tag' => $options['tag']];
+	 * $twigAdd['tag'] = TagFactory::get($options['tag']);
+	 * }
+	 *
+	 * $dataMapHelper = new DataMapHelper();
+	 * $dataMapHelper->setRelationship([
+	 * 'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_TAGS | NewsPostDataMap::WITH_MAIN_IMAGE,
+	 * ]);
+	 *
+	 * $dataMap = new NewsPostDataMap($dataMapHelper);
+	 *
+	 * $posts = $dataMap->find($mapOptions,
+	 * [($options['page'] - 1) * $onPage, $onPage],
+	 * $paginator
+	 * );
+	 *
+	 * if ($options['page'] > $paginator['pages']) {
+	 * $this->getSlim()->notFound();
+	 * }
+	 *
+	 * $this
+	 * ->getTwig()
+	 * ->display('/news/Posts.twig', array_merge([
+	 * 'posts'     => $posts,
+	 * 'paginator' => [
+	 * 'pages'  => $paginator['pages'],
+	 * 'active' => $options['page']
+	 * ]
+	 * ], $twigAdd));
+	 *
+	 * }*/
 
 	/**
 	 * @param int $postId
@@ -171,7 +193,7 @@ class PostController extends GenericController implements ControllerInterface {
 			$post = $fullDataMap->findById($postId);
 		}
 
-		if (!$post){
+		if (!$post) {
 			$this->getSlim()->notFound();
 		}
 
@@ -199,10 +221,10 @@ class PostController extends GenericController implements ControllerInterface {
 		$this
 			->getTwig()
 			->display('/news/Post.twig', [
-				'post' => $post,
+				'post'         => $post,
 				'commentsTree' => $commentsTree,
-				'earlyPosts' => $earlyPosts,
-				'earlyTime' => $month
+				'earlyPosts'   => $earlyPosts,
+				'earlyTime'    => $month
 			]);
 	}
 
@@ -233,7 +255,7 @@ class PostController extends GenericController implements ControllerInterface {
 			$dataMap = new NewsPostDataMap($helper);
 			$items = $dataMap->findByDate($from, $to);
 			$posts = [];
-			foreach($items as $item) {
+			foreach ($items as $item) {
 				$posts[RuHelper::ruDate("d f2", $item->getCreateDate())][] = $item;
 			}
 		} else {
@@ -254,15 +276,15 @@ class PostController extends GenericController implements ControllerInterface {
 		$this
 			->getTwig()
 			->display('/news/PostsArchive.twig', [
-				'posts' => $posts,
-				'curYear' => date('Y'),
+				'posts'    => $posts,
+				'curYear'  => date('Y'),
 				'curMonth' => date('m'),
-				'curDay' => date('d'),
-				'year' => $year,
-				'month' => $month,
-				'day' => $day,
-				'dayEnd' => $dayEnd,
-				'months' => RuHelper::$ruMonth,
+				'curDay'   => date('d'),
+				'year'     => $year,
+				'month'    => $month,
+				'day'      => $day,
+				'dayEnd'   => $dayEnd,
+				'months'   => RuHelper::$ruMonth,
 			]);
 
 	}

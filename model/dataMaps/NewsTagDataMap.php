@@ -141,20 +141,13 @@ class NewsTagDataMap extends CrossLinkedDataMap {
 
 		$dm = new NewsPostDataMap();
 
-		$sql = <<<EOL
-SELECT
-	%s
-FROM
-         pn_news      news
-	JOIN pn_news_tags newsTags ON (newsTags.newsId = news.id)
-	JOIN pn_tags      tags     ON (tags.id = newsTags.tagId)
-WHERE
-	tags.type = :tagType AND tags.name = :person
-EOL;
+		$sql = "select %s from pn_news where id in (
+			select newsId from pn_news_tags where type = :type and entityId = :personId
+		)";
 
 		$binds = [
-			':tagType' => Tag::PERSON,
-			':person'  => $person->getId()
+			':type'     => Tag::PERSON,
+			':personId' => $person->getId()
 		];
 
 		$stmt = $this->prepare(sprintf($sql, 'count(*)'));
@@ -164,11 +157,11 @@ EOL;
 
 		if ($modifier == self::POPULAR_POSTS) {
 			$sql .= $this->getOrderString([
-				'news.comments' => 'desc',
-				'news.views'    => 'desc'
+				'comments' => 'desc',
+				'views'    => 'desc'
 			]);
 		} else {
-			$sql .= $this->getOrderString(['news.id' => 'desc']);
+			$sql .= $this->getOrderString(['id' => 'desc']);
 		}
 
 		$sql .= $this->getLimitString($paginator[0], $paginator[1]);
@@ -176,7 +169,7 @@ EOL;
 		$paginator['overall'] = $totalFound;
 		$paginator['pages'] = ceil($totalFound / $paginator[1]);
 
-		$stmt = $this->prepare(sprintf($sql, 'news.*'));
+		$stmt = $this->prepare(sprintf($sql, '*'));
 		$stmt->execute($binds);
 
 		$items = $stmt->fetchAll(\PDO::FETCH_CLASS, $dm->getClass());

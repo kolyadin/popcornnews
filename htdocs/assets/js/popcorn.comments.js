@@ -10,7 +10,7 @@ $(function () {
 
         messageBox.on('focus',function () {
             st = setTimeout(function () {
-                $('.b-new-message-box__message').blur().focus();
+                messageBox.blur().focus();
                 clearInterval(st);
             }, 10);
         }).focusout(function () {
@@ -284,7 +284,7 @@ $(function () {
                     resetNewCommentBox();
                     unBlockNewCommentEdit();
 
-                    messageBox.css('color', '#999')
+                    messageBox.css('color', '#999');
                 });
             }
         };

@@ -522,8 +522,10 @@ class PersonController extends GenericController implements ControllerInterface 
 			$paginator = [($page - 1) * $onPage, $onPage];
 		}
 
+		$cityId = UserFactory::getCurrentUser()->getUserInfo()->getCityId();
+
 		$dataMap = new PersonFanDataMap($dataMapHelper);
-		$users = $dataMap->find(self::$personId, ['info.cityId' => UserFactory::getCurrentUser()->getUserInfo()->getCityId()], ['id' => 'asc'], $paginator);
+		$users = $dataMap->find(self::$personId, ['info.cityId' => $cityId], ['id' => 'asc'], $paginator);
 
 		if ($page > $paginator['pages']) {
 			$this->getSlim()->notFound();

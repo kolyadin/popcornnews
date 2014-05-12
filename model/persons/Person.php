@@ -174,6 +174,10 @@ class Person extends Model {
 		return $this->allowFacts;
 	}
 
+	public function isPerson(){
+		return true;
+	}
+
 	/**
 	 * @return string
 	 */

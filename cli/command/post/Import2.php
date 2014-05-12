@@ -87,8 +87,8 @@ class Import2 extends Command {
 		$this->stmtInsertFashionBattle =
 			$this->pdo->prepare('insert into pn_news_fashion_battle set newsId = :newsId, firstOption = :firstOption, secondOption = :secondOption');
 
-//		$this->stmtFindFashionBattleStat =
-//			$this->pdo->query('select t_vote.*,t_post.pole34 firstPerson,t_post.pole35 secondPerson from popcornnews.popcornnews_news_votes t_vote join popcornnews.popconnews_goods_ t_post on (t_post.id = t_vote.nid)');
+		$this->stmtFindFashionBattleStat =
+			$this->pdo->query('select t_vote.*,t_post.pole34 firstPerson,t_post.pole35 secondPerson from popcornnews.popcornnews_news_votes t_vote join popcornnews.popconnews_goods_ t_post on (t_post.id = t_vote.nid)');
 
 		$this->stmtInsertFashionBattleVoting =
 			$this->pdo->prepare('insert into pn_news_fashion_battle_voting set checksum = :checksum, votedAt = :votedAt, newsId = :newsId, `option` = :option');
@@ -235,6 +235,8 @@ class Import2 extends Command {
 			}
 			//endregion
 
+			/*
+
 			//region Ищем фотографии новости и пытаемся их скачать
 			$stmt = $this->pdo->prepare('SELECT * FROM popcornnews.popcornnews_news_images WHERE news_id = :newsId');
 			$stmt->execute([
@@ -286,6 +288,7 @@ class Import2 extends Command {
 
 			}
 			//endregion
+			*/
 
 
 
@@ -327,7 +330,6 @@ class Import2 extends Command {
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
 
-		/*
 		{
 			$output->write('<info>Чистим таблицы</info>');
 
@@ -336,7 +338,7 @@ class Import2 extends Command {
 			]);
 
 			$output->writeln('<comment> готово</comment>');
-		}*/
+		}
 
 		{
 			$output->writeln('<info>Добавление новостей</info>');
@@ -346,7 +348,6 @@ class Import2 extends Command {
 			$output->writeln('<comment>Готово</comment>');
 		}
 
-		/*
 		{
 			$output->write('<info>Добавление рубрик</info>');
 
@@ -387,7 +388,6 @@ class Import2 extends Command {
 
 			$output->writeln('<comment> готово</comment>');
 		}
-		*/
 
 
 		/*

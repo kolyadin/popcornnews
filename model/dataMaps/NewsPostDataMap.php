@@ -318,6 +318,34 @@ EOL;
 	}
 
 	/**
+	 * @param $categoryId
+	 * @param int $from
+	 * @param $count
+	 * @param $totalFound
+	 * @return NewsPost[]
+	 */
+	public function findByCategory($categoryId, $from = 0, $count = -1, &$totalFound) {
+
+		$sql = 'select %s from pn_news where id in
+		(select newsId from pn_news_tags where type = :type and entityId = :categoryId)';
+
+		$binds = [
+			':type'       => Tag::ARTICLE,
+			':categoryId' => $categoryId
+		];
+
+		$stmt = $this->prepare(sprintf($sql, 'count(*)'));
+		$stmt->execute($binds);
+
+		$totalFound = $stmt->fetchColumn();
+
+		$sql .= $this->getOrderString(['id' => 'desc']);
+		$sql .= $this->getLimitString($from, $count);
+
+		return $this->fetchAll(sprintf($sql, '*'), $binds);
+	}
+
+	/**
 	 * @param array $options
 	 * @param array $offset
 	 * @param array $paginator

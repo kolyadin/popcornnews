@@ -88,20 +88,15 @@ class UpdateCounters extends Command {
 	 * @param $personId
 	 */
 	private function updateNewsCount($personId) {
-		$sql = <<<SQL
-SELECT
-	count(*)
-FROM
-         pn_news      news
-	JOIN pn_news_tags newsTags ON (newsTags.newsId = news.id)
-	JOIN pn_tags      tags     ON (tags.id = newsTags.tagId)
-WHERE
-	tags.type = :tagType AND tags.name = :person
-SQL;
+
+		$sql = "select count(*) from pn_news where id in (
+			select newsId from pn_news_tags where type = :type and entityId = :personId
+		)";
+
 		$stmt = $this->pdo->prepare($sql);
 		$stmt->execute([
-			'tagType' => Tag::PERSON,
-			'person' => $personId
+			':type'     => Tag::PERSON,
+			':personId' => $personId
 		]);
 
 		$newsCount = $stmt->fetchColumn();
@@ -109,7 +104,7 @@ SQL;
 		$stmt = $this->pdo->prepare('UPDATE pn_persons SET newsCount = :newsCount WHERE id = :personId');
 		$stmt->execute([
 			':newsCount' => $newsCount,
-			':personId' => $personId
+			':personId'  => $personId
 		]);
 	}
 }

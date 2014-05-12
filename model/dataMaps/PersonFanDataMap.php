@@ -99,6 +99,13 @@ class PersonFanDataMap extends CrossLinkedDataMap {
 	}
 
 
+	/**
+	 * @param $personId
+	 * @param array $where
+	 * @param array $orders
+	 * @param array $paginator
+	 * @return User[]
+	 */
 	public function find($personId, array $where = [], array $orders = [], array &$paginator = []) {
 
 		$sql = <<<SQL

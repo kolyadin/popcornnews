@@ -129,11 +129,11 @@ class TagDataMap extends DataMap {
 		$sql = <<<SQL
 SELECT
 	count(*) overall,
-	t_nt.entityId,
+	t_nt.entityId tagId,
 	t_t.name
 FROM
 	     pn_news_tags t_nt
-	JOIN pn_tags      t_t ON (t_t.id = t_nt.entityId AND t_t.type = 1)
+	JOIN pn_tags      t_t ON (t_t.id = t_nt.entityId AND t_t.type = :type)
 GROUP BY
 	t_nt.entityId
 ORDER BY
@@ -145,8 +145,15 @@ SQL;
 //		$cacheKey = MMC::genKey($this->class, __METHOD__);
 
 //		return MMC::getSet($cacheKey, strtotime('+1 week'), ['tag'], function () use ($sql) {
-		$stmt = PDOHelper::getPDO()->query($sql);
-		return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+		$stmt = $this->prepare($sql);
+		$stmt->execute([
+			':type' => Tag::EVENT
+		]);
+
+
+		$tags = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+		return $tags;
 //		});
 
 	}

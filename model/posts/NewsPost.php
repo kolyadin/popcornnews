@@ -30,7 +30,6 @@ class NewsPost extends Model {
 	const STATUS_PLANNED = 2;
 
 
-
 	private $encoding = 'utf-8';
 
 	//region Fields
@@ -206,6 +205,10 @@ class NewsPost extends Model {
 	 */
 	public function isSent() {
 		return $this->sent;
+	}
+
+	public function isPost() {
+		return true;
 	}
 
 	/**
@@ -410,7 +413,7 @@ class NewsPost extends Model {
 	/**
 	 * @return FashionBattle
 	 */
-	public function getFashionBattle(){
+	public function getFashionBattle() {
 		return $this->fashionBattle;
 	}
 

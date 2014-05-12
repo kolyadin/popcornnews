@@ -13,6 +13,8 @@ use popcorn\model\dataMaps\DataMap;
 use popcorn\model\dataMaps\DataMapHelper;
 use popcorn\model\dataMaps\NewsPostDataMap;
 use popcorn\model\dataMaps\NewsTagDataMap;
+use popcorn\model\dataMaps\PersonDataMap;
+use popcorn\model\tags\Tag;
 
 class PostFactory {
 
@@ -55,7 +57,6 @@ class PostFactory {
 		});
 
 
-		
 	}
 
 	/**
@@ -149,6 +150,22 @@ class PostFactory {
 				0, $count);
 		});
 
+
+	}
+
+	public static function findByCategory($categoryAlias, $from = 0, $count = -1, &$totalFound) {
+
+		$categoryId = PostCategory::getCategoryIdByAlias($categoryAlias);
+
+		$dataMapHelper = new DataMapHelper();
+		$dataMapHelper->setRelationship([
+			'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_ALL,
+			'popcorn\\model\\dataMaps\\PersonDataMap' => PersonDataMap::WITH_NONE
+		]);
+
+		$newsPostDataMap = new NewsPostDataMap($dataMapHelper);
+
+		return $newsPostDataMap->findByCategory($categoryId, $from, $count, $totalFound);
 
 	}
 

@@ -4,7 +4,7 @@ namespace popcorn\model\posts;
 
 class PostCategory {
 
-	private $category = [
+	private static $category = [
 		1 => [
 			'urlName' => 'stars',
 			'name'    => 'Звезды'
@@ -35,14 +35,20 @@ class PostCategory {
 		],
 	];
 
-	public function getCategory($categoryId) {
-
-		return $this->category[$categoryId];
-
+	public static function getCategory($categoryId) {
+		return self::$category[$categoryId];
 	}
 
-	public function getCategories() {
-		return $this->category;
+	public static function getCategories() {
+		return self::$category;
+	}
+
+	public static function getCategoryIdByAlias($alias) {
+		foreach (self::getCategories() as $categoryId => $category) {
+			if ($category['urlName'] == $alias) {
+				return $categoryId;
+			}
+		}
 	}
 
 }
