@@ -1,1 +1,1 @@
-24 * * * * ....ю....,..выбазлвыьащз ыо щштИшвыоипшыоитщЩОТи
+* * * * * /usr/bin/flock -xn ~/popcorn/var/tmp/indexer.lock /bin/bash ~/popcorn/scripts/indexer.sh >> ~/popcorn/var/log/indexer.log
