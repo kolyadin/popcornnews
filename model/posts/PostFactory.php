@@ -30,36 +30,6 @@ class PostFactory {
 	}
 
 	/**
-	 * @param $postId
-	 *
-	 * @return NewsPost
-	 */
-	public static function getPost($postId) {
-		self::checkDataMap();
-
-		return self::$dataMap->findById($postId);
-	}
-
-	/**
-	 * Посты по дате, новые выше
-	 * @param int $from
-	 * @param int $count
-	 *
-	 * @return NewsPost[]
-	 */
-	public static function getPosts($from = 0, $count = 10) {
-		self::checkDataMap();
-
-		$cacheKey = MMC::genKey(self::$dataMap->getClass(), __METHOD__, func_get_args());
-
-		return MMC::getSet($cacheKey, strtotime('+1 day'), ['post'], function () use ($from, $count) {
-			return self::$dataMap->findByLimit($from, $count);
-		});
-
-
-	}
-
-	/**
 	 * @param int $id
 	 */
 	public static function removePost($id) {
@@ -71,15 +41,151 @@ class PostFactory {
 		self::$dataMap = $dataMap;
 	}
 
+	private static function checkDataMap() {
+		if (is_null(self::$dataMap)) {
+			self::setDataMap(new NewsPostDataMap());
+		}
+	}
+
+	public static function resetDataMap() {
+		self::$dataMap = new NewsPostDataMap();
+	}
+
+	/**
+	 * @param NewsPostBuilder $builder
+	 * @return \popcorn\model\posts\NewsPost
+	 */
+	public static function createFromBuilder($builder) {
+		$post = $builder->build();
+		self::savePost($post);
+
+		return $post;
+	}
+
+	/**
+	 * @param $postId
+	 * @param array $options
+	 * @param array $relationships
+	 * @return NewsPost
+	 */
+	public static function getPost($postId, array $options = [], array $relationships = []) {
+
+		$dataMapHelper = new DataMapHelper();
+
+		if (count($relationships)) {
+			$dataMapHelper->setRelationship($relationships);
+		} else {
+			$dataMapHelper->setRelationship([
+				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_ALL,
+				'popcorn\\model\\dataMaps\\PersonDataMap'   => PersonDataMap::WITH_NONE
+
+			]);
+		}
+
+		$newsPostDataMap = new NewsPostDataMap($dataMapHelper);
+
+		return $newsPostDataMap->findById($postId, $options);
+	}
+
+	/**
+	 * Посты по дате, новые выше
+	 *
+	 * @param int $from
+	 * @param int $count
+	 * @param array $options
+	 * @param $totalFound
+	 * @return NewsPost[]
+	 */
+	public static function getPosts(array $options = [], $from = 0, $count = 10, &$totalFound = 0) {
+
+		$options = array_merge([
+			'itemCallback' => [
+				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE ^ NewsPostDataMap::WITH_MAIN_IMAGE ^ NewsPostDataMap::WITH_TAGS,
+				'popcorn\\model\\dataMaps\\PersonDataMap'   => PersonDataMap::WITH_NONE
+			]
+		], $options);
+
+		$newsPostDataMap = new NewsPostDataMap(new DataMapHelper($options['itemCallback']));
+
+		return $newsPostDataMap->findByLimit($options, $from, $count, $totalFound);
+	}
+
+	/**
+	 * @param $categoryAlias
+	 * @param array $options
+	 * @param int $from
+	 * @param $count
+	 * @param int $totalFound
+	 * @return NewsPost[]
+	 */
+	public static function findByCategory($categoryAlias, array $options = [], $from = 0, $count = -1, &$totalFound = 0) {
+
+		$categoryId = PostCategory::getCategoryIdByAlias($categoryAlias);
+
+		$options = array_merge([
+			'itemCallback' => [
+				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE ^ NewsPostDataMap::WITH_MAIN_IMAGE ^ NewsPostDataMap::WITH_TAGS,
+				'popcorn\\model\\dataMaps\\PersonDataMap'   => PersonDataMap::WITH_NONE
+			]
+		], $options);
+
+		$newsPostDataMap = new NewsPostDataMap(new DataMapHelper($options['itemCallback']));
+
+		return $newsPostDataMap->findByCategory($categoryId, $options, $from, $count, $totalFound);
+	}
+
+	/**
+	 * @param $tagId
+	 * @param array $options
+	 * @param int $from
+	 * @param $count
+	 * @param $totalFound
+	 * @return NewsPost[]
+	 */
+	public static function findByTag($tagId, array $options = [], $from = 0, $count = -1, &$totalFound = 0) {
+
+		$options = array_merge([
+			'itemCallback' => [
+				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE ^ NewsPostDataMap::WITH_MAIN_IMAGE ^ NewsPostDataMap::WITH_TAGS,
+				'popcorn\\model\\dataMaps\\PersonDataMap'   => PersonDataMap::WITH_NONE
+			]
+		], $options);
+
+
+		$newsPostDataMap = new NewsPostDataMap(new DataMapHelper($options['itemCallback']));
+
+		return $newsPostDataMap->findByTag($tagId, $options, $from, $count, $totalFound);
+
+	}
+
+
+	public static function findEarlier(NewsPost $post, array $relationships = []) {
+
+		$dataMapHelper = new DataMapHelper();
+
+		if (count($relationships)) {
+			$dataMapHelper->setRelationship($relationships);
+		} else {
+			$dataMapHelper->setRelationship([
+				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE
+			]);
+		}
+
+		$newsPostDataMap = new NewsPostDataMap($dataMapHelper);
+
+		return $newsPostDataMap->findEarlier($post);
+
+	}
+
+	/**
+	 * Обновим количество показов у новости
+	 *
+	 * @param NewsPost $post
+	 */
 	public static function incrementViews(NewsPost $post) {
 		self::checkDataMap();
 
-		$stmt = PDOHelper::getPDO()->prepare('UPDATE pn_news SET views = views+1 WHERE id = :newsId');
-
-		return $stmt->execute([
-			':newsId' => $post->getId()
-		]);
-
+		self::$dataMap->updateViews($post);
 	}
 
 	/**
@@ -110,11 +216,6 @@ class PostFactory {
 		return self::$dataMap->findRaw($query, $orders, $from, $count);
 	}
 
-	private static function checkDataMap() {
-		if (is_null(self::$dataMap)) {
-			self::setDataMap(new NewsPostDataMap());
-		}
-	}
 
 	public static function getStopShot($from = 0, $count = 2) {
 
@@ -153,36 +254,6 @@ class PostFactory {
 
 	}
 
-	public static function findByCategory($categoryAlias, $from = 0, $count = -1, &$totalFound) {
-
-		$categoryId = PostCategory::getCategoryIdByAlias($categoryAlias);
-
-		$dataMapHelper = new DataMapHelper();
-		$dataMapHelper->setRelationship([
-			'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_ALL,
-			'popcorn\\model\\dataMaps\\PersonDataMap' => PersonDataMap::WITH_NONE
-		]);
-
-		$newsPostDataMap = new NewsPostDataMap($dataMapHelper);
-
-		return $newsPostDataMap->findByCategory($categoryId, $from, $count, $totalFound);
-
-	}
-
-	public static function resetDataMap() {
-		self::$dataMap = new NewsPostDataMap();
-	}
-
-	/**
-	 * @param NewsPostBuilder $builder
-	 * @return \popcorn\model\posts\NewsPost
-	 */
-	public static function createFromBuilder($builder) {
-		$post = $builder->build();
-		self::savePost($post);
-
-		return $post;
-	}
 
 	public static function getByTag($tagId) {
 		$dataMap = new NewsTagDataMap();

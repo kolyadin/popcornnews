@@ -112,23 +112,7 @@
 
 				<span class="b-single-article__views-title">Просмотров: {{ post.views|number_format(0,'',' ') }}</span>
 
-				{#{% if post.tagsOnly %}#}
-					{#<div>#}
-						{#<span class="b-single-article__tags-title">Теги: </span>#}
-						{#<ul class="b-large-news__tags-list">#}
-							{#<li class="b-single-article__gray">#}
-								{#{% for tag in post.tagsOnly %}#}
-									{#{% if tag.isPerson %}#}
-										{#{% set person = tag.entity %}#}
-										{#<a href="/persons/{{ person.urlName }}">{{ person.name|e }}</a>&nbsp;{% if loop.last == false %},{% endif %}#}
-									{#{% else %}#}
-										{#<a href="/event/{{ tag.id }}">{{ tag.name|e }}</a>&nbsp;{% if loop.last == false %},{% endif %}#}
-									{#{% endif %}#}
-								{#{% endfor %}#}
-							{#</li>#}
-						{#</ul>#}
-					{#</div>#}
-				{#{% endif %}#}
+				{% include '/news/TagsBar.twig' with {'post':post} only %}
 			</section>
 		</article>
 

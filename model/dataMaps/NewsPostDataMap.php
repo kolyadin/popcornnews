@@ -172,15 +172,21 @@ class NewsPostDataMap extends DataMap {
 	}
 
 	/**
+	 * При удалении новости удаляем:
+	 * - все вложенные фотки
+	 * - все связи тегов
+	 * - связанный опрос (если есть)
+	 * - связанный fashion battle (если есть)
+	 *
 	 * @param $postId
 	 */
 	protected function onRemove($postId) {
 
 		$this->getPDO()->prepare('
-			delete from pn_news_images where newsId = :postId;
-			delete from pn_news_tags where newsId = :postId;
-			delete from pn_news_poll where newsId = :postId;
-			delete from pn_news_fashion_battle where newsId = :postId
+			DELETE FROM pn_news_images WHERE newsId = :postId;
+			DELETE FROM pn_news_tags WHERE newsId = :postId;
+			DELETE FROM pn_news_poll WHERE newsId = :postId;
+			DELETE FROM pn_news_fashion_battle WHERE newsId = :postId
 		')->execute([
 			':postId' => $postId
 		]);
@@ -229,18 +235,43 @@ class NewsPostDataMap extends DataMap {
 		return $item;
 	}
 
+	/**
+	 * @param array $options
+	 * @param int $from
+	 * @param $count
+	 * @param int $totalFound
+	 * @return NewsPost[]
+	 */
+	public function findByLimit(array $options = [], $from = 0, $count = -1, &$totalFound = 0) {
 
-	public function findByLimit($from = 0, $count = -1) {
-		$sql = "SELECT * FROM pn_news ORDER BY createDate DESC";
+		$options = array_merge([
+			'status'  => NewsPost::STATUS_PUBLISHED,
+			'orderBy' => [
+				'createDate' => 'desc'
+			]
+		], $options);
+
+		$sql = 'SELECT %s FROM pn_news WHERE status = :status';
+
+		$binds = [
+			':status' => $options['status']
+		];
+
+		$stmt = $this->prepare(sprintf($sql, 'count(*)'));
+		$stmt->execute($binds);
+
+		$totalFound = $stmt->fetchColumn();
+
+		$sql .= $this->getOrderString($options['orderBy']);
 		$sql .= $this->getLimitString($from, $count);
 
-		return $this->fetchAll($sql);
+		return $this->fetchAll(sprintf($sql, '*'), $binds);
 	}
 
 	public function findByDate($from, $to, $limit = 0) {
 		$sql = "SELECT *
 				FROM pn_news
-				WHERE createDate BETWEEN $from AND $to
+				WHERE status = " . NewsPost::STATUS_PUBLISHED . " and createDate BETWEEN $from AND $to
 				ORDER BY createDate DESC";
 
 		if ($limit) {
@@ -250,34 +281,49 @@ class NewsPostDataMap extends DataMap {
 		return $this->fetchAll($sql);
 	}
 
+	/**
+	 * Находим ранние новости, основываясь на текущем посте
+	 *
+	 * @param NewsPost $post
+	 * @return array
+	 */
 	public function findEarlier(NewsPost $post) {
 
 		$currentDate = date('Y-m-d H:i:s', $post->getCreateDate());
 
-		$sql = "SELECT * FROM pn_news WHERE
+		$sql = "SELECT * FROM pn_news WHERE status = " . NewsPost::STATUS_PUBLISHED . " and
 				YEAR(from_unixtime(createDate)) = YEAR('$currentDate' - INTERVAL :month MONTH) AND
 				MONTH(from_unixtime(createDate)) = MONTH('$currentDate' - INTERVAL :month MONTH)
 			 ORDER BY comments DESC LIMIT 5";
 
-		$news = [
+		return [
 			'month1' => $this->fetchAll($sql, [':month' => 1]),
 			'month2' => $this->fetchAll($sql, [':month' => 2]),
 			'month3' => $this->fetchAll($sql, [':month' => 3])
 		];
-
-		return $news;
 	}
 
-	public function updateViews(NewsPost $news) {
+	/**
+	 * @param NewsPost $post
+	 */
+	public function updateViews(NewsPost $post) {
 
-		$stmt = $this->prepare('UPDATE pn_news SET views = views+1 WHERE id = :newsId');
+		$stmt = $this->prepare('UPDATE pn_news SET views = views+1 WHERE id = :postId LIMIT 1');
 		$stmt->execute([
-			':newsId' => $news->getId()
+			':postId' => $post->getId()
 		]);
 
 	}
 
-	public function findRaw($query, $orders = array(), $from = 0, $count = -1) {
+	/**
+	 * @param $query
+	 * @param array $orders
+	 * @param int $from
+	 * @param $count
+	 * @return array
+	 */
+	public function findRaw($query, array $orders = [], $from = 0, $count = -1) {
+
 		$sql = "SELECT * FROM pn_news";
 		$where = empty($query) ? '' : ' WHERE ' . $query;
 		$orderString = $this->getOrderString($orders);
@@ -318,20 +364,42 @@ EOL;
 	}
 
 	/**
+	 * @param $postId
+	 * @param array $options
+	 * @return NewsPost
+	 */
+	public function findById($postId, array $options = []) {
+		$options = array_merge([
+			'status' => NewsPost::STATUS_PUBLISHED
+		], $options);
+
+		return $this->fetchOne('SELECT * FROM pn_news WHERE id = :postId AND status = :status LIMIT 1', [
+			':postId' => $postId,
+			':status' => $options['status']
+		]);
+	}
+
+	/**
 	 * @param $categoryId
 	 * @param int $from
 	 * @param $count
 	 * @param $totalFound
+	 * @param array $options
 	 * @return NewsPost[]
 	 */
-	public function findByCategory($categoryId, $from = 0, $count = -1, &$totalFound) {
+	public function findByCategory($categoryId, array $options = [], $from = 0, $count = -1, &$totalFound) {
 
-		$sql = 'select %s from pn_news where id in
-		(select newsId from pn_news_tags where type = :type and entityId = :categoryId)';
+		$options = array_merge([
+			'status' => NewsPost::STATUS_PUBLISHED
+		], $options);
+
+		$sql = 'SELECT %s FROM pn_news WHERE id IN
+		(SELECT newsId FROM pn_news_tags WHERE type = :type AND entityId = :categoryId) AND status = :status';
 
 		$binds = [
 			':type'       => Tag::ARTICLE,
-			':categoryId' => $categoryId
+			':categoryId' => $categoryId,
+			':status'     => $options['status']
 		];
 
 		$stmt = $this->prepare(sprintf($sql, 'count(*)'));
@@ -339,98 +407,44 @@ EOL;
 
 		$totalFound = $stmt->fetchColumn();
 
-		$sql .= $this->getOrderString(['id' => 'desc']);
+		$sql .= $this->getOrderString(['createDate' => 'desc']);
 		$sql .= $this->getLimitString($from, $count);
 
 		return $this->fetchAll(sprintf($sql, '*'), $binds);
 	}
 
 	/**
+	 * @param $tagId
+	 * @param int $from
+	 * @param $count
 	 * @param array $options
-	 * @param array $offset
-	 * @param array $paginator
+	 * @param $totalFound
 	 * @return NewsPost[]
 	 */
-	public function find(array $options = [], array $offset = [], array &$paginator = []) {
+	public function findByTag($tagId, array $options = [], $from = 0, $count = -1, &$totalFound) {
 
-		if (isset($options['category'])) {
-			$categoryId = PostCategory::$category[$options['category']];
+		$options = array_merge([
+			'status' => NewsPost::STATUS_PUBLISHED
+		], $options);
 
-			$sql = <<<EOL
-select
-	%s
-from
-         pn_news      news
-	join pn_news_tags newsTags on (newsTags.newsId = news.id)
-	join pn_tags      tags     on (tags.id = newsTags.tagId)
-where
-	tags.type = :tagType and tags.name = :category and news.mainImageId <> 0
-EOL;
+		$sql = 'SELECT %s FROM pn_news WHERE id IN
+		(SELECT newsId FROM pn_news_tags WHERE type = :type AND entityId = :tagId) AND status = :status';
 
-			$binds = [
-				':tagType'  => Tag::ARTICLE,
-				':category' => $categoryId
-			];
+		$binds = [
+			':type'   => Tag::EVENT,
+			':tagId'  => $tagId,
+			':status' => $options['status']
+		];
 
-			$stmt = $this->prepare(sprintf($sql, 'count(*)'));
-			$stmt->execute($binds);
+		$stmt = $this->prepare(sprintf($sql, 'count(*)'));
+		$stmt->execute($binds);
 
-			$paginator['overall'] = $stmt->fetchColumn();
-			$paginator['pages'] = ceil($paginator['overall'] / $offset[1]);
+		$totalFound = $stmt->fetchColumn();
 
-			$sql .= $this->getOrderString(['news.id' => 'desc']);
-			$sql .= $this->getLimitString($offset[0], $offset[1]);
+		$sql .= $this->getOrderString(['createDate' => 'desc']);
+		$sql .= $this->getLimitString($from, $count);
 
-			return $this->fetchAll(sprintf($sql, 'news.*'), $binds);
-
-		} elseif (isset($options['tag'])) {
-
-			$sql = <<<EOL
-select
-	%s
-from
-         pn_news      news
-	join pn_news_tags newsTags on (newsTags.newsId = news.id)
-	join pn_tags      tags     on (tags.id = newsTags.tagId)
-where
-	tags.type = :tagType and tags.id = :tag and news.mainImageId <> 0
-EOL;
-
-			$binds = [
-				':tagType' => Tag::EVENT,
-				':tag'     => $options['tag']
-			];
-
-			$stmt = $this->prepare(sprintf($sql, 'count(*)'));
-			$stmt->execute($binds);
-
-			$paginator['overall'] = $stmt->fetchColumn();
-			$paginator['pages'] = ceil($paginator['overall'] / $offset[1]);
-
-			$sql .= $this->getOrderString(['id' => 'desc']);
-			$sql .= $this->getLimitString($offset[0], $offset[1]);
-
-			return $this->fetchAll(sprintf($sql, 'news.*'), $binds);
-
-		} else {
-
-			$sql = 'SELECT %s FROM pn_news';
-
-			$stmt = $this->getPDO()->query(sprintf($sql, 'count(*)'));
-
-			$paginator['overall'] = $stmt->fetchColumn();
-			$paginator['pages'] = ceil($paginator['overall'] / $offset[1]);
-
-			if (isset($options['order'])) {
-				$sql .= $this->getOrderString($options['order']);
-			} else {
-				$sql .= $this->getOrderString(['id' => 'desc']);
-			}
-
-			$sql .= $this->getLimitString($offset[0], $offset[1]);
-
-			return $this->fetchAll(sprintf($sql, '*'));
-		}
+		return $this->fetchAll(sprintf($sql, '*'), $binds);
 	}
 
 }

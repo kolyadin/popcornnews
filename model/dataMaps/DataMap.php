@@ -251,6 +251,16 @@ abstract class DataMap {
 
 	}
 
+	protected function fetchOne($sql, $bindings = array(), $asArray = false) {
+		$items = $this->fetchAll($sql, $bindings, $asArray);
+
+		if ($items[0]) {
+			return $items[0];
+		}
+
+		return null;
+	}
+
 	protected function fetchAll($sql, $bindings = array(), $asArray = false) {
 		$stmt = $this->prepare($sql);
 		if (count($bindings) > 0) {

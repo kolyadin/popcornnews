@@ -7,15 +7,21 @@ class DataMapHelper {
 
 	private $relationships = [];
 
-	public function setPaginator(){
+	public function __construct(array $relationship = null) {
+		if ($relationship){
+			$this->relationships = $relationship;
+		}
+	}
+
+	public function setPaginator() {
 
 	}
 
-	public function getRelationship(){
+	public function getRelationship() {
 		return $this->relationships;
 	}
 
-	public function setRelationship(array $relationship){
+	public function setRelationship(array $relationship) {
 		$this->relationships = $relationship;
 	}
 

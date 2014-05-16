@@ -58,7 +58,7 @@ class PostController extends GenericController implements ControllerInterface {
 					$this->getSlim()->redirect('/news', 301);
 				}
 
-				$this->posts(['page' => $page]);
+				$this->posts($page);
 			})
 			->conditions([
 				'page' => '[1-9][0-9]*'
@@ -85,7 +85,7 @@ class PostController extends GenericController implements ControllerInterface {
 					$this->getSlim()->redirect(sprintf('/tag/%u', $tag), 301);
 				}
 
-				$this->posts(['tag' => $tag, 'page' => $page]);
+				$this->postsByTag($tag, $page);
 			})
 			->conditions([
 				'tag'  => '[1-9][0-9]*',
@@ -104,7 +104,78 @@ class PostController extends GenericController implements ControllerInterface {
 		$onPage = 6;
 		$totalFound = 0;
 
-		$posts = PostFactory::findByCategory($categoryId, ($page - 1) * $onPage, $onPage, $totalFound);
+		$posts = PostFactory::findByCategory(
+			$categoryId,
+			['status' => NewsPost::STATUS_PUBLISHED],
+			($page - 1) * $onPage,
+			$onPage,
+			$totalFound
+		);
+
+		$this
+			->getTwig()
+			->display('/news/Posts.twig', [
+				'posts'     => $posts,
+				'paginator' => [
+					'pages'  => ceil($totalFound / $onPage),
+					'active' => $page
+				]
+			]);
+	}
+
+	/**
+	 * @param $tagId
+	 * @param null $page
+	 */
+	public function postsByTag($tagId, $page = null) {
+
+		if (is_null($page)) {
+			$page = 1;
+		}
+
+		$onPage = 6;
+		$totalFound = 0;
+
+		$posts = PostFactory::findByTag(
+			$tagId,
+			['status' => NewsPost::STATUS_PUBLISHED],
+			($page - 1) * $onPage,
+			$onPage,
+			$totalFound
+		);
+
+		$tag = TagFactory::get($tagId);
+
+		$this
+			->getTwig()
+			->display('/news/Posts.twig', [
+				'posts'     => $posts,
+				'tag'       => $tag,
+				'paginator' => [
+					'pages'  => ceil($totalFound / $onPage),
+					'active' => $page
+				]
+			]);
+	}
+
+	/**
+	 * @param null $page
+	 */
+	public function posts($page = null) {
+
+		if (is_null($page)) {
+			$page = 1;
+		}
+
+		$onPage = 6;
+		$totalFound = 0;
+
+		$posts = PostFactory::getPosts(
+			['status' => NewsPost::STATUS_PUBLISHED],
+			($page - 1) * $onPage,
+			$onPage,
+			$totalFound
+		);
 
 		$this
 			->getTwig()
@@ -182,16 +253,7 @@ class PostController extends GenericController implements ControllerInterface {
 	 */
 	public function post($postId) {
 
-		{
-			$fullHelper = new DataMapHelper();
-			$fullHelper->setRelationship([
-				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_ALL
-			]);
-			$fullDataMap = new NewsPostDataMap($fullHelper);
-
-			/** @var NewsPost $post */
-			$post = $fullDataMap->findById($postId);
-		}
+		$post = PostFactory::getPost($postId, ['status' => NewsPost::STATUS_PUBLISHED]);
 
 		if (!$post) {
 			$this->getSlim()->notFound();
@@ -199,21 +261,14 @@ class PostController extends GenericController implements ControllerInterface {
 
 		PostFactory::incrementViews($post);
 
-		{
-			$lightHelper = new DataMapHelper();
-			$lightHelper->setRelationship([
-				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE
-			]);
-			$lightDataMap = new NewsPostDataMap($lightHelper);
 
-			$earlyPosts = $lightDataMap->findEarlier($post);
+		$earlyPosts = PostFactory::findEarlier($post);
+		$month = [
+			'month1' => strtotime('-1 month', $post->getCreateDate()),
+			'month2' => strtotime('-2 month', $post->getCreateDate()),
+			'month3' => strtotime('-3 month', $post->getCreateDate())
+		];
 
-			$month = [
-				'month1' => strtotime('-1 month', $post->getCreateDate()),
-				'month2' => strtotime('-2 month', $post->getCreateDate()),
-				'month3' => strtotime('-3 month', $post->getCreateDate())
-			];
-		}
 
 		$dataMap = new NewsCommentDataMap();
 		$commentsTree = $dataMap->getAllComments($post);
