@@ -11,6 +11,7 @@ use popcorn\model\dataMaps\GroupMembersDataMap;
 use popcorn\model\dataMaps\KidsCommentDataMap;
 use popcorn\model\dataMaps\MeetingsCommentDataMap;
 use popcorn\model\dataMaps\NewsCommentDataMap;
+use popcorn\model\dataMaps\NewsPostDataMap;
 use popcorn\model\dataMaps\PersonDataMap;
 use popcorn\model\dataMaps\TagDataMap;
 use popcorn\model\dataMaps\TopicCommentDataMap;
@@ -33,6 +34,7 @@ use popcorn\model\persons\MeetingFactory;
 use popcorn\model\persons\PersonFactory;
 use popcorn\model\poll\Poll;
 use popcorn\model\poll\PollDataMap;
+use popcorn\model\posts\PostFactory;
 use popcorn\model\system\users\GuestUser;
 use popcorn\model\system\users\UserFactory;
 use popcorn\lib\MailHelper;
@@ -41,6 +43,7 @@ use popcorn\lib\PDOHelper;
 use popcorn\model\voting\UpDownVoting;
 use popcorn\model\persons\Person;
 use popcorn\model\groups\Group;
+use popcorn\model\posts\NewsPost;
 
 class AjaxController extends GenericController implements ControllerInterface {
 
@@ -162,16 +165,18 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 		$searchString = $this->getSlim()->request()->post('searchString');
 
-		$sphinx = SphinxHelper::getSphinx();
+		$sphinx = new SphinxHelper;
 
 		$persons = $users = $news = [];
 
 		//region ищем пользователей
 		$resultUsers = $sphinx
 			->query('@nick %1$s', $searchString)
-			->in('usersIndex')
+			->in('users')
 			->offset(0, 5)
-			->fetch(['popcorn\model\system\users\UserFactory', 'getUser'])
+			->fetch(function($userId){
+				return UserFactory::getUser($userId);
+			})
 			->run();
 
 		if ($resultUsers->matchesFound > 0) {
@@ -193,24 +198,26 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 		//region ищем персон
 		$query = [
-			'(@name               ^%1$s | %1$s)',
-			'(@englishName        ^%1$s | %1$s)',
-			'(@genitiveName       ^%1$s | %1$s)',
-			'(@prepositionalName  ^%1$s | %1$s)',
-			'(@vkPage             ^%1$s | %1$s)',
-			'(@twitterLogin       ^%1$s | %1$s)',
-			'(@urlName            ^%1$s | %1$s)'
+			'(@name ^%1$s | %1$s)',
+			'(@englishName ^%1$s | %1$s)',
+			'(@genitiveName ^%1$s | %1$s)',
+			'(@prepositionalName ^%1$s | %1$s)',
+			'(@vkPage ^%1$s | %1$s)',
+			'(@twitterLogin ^%1$s | %1$s)',
+			'(@urlName ^%1$s | %1$s)'
 		];
 
 		$resultPersons = $sphinx
 			->query(implode(' | ', $query), $searchString)
-			->in('personsIndex')
+			->in('persons')
 			->weights([
 				'name' => 70,
 				'genitiveName' => 30,
 				'prepositionalName' => 30
 			])
-			->fetch(['popcorn\model\persons\PersonFactory', 'getPerson'])
+			->fetch(function($personId){
+				return PersonFactory::getPerson($personId);
+			})
 			->run();
 
 		if ($resultPersons->matchesFound > 0) {
@@ -218,7 +225,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 			foreach ($resultPersons->matches as $person) {
 				$personName = $person->getName();
 				$personName = preg_replace("@$searchString@iu", "<i>\$0</i>", $personName);
-				$persons[] = sprintf('<a href="/person/%s">%s</a>', $person->getUrlName(), $personName);
+				$persons[] = sprintf('<a href="/persons/%s">%s</a>', $person->getUrlName(), $personName);
 			}
 		}
 
@@ -233,13 +240,19 @@ class AjaxController extends GenericController implements ControllerInterface {
 		//region ищем новости
 		$resultNews = $sphinx
 			->query('(@name ^%1$s | %1$s) | @content %1$s | @announce %1$s', $searchString)
-			->in('newsIndex')
+			->in('news')
 			->offset(0, 5)
-			->fetch(['popcorn\model\posts\PostFactory', 'getPost'])
+			->fetch(function($postId){
+				return PostFactory::getPost($postId,[
+					'itemCallback' => [
+						'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE
+					]
+				]);
+			})
 			->run();
 
 		if ($resultNews->matchesFound > 0) {
-			/** @var Person $person */
+			/** @var NewsPost $post */
 			foreach ($resultNews->matches as $post) {
 				$postName = $post->getName();
 				$postName = preg_replace("@$searchString@iu", "<i>\$0</i>", $postName);

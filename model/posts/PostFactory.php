@@ -65,27 +65,22 @@ class PostFactory {
 	/**
 	 * @param $postId
 	 * @param array $options
-	 * @param array $relationships
 	 * @return NewsPost
 	 */
-	public static function getPost($postId, array $options = [], array $relationships = []) {
+	public static function getPost($postId, array $options = []) {
 
-		$dataMapHelper = new DataMapHelper();
-
-		if (count($relationships)) {
-			$dataMapHelper->setRelationship($relationships);
-		} else {
-			$dataMapHelper->setRelationship([
+		$options = array_merge([
+			'itemCallback' => [
 				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_ALL,
 				'popcorn\\model\\dataMaps\\PersonDataMap'   => PersonDataMap::WITH_NONE
+			]
+		], $options);
 
-			]);
-		}
-
-		$newsPostDataMap = new NewsPostDataMap($dataMapHelper);
+		$newsPostDataMap = new NewsPostDataMap(new DataMapHelper($options['itemCallback']));
 
 		return $newsPostDataMap->findById($postId, $options);
 	}
+
 
 	/**
 	 * Посты по дате, новые выше

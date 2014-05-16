@@ -107,13 +107,16 @@ abstract class DataMap {
 	 * @return Model|null
 	 */
 	public function findById($id) {
+
 		$this->checkStatement($this->findOneStatement);
 		$this->findOneStatement->bindValue(':id', $id);
 		$this->findOneStatement->execute();
+
 		$item = empty($this->class)
 			? $this->findOneStatement->fetch(PDO::FETCH_ASSOC)
 			: $this->findOneStatement->fetchObject($this->class);
 		$this->findOneStatement->closeCursor();
+
 		if ($item === false) {
 			return null;
 		} else {

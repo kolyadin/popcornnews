@@ -30,7 +30,10 @@
     "autoload": {
         "psr-4": {
             "popcorn\\": ""
-        }
+        },
+        "files": [
+            "lib/SphinxApi.php"
+        ]
     },
     "scripts": {
         "post-update-cmd": "scripts/setupEnvironment.sh"

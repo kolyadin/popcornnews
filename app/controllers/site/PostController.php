@@ -3,6 +3,8 @@ namespace popcorn\app\controllers\site;
 
 use popcorn\app\controllers\ControllerInterface;
 use popcorn\app\controllers\GenericController;
+use popcorn\lib\SphinxClient;
+use popcorn\lib\SphinxHelper;
 use popcorn\model\dataMaps\DataMapHelper;
 use popcorn\model\dataMaps\NewsCommentDataMap;
 use popcorn\model\dataMaps\NewsPostDataMap;
@@ -261,14 +263,12 @@ class PostController extends GenericController implements ControllerInterface {
 
 		PostFactory::incrementViews($post);
 
-
 		$earlyPosts = PostFactory::findEarlier($post);
 		$month = [
 			'month1' => strtotime('-1 month', $post->getCreateDate()),
 			'month2' => strtotime('-2 month', $post->getCreateDate()),
 			'month3' => strtotime('-3 month', $post->getCreateDate())
 		];
-
 
 		$dataMap = new NewsCommentDataMap();
 		$commentsTree = $dataMap->getAllComments($post);

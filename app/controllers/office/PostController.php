@@ -15,6 +15,7 @@ use popcorn\model\posts\fashionBattle\FashionBattleFactory;
 use popcorn\model\posts\Movie;
 use popcorn\model\posts\MovieFactory;
 use popcorn\model\posts\NewsPost;
+use popcorn\model\posts\PostFactory;
 use popcorn\model\tags\Tag;
 use popcorn\model\tags\TagFactory;
 
@@ -93,27 +94,17 @@ class PostController extends GenericController implements ControllerInterface {
 			$page = 1;
 		}
 
-		$dataMapHelper = new DataMapHelper();
-		$dataMapHelper->setRelationship([
-			'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE
-		]);
-
-		$newsDataMap = new NewsPostDataMap($dataMapHelper);
-
 		$onPage = 50;
-		$paginator = [];
+		$totalFound = 0;
 
-		$posts = $newsDataMap->find(['order' => ['createDate' => 'desc']],
-			[($page - 1) * $onPage, $onPage],
-			$paginator
-		);
+		$posts = PostFactory::getPosts(['orderBy' => ['createDate' => 'desc']],($page - 1) * $onPage,$onPage,$totalFound);
 
 		$this
 			->getTwig()
 			->display('news/List.twig', [
 				'posts'     => $posts,
 				'paginator' => [
-					'pages'  => $paginator['pages'],
+					'pages'  => ceil($totalFound / $onPage),
 					'active' => $page
 				]
 			]);
@@ -128,14 +119,7 @@ class PostController extends GenericController implements ControllerInterface {
 
 		if ($postId > 0) {
 
-			$dataMapHelper = new DataMapHelper();
-			$dataMapHelper->setRelationship([
-				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_ALL
-			]);
-
-			$newsDataMap = new NewsPostDataMap($dataMapHelper);
-			/** @var NewsPost $post */
-			$post = $newsDataMap->findById($postId);
+			$post = PostFactory::getPost($postId);
 
 			if (!$post) {
 				$this->getSlim()->notFound();
@@ -180,17 +164,18 @@ class PostController extends GenericController implements ControllerInterface {
 		$postId = $request->post('postId');
 
 		if ($postId > 0) {
+			/** @var NewsPost $post */
 			$post = $this->newsDataMap->findById($postId);
+			$post->setEditDate(new \DateTime('now'));
 		} else {
 			$post = new NewsPost();
 		}
 
 		$post->setName($request->post('name'));
 
-		$createDate = strtotime(vsprintf('%3$04u-%2$02u-%1$02u %4$02u:%5$02u:00', sscanf($request->post('createDate'), '%02u.%02u.%04u %02u:%02u')));
+		$createDate = vsprintf('%3$04u-%2$02u-%1$02u %4$02u:%5$02u:00', sscanf($request->post('createDate'), '%02u.%02u.%04u %02u:%02u'));
 
-
-		$post->setCreateDate($createDate);
+		$post->setCreateDate(new \DateTime($createDate));
 
 		$post->setStatus($request->post('status'));
 

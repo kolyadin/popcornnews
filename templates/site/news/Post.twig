@@ -66,15 +66,13 @@
 			<section class="b-single-article__content clearfix">
 				<h1 class="b-single-article__title">
 					{{ post.name|e }}
-					<span class="b-single-article__date">{{ post.createDateFriendly }}</span>
+					<span class="b-single-article__date">{{ post.createDate|ruDate('j f2 Y') }}</span>
 				</h1>
 				<div class="b-text">
 
 					{% if post.announceFriendly %}
 						<p>{{ post.announceFriendly }}</p>
 					{% endif %}
-
-
 
 					{% if post.mainImageId.id > 0 %}
 
@@ -84,8 +82,8 @@
 
 					{% endif %}
 
-					{% if post.contentFriendly %}
-						<p>{{ post.contentFriendly }}</p>
+					{% if post.content %}
+						<p>{{ post.content }}</p>
 					{% endif %}
 
 				</div>

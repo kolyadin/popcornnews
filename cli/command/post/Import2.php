@@ -67,14 +67,14 @@ class Import2 extends Command {
 		INSERT INTO pn_news (
 			id, announce, source,
 			sent, uploadRSS, mainImageId,
-			name, updateDate, createDate,
+			name, createDate,
 			editDate, content, allowComment,
 			status, views, comments
 		)
 		VALUES (
 			:id, :announce, :source,
 			:sent, :uploadRSS, :mainImageId,
-			:name, :updateDate, :createDate,
+			:name, :createDate,
 			:editDate, :content, :allowComment,
     		:status, :views, :comments)');
 
@@ -308,7 +308,6 @@ class Import2 extends Command {
 			$this->stmtInsertPost->bindValue(':sent', $table['pole31'] == 'Yes');
 			$this->stmtInsertPost->bindValue(':uploadRSS', $table['pole36'] == 'Yes');
 			$this->stmtInsertPost->bindValue(':name', $table['name']);
-			$this->stmtInsertPost->bindValue(':updateDate', 0);
 
 			$dateTime = new DateTime($table['newsIntDate']);
 			$this->stmtInsertPost->bindValue(':createDate', $dateTime->format('U'));

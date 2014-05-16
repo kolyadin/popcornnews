@@ -75,23 +75,17 @@ class NewsPost extends Model {
 	 */
 	protected $name = '';
 	/**
-	 * какая-то поебень
-	 * @var int
-	 * @export
-	 */
-	protected $updateDate = 0;
-	/**
 	 * Дата создания новости, можно менять (можно отправлять в будущее)
-	 * @var int
+	 * @var \DateTime
 	 * @export
 	 */
-	protected $createDate = 0;
+	protected $createDate;
 	/**
 	 * Дата изменения новости, обновляется по триггеру
-	 * @var int
-	 * @export readonly
+	 * @var \DateTime
+	 * @export
 	 */
-	protected $editDate = 0;
+	protected $editDate;
 	/**
 	 * @var string
 	 * @export
@@ -129,6 +123,8 @@ class NewsPost extends Model {
 
 	function __construct() {
 		$this->type = get_class($this);
+
+		$this->editDate = new \DateTime('now');
 	}
 
 	//region Getters
@@ -162,14 +158,14 @@ class NewsPost extends Model {
 	}
 
 	/**
-	 * @return int
+	 * @return \DateTime
 	 */
 	public function getCreateDate() {
 		return $this->createDate;
 	}
 
 	/**
-	 * @return int
+	 * @return \DateTime
 	 */
 	public function getEditDate() {
 		return $this->editDate;
@@ -223,13 +219,6 @@ class NewsPost extends Model {
 	 */
 	public function getType() {
 		return $this->type;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getUpdateDate() {
-		return $this->updateDate;
 	}
 
 	/**
@@ -314,10 +303,18 @@ class NewsPost extends Model {
 	}
 
 	/**
-	 * @param int $createDate
+	 * @param \DateTime $dateTime
 	 */
-	public function setCreateDate($createDate) {
-		$this->createDate = $createDate;
+	public function setCreateDate(\DateTime $dateTime) {
+		$this->createDate = $dateTime;
+		$this->changed();
+	}
+
+	/**
+	 * @param \DateTime $dateTime
+	 */
+	public function setEditDate(\DateTime $dateTime) {
+		$this->editDate = $dateTime;
 		$this->changed();
 	}
 
@@ -381,14 +378,6 @@ class NewsPost extends Model {
 	 */
 	public function setTags($tags) {
 		$this->tags = $tags;
-	}
-
-	/**
-	 * @param int $updateDate
-	 */
-	public function setUpdateDate($updateDate) {
-		$this->updateDate = $updateDate;
-		$this->changed();
 	}
 
 	/**
