@@ -1,36 +1,36 @@
-.search-news {
-  padding-top: 9px;
+.b-search__header {
+  margin-bottom: 30px;
 }
-.search-news__list > li {
+.b-search__list > li {
   margin-bottom: 38px;
 }
-.search-news__list img {
+.b-search__list img {
   max-width: 100%;
 }
-.search-news__head {
+.b-search__head {
   display: block;
   margin-bottom: 14px;
 }
-.search-news__title {
+.b-search__title {
   font-weight: bold;
   font-size: 14px;
   line-height: 17px;
   margin-bottom: 4px;
 }
-.search-news__title a {
+.b-search__title a {
   text-decoration: none;
   color: #000;
 }
-.search-news__text {
+.b-search__text {
   font-size: 12px;
   line-height: 15px;
   margin-bottom: 5px;
 }
-.search-news__image {
+.b-search__image {
   float: left;
   padding: 0 14px 0 0;
   width: 110px;
 }
-.search-news__image img {
+.b-search__image img {
   max-width: 110px;
 }

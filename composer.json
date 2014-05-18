@@ -34,8 +34,8 @@
         "files": [
             "lib/SphinxApi.php"
         ]
-    },
-    "scripts": {
-        "post-update-cmd": "scripts/setupEnvironment.sh"
-    }
+    }//,
+//    "scripts": {
+//        "post-update-cmd": "scripts/setupEnvironment.sh"
+//    }
 }

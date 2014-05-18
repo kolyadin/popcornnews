@@ -38,7 +38,6 @@ class MainPageController extends GenericController implements ControllerInterfac
 		$this->buildRandomKid();
 		$this->buildStopShot();
 
-
 		$this->twigData['showSidebar'] = false;
 
 		$this->getTwig()->display('/MainPage.twig', $this->twigData);

@@ -81,8 +81,8 @@ class Application {
 		]);
 
 		$this->twig->addGlobal('slim', array(
-			'request' => $this->slim->request(),
-			'path' => explode('/', $this->slim->request()->getPath())
+			'request' => $this->slim->request,
+			'path' => explode('/', $this->slim->request->getPath())
 		));
 	}
 

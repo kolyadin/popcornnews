@@ -307,8 +307,8 @@
     <div class="b-header__top b-grid__g12 clearfix">
         <div class="b-grid__g3 b-grid__p6 b-grid__a">
             <div class="b-search-stroke">
-                <form>
-                    <input type="search" id="global-search" class="b-search-stroke__input" placeholder="поиск по новостям" tabindex="89" />
+                <form method="get" action="/search">
+                    <input type="search" name="term" id="global-search" class="b-search-stroke__input" placeholder="поиск по сайту" tabindex="89" value="{{ term|e }}" />
                     <input type="submit" value="" class="b-search-stroke__submit" />
                 </form>
             </div>

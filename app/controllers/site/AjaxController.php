@@ -169,81 +169,18 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 		$persons = $users = $news = [];
 
-		//region ищем пользователей
-		$resultUsers = $sphinx
-			->query('@nick %1$s', $searchString)
-			->in('users')
-			->offset(0, 5)
-			->fetch(function($userId){
-				return UserFactory::getUser($userId);
-			})
-			->run();
-
-		if ($resultUsers->matchesFound > 0) {
-			foreach ($resultUsers->matches as $user) {
-				$userNick = $user->getNick();
-				$userNick = preg_replace("@$searchString@iu", "<i>\$0</i>", $userNick);
-				$users[] = sprintf('<a href="/profile/%u">%s</a>', $user->getId(), $userNick);
-			}
-		}
-
-		$usersFound = $this
-			->getApp()
-			->getTwigString()
-			->render('<a href="/users/search/{{ searchString|url_encode }}">{{ usersCount|ruNumber(["пользователь","пользователя","пользователей"]) }}&nbsp;&gt;</a>', [
-				'usersCount' => $resultUsers->matchesFound,
-				'searchString' => $searchString
-			]);
-		//endregion
-
-		//region ищем персон
-		$query = [
-			'(@name ^%1$s | %1$s)',
-			'(@englishName ^%1$s | %1$s)',
-			'(@genitiveName ^%1$s | %1$s)',
-			'(@prepositionalName ^%1$s | %1$s)',
-			'(@vkPage ^%1$s | %1$s)',
-			'(@twitterLogin ^%1$s | %1$s)',
-			'(@urlName ^%1$s | %1$s)'
-		];
-
-		$resultPersons = $sphinx
-			->query(implode(' | ', $query), $searchString)
-			->in('persons')
-			->weights([
-				'name' => 70,
-				'genitiveName' => 30,
-				'prepositionalName' => 30
-			])
-			->fetch(function($personId){
-				return PersonFactory::getPerson($personId);
-			})
-			->run();
-
-		if ($resultPersons->matchesFound > 0) {
-			/** @var Person $person */
-			foreach ($resultPersons->matches as $person) {
-				$personName = $person->getName();
-				$personName = preg_replace("@$searchString@iu", "<i>\$0</i>", $personName);
-				$persons[] = sprintf('<a href="/persons/%s">%s</a>', $person->getUrlName(), $personName);
-			}
-		}
-
-		$personsFound = $this
-			->getApp()
-			->getTwigString()
-			->render('{{ personsCount|ruNumber(["персона","персоны","персон"]) }}', [
-				'personsCount' => $resultPersons->matchesFound
-			]);
-		//endregion
-
 		//region ищем новости
 		$resultNews = $sphinx
-			->query('(@name ^%1$s | %1$s) | @content %1$s | @announce %1$s', $searchString)
-			->in('news')
+			->query('(@name %1$s) | (@content %1$s) | (@announce %1$s)', $searchString)
+			->in('news newsDelta')
 			->offset(0, 5)
-			->fetch(function($postId){
-				return PostFactory::getPost($postId,[
+			->weights([
+				'name'     => 100,
+				'content'  => 50,
+				'announce' => 50
+			])
+			->fetch(function ($postId) {
+				return PostFactory::getPost($postId, [
 					'itemCallback' => [
 						'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE
 					]
@@ -268,10 +205,77 @@ class AjaxController extends GenericController implements ControllerInterface {
 			]);
 		//endregion
 
+		//region ищем пользователей
+		$resultUsers = $sphinx
+			->query('@nick %1$s', $searchString)
+			->in('users')
+			->offset(0, 5)
+			->fetch(function ($userId) {
+				return UserFactory::getUser($userId);
+			})
+			->run();
+
+		if ($resultUsers->matchesFound > 0) {
+			foreach ($resultUsers->matches as $user) {
+				$userNick = $user->getNick();
+				$userNick = preg_replace("@$searchString@iu", "<i>\$0</i>", $userNick);
+				$users[] = sprintf('<a href="/profile/%u">%s</a>', $user->getId(), $userNick);
+			}
+		}
+
+		$usersFound = $this
+			->getApp()
+			->getTwigString()
+			->render('<a href="/users/search/{{ searchString|url_encode }}">{{ usersCount|ruNumber(["пользователь","пользователя","пользователей"]) }}&nbsp;&gt;</a>', [
+				'usersCount'   => $resultUsers->matchesFound,
+				'searchString' => $searchString
+			]);
+		//endregion
+
+		//region ищем персон
+		$query = [
+			'(@name ^%1$s | %1$s)',
+			'(@englishName ^%1$s | %1$s)',
+			'(@genitiveName ^%1$s | %1$s)',
+			'(@prepositionalName ^%1$s | %1$s)',
+			'(@vkPage ^%1$s | %1$s)',
+			'(@twitterLogin ^%1$s | %1$s)',
+			'(@urlName ^%1$s | %1$s)'
+		];
+
+		$resultPersons = $sphinx
+			->query(implode(' | ', $query), $searchString)
+			->in('persons')
+			->weights([
+				'name'              => 70,
+				'genitiveName'      => 30,
+				'prepositionalName' => 30
+			])
+			->fetch(function ($personId) {
+				return PersonFactory::getPerson($personId);
+			})
+			->run();
+
+		if ($resultPersons->matchesFound > 0) {
+			/** @var Person $person */
+			foreach ($resultPersons->matches as $person) {
+				$personName = $person->getName();
+				$personName = preg_replace("@$searchString@iu", "<i>\$0</i>", $personName);
+				$persons[] = sprintf('<a href="/persons/%s">%s</a>', $person->getUrlName(), $personName);
+			}
+		}
+
+		$personsFound = $this
+			->getApp()
+			->getTwigString()
+			->render('{{ personsCount|ruNumber(["персона","персоны","персон"]) }}', [
+				'personsCount' => $resultPersons->matchesFound
+			]);
+		//endregion
 
 		$this->getApp()->exitWithJsonSuccessMessage([
-			'data' => ['persons' => $persons, 'news' => $news, 'users' => $users],
-			'headers' => ['persons' => $personsFound, 'news' => $newsFound, 'users' => $usersFound],
+			'data'     => ['persons' => $persons, 'news' => $news, 'users' => $users],
+			'headers'  => ['persons' => $personsFound, 'news' => $newsFound, 'users' => $usersFound],
 			'counters' => ['persons' => $resultPersons->matchesFound, 'news' => $resultNews->matchesFound, 'users' => $resultUsers->matchesFound]
 		]);
 
@@ -309,7 +313,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 				$mail->Subject = sprintf('POPCORNNEWS: пользователь %s добавил(а) вас в свои друзья и ждет подтверждения', htmlspecialchars($user->getNick()));
 				$mail->msgHTML(
 					$this->getTwig()->render('/mail/FriendAdd.twig', array(
-						'user' => $user,
+						'user'   => $user,
 						'friend' => $friend
 					))
 				);
@@ -419,7 +423,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 			foreach ($users as $user) {
 				$jsonOut[] = [
 //					'avatar' => $user->getAvatar()->getUrl(),
-					'id' => $user->getId(),
+					'id'   => $user->getId(),
 					'nick' => $user->getNick()
 				];
 			}
@@ -441,7 +445,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 			->loadTemplate('/users/UserRows.twig')
 			->render([
 				'profiles' => $topUsers,
-				'num' => $offset[0] + 1
+				'num'      => $offset[0] + 1
 			]);
 
 		$this->getApp()->exitWithJsonSuccessMessage(['topUsers' => $outHtml]);
@@ -462,7 +466,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 				->loadTemplate('/users/UserRows.twig')
 				->render([
 					'profiles' => $users,
-					'num' => $offset[0] + 1
+					'num'      => $offset[0] + 1
 				]);
 		}
 
@@ -485,7 +489,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 				->loadTemplate('/users/UserRows.twig')
 				->render([
 					'profiles' => $users,
-					'num' => $offset[0] + 1
+					'num'      => $offset[0] + 1
 				]);
 		}
 
@@ -509,7 +513,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 		foreach ($result->matches as $user) {
 			$users[] = [
-				'id' => $user->getId(),
+				'id'   => $user->getId(),
 				'nick' => $user->getNick()
 			];
 		}
@@ -554,7 +558,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 					]);
 
 				$this->getApp()->exitWithJsonSuccessMessage([
-					'points' => $kid->getVotes(),
+					'points'        => $kid->getVotes(),
 					'pointsOverall' => $pointsOverall
 				]);
 
@@ -604,7 +608,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 					]);
 
 				$this->getApp()->exitWithJsonSuccessMessage([
-					'points' => $topic->getVotes(),
+					'points'        => $topic->getVotes(),
 					'pointsOverall' => $pointsOverall
 				]);
 
@@ -656,7 +660,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 					]);
 
 				$this->getApp()->exitWithJsonSuccessMessage([
-					'points' => $meet->getVotes(),
+					'points'        => $meet->getVotes(),
 					'pointsOverall' => $pointsOverall
 				]);
 
@@ -707,12 +711,12 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 			$this->getApp()->exitWithJsonSuccessMessage([
 				'comment' => $this->getTwig()->render('/comments/Comment.twig', [
-					'comment' => $lastComment,
+					'comment'        => $lastComment,
 					'forceImageLoad' => true
 				]),
 				'replyTo' => $replyTo,
-				'level' => $lastComment->getLevel(),
-				'id' => $lastComment->getId()
+				'level'   => $lastComment->getLevel(),
+				'id'      => $lastComment->getId()
 			]);
 
 
@@ -816,12 +820,12 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 			$this->getApp()->exitWithJsonSuccessMessage([
 				'comment' => $this->getTwig()->render('/comments/Comment.twig', [
-					'comment' => $lastComment,
+					'comment'        => $lastComment,
 					'forceImageLoad' => true
 				]),
 				'replyTo' => $replyTo,
-				'level' => $lastComment->getLevel(),
-				'id' => $lastComment->getId()
+				'level'   => $lastComment->getLevel(),
+				'id'      => $lastComment->getId()
 			]);
 
 
@@ -945,7 +949,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 		foreach ($results as $model) {
 			$out[] = [
-				'id' => $model->getId(),
+				'id'   => $model->getId(),
 				'name' => $model->getName()
 			];
 		}
@@ -1033,10 +1037,10 @@ class AjaxController extends GenericController implements ControllerInterface {
 				$stmt = PDOHelper::getPDO()->prepare('INSERT INTO pn_persons_voting SET checksum = :checksum, votedAt = :votedAt, personId = :personId, category = :category, rating = :rating');
 				$stmt->execute([
 					':checksum' => $personDataMap->getChecksum(),
-					':votedAt' => time(),
+					':votedAt'  => time(),
 					':personId' => $person->getId(),
 					':category' => $category,
-					':rating' => $vote
+					':rating'   => $vote
 				]);
 
 				$stmt = PDOHelper::getPDO()->prepare('SELECT count(*) FROM pn_persons_voting WHERE personId = :personId');
@@ -1067,16 +1071,16 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 				$stmt = PDOHelper::getPDO()->prepare('UPDATE pn_persons SET look = :look, style = :style, talent = :talent, votesCount = :votesCount WHERE id = :personId');
 				$stmt->execute([
-					':personId' => $person->getId(),
-					':look' => $votes['look'],
-					':style' => $votes['style'],
-					':talent' => $votes['talent'],
+					':personId'   => $person->getId(),
+					':look'       => $votes['look'],
+					':style'      => $votes['style'],
+					':talent'     => $votes['talent'],
 					':votesCount' => $votesTotal
 				]);
 
 
 				$this->getApp()->exitWithJsonSuccessMessage([
-					'votes' => $votes,
+					'votes'      => $votes,
 					'votesTotal' => $votesTotal
 				]);
 
@@ -1111,7 +1115,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 		$dataMap = new PollDataMap();
 		$poll = $dataMap->findById($pollId);
 
-		$returnVotes = function(Poll $poll){
+		$returnVotes = function (Poll $poll) {
 			$stmt = PDOHelper::getPDO()->prepare('SELECT id,votes FROM pn_poll_opinions WHERE pollId = :pollId');
 			$stmt->execute([
 				':pollId' => $poll->getId()
@@ -1120,12 +1124,12 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 			$maxOpinion = max($opinions);
 
-			foreach ($opinions as &$votes){
+			foreach ($opinions as &$votes) {
 				$votes = ceil(($votes * 100) / $maxOpinion);
 			}
 
 			$this->getApp()->exitWithJsonSuccessMessage([
-				'opinions' =>$opinions
+				'opinions' => $opinions
 			]);
 		};
 
@@ -1134,9 +1138,9 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 				$stmt = PDOHelper::getPDO()->prepare('INSERT DELAYED INTO pn_poll_voting SET checksum = :checksum, votedAt = :votedAt, pollId = :pollId, opinionId = :opinionId');
 				$stmt->execute([
-					':checksum' => UserFactory::getHeadersChecksum(),
-					':votedAt' => time(),
-					':pollId' => $poll->getId(),
+					':checksum'  => UserFactory::getHeadersChecksum(),
+					':votedAt'   => time(),
+					':pollId'    => $poll->getId(),
 					':opinionId' => $opinionId,
 				]);
 
@@ -1255,16 +1259,16 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 		$resizeValue = 'x30';
 
-		if (isset($_POST['resize'])){
+		if (isset($_POST['resize'])) {
 			$resizeValue = $_POST['resize'];
 		}
 
 		die(json_encode([
 			'jsonrpc' => '2.0',
-			'result' => [
+			'result'  => [
 				'url' => $img->getThumb($resizeValue)->getUrl()
 			],
-			'id' => $img->getId()
+			'id'      => $img->getId()
 		]));
 
 	}

@@ -214,18 +214,13 @@ class PostFactory {
 
 	public static function getStopShot($from = 0, $count = 2) {
 
-		$dataMapHelper = new DataMapHelper();
-		$dataMapHelper->setRelationship([
-			'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE ^ NewsPostDataMap::WITH_IMAGES
-		]);
+		$newsPostDataMap = new NewsPostDataMap(new DataMapHelper(['popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE ^ NewsPostDataMap::WITH_IMAGES]));
 
-		$newsPostDataMap = new NewsPostDataMap($dataMapHelper);
+//		$cacheKey = MMC::genKey($newsPostDataMap->getClass(), __METHOD__, func_get_args());
 
-		$cacheKey = MMC::genKey($newsPostDataMap->getClass(), __METHOD__, func_get_args());
-
-		return MMC::getSet($cacheKey, strtotime('+1 day'), ['post'], function () use ($newsPostDataMap, $from, $count) {
+//		return MMC::getSet($cacheKey, strtotime('+1 day'), ['post'], function () use ($newsPostDataMap, $from, $count) {
 			return $newsPostDataMap->findRaw('name like "Стоп-кадр%" and status = ' . NewsPost::STATUS_PUBLISHED, ['createDate' => 'desc'], $from, $count);
-		});
+//		});
 
 
 	}

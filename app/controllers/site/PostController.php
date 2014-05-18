@@ -94,6 +94,20 @@ class PostController extends GenericController implements ControllerInterface {
 				'page' => '[1-9][0-9]*'
 			]);
 
+		$this
+			->getSlim()
+			->get('/tag/:tag(/page:page)', function ($tag, $page = null) {
+				if ($page == 1) {
+					$this->getSlim()->redirect(sprintf('/tag/%u', $tag), 301);
+				}
+
+				$this->postsByTag($tag, $page);
+			})
+			->conditions([
+				'tag'  => '[1-9][0-9]*',
+				'page' => '[1-9][0-9]*'
+			]);
+
 
 	}
 

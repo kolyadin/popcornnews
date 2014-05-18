@@ -13,6 +13,7 @@ use popcorn\app\controllers\site\MeetController;
 use popcorn\app\controllers\site\PostController;
 use popcorn\app\controllers\site\ProfileController;
 use popcorn\app\controllers\site\ProfileManagerController;
+use popcorn\app\controllers\site\SearchController;
 use popcorn\app\controllers\site\SidebarController;
 use popcorn\app\controllers\site\StaticController;
 use popcorn\app\controllers\site\UsersController;
@@ -141,6 +142,7 @@ class Popcorn extends Application {
 	protected function initControllers() {
 
 		$this->registerController(new AjaxController());
+		$this->registerController(new SearchController());
 		$this->registerController(new MainPageController());
 		$this->registerController(new ProfileManagerController());
 		$this->registerController(new KidsController());

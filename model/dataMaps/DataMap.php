@@ -257,7 +257,7 @@ abstract class DataMap {
 	protected function fetchOne($sql, $bindings = array(), $asArray = false) {
 		$items = $this->fetchAll($sql, $bindings, $asArray);
 
-		if ($items[0]) {
+		if (isset($items[0])) {
 			return $items[0];
 		}
 

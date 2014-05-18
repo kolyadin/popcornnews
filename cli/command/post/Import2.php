@@ -4,6 +4,7 @@ namespace popcorn\cli\command\post;
 
 
 use DateTime;
+use popcorn\lib\mmc\MMC;
 use popcorn\lib\PDOHelper;
 use popcorn\model\content\ImageFactory;
 use popcorn\model\exceptions\Exception;
@@ -224,6 +225,12 @@ class Import2 extends Command {
 				$output->write("\t\t<comment>Попытка скачать главное фото $url");
 
 				$mainImage = ImageFactory::createFromUrl($url);
+
+				{
+					$output->write("\t\t<info>Генерим мелкую фотку поиска</info>");
+					$mainImage->getThumb('110x');//Фотка для результатов поиска
+				}
+
 				$this->stmtInsertPost->bindValue(':mainImageId', $mainImage->getId());
 
 				$output->writeln(" готово</comment>");
@@ -235,7 +242,6 @@ class Import2 extends Command {
 			}
 			//endregion
 
-			/*
 
 			//region Ищем фотографии новости и пытаемся их скачать
 			$stmt = $this->pdo->prepare('SELECT * FROM popcornnews.popcornnews_news_images WHERE news_id = :newsId');
@@ -288,7 +294,6 @@ class Import2 extends Command {
 
 			}
 			//endregion
-			*/
 
 
 
@@ -333,7 +338,8 @@ class Import2 extends Command {
 			$output->write('<info>Чистим таблицы</info>');
 
 			PDOHelper::truncate([
-				'pn_news', 'pn_news_fashion_battle', 'pn_news_images', 'pn_news_poll', 'pn_news_tags', 'pn_news_fashion_battle_voting', 'pn_tags'
+				'pn_news', 'pn_news_fashion_battle', 'pn_news_images', 'pn_news_poll',
+				'pn_news_tags', 'pn_news_fashion_battle_voting', 'pn_tags'
 			]);
 
 			$output->writeln('<comment> готово</comment>');
@@ -354,7 +360,6 @@ class Import2 extends Command {
 
 			$output->writeln('<comment> готово</comment>');
 		}
-
 
 		{
 			$output->write('<info>Добавление тегов-событий</info>');
@@ -387,6 +392,8 @@ class Import2 extends Command {
 
 			$output->writeln('<comment> готово</comment>');
 		}
+
+		MMC::delByTag('post');
 
 
 		/*

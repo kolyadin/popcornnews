@@ -1,0 +1,111 @@
+{% extends '/GenericInner.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% block head %}
+	<title>Результаты поиска / {{ term }}</title>
+{% endblock %}
+
+
+{% block content %}
+	<div class="b-grid__g8">
+		<div class="clearfix">
+			<div class="b-grid__g7 b-grid__a">
+				<h1 class="b-search__header">Результаты поиска &quot;{{ term|e }}&quot;</h1>
+				<section class="b-group__menu b-inside__menu">
+
+					<ul class="b-inside__menu-firstlist">
+						<li{% if slim.request.path starts with '/search/news' %} class="active"{% endif %}>
+							<a href="/search/news/{{ term|url_encode }}">новости</a>
+						</li>
+						<li{% if slim.request.path starts with '/search/persons' %} class="active"{% endif %}>
+							<a href="/search/persons/{{ term|url_encode }}">персоны</a>
+						</li>
+					</ul>
+				</section>
+				<section class="b-search">
+					<ul class="b-search__list">
+
+						{% if section == 'news' %}
+
+							{% for post in posts %}
+
+								<li>
+									<div class="b-search__image">
+										<a class="b-search__head" href="/news/{{ post.id }}" title="{{ post.name|e }}">
+
+											{% if post.mainImageId.id > 0 %}
+
+												{% set photo = post.mainImageId.thumb('110x') %}
+
+												<img alt="{{ post.name|e }}" src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}">
+
+											{% endif %}
+
+										</a>
+									</div>
+									<div class="b-search__body">
+										<h2 class="b-search__title"><a href="/news/{{ post.id }}" title="{{ post.name|e }}">{{ post.name|e }}</a></h2>
+										<p class="b-search__text">{{ post.announceFriendly(100) }}</p>
+										<a class="b-search__comments b-comments-status" href="/news/{{ post.id }}#comments">
+
+											{% if post.comments == 0 %}
+
+												<span class="b-comments-status__title">нет комментариев</span>
+
+											{% else %}
+
+												<span class="b-comments-status__num">{{ post.comments }}</span>
+												<span class="b-comments-status__title">{{ post.comments|ruNumber('%s',['комментарий','комментария','комментариев','нет комментариев']) }}</span>
+
+											{% endif %}
+										</a>
+									</div>
+									<div class="clearfix"></div>
+								</li>
+
+							{% endfor %}
+
+						{% elseif section == 'persons' %}
+
+							{% for person in persons %}
+
+								<li>
+									<div class="b-search__image">
+										<a class="b-search__head" href="/persons/{{ person.urlName }}" title="{{ person.name|e }}">
+
+											{% if person.photo.id > 0 %}
+
+												{% set photo = person.photo.thumb('110x') %}
+
+												<img alt="{{ person.name|e }}" src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}">
+
+											{% endif %}
+
+										</a>
+									</div>
+									<div class="b-search__body">
+										<h2 class="b-search__title"><a href="/persons/{{ person.urlName }}" title="{{ person.name|e }}">{{ person.name|e }}</a></h2>
+									</div>
+									<div class="clearfix"></div>
+								</li>
+
+							{% endfor %}
+
+						{% endif %}
+
+					</ul>
+				</section>
+
+				{{
+					html.paginator(
+						 paginator.pages
+						,paginator.active
+						,'/search/' ~ section ~ '/' ~ term|url_encode|replace({'%':'%%'}) ~ '/page%u'
+					)
+				}}
+
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

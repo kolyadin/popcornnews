@@ -8,5 +8,5 @@ if [[ $action == "update" ]];
 then
 	echo && echo [ `date "+%Y-%m-%d %H:%M:%S"` ] && echo
 	sudo indexer --rotate --config $pwd/../config/sphinxsearch.conf newsDelta
-	sudo indexer --merge news newsDelta --rotate --config $pwd/../config/sphinxsearch.conf
+	#sudo indexer --merge news newsDelta --rotate --config $pwd/../config/sphinxsearch.conf
 fi

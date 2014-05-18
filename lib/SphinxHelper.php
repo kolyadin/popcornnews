@@ -4,8 +4,6 @@ namespace popcorn\lib;
 
 class SphinxHelper {
 
-	private $fetchObject = null;
-
 	private $queryString;
 	private $queryStringPlaceholders = [];
 
@@ -68,21 +66,13 @@ class SphinxHelper {
 
 	}
 
-	public function fetch($callback) {
-
-		$this->fetchObject = $callback;
-
-		return $this;
-
-	}
-
-	public function run() {
+	public function run($callback, &$totalFound = 0) {
 
 		$sphinx = new SphinxClient();
 
 		$sphinx->SetServer('localhost', 9312);
 		$sphinx->SetConnectTimeout(1);
-		$sphinx->SetMaxQueryTime(5);
+		$sphinx->SetMaxQueryTime(0);
 		$sphinx->SetArrayResult(true);
 
 		$sphinx->SetMatchMode(SPH_MATCH_EXTENDED);
@@ -107,19 +97,18 @@ class SphinxHelper {
 
 		$results = $sphinx->Query($query, $this->searchIndex);
 
-		$result = new \StdClass;
-		$result->matchesFound = $results['total_found'];
+		$output = [];
 
-		if (isset($results['total_found']) && $results['total_found'] > 0) {
-			$result->matches = $results['matches'];
+		$totalFound = $results['total_found'];
 
-			if (!is_null($this->fetchObject)) {
-				foreach ($result->matches as &$match) {
-					$match = call_user_func($this->fetchObject,$match['id']);
+		if ($totalFound > 0) {
+			if (!is_null($callback)) {
+				foreach ($results['matches'] as &$match) {
+					$output[] = call_user_func($callback,$match['id']);
 				}
 			}
 		}
 
-		return $result;
+		return $output;
 	}
 }
