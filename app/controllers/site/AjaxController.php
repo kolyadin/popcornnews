@@ -44,6 +44,7 @@ use popcorn\model\voting\UpDownVoting;
 use popcorn\model\persons\Person;
 use popcorn\model\groups\Group;
 use popcorn\model\posts\NewsPost;
+use popcorn\model\system\users\User;
 
 class AjaxController extends GenericController implements ControllerInterface {
 
@@ -167,10 +168,11 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 		$sphinx = new SphinxHelper;
 
-		$persons = $users = $news = [];
+		$personsTotalFound = $usersTotalFound = $newsTotalFound = 0;
 
 		//region ищем новости
-		$resultNews = $sphinx
+		/** @var NewsPost[] $posts */
+		$posts = $sphinx
 			->query('(@name %1$s) | (@content %1$s) | (@announce %1$s)', $searchString)
 			->in('news newsDelta')
 			->offset(0, 5)
@@ -179,55 +181,55 @@ class AjaxController extends GenericController implements ControllerInterface {
 				'content'  => 50,
 				'announce' => 50
 			])
-			->fetch(function ($postId) {
+			->run(function ($postId) {
 				return PostFactory::getPost($postId, [
 					'itemCallback' => [
 						'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE
 					]
 				]);
-			})
-			->run();
+			}, $newsTotalFound);
 
-		if ($resultNews->matchesFound > 0) {
-			/** @var NewsPost $post */
-			foreach ($resultNews->matches as $post) {
+		if (count($posts)) {
+			foreach ($posts as &$post) {
 				$postName = $post->getName();
 				$postName = preg_replace("@$searchString@iu", "<i>\$0</i>", $postName);
-				$news[] = sprintf('<a href="/news/%u">%s</a>', $post->getId(), $postName);
+				$post = sprintf('<a href="/news/%u">%s</a>', $post->getId(), $postName);
 			}
 		}
 
 		$newsFound = $this
 			->getApp()
 			->getTwigString()
-			->render('{{ newsCount|ruNumber(["новость","новости","новостей"]) }}', [
-				'newsCount' => $resultNews->matchesFound
+			->render('<a href="/search/news/{{ searchString|url_encode }}">{{ newsCount|ruNumber(["новость","новости","новостей"]) }}</a>', [
+				'newsCount' => $newsTotalFound,
+				'searchString' => $searchString
 			]);
 		//endregion
 
 		//region ищем пользователей
-		$resultUsers = $sphinx
+		/** @var User[] $users */
+		$users = $sphinx
 			->query('@nick %1$s', $searchString)
 			->in('users')
 			->offset(0, 5)
-			->fetch(function ($userId) {
+			->run(function ($userId) {
 				return UserFactory::getUser($userId);
-			})
-			->run();
+			}, $usersTotalFound);
 
-		if ($resultUsers->matchesFound > 0) {
-			foreach ($resultUsers->matches as $user) {
+		if (count($users)) {
+			foreach ($users as &$user) {
 				$userNick = $user->getNick();
 				$userNick = preg_replace("@$searchString@iu", "<i>\$0</i>", $userNick);
-				$users[] = sprintf('<a href="/profile/%u">%s</a>', $user->getId(), $userNick);
+				$user = sprintf('<a href="/profile/%u">%s</a>', $user->getId(), $userNick);
 			}
 		}
+
 
 		$usersFound = $this
 			->getApp()
 			->getTwigString()
 			->render('<a href="/users/search/{{ searchString|url_encode }}">{{ usersCount|ruNumber(["пользователь","пользователя","пользователей"]) }}&nbsp;&gt;</a>', [
-				'usersCount'   => $resultUsers->matchesFound,
+				'usersCount'   => $usersTotalFound,
 				'searchString' => $searchString
 			]);
 		//endregion
@@ -243,7 +245,8 @@ class AjaxController extends GenericController implements ControllerInterface {
 			'(@urlName ^%1$s | %1$s)'
 		];
 
-		$resultPersons = $sphinx
+		/** @var Person[] $persons */
+		$persons = $sphinx
 			->query(implode(' | ', $query), $searchString)
 			->in('persons')
 			->weights([
@@ -251,41 +254,32 @@ class AjaxController extends GenericController implements ControllerInterface {
 				'genitiveName'      => 30,
 				'prepositionalName' => 30
 			])
-			->fetch(function ($personId) {
+			->run(function ($personId) {
 				return PersonFactory::getPerson($personId);
-			})
-			->run();
+			}, $personsTotalFound);
 
-		if ($resultPersons->matchesFound > 0) {
-			/** @var Person $person */
-			foreach ($resultPersons->matches as $person) {
+		if (count($persons)) {
+			foreach ($persons as &$person) {
 				$personName = $person->getName();
 				$personName = preg_replace("@$searchString@iu", "<i>\$0</i>", $personName);
-				$persons[] = sprintf('<a href="/persons/%s">%s</a>', $person->getUrlName(), $personName);
+				$person = sprintf('<a href="/persons/%s">%s</a>', $person->getUrlName(), $personName);
 			}
 		}
 
 		$personsFound = $this
 			->getApp()
 			->getTwigString()
-			->render('{{ personsCount|ruNumber(["персона","персоны","персон"]) }}', [
-				'personsCount' => $resultPersons->matchesFound
+			->render('<a href="/search/persons/{{ searchString|url_encode }}">{{ personsCount|ruNumber(["персона","персоны","персон"]) }}</a>', [
+				'personsCount' => $personsTotalFound,
+				'searchString' => $searchString
 			]);
 		//endregion
 
 		$this->getApp()->exitWithJsonSuccessMessage([
-			'data'     => ['persons' => $persons, 'news' => $news, 'users' => $users],
+			'data'     => ['persons' => $persons, 'news' => $posts, 'users' => $users],
 			'headers'  => ['persons' => $personsFound, 'news' => $newsFound, 'users' => $usersFound],
-			'counters' => ['persons' => $resultPersons->matchesFound, 'news' => $resultNews->matchesFound, 'users' => $resultUsers->matchesFound]
+			'counters' => ['persons' => $personsTotalFound, 'news' => $newsTotalFound, 'users' => $usersTotalFound]
 		]);
-
-		/*
-		$resultNews = $sphinx
-			->in('newsIndex')123
-
-			->query('@name *%1$s* | @content *%1$s* | @announce *%1$s*', $searchString)
-			->run()
-		;*/
 
 
 	}
