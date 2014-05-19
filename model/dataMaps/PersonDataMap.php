@@ -413,4 +413,23 @@ class PersonDataMap extends DataMap {
 		return parent::prepareItem($item);
 	}
 
+	public function getPersonsLits() {
+
+		$sql = 'SELECT `id`, `name`
+				FROM `pn_persons`
+				ORDER BY `name`';
+
+		$stmt = $this->prepare($sql);
+		$stmt->execute();
+		$items = $stmt->fetchAll(\PDO::FETCH_OBJ);
+
+		if ($items === false) {
+			return null;
+		}
+
+		return $items;
+
+	}
+
+
 }

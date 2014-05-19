@@ -8,6 +8,7 @@ use popcorn\model\dataMaps\UserDataMap;
 use popcorn\model\dataMaps\UserDataMapPaginator;
 use popcorn\model\exceptions\NotAuthorizedException;
 use popcorn\model\persons\PersonFactory;
+use popcorn\model\dataMaps\PersonDataMap;
 use popcorn\model\system\users\GuestUser;
 use popcorn\model\system\users\User;
 use popcorn\model\system\users\UserFactory;
@@ -181,12 +182,18 @@ class ProfileController extends GenericController implements ControllerInterface
 	}
 
 	public static function profileEditForm($profileId) {
+
 		$profile = UserFactory::getUser($profileId);
+		$personDataMap = new PersonDataMap();
 
 		self::getTwig()
-			->display('/profile/ProfilePage.twig', array(
-				'profile' => $profile
-			));
+			->display('/profile/ProfileForm.twig', array(
+				'profile' => $profile,
+				'countries' => UserFactory::getCountries(),
+				'persons' =>  $personDataMap->getPersonsLits(),
+			)
+		);
+
 	}
 
 
