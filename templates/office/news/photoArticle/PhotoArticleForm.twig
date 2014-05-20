@@ -12,26 +12,30 @@
 
 	{% raw %}
 	<script id="tmpl-image-box" type="x-tmpl-mustache">
-		<div class="form-group last" data-element="image">
+		<div class="form-group" data-element="image">
 			<input type="hidden" name="images[]" value="{{ imageId }}"/>
 			<label class="control-label col-md-1">&nbsp;</label>
 			<div class="col-md-10">
 
-				<div style="float:left;margin-right: 20px;">
-					<a href="{{ url }}" class="thumbnail">
-						<img src="{{ thumbUrl }}" alt=""/>
-					</a>
+				<div style="width: 750px;">
+					<div style="float:left;margin-right: 20px;">
+						<a href="{{ url }}" class="thumbnail">
+							<img src="{{ thumbUrl }}" alt=""/>
+						</a>
+					</div>
+					<div style="float:left;">
+						<p><input class="form-control" style="width:450px;" name="imagesTitle[{{ imageId }}]" type="text" placeholder="Название фото" value="{{ title }}"/></p>
+						<p><input class="form-control" style="width:450px;" name="imagesSource[{{ imageId }}]" type="text" placeholder="Источник фото" value="{{ source }}"/></p>
+						<p>
+							<textarea class="form-control" style="width:450px;" name="imagesCaption[{{ imageId }}]" required="true" placeholder="Подпись к фото" cols="30" rows="6">{{ caption }}</textarea>
+						</p>
+						<p>
+							<input type="hidden" name="imagesPerson[{{ imageId }}]" value="{{ persons }}"/>
+						</p>
+						<p><input class="btn btn-danger" type="button" value="убрать" data-action="remove-image"/></p>
+					</div>
+					<div style="clear:both;"></div>
 				</div>
-				<div style="float:left;">
-					<p><input class="form-control" style="width:450px;" name="imagesTitle[{{ imageId }}]" type="text" placeholder="Название фото" value="{{ title }}"/></p>
-					<p><input class="form-control" style="width:450px;" name="imagesSource[{{ imageId }}]" type="text" placeholder="Источник фото" value="{{ source }}"/></p>
-					<p>
-						<textarea class="form-control" style="width:450px;" name="imagesCaption[{{ imageId }}]" required="true" placeholder="Подпись к фото" cols="30" rows="2">{{ caption }}</textarea>
-					</p>
-					<p><input class="btn btn-danger" type="button" value="убрать" data-action="remove-image"/></p>
-				</div>
-
-				<div style="clear:both;"></div>
 			</div>
 		</div>
 	</script>
@@ -140,15 +144,24 @@
 			images.handler();
 
 			{% if post.images %}
+
 				{% for image in post.images %}
+
+					{% set imagePersons = [] %}
+
+					{% for person in image.extra %}
+						{% set imagePersons = imagePersons|merge([person.id]) %}
+				    {% endfor %}
 
 					images.addImage({
 						imageId: {{ image.id }},
 						url: '{{ image.url }}',
 						thumbUrl: '{{ image.thumb('200x').url }}',
-						title: '{{ image.title|e }}',
-						caption: '{{ image.description|e }}',
-						source: '{{ image.source }}'
+						title: '{{ image.title|e('js') }}',
+						caption: '{{ image.description|e('js') }}',
+						source: '{{ image.source|e('js') }}',
+					    persons: '{{ imagePersons|join(';') }}'
+
 					});
 
 				{% endfor %}
@@ -163,104 +176,6 @@
 
 		$(function(){
 
-			var jcropApi;
-
-			var resetMainImage = function(params){
-
-				if (params.width < 620){
-					params['sizeAlert'] = 1;
-				}
-
-				var $html = Mustache.render($('#tmpl-main-image-box').html(),params);
-
-				var $id = $('#main-image-uploader');
-
-				var $parent = $id.closest('.col-md-9').find('.help-block');
-				$parent.html($html);
-
-				$id.hide();
-			};
-
-			//Показываем фотку с возможностью обрезания
-			$('body').on('click','input[data-action=crop-main-image]',function(){
-
-				var $imagePreview = $('#main-image-preview');
-
-				var $fullSrc = $imagePreview.attr('href');
-				var $fullWidth = $imagePreview.attr('data-full-width');
-
-				$('#modal-crop .modal-body .main-image-crop').html(sprintf('<img src="%s" id="main-image-crop" />',$fullSrc));
-
-				var handlerWriteCoords = function(c){
-					$('#modal-crop input[name=cropCoords]').val(sprintf('%u,%u,%u,%u,%u,%u', c.x, c.y, c.x2, c.y2, c.w, c.h));
-				};
-
-				$('#main-image-crop').Jcrop({
-					boxWidth: 560,
-					aspectRatio: 62/40,
-					minSize: [620,0],
-					setSelect: [0,0,620,0],
-					onSelect: handlerWriteCoords,
-					onChange: handlerWriteCoords,
-					bgOpacity: 0.2
-				},function(){
-					jcropApi = this;
-					$('#modal-crop').modal('show');
-				});
-
-
-			});
-
-			//Подтверждение обрезания
-			$('button[data-action=confirm-crop]').on('click',function(){
-
-				var params = {
-					'imageId': $('input[name=mainImageId]').val(),
-					'coords': $('#modal-crop input[name=cropCoords]').val()
-				};
-
-				var handler = function(response){
-
-					var params = {
-						mainImageId: response.id,
-						width: response.width,
-						height: response.height,
-						thumbUrl: response.url,
-						url: response.url
-					};
-
-					resetMainImage(params);
-
-					$('form[name=form-edit]').prepend('<input type="hidden" name="cropped" value="1" />');
-
-					$('#modal-crop').modal('hide');
-				};
-
-				$.post('/office/ajax/crop',params,handler,'json');
-			});
-
-			$('button[data-action=jcrop-select-all-width]').on('click',function(){
-
-				var $width = $('#main-image-preview').attr('data-full-width');
-
-				jcropApi.setSelect([0,0,$width,0]);
-
-			});
-
-			$('button[data-action=jcrop-select-default]').on('click',function(){
-
-				jcropApi.setSelect([0,0,620,0]);
-
-			});
-
-
-
-			//Событие на кнопку "выбрать другое фото" у основного фото
-			$('body').on('click','input[data-action=remove-main-image]',function(){
-				$(this).closest('.col-md-9').find('.help-block').html('');
-
-				$('#main-image-uploader').show().click();
-			});
 
 			$('#postDate').datetimepicker({
 				language: 'ru',
@@ -317,18 +232,27 @@
 				}
 			});
 
-			$('input[name=persons]').select2({
+			var persons = {};
+
+			{% for person in persons %}
+				persons[{{ person.id }}] = '{{ person.name|e("js") }}';
+     		{% endfor %}
+
+			$('input[name=persons],input[name^=imagesPerson]').select2({
 				width: '480px',
 				multiple: true,
 				placeholder: "Начни вводить имя персоны...",
 				initSelection: function (element, callback) {
-					{% if tags.persons|length %}
+					{% if persons|length %}
 
 					var data = [];
 
-					{% for person in tags.persons %}
-						data.push({'id': {{ person.id }}, 'text': '{{ person.name|e }}'});
-					{% endfor %}
+					$(element.val().split(";")).each(function () {
+						var personId = this;
+
+						data.push({id:personId,text:persons[personId]});
+
+					});
 
 					callback(data);
 					{% endif %}

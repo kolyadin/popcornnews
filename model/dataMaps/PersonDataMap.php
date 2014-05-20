@@ -198,6 +198,10 @@ class PersonDataMap extends DataMap {
 		]);
 	}
 
+	public function getAll() {
+		return $this->fetchAll('select * from pn_persons');
+	}
+
 	/**
 	 * @param Person $item
 	 */

@@ -3,8 +3,12 @@
 namespace popcorn\model\posts\photoArticle;
 
 use popcorn\lib\mmc\MMC;
+use popcorn\model\content\Image;
 use popcorn\model\dataMaps\DataMap;
 use popcorn\model\dataMaps\DataMapHelper;
+use popcorn\model\dataMaps\PersonDataMap;
+use popcorn\model\persons\Person;
+use popcorn\model\persons\PersonFactory;
 use popcorn\model\tags\Tag;
 
 class PhotoArticleDataMap extends DataMap {
@@ -157,7 +161,51 @@ class PhotoArticleDataMap extends DataMap {
 	}
 
 	private function getAttachedImages($id) {
-		return $this->imagesDataMap->findById($id);
+		$items = $this->imagesDataMap->findById($id);
+
+		foreach ($items as &$image) {
+			$image->setExtra($this->getAttachPersonsOfImage($image));
+		}
+
+		return $items;
+	}
+
+	public function getAttachPersonsOfImage(Image $image){
+		$stmt = $this->prepare('select personId from pn_photoarticles_images_persons where imageId = :imageId');
+		$stmt->execute([
+			':imageId'  => $image->getId(),
+		]);
+
+		$persons = [];
+
+		while ($personId = $stmt->fetch(\PDO::FETCH_COLUMN)){
+			$persons[] = PersonFactory::getPerson($personId,[
+				'itemCallback' => [
+					'popcorn\\model\\dataMaps\\PersonDataMap' => PersonDataMap::WITH_NONE
+				]
+			]);
+		}
+
+		return $persons;
+	}
+
+	public function attachPersonToImage(Image $image, Person $person) {
+
+		$stmt = $this->prepare('insert into pn_photoarticles_images_persons set imageId = :imageId, personId = :personId');
+		$stmt->execute([
+			':imageId'  => $image->getId(),
+			':personId' => $person->getId()
+		]);
+
+	}
+
+	public function clearImageFromPersons(Image $image) {
+
+		$stmt = $this->prepare('delete from pn_photoarticles_images_persons where imageId = :imageId');
+		$stmt->execute([
+			':imageId' => $image->getId()
+		]);
+
 	}
 
 	/**
@@ -228,8 +276,6 @@ class PhotoArticleDataMap extends DataMap {
 		]);
 
 	}
-
-
 
 
 }

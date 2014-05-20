@@ -111,8 +111,6 @@ class PhotoArticleController extends GenericController implements ControllerInte
 
 			$post = PhotoArticleFactory::getPhotoArticle($postId);
 
-//			print '<pre>'.print_r($post,true).'</pre>';
-
 			if (!$post) {
 				$this->getSlim()->notFound();
 			}
@@ -121,7 +119,7 @@ class PhotoArticleController extends GenericController implements ControllerInte
 
 			foreach ($post->getTags() as $tag) {
 				if ($tag instanceof Person) {
-					$twigData['tags']['persons'][] = $tag;
+					$twigData['persons'][] = $tag;
 					$twigData['tags']['personsString'][] = $tag->getId();
 				} elseif ($tag instanceof Movie) {
 					$twigData['tags']['movies'][] = $tag;
@@ -134,6 +132,17 @@ class PhotoArticleController extends GenericController implements ControllerInte
 						$twigData['tags']['events'][] = $tag;
 						$twigData['tags']['eventsString'][] = $tag->getId();
 					}
+				}
+			}
+
+			foreach ($post->getImages() as &$image){
+
+				/** @var Person[] $persons */
+				$persons = $image->getExtra();
+
+				foreach ($persons as $person){
+
+					$twigData['persons'][] = $person;
 				}
 			}
 		}
@@ -205,9 +214,12 @@ class PhotoArticleController extends GenericController implements ControllerInte
 
 				$image = ImageFactory::getImage($imageId);
 
+				PhotoArticleFactory::clearImageFromPersons($image);
+
 				$imageTitles = $request->post('imagesTitle');
 				$imageCaptions = $request->post('imagesCaption');
 				$imageSources = $request->post('imagesSource');
+				$imagePersons = $request->post('imagesPerson');
 
 				if (isset($imageTitles[$imageId])) {
 					$image->setTitle($imageTitles[$imageId]);
@@ -219,6 +231,18 @@ class PhotoArticleController extends GenericController implements ControllerInte
 
 				if (isset($imageSources[$imageId])) {
 					$image->setSource($imageSources[$imageId]);
+				}
+
+				if ($imagePersons) {
+					$persons = explode(',', $imagePersons[$imageId]);
+
+					foreach ($persons as $personId) {
+						$person = PersonFactory::getPerson($personId);
+
+						if ($person){
+							PhotoArticleFactory::attachPersonToImage($image, $person);
+						}
+					}
 				}
 
 				ImageFactory::save($image);

@@ -64,6 +64,8 @@ class Image extends Model {
      */
     private $height = 0;
 
+	private $extra = [];
+
     //endregion
 
     //region Getters
@@ -118,6 +120,10 @@ class Image extends Model {
     public function getTitle() {
         return $this->title;
     }
+
+	public function getExtra(){
+		return $this->extra;
+	}
 
     //endregion
 
@@ -194,6 +200,10 @@ class Image extends Model {
         $this->title = $title;
         $this->changed();
     }
+
+	public function setExtra($object){
+		$this->extra = $object;
+	}
 
     //endregion
 

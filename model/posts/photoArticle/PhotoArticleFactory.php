@@ -2,8 +2,10 @@
 
 namespace popcorn\model\posts\photoArticle;
 
+use popcorn\model\content\Image;
 use popcorn\model\dataMaps\DataMapHelper;
 use popcorn\model\dataMaps\PersonDataMap;
+use popcorn\model\persons\Person;
 use popcorn\model\posts\photoArticle\PhotoArticleDataMap;
 
 class PhotoArticleFactory {
@@ -51,7 +53,7 @@ class PhotoArticleFactory {
 		$options = array_merge([
 			'itemCallback' => [
 				'popcorn\\model\\posts\\photoArticle\\PhotoArticleDataMap' => PhotoArticleDataMap::WITH_ALL,
-				'popcorn\\model\\dataMaps\\PersonDataMap'       => PersonDataMap::WITH_NONE
+				'popcorn\\model\\dataMaps\\PersonDataMap'                  => PersonDataMap::WITH_NONE
 			]
 		], $options);
 
@@ -94,6 +96,18 @@ class PhotoArticleFactory {
 		self::checkDataMap();
 
 		self::$dataMap->updateViews($post);
+	}
+
+	public static function attachPersonToImage(Image $image, Person $person) {
+		self::checkDataMap();
+
+		self::$dataMap->attachPersonToImage($image, $person);
+	}
+
+	public static function clearImageFromPersons(Image $image) {
+		self::checkDataMap();
+
+		self::$dataMap->clearImageFromPersons($image);
 	}
 
 }

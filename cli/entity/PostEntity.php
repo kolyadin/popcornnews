@@ -12,6 +12,7 @@ class PostEntity {
             new command\post\RemoveAll(),
             new command\post\Import2(),
 			new command\post\ImportComments(),
+			new command\post\ImportPhotoArticles(),
 			new command\post\Publish()
         );
 
