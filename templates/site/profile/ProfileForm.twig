@@ -91,8 +91,12 @@
 
 	{% include '/profile/ProfileMenu.twig' %}
 
+	{% if userError == 103 %}
+		<p><strong>&lowast;&nbsp;Пароли не совпадают</strong></p>
+	{% endif %}
+
 	<div class="info">
-		<form class="questionnaireForm" action="/" method="POST" enctype="multipart/form-data">
+		<form class="questionnaireForm" action="/profile/{{ profile.id }}/form" method="POST" enctype="multipart/form-data">
 			<input type="hidden" name="type" value="profile">
 			<input type="hidden" name="action" value="edit">
 			<br><label>
@@ -101,7 +105,7 @@
 			</label>
 			<br><label>
 				<strong>Имя</strong>
-				<input type="text" name="uname" value="{{ profile.userInfo.name }}">
+				<input type="text" name="name" value="{{ profile.userInfo.name }}">
 			</label>
 			<br><label>
 				<strong>Ваше кредо <br>(не более 250 символов)</strong>
@@ -190,28 +194,27 @@
 				<select name="meet_actor">
 					<option value="0">ни с кем</option>
 					{% for person in persons %}
-						<option value="{{ person.id }}"{% if profile.userInfo.meetPerson == person.id %}selected="selected"{% endif %}>{{ person.name }}</option>
+						<option value="{{ person.id }}" {% if profile.userInfo.meetPerson.id == person.id %}selected="selected"{% endif %}>{{ person.name }}</option>
 					{% endfor %}
 				</select>
 			</label>
 			<br><label class="long">
 				<strong>Я хочу получать ежедневную рассылку новостей с сайта</strong>
-				<input type="checkbox" name="daily_sub" value="1" {% if profile.userSettings.dailySubscribe == 1 %}'checked="checked"{% endif %}>
+				<input type="checkbox" name="daily_sub" value="1" {% if profile.userSettings.dailySubscribe == 1 %}checked="checked"{% endif %}>
 			</label>
 			<br><label class="long">
 				<strong>Я хочу получать уведомления о новых сообщения</strong>
-				<input type="checkbox" name="alert_on_new_mail" value="1" {% if profile.userSettings.alertMessage == 1 %}'checked="checked"{% endif %}>
+				<input type="checkbox" name="alert_on_new_mail" value="1" {% if profile.userSettings.alertMessage == 1 %}checked="checked"{% endif %}>
 			</label>
 			<br><label class="long">
 				<strong>Я хочу получать уведомления о новых записях в гостевой</strong>
-				<input type="checkbox" name="alert_on_new_guest_items" value="1" {% if profile.userSettings.alertGuestBook == 1 %}'checked="checked"{% endif %}>
+				<input type="checkbox" name="alert_on_new_guest_items" value="1" {% if profile.userSettings.alertGuestBook == 1 %}checked="checked"{% endif %}>
 			</label>
 			<br><label class="long">
 				<strong>Принимать приглашения в группу</strong>
-				<input type="checkbox" name="can_invite_to_community_groups" value="1" {% if profile.userSettings.canInvite == 1 %}'checked="checked"{% endif %}>
+				<input type="checkbox" name="can_invite_to_community_groups" value="1" {% if profile.userSettings.canInvite == 1 %}checked="checked"{% endif %}>
 			</label>
 			<br><input type="submit" value="сохранить" /><label></label>
-
 		</form>
 
 	</div>

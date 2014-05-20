@@ -32,7 +32,7 @@ class UserInfoDataMap extends DataMap {
         $this->insertStatement->bindValue(":countryId", $item->getCountryId());
         $this->insertStatement->bindValue(":married", $item->getMarried());
         $this->insertStatement->bindValue(":cityId", $item->getCityId());
-        $this->insertStatement->bindValue(":meetPerson", $item->getMeetPerson());
+        $this->insertStatement->bindValue(":meetPerson", $item->getMeetPerson()->getId());
         $this->insertStatement->bindValue(":points", $item->getPoints());
         $this->insertStatement->bindValue(":activist", $item->getActivist());
         $this->insertStatement->bindValue(":activistCount", $item->getActivistCount());
@@ -50,7 +50,7 @@ class UserInfoDataMap extends DataMap {
         $this->updateStatement->bindValue(":countryId", $item->getCountryId());
         $this->updateStatement->bindValue(":married", $item->getMarried());
         $this->updateStatement->bindValue(":cityId", $item->getCityId());
-        $this->updateStatement->bindValue(":meetPerson", $item->getMeetPerson());
+        $this->updateStatement->bindValue(":meetPerson", $item->getMeetPerson()->getId());
         $this->updateStatement->bindValue(":points", $item->getPoints());
         $this->updateStatement->bindValue(":activist", $item->getActivist());
         $this->updateStatement->bindValue(":activistCount", $item->getActivistCount());

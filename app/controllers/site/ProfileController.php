@@ -12,8 +12,14 @@ use popcorn\model\dataMaps\PersonDataMap;
 use popcorn\model\system\users\GuestUser;
 use popcorn\model\system\users\User;
 use popcorn\model\system\users\UserFactory;
+use popcorn\model\system\users\UserHash;
+use popcorn\model\system\users\UserInfo;
+use popcorn\model\system\users\UserSettings;
 use popcorn\model\im\Message;
 use popcorn\model\im\MessageFactory;
+use popcorn\model\content\ImageFactory;
+use popcorn\model\dataMaps\UserInfoDataMap;
+use popcorn\model\dataMaps\UserSettingsDataMap;
 use Slim\Route;
 
 /**
@@ -93,6 +99,10 @@ class ProfileController extends GenericController implements ControllerInterface
 					$this
 						->getSlim()
 						->get('/form', $justForMeMiddleware, [$this, 'profileEditForm']);
+
+					$this
+						->getSlim()
+						->post('/form', $justForMeMiddleware, [$this, 'profileSaveForm']);
 
 					//@example /profile/1/photos/del
 					$this
@@ -191,8 +201,83 @@ class ProfileController extends GenericController implements ControllerInterface
 				'profile' => $profile,
 				'countries' => UserFactory::getCountries(),
 				'persons' =>  $personDataMap->getPersonsLits(),
+				'userError' => (isset($_SESSION['userError']) ? $_SESSION['userError'] : array()),
 			)
 		);
+
+	}
+
+	public static function profileSaveForm($profileId) {
+
+		$request = self::getSlim()->request();
+
+		$params = array(
+			'name' => strip_tags(trim($request->post('name'))),
+			'pass1' => trim($request->post('pass1')),
+			'pass2' => trim($request->post('pass2')),
+			'credo' => trim($request->post('credo')),
+			'city' => trim($request->post('city')),
+			'country' => trim($request->post('country')),
+			'sex' => (int)$request->post('sex'),
+			'show_bd' => (int)$request->post('show_bd'),
+			'family' => (int)$request->post('family'),
+			'meet_actor' => (int)$request->post('meet_actor'),
+			'day' => (int)$request->post('day'),
+			'month' => (int)$request->post('month'),
+			'year' => (int)$request->post('year'),
+			'daily_sub' => (int)$request->post('daily_sub'),
+			'alert_on_new_mail' => (int)$request->post('alert_on_new_mail'),
+			'alert_on_new_guest_items' => (int)$request->post('alert_on_new_guest_items'),
+			'can_invite_to_community_groups' => (int)$request->post('can_invite_to_community_groups'),
+		);
+
+		$params['birthday'] = mktime(0, 0, 0, $params['month'], $params['day'], $params['year']);
+
+		$profile = UserFactory::getUser($profileId);
+
+		//Пароли отличаются
+		if ($params['pass1'] != $params['pass2']) {
+			$_SESSION['userError'] = 103;
+			self::getSlim()->redirect('/profile/' . $profileId . '/form');
+		} else {
+			unset($_SESSION['userError']);
+		}
+
+		$profile->setPassword($params['pass1']);
+
+		if (isset($_FILES) && isset($_FILES['avatara']) && !$_FILES['avatara']['error']) {
+			$profile->setAvatar(
+				ImageFactory::createFromUpload($_FILES['avatara']['tmp_name'])
+			);
+		}
+
+		$userInfoDataMap = new UserInfoDataMap();
+		$userInfo = $userInfoDataMap->findById($profile->getUserInfo()->getId());
+		$userInfo->setName($params['name']);
+		$userInfo->setBirthDate($params['birthday']);
+		$userInfo->setCityId($params['city']);
+		$userInfo->setCountryId($params['country']);
+		$userInfo->setCredo($params['credo']);
+		$userInfo->setSex($params['sex']);
+		$userInfo->setMarried($params['family']);
+		$userInfo->setMeetPerson($params['meet_actor']);
+		$profile->setUserInfo($userInfo);
+
+		$userSettingsDataMap = new UserSettingsDataMap();
+		$userSettings = $userSettingsDataMap->findById($profile->getUserSettings()->getId());
+		$userSettings->setDailySubscribe($params['daily_sub']);
+		$userSettings->setShowBirthDate($params['show_bd']);
+		$userSettings->setAlertMessage($params['alert_on_new_mail']);
+		$userSettings->setAlertGuestBook($params['alert_on_new_guest_items']);
+		$userSettings->setCanInvite($params['can_invite_to_community_groups']);
+		$profile->setUserSettings($userSettings);
+
+//		echo_arr($profile); die();
+		UserFactory::save($profile);
+
+		unset($_SESSION['userError']);
+
+		self::getSlim()->redirect('/profile/' . $profileId . '/form');
 
 	}
 
