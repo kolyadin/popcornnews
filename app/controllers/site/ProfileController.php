@@ -243,7 +243,9 @@ class ProfileController extends GenericController implements ControllerInterface
 			unset($_SESSION['userError']);
 		}
 
-		$profile->setPassword($params['pass1']);
+		if (!empty($params['pass1'])) {
+			$profile->setPassword($params['pass1']);
+		}
 
 		if (isset($_FILES) && isset($_FILES['avatara']) && !$_FILES['avatara']['error']) {
 			$profile->setAvatar(
