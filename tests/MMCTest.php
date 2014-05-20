@@ -8,7 +8,7 @@ namespace popcorn\tests\model;
 
 use popcorn\lib\mmc\MemcacheObject;
 use popcorn\lib\mmc\MMC;
-use popcorn\model\posts\NewsPost;
+use popcorn\model\posts\PhotoArticlePost;
 
 class MMCTest extends PopcornTest {
 
@@ -76,7 +76,7 @@ class MMCTest extends PopcornTest {
     }
 
     public function testObjectSave() {
-        $testObject = new NewsPost();
+        $testObject = new PhotoArticlePost();
         $testObject->setContent('test');
         $val = new MemcacheObject('test_object', $testObject);
         $this->assertTrue(MMC::set($val));

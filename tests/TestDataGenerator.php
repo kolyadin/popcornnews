@@ -10,7 +10,7 @@ namespace popcorn\tests;
 use popcorn\model\content\NullImage;
 use popcorn\model\persons\PersonBuilder;
 use popcorn\model\persons\PersonFactory;
-use popcorn\model\posts\NewsPost;
+use popcorn\model\posts\PhotoArticlePost;
 use popcorn\model\posts\PostFactory;
 use popcorn\model\system\users\User;
 use popcorn\model\system\users\UserFactory;
@@ -21,7 +21,7 @@ class TestDataGenerator {
 
     public static function addTopNewsPosts($count = 10) {
         for($i = 0; $i < $count; $i++) {
-            $post = new NewsPost();
+            $post = new PhotoArticlePost();
             $post->setName('test post '.$i);
             $post->setAnnounce('announce '.$i);
             $post->setComments(($i + 1) * $count);

@@ -23,9 +23,9 @@
 	        {% include '/person/PersonsMenu.twig' %}
 
             <div class="b-search-block">
-                <form method="post">
+	            <form method="get" action="/search">
                     <label for="b-search-block__input-text" class="b-search-block__label">поиск по имени</label>
-                    <input type="search" id="b-search-block__input-text" class="b-search-block__input-text">
+                    <input type="search" name="term" id="b-search-block__input-text" class="b-search-block__input-text">
                     <input type="submit" value="найти" class="b-search-block__input-submit b-firm-grad">
                 </form>
             </div>

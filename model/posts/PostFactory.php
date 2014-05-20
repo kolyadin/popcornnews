@@ -23,7 +23,7 @@ class PostFactory {
 	 */
 	private static $dataMap = null;
 
-	public static function savePost(NewsPost $post) {
+	public static function savePost(PhotoArticlePost $post) {
 		self::checkDataMap();
 		self::$dataMap->save($post);
 		$post->onSave();
@@ -154,7 +154,7 @@ class PostFactory {
 	}
 
 
-	public static function findEarlier(NewsPost $post, array $relationships = []) {
+	public static function findEarlier(PhotoArticlePost $post, array $relationships = []) {
 
 		$dataMapHelper = new DataMapHelper();
 
@@ -177,7 +177,7 @@ class PostFactory {
 	 *
 	 * @param NewsPost $post
 	 */
-	public static function incrementViews(NewsPost $post) {
+	public static function incrementViews(PhotoArticlePost $post) {
 		self::checkDataMap();
 
 		self::$dataMap->updateViews($post);
@@ -219,7 +219,7 @@ class PostFactory {
 //		$cacheKey = MMC::genKey($newsPostDataMap->getClass(), __METHOD__, func_get_args());
 
 //		return MMC::getSet($cacheKey, strtotime('+1 day'), ['post'], function () use ($newsPostDataMap, $from, $count) {
-			return $newsPostDataMap->findRaw('name like "Стоп-кадр%" and status = ' . NewsPost::STATUS_PUBLISHED, ['createDate' => 'desc'], $from, $count);
+			return $newsPostDataMap->findRaw('name like "Стоп-кадр%" and status = ' . PhotoArticlePost::STATUS_PUBLISHED, ['createDate' => 'desc'], $from, $count);
 //		});
 
 
@@ -236,7 +236,7 @@ class PostFactory {
 		$cacheKey = MMC::genKey(self::$dataMap->getClass(), __METHOD__, func_get_args());
 
 		return MMC::getSet($cacheKey, strtotime('+1 day'), ['post'], function () use ($count) {
-			return self::$dataMap->findRaw("status = " . NewsPost::STATUS_PUBLISHED . " AND createDate > " . strtotime("-2 week"),
+			return self::$dataMap->findRaw("status = " . PhotoArticlePost::STATUS_PUBLISHED . " AND createDate > " . strtotime("-2 week"),
 				array('comments' => DataMap::DESC, 'createDate' => DataMap::DESC),
 				0, $count);
 		});

@@ -1,0 +1,19 @@
+{% extends '/Generic.twig' %}
+
+{% block PageTop %}
+
+	{% if post %}
+
+		<ul class="mix-filter">
+			<li class="filter btn {% if tab1 %}active{% endif %}" data-filter="person">
+				<a href="/office/post{{ post.id }}">Новость</a>
+			</li>
+
+			<li class="filter btn {% if tab2 %}active{% endif %}" data-filter="comments">
+				<a href="/office/post{{ post.id }}/comments">Комментарии</a>
+			</li>
+		</ul>
+
+	{% endif %}
+
+{% endblock %}

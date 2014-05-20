@@ -11,7 +11,7 @@ use popcorn\model\dataMaps\NewsPostDataMap;
 use popcorn\model\dataMaps\PersonDataMap;
 use popcorn\model\dataMaps\TagDataMap;
 use popcorn\model\persons\PersonFactory;
-use popcorn\model\posts\NewsPost;
+use popcorn\model\posts\PhotoArticlePost;
 use popcorn\model\posts\PostCategory;
 use popcorn\model\posts\PostFactory;
 use popcorn\model\tags\TagFactory;
@@ -61,7 +61,7 @@ class SearchController extends GenericController implements ControllerInterface 
 
 		$sphinx = new SphinxHelper;
 
-		$onPage = 10;
+		$onPage = 15;
 		$totalFound = 0;
 
 		$posts = $sphinx
@@ -75,7 +75,7 @@ class SearchController extends GenericController implements ControllerInterface 
 			])
 			->run(function ($postId) {
 				return PostFactory::getPost($postId, [
-					'status'       => NewsPost::STATUS_PUBLISHED,
+					'status'       => PhotoArticlePost::STATUS_PUBLISHED,
 					'itemCallback' => [
 						'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE ^ NewsPostDataMap::WITH_MAIN_IMAGE
 					]

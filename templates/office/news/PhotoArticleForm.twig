@@ -1,0 +1,612 @@
+{% extends '/news/PostGeneric.twig' %}
+
+{% block HeadEnd %}
+
+	<style type="text/css">
+		.ui-state-highlight { height: 45px; border: 3px dashed #aaa; background: #ccc; }
+	</style>
+
+{% endblock %}
+
+{% block BodyEnd %}
+
+	{% raw %}
+	<script id="tmpl-image-box" type="x-tmpl-mustache">
+		<div class="form-group last" data-element="image">
+			<input type="hidden" name="images[]" value="{{ imageId }}"/>
+			<label class="control-label col-md-1">&nbsp;</label>
+			<div class="col-md-10">
+
+				<div style="float:left;margin-right: 20px;">
+					<a href="{{ url }}" class="thumbnail">
+						<img src="{{ thumbUrl }}" alt=""/>
+					</a>
+				</div>
+				<div style="float:left;">
+					<p><input class="form-control" style="width:450px;" name="imagesTitle[{{ imageId }}]" type="text" placeholder="Название фото" value="{{ title }}"/></p>
+					<p><input class="form-control" style="width:450px;" name="imagesSource[{{ imageId }}]" type="text" placeholder="Источник фото" value="{{ source }}"/></p>
+					<p>
+						<textarea class="form-control" style="width:450px;" name="imagesCaption[{{ imageId }}]" required="true" placeholder="Подпись к фото" cols="30" rows="2">{{ caption }}</textarea>
+					</p>
+					<p><input class="btn btn-danger" type="button" value="убрать" data-action="remove-image"/></p>
+				</div>
+
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+	</script>
+	{% endraw %}
+
+
+	{#Приложенные фотки#}
+	<script type="text/javascript">
+		$(function () {
+			var images = {
+				handler: function(){
+
+					$this = this;
+
+					var uploaderImages = new plupload.Uploader({
+						runtimes: 'html5,flash,silverlight,html4',
+						browse_button: 'add-images',
+						max_file_size: '10mb',
+						unique_names: true,
+						max_file_count: 1,
+
+						multipart_params : {
+							'resize' : '200x'
+						},
+
+						url: "/office/ajax/upload-attach",
+
+						flash_swf_url: '/office/assets/plugins/plupload-2.1.1/js/Moxie.swf',
+						silverlight_xap_url: '/office/assets/plugins/plupload-2.1.1/js/Moxie.xap',
+
+						filters: [
+							{title: "Фотографии", extensions: "jpg,jpeg,gif,png"}
+						],
+
+						init: {
+							PostInit: function () {
+
+							},
+							UploadComplete: function (up, files) {
+								$this.addSortingDragAndDrop();
+							},
+							BeforeUpload: function (up, file) {
+							},
+							FilesAdded: function (up, files) {
+								up.start();
+							},
+							FileUploaded: function (upldir, file, object) {
+
+								var data = $.parseJSON(object.response);
+
+								$this.addImage({
+									imageId: data.id,
+									url: data.url,
+									thumbUrl: data.thumb.url,
+									title: '',
+									caption: ''
+								});
+
+							},
+
+							UploadProgress: function (up, file) {
+
+							},
+
+							Error: function (up, err) {
+
+							}
+						}
+
+					});
+					uploaderImages.init();
+
+					this.applyRemoveAbility();
+				},
+				addImage: function(params){
+					var $html = Mustache.render($('#tmpl-image-box').html(),params);
+
+					$('#add-images').closest('.form-group').before($html);
+				},
+				applyRemoveAbility: function(){
+					//Событие на кнопку убрать у приложенных фотографий
+					$('body').on('click','input[data-action=remove-image]',function(){
+						var $formGroup = $(this).closest('.form-group');
+						$formGroup.fadeOut('fast',function(){
+							$(this).remove();
+						});
+					});
+				},
+				addSortingDragAndDrop: function(){
+					$('div[data-element=post-images]').sortable({
+						placeholder: 'ui-state-highlight',
+
+						axis : 'y',
+						items : 'div[data-element=image]',
+						handle: 'img',
+						opacity : 0.2,
+						cursor: 'move',
+						stop : function(event,ui)
+						{
+
+						}
+					});
+				}
+			};
+
+			images.handler();
+
+			{% if post.images %}
+				{% for image in post.images %}
+
+					images.addImage({
+						imageId: {{ image.id }},
+						url: '{{ image.url }}',
+						thumbUrl: '{{ image.thumb('200x').url }}',
+						title: '{{ image.title|e }}',
+						caption: '{{ image.description|e }}',
+						source: '{{ image.source }}'
+					});
+
+				{% endfor %}
+
+				images.addSortingDragAndDrop();
+
+			{% endif %}
+		})
+	</script>
+
+	<script type="text/javascript">
+
+		$(function(){
+
+			var jcropApi;
+
+			var resetMainImage = function(params){
+
+				if (params.width < 620){
+					params['sizeAlert'] = 1;
+				}
+
+				var $html = Mustache.render($('#tmpl-main-image-box').html(),params);
+
+				var $id = $('#main-image-uploader');
+
+				var $parent = $id.closest('.col-md-9').find('.help-block');
+				$parent.html($html);
+
+				$id.hide();
+			};
+
+			//Показываем фотку с возможностью обрезания
+			$('body').on('click','input[data-action=crop-main-image]',function(){
+
+				var $imagePreview = $('#main-image-preview');
+
+				var $fullSrc = $imagePreview.attr('href');
+				var $fullWidth = $imagePreview.attr('data-full-width');
+
+				$('#modal-crop .modal-body .main-image-crop').html(sprintf('<img src="%s" id="main-image-crop" />',$fullSrc));
+
+				var handlerWriteCoords = function(c){
+					$('#modal-crop input[name=cropCoords]').val(sprintf('%u,%u,%u,%u,%u,%u', c.x, c.y, c.x2, c.y2, c.w, c.h));
+				};
+
+				$('#main-image-crop').Jcrop({
+					boxWidth: 560,
+					aspectRatio: 62/40,
+					minSize: [620,0],
+					setSelect: [0,0,620,0],
+					onSelect: handlerWriteCoords,
+					onChange: handlerWriteCoords,
+					bgOpacity: 0.2
+				},function(){
+					jcropApi = this;
+					$('#modal-crop').modal('show');
+				});
+
+
+			});
+
+			//Подтверждение обрезания
+			$('button[data-action=confirm-crop]').on('click',function(){
+
+				var params = {
+					'imageId': $('input[name=mainImageId]').val(),
+					'coords': $('#modal-crop input[name=cropCoords]').val()
+				};
+
+				var handler = function(response){
+
+					var params = {
+						mainImageId: response.id,
+						width: response.width,
+						height: response.height,
+						thumbUrl: response.url,
+						url: response.url
+					};
+
+					resetMainImage(params);
+
+					$('form[name=form-edit]').prepend('<input type="hidden" name="cropped" value="1" />');
+
+					$('#modal-crop').modal('hide');
+				};
+
+				$.post('/office/ajax/crop',params,handler,'json');
+			});
+
+			$('button[data-action=jcrop-select-all-width]').on('click',function(){
+
+				var $width = $('#main-image-preview').attr('data-full-width');
+
+				jcropApi.setSelect([0,0,$width,0]);
+
+			});
+
+			$('button[data-action=jcrop-select-default]').on('click',function(){
+
+				jcropApi.setSelect([0,0,620,0]);
+
+			});
+
+
+
+			//Событие на кнопку "выбрать другое фото" у основного фото
+			$('body').on('click','input[data-action=remove-main-image]',function(){
+				$(this).closest('.col-md-9').find('.help-block').html('');
+
+				$('#main-image-uploader').show().click();
+			});
+
+			$('#postDate').datetimepicker({
+				language: 'ru',
+				format: 'dd.mm.yyyy hh:ii',
+				autoclose: true,
+				minuteStep: 1
+			});
+
+			//Поставить сегодняшнее время и дату
+			$('body').on('click','input[data-action=set-now-date]',function(){
+
+				var currentDate = new Date();
+
+				var $date = sprintf('%02u.%02u.%04u %02u:%02u',
+					currentDate.getDate(),
+					currentDate.getMonth()+1,
+					currentDate.getFullYear(),
+				    currentDate.getHours(),
+				    currentDate.getMinutes()
+				);
+				$('#postDate').val($date);
+			});
+
+			$('input[name=tags]').select2({
+				width: '480px',
+				multiple: true,
+				placeholder: "Начни вводить название тега...",
+				initSelection: function (element, callback) {
+
+					{% if tags.events|length %}
+
+					var data = [];
+
+					{% for tag in tags.events %}
+						data.push({'id': {{ tag.id }}, 'text': '{{ tag.name|e }}'});
+					{% endfor %}
+
+					callback(data);
+					{% endif %}
+				},
+				ajax: {
+					url: '/office/ajax/post/tags',
+					dataType: 'json',
+					data: function (term) {
+						return {
+							term: term
+						};
+					},
+					results: function (data) {
+						return {
+							results: data.tags
+						};
+					}
+				}
+			});
+
+			$('input[name=persons]').select2({
+				width: '480px',
+				multiple: true,
+				placeholder: "Начни вводить имя персоны...",
+				initSelection: function (element, callback) {
+					{% if tags.persons|length %}
+
+					var data = [];
+
+					{% for person in tags.persons %}
+						data.push({'id': {{ person.id }}, 'text': '{{ person.name|e }}'});
+					{% endfor %}
+
+					callback(data);
+					{% endif %}
+				},
+				ajax: {
+					url: '/office/ajax/post/persons',
+					dataType: 'json',
+					data: function (term) {
+						return {
+							term: term
+						};
+					},
+					results: function (data) {
+						return {
+							results: data.persons
+						};
+					}
+				}
+			});
+
+			$('input[name=movies]').select2({
+				width: '480px',
+				multiple: true,
+				placeholder: "Начни вводить название фильма...",
+				initSelection: function (element, callback) {
+					{% if tags.movies|length %}
+
+					var data = [];
+
+					{% for movie in tags.movies %}
+						data.push({'id': {{ movie.id }}, 'text': '{{ movie.name }}'});
+					{% endfor %}
+
+					callback(data);
+					{% endif %}
+				},
+				ajax: {
+					url: '/office/ajax/find/movies',
+					dataType: 'json',
+					data: function (term,page) {
+						return {
+							term: term
+						};
+					},
+					results: function (data) {
+						var results = [];
+						$.each(data.movies, function (index, film) {
+							results.push({
+								id: film.id,
+								text: sprintf('%s / %u',film.name,film.year)
+							});
+						});
+						return {
+							results: results
+						};
+					}
+				}
+			});
+
+
+		});
+
+	</script>
+
+{% endblock %}
+
+{% block PageTop %}
+
+	{% if post %}
+		<h3 class="page-title">
+			фото-статья
+			<small>&quot;{{ post.name|e }}&quot;</small>
+		</h3>
+	{% else %}
+		<h3 class="page-title">
+			Добавление фото-статьи
+		</h3>
+	{% endif %}
+
+	<ul class="page-breadcrumb breadcrumb">
+		<li>
+			<i class="fa fa-home"></i>
+			<a href="/office">Консоль</a>
+			<i class="fa fa-angle-right"></i>
+		</li>
+		<li>
+			<a href="/office/photoarticles">Новости</a>
+			<i class="fa fa-angle-right"></i>
+		</li>
+		{% if post %}
+			<li>
+				<a href="/office/photoarticle{{ post.id }}">Редактирование</a>
+			</li>
+		{% else %}
+			<li>
+				<a href="/office/photoarticle_create">Добавление фото-статьи</a>
+			</li>
+		{% endif %}
+	</ul>
+
+	{{ parent() }}
+
+{% endblock %}
+
+{% block PageContent %}
+
+	<div class="modal fade" id="modal-crop" role="basic" aria-hidden="true" data-backdrop="static">
+		<input name="cropCoords" type="hidden"/>
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="main-image-crop">
+
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-info" aria-hidden="true" data-action="jcrop-select-all-width">Подогнать под ширину</button>
+					<button class="btn btn-info" aria-hidden="true" data-action="jcrop-select-default">Выбрать минимальный &quot;кусок&quot;</button>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Отмена</button>
+					<button class="btn btn-success" data-action="confirm-crop">Сделать обрезание&nbsp;<i class="fa fa-check"></i></button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<form class="form-horizontal form-row-seperated" method="post" enctype="multipart/form-data" name="form-edit">
+		{% if post %}
+			<input type="hidden" name="postId" value="{{ post.id }}"/>
+		{% endif %}
+
+		<div class="form-body">
+
+			{% if app.request.get('status') == 'updated' %}
+				<div class="alert alert-success">
+					<i class="fa fa-check"></i>
+					<strong>Новость обновлена</strong>
+				</div>
+			{% endif %}
+
+			{% if app.request.get('status') == 'created' %}
+				<div class="alert alert-success">
+					<i class="fa fa-check"></i>
+					<strong>Новость создана</strong>
+				</div>
+			{% endif %}
+
+			<div class="portlet">
+				<div class="portlet-title">
+					<div class="caption">
+						<i class="fa fa-reorder"></i>Главное
+					</div>
+					<div class="tools">
+						<a href="javascript:;" class="collapse"></a>
+					</div>
+				</div>
+				<div class="portlet-body">
+					<div class="form-group">
+						<label class="control-label col-md-3">Заголовок фото-статьи: <span class="required">*</span></label>
+
+						<div class="col-md-9">
+							<textarea class="form-control" name="name" required="true" id="" cols="30" rows="2">{{ post.name|e }}</textarea>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="alert alert-info alert-dismissable">
+							<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+							<p>Указав дату публикации в <strong>будущем времени</strong>, новость будет опубликована <strong>при наступлении</strong> указанной дате и времени</p>
+							<p>Очень удобно для публикации новостей в выходные или каких-то анонсов</p>
+							<p>Реальная дата публикации может отличаться от указанной максимум на 5 минут</p>
+						</div>
+
+						<label class="control-label col-md-3">Дата публикации: <span class="required">*</span></label>
+
+						<div class="col-md-9">
+							<input class="form-control" style="width:150px;float:left;margin-right: 10px;" id="postDate" name="createDate" required="true" type="text" value="{{ post.createDate|date('d.m.Y H:i')|default('now'|date('d.m.Y H:i')) }}"/>
+							<input class="btn btn-info" type="button" value="поставить текущее время" data-action="set-now-date"/>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+
+				</div>
+			</div>
+
+			<div class="portlet">
+				<div class="portlet-title">
+					<div class="caption">
+						<i class="fa fa-reorder"></i>Фотографии
+					</div>
+					<div class="tools">
+						<a href="javascript:;" class="collapse"></a>
+					</div>
+				</div>
+				<div class="portlet-body" data-element="post-images">
+
+					<div class="alert alert-info alert-dismissable">
+						<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+						Можно выбирать сразу много фотографий. Просто выдели мышью сколько захочешь.
+					</div>
+
+					<div class="alert alert-info alert-dismissable">
+						<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+						Фотографии можно сортировать. Наведи курсор на фото, зажми и перетаскивай вверх-вниз меняя последовательность
+					</div>
+
+					<div class="form-group last">
+						<label class="control-label col-md-2">&nbsp;</label>
+						<div class="col-md-9 right">
+							<input type="button" class="btn btn-info btn-s" id="add-images" value="добавить фотографии"/>
+						</div>
+					</div>
+
+					<div class="clearfix"></div>
+
+				</div>
+			</div>
+
+			<div class="portlet">
+				<div class="portlet-title">
+					<div class="caption">
+						<i class="fa fa-reorder"></i>Теги
+					</div>
+					<div class="tools">
+						<a href="javascript:;" class="collapse"></a>
+					</div>
+				</div>
+				<div class="portlet-body">
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Теги:</label>
+
+						<div class="col-md-9">
+							<input type="hidden" name="tags" value="{{ tags.eventsString|join(';') }}"/>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Персоны:</label>
+
+						<div class="col-md-9">
+							<input type="hidden" name="persons" value="{{ tags.personsString|join(';') }}"/>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Фильмы:</label>
+
+						<div class="col-md-9">
+							<input type="hidden" name="movies" value="{{ tags.moviesString|join(';') }}"/>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<div class="form-actions right">
+
+			{% if post %}
+
+				<button class="btn btn-m btn-danger" type="button" data-action="poll-remove">Удалить фото-статью</button>
+				<button class="btn btn-m btn-success" type="submit">Обновить фото-статью&nbsp;<i class="fa fa-check"></i></button>
+
+			{% else %}
+
+				{#<button class="btn btn-m btn-info" type="button" data-action="submit-just-save">Создать опрос</button>#}
+				<button class="btn btn-m btn-success" type="submit">Создать фото-статью&nbsp;<i class="fa fa-check"></i></button>
+
+			{% endif %}
+		</div>
+	</form>
+
+{% endblock %}

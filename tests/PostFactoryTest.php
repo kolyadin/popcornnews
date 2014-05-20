@@ -14,7 +14,7 @@ use popcorn\model\dataMaps\FashionBattleDataMap;
 use popcorn\model\dataMaps\PollPostDataMap;
 use popcorn\model\dataMaps\TagDataMap;
 use popcorn\model\posts\FashionBattlePost;
-use popcorn\model\posts\NewsPost;
+use popcorn\model\posts\PhotoArticlePost;
 use popcorn\model\posts\NewsPostBuilder;
 use popcorn\model\posts\PollPost;
 use popcorn\model\posts\PostFactory;
@@ -31,7 +31,7 @@ use popcorn\tests\TestDataGenerator;
 class PostFactoryTest extends PopcornTest {
 
     public function testDefaultNewsPost() {
-        $post = new NewsPost();
+        $post = new PhotoArticlePost();
         $post->setAnnounce('test');
 
         $tag = new Tag('tag');
@@ -96,7 +96,7 @@ class PostFactoryTest extends PopcornTest {
     }
 
     public function testEditPost() {
-        $post = new NewsPost();
+        $post = new PhotoArticlePost();
         $post->setAnnounce('test');
 
         $tag = new Tag('tag');

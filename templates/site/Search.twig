@@ -45,7 +45,7 @@
 									</div>
 									<div class="b-search__body">
 										<h2 class="b-search__title"><a href="/news/{{ post.id }}" title="{{ post.name|e }}">{{ post.name|e }}</a></h2>
-										<p class="b-search__text">{{ post.announceFriendly(100) }}</p>
+										<p class="b-search__text">{{ post.announce }}</p>
 										<a class="b-search__comments b-comments-status" href="/news/{{ post.id }}#comments">
 
 											{% if post.comments == 0 %}

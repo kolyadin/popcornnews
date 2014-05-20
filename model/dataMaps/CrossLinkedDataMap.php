@@ -48,6 +48,7 @@ abstract class CrossLinkedDataMap extends DataMap {
         $this->checkStatement($this->findLinkedStatement);
         $this->findLinkedStatement->bindValue(':id', $id);
         $this->findLinkedStatement->execute();
+
         $items = $this->findLinkedStatement->fetchAll(\PDO::FETCH_CLASS, $this->class);
 
         foreach($items as &$item) {

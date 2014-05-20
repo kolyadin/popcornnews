@@ -43,7 +43,7 @@ use popcorn\lib\PDOHelper;
 use popcorn\model\voting\UpDownVoting;
 use popcorn\model\persons\Person;
 use popcorn\model\groups\Group;
-use popcorn\model\posts\NewsPost;
+use popcorn\model\posts\PhotoArticlePost;
 use popcorn\model\system\users\User;
 
 class AjaxController extends GenericController implements ControllerInterface {

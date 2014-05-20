@@ -10,6 +10,7 @@ namespace popcorn\model\persons;
 use popcorn\lib\PDOHelper;
 use popcorn\model\content\ImageFactory;
 use popcorn\model\dataMaps\DataMap;
+use popcorn\model\dataMaps\DataMapHelper;
 use popcorn\model\dataMaps\PersonDataMap;
 use popcorn\model\dataMaps\PersonImageDataMap;
 use popcorn\model\dataMaps\PersonsLinkDataMap;
@@ -27,14 +28,20 @@ class PersonFactory {
 	private static $dataMap = null;
 
 	/**
-	 * @param int $id
-	 *
+	 * @param $personId
+	 * @param array $options
 	 * @return Person
 	 */
-	public static function getPerson($id) {
-		self::checkDataMap();
+	public static function getPerson($personId, array $options = []) {
+		$options = array_merge([
+			'itemCallback' => [
+				'popcorn\\model\\dataMaps\\PersonDataMap' => PersonDataMap::WITH_PHOTO
+			]
+		], $options);
 
-		return self::$dataMap->findById($id);
+		$dataMap = new PersonDataMap(new DataMapHelper($options['itemCallback']));
+
+		return $dataMap->findById($personId);
 	}
 
 	public static function getPersonPhotos(Person $person) {

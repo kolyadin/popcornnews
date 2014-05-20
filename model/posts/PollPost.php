@@ -16,7 +16,7 @@ use popcorn\model\voting\VotingFactory;
  * Class PollPost
  * @package popcorn\model\posts
  */
-class PollPost extends NewsPost {
+class PollPost extends PhotoArticlePost {
 
     /**
      * @var Voting

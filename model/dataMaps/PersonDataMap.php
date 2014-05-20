@@ -192,6 +192,12 @@ class PersonDataMap extends DataMap {
 //		$this->attachImages($item);
 	}
 
+	public function findById($personId) {
+		return $this->fetchOne('SELECT * FROM pn_persons WHERE id = :personId LIMIT 1', [
+			':personId' => $personId
+		]);
+	}
+
 	/**
 	 * @param Person $item
 	 */
@@ -328,11 +334,11 @@ class PersonDataMap extends DataMap {
 	 * @param $count
 	 * @return array
 	 */
-	public function getFilmography($personId, $from, $count){
+	public function getFilmography($personId, $from, $count) {
 
 		$sql = 'select movie.* from ka_movies movie join pn_persons_movies p_movie on (p_movie.movieId = movie.id) where p_movie.personId = :personId order by movie.year desc';
 
-		$sql .= $this->getLimitString($from,$count);
+		$sql .= $this->getLimitString($from, $count);
 
 		$stmt = $this->prepare($sql);
 		$stmt->execute([
@@ -347,7 +353,7 @@ class PersonDataMap extends DataMap {
 	 * @param $personId
 	 * @return int
 	 */
-	public function getFilmographyCount($personId){
+	public function getFilmographyCount($personId) {
 
 		$stmt = $this->prepare('select count(*) from ka_movies movie join pn_persons_movies p_movie on (p_movie.movieId = movie.id) where p_movie.personId = :personId');
 		$stmt->execute([
