@@ -1,0 +1,124 @@
+{% extends '/Generic.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% block HeadEnd %}
+
+	<style type="text/css">
+		.table-items a {
+			font-size: 13px;
+		}
+
+		.table-items .item-link a {
+			font-size: 13px;
+			height:auto;
+			width:auto;
+			white-space:pre-wrap;
+			text-align: left;
+		}
+
+		.table-items .item-date {
+			white-space: nowrap;
+			font-size: 13px;
+		}
+
+		.table-items .stat .progress {
+			margin-bottom: 5px;
+		}
+
+		.table-items .stat .progress-bar strong {
+			padding-left: 5px;
+		}
+
+		.table-items .stat .label {
+			margin-right: 5px;
+		}
+	</style>
+
+{% endblock %}
+
+{% block PageTop %}
+
+	<h3 class="page-title">
+		Список фото-статей
+		<small>просмотр сводной информации</small>
+	</h3>
+
+	<ul class="page-breadcrumb breadcrumb">
+		<li>
+			<i class="fa fa-home"></i>
+			<a href="/office">Консоль</a>
+			<i class="fa fa-angle-right"></i>
+		</li>
+		<li>
+			<a href="/office/photoarticles">Фото-статьи</a>
+			<i class="fa"></i>
+		</li>
+	</ul>
+
+{% endblock %}
+
+{% block PageContent %}
+
+	{% if posts|length %}
+
+		<div style="float:left;margin:17px 0;">
+			<a class="btn btn-success" href="/office/photoarticle_create"><i class="fa fa-plus" style="position:relative;top:1px;padding-right: 10px;"></i>добавить фото-статью</a>
+		</div>
+
+		<div style="float: right;">
+			{{ html.paginator(paginator.pages,paginator.active,'/office/photoarticles/page%u') }}
+		</div>
+
+		<div class="clearfix"></div>
+
+
+		<div class="table-responsive">
+			<table class="table table-hover table-items">
+				<thead>
+					<tr>
+						<th></th>
+						<th style="white-space: nowrap;">Дата публикации</th>
+						<th></th>
+						<th style="width: 100%;">Заголовок фото-статьи</th>
+					</tr>
+				</thead>
+				<tbody>
+				{% for post in posts %}
+					<tr data-post-id="{{ post.id }}">
+						<td style="white-space: nowrap;">
+							<a class="btn btn-default btn-xs tooltips" data-original-title="Редактировать фото-статью"
+							   data-placement="top" href="/office/photoarticle{{ post.id }}"><i class="fa fa-edit"></i></a>
+							<a class="btn btn-danger btn-xs tooltips" data-original-title="Удалить фото-статью"
+							   data-placement="top" href="/office/photoarticle{{ post.id }}/remove"><i class="fa fa-trash-o"></i></a>
+						</td>
+						<td class="item-date">{{ post.createDate|ruDate('j.m.Y H:i') }}</td>
+						<td><a class="btn btn-info tooltips" data-original-title="{{ post.comments|ruNumber('%s',['комментарий','комментария','комментариев']) }}" href="/office/post{{ post.id }}/comments">{{ post.comments }}</a></td>
+						<td class="item-link"><a class="btn btn-default" href="/office/photoarticle{{ post.id }}">{{ post.name|e }}</a></td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+
+		<div style="float:left;margin-top:17px;">
+			<a class="btn btn-success" href="/office/photoarticle_create"><i class="fa fa-plus" style="position:relative;top:1px;padding-right: 10px;"></i>добавить фото-статью</a>
+		</div>
+
+		<div style="float: right;">
+			{{ html.paginator(paginator.pages,paginator.active,'/office/photoarticles/page%u') }}
+		</div>
+
+		<div class="clearfix"></div>
+
+	{% else %}
+
+		<div class="note note-info">
+			<h4 class="note-heading">Нет добавленных фото-статей</h4>
+			<p>
+				<a class="btn btn-success" href="/office/photoarticle_create"><i class="fa fa-plus" style="position:relative;top:1px;padding-right: 10px;"></i>добавить фото-статью</a>
+			</p>
+		</div>
+
+	{% endif %}
+
+{% endblock %}

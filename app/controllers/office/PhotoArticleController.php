@@ -63,6 +63,14 @@ class PhotoArticleController extends GenericController implements ControllerInte
 				':postId' => '[1-9][0-9]*'
 			])
 			->via('GET', 'POST');
+
+		$this
+			->getSlim()
+			->map('/photoarticle:postId/remove', [$this, 'photoArticleRemove'])
+			->conditions([
+				':postId' => '[1-9][0-9]*'
+			])
+			->via('GET', 'POST');
 	}
 
 	public function __construct() {
@@ -79,11 +87,11 @@ class PhotoArticleController extends GenericController implements ControllerInte
 		$onPage = 50;
 		$totalFound = 0;
 
-		$posts = PostFactory::getPosts(['orderBy' => ['createDate' => 'desc']], ($page - 1) * $onPage, $onPage, $totalFound);
+		$posts = PhotoArticleFactory::getPhotoArticles(['orderBy' => ['createDate' => 'desc']], ($page - 1) * $onPage, $onPage, $totalFound);
 
 		$this
 			->getTwig()
-			->display('news/List.twig', [
+			->display('news/photoArticle/PhotoArticleList.twig', [
 				'posts'     => $posts,
 				'paginator' => [
 					'pages'  => ceil($totalFound / $onPage),
@@ -133,11 +141,11 @@ class PhotoArticleController extends GenericController implements ControllerInte
 		if ($postId > 0 && $request->get('action') == 'remove') {
 			$this
 				->getTwig()
-				->display('news/PostRemove.twig', $twigData);
+				->display('news/photoArticle/PostRemove.twig', $twigData);
 		} else {
 			$this
 				->getTwig()
-				->display('news/PhotoArticleForm.twig', $twigData);
+				->display('news/photoArticle/PhotoArticleForm.twig', $twigData);
 		}
 	}
 
@@ -228,5 +236,25 @@ class PhotoArticleController extends GenericController implements ControllerInte
 		} else {
 			$this->getSlim()->redirect(sprintf('/office/photoarticle%u?status=created', $post->getId()));
 		}
+	}
+
+	public function photoArticleRemove($postId) {
+		$request = $this->getSlim()->request;
+
+		$post = PhotoArticleFactory::getPhotoArticle($postId);
+
+		if (!$post) {
+			$this->getSlim()->notFound();
+		}
+
+		if ($request->getMethod() == 'POST') {
+			PhotoArticleFactory::removePhotoArticle($post->getId());
+			$this->getSlim()->redirect('/office/photoarticles');
+		}
+
+
+		$this->getTwig()->display('news/photoArticle/PhotoArticleRemove.twig', [
+			'post' => $post
+		]);
 	}
 }

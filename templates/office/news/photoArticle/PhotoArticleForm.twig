@@ -399,8 +399,8 @@
 
 	{% if post %}
 		<h3 class="page-title">
-			фото-статья
-			<small>&quot;{{ post.name|e }}&quot;</small>
+			&quot;{{ post.name|e }}&quot;
+			<small>фото-статья</small>
 		</h3>
 	{% else %}
 		<h3 class="page-title">
@@ -415,7 +415,7 @@
 			<i class="fa fa-angle-right"></i>
 		</li>
 		<li>
-			<a href="/office/photoarticles">Новости</a>
+			<a href="/office/photoarticles">Фото-статьи</a>
 			<i class="fa fa-angle-right"></i>
 		</li>
 		{% if post %}
