@@ -5,49 +5,41 @@
 	<title>{{ profile.nick|e }} - popcornnews</title>
 
 	<meta name="description" content="Новостной блог" />
-	<meta name="keywords"    content="попкорнньюз, popcornnews, блог звезды, новости звезд, звездные новости" />
+	<meta name="keywords" content="попкорнньюз, popcornnews, блог звезды, новости звезд, звездные новости" />
 
-	{{ parent() }}
+	<script type="text/javascript">
+		$(function(){
+			$('select[name=city]');
 
-    {% if profileHelper.isMyProfile %}
-        <script type="text/javascript">
-            $(function(){
-                $('#profile-status a').on('click',function(){
+			$('select[name=country]').on('change',function(){
+				$.getJSON('/ajax/cities/'+$(this).find('option:selected').val(),function(json){
+					var html = '';
+					for (city in json){
+						html += '<option value="'+ json[city]['id'] + '"';
+						{% if profile.userInfo.cityId %}
+							if (json[city]['id'] == {{ profile.userInfo.cityId }}) {
+								html += ' selected="selected" ';
+							}
+						{% endif %}
+						html += '>'+ json[city]['name'] +'</option>';
+					}
 
-                    var offset = $(this).offset();
+					$('select[name=city]').html('<option value="">-выберите-</option>'+html);
+				});
+			})
+			.change();
+		});
+	</script>
 
-                    $('#status-window')
-                      .css({
-                        top: offset.top + 'px',
-                        left: offset.left + 'px'
-                        })
-                      .show()
-                    ;
-
-                    return false;
-                });
-
-                $('#status-window input').on('keydown',function(event){
-                    var statusText = $(this).val();
-
-                    if (event.which == 13){
-                        $.post('/ajax/status/update',{ 'statusMessage' : statusText },function(response){
-
-                            if (response.status == 'success'){
-                                $('#status-window').hide();
-                                $('#profile-status a strong').html(statusText);
-
-                            }
-
-                        },'json');
-                    }
-                });
-            });
-        </script>
-    {% endif %}
+	<style type="text/css">
+		.system-message {
+			background-color: #f0f0f0;
+			padding: 20px 30px;
+		}
+	</style>
 
 {% endblock %}
-
+{#
 {% block bodyStart %}
 
 	<div id="status-window">
@@ -69,156 +61,139 @@
 	</div>
 
 {% endblock %}
-
+#}
 {% block profile %}
 
-	<h1>{{ profile.nick|e }}</h1>
+<div class="b-grid__g8">
+	<article class="b-text b-register">
 
-    {% if profileHelper.isMyProfile %}
-        <div class="status" id="profile-status">
-        </div>
-    {% else %}
-        <div class="status" id="profile-status">
-            <a href="#">
-                {% if profile.extra('status') %}
-                    <strong>{{ profile.extra('status').statusMessage }}</strong>
-                {% endif %}
-            </a>
-        </div>
-    {% endif %}
+		<h1>{{ profile.nick|e }}</h1>
 
+		{% if profileHelper.isMyProfile %}
+			<div class="status" id="profile-status">
+			</div>
+		{% else %}
+			<div class="status" id="profile-status">
+				<a href="#">
+					{% if profile.extra('status') %}
+						<strong>{{ profile.extra('status').statusMessage }}</strong>
+					{% endif %}
+				</a>
+			</div>
+		{% endif %}
 
+		{% include '/profile/ProfileMenu.twig' %}
 
-	{% include '/profile/ProfileMenu.twig' %}
+		{% if userError == 103 %}
+			<p><strong>&lowast;&nbsp;Пароли не совпадают</strong></p>
+		{% endif %}
 
-	{% if userError == 103 %}
-		<p><strong>&lowast;&nbsp;Пароли не совпадают</strong></p>
-	{% endif %}
-
-	<div class="info">
-		<form class="questionnaireForm" action="/profile/{{ profile.id }}/form" method="POST" enctype="multipart/form-data">
+		<form class="b-form" action="/profile/{{ profile.id }}/form" method="POST" enctype="multipart/form-data" name="fr">
 			<input type="hidden" name="type" value="profile">
 			<input type="hidden" name="action" value="edit">
-			<br><label>
+			<label>
 				<strong>Ник <sup>*</sup></strong>
-				<input type="text" name="nick" value="{{ profile.nick }}" readonly="readonly">
+				<input type="text" value="{{ profile.nick|e }}" name="nick" readonly="readonly">
 			</label>
-			<br><label>
-				<strong>Имя</strong>
-				<input type="text" name="name" value="{{ profile.userInfo.name }}">
+			<label>
+				<strong>Имя <sup></sup></strong>
+				<input type="text" value="{{ profile.userInfo.name|e }}" name="name">
 			</label>
-			<br><label>
-				<strong>Ваше кредо <br>(не более 250 символов)</strong>
+			<label>
+				<strong>Ваше кредо</strong>
 				<textarea name="credo">{{ profile.userInfo.credo|e }}</textarea>
 			</label>
-			<fieldset>
-				<strong>Аватара<br />84x84 точки</strong>
-				<span class="cont">
-					{% if profile.avatar.id %}<img src="{{ profile.avatar.url('140x') }}">{% endif %}
-					<input type="file" name="avatara" value="">
-				</span>
-			</fieldset>
-			<fieldset>
-				{% set birthY = profile.userInfo.birthDate|date("Y") %}
-				{% set birthM = profile.userInfo.birthDate|date("m") %}
-				{% set birthD = profile.userInfo.birthDate|date("d") %}
-				<strong>Дата рождения <sup>*</sup></strong>
-				<span class="cont">
-					<select name="day">
-						{% for i in 1..31 %}
-							<option value="{{ i }}" {% if i == birthD %}selected{% endif %}>{{ i }}</option>
-						{% endfor %}
-					</select>
-					<select name="month">
-						<option value="1" {% if 1 == birthM %}selected="selected"{% endif %}}>января</option>
-						<option value="2" {% if 2 == birthM %}selected="selected"{% endif %}}>февраля</option>
-						<option value="3" {% if 3 == birthM %}selected="selected"{% endif %}}>марта</option>
-						<option value="4" {% if 4 == birthM %}selected="selected"{% endif %}}>апреля</option>
-						<option value="5" {% if 5 == birthM %}selected="selected"{% endif %}}>мая</option>
-						<option value="6" {% if 6 == birthM %}selected="selected"{% endif %}}>июня</option>
-						<option value="7" {% if 7 == birthM %}selected="selected"{% endif %}}>июля</option>
-						<option value="8" {% if 8 == birthM %}selected="selected"{% endif %}}>августа</option>
-						<option value="9" {% if 9 == birthM %}selected="selected"{% endif %}}>сентября</option>
-						<option value="10" {% if 10 == birthM %}selected="selected"{% endif %}}>октября</option>
-						<option value="11" {% if 11 == birthM %}selected="selected"{% endif %}}>ноября</option>
-						<option value="12" {% if 12 == birthM %}selected="selected"{% endif %}}>декабря</option>
-					</select>
-					<select name="year">
-						{% for i in "now"|date('Y')..1900 %}
-							<option value="{{ i }}" {% if i == birthY %}selected{% endif %}>{{ i }}</option>
-						{% endfor %}
-					</select>
-					<span>показывать в профиле</span>
-					<input type="checkbox" name="show_bd" value="1" {% if profile.userSettings.showBirthDate == 1 %}checked="checked"{% endif %} />
-				</span>
-			</fieldset>
-			<br><label>
-				<strong>Новый пароль</strong>
-				<input type="password" name="pass1" value="">
+			<label>
+				<strong>Аватара</strong>
+				{% if profile.avatar.id %}<img src="{{ profile.avatar.url('140x') }}">{% endif %}
+					<input type="file" value="" name="avatara">
 			</label>
-			<br><label>
+			<label>
+				<strong>Пароль</strong>
+				<input type="password" value="" name="pass1">
+			</label>
+			<label>
 				<strong>Повторите пароль</strong>
-				<input type="password" name="pass2" value="">
+				<input type="password" value="" name="pass2">
 			</label>
-			<br><label><strong>Страна</strong>
+			<fieldset>
+				<strong>Дата рождения</strong>
+				<span class="cont">
+					{% set birthY = profile.userInfo.birthDate|date("Y") %}
+					{% set birthM = profile.userInfo.birthDate|date("m") %}
+					{% set birthD = profile.userInfo.birthDate|date("d") %}
+					{% spaceless %}
+					<select name="day">
+						{% for day in 1..31 %}
+							<option {% if birthD == loop.index %}selected="true"{% endif %}>{{ day }}</option>
+						{% endfor %}
+					</select>
+					{% endspaceless %}
+
+					<select name="month">
+						{% for month in ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'] %}
+							<option {% if birthM == loop.index %}selected="true"{% endif %} value="{{ loop.index }}">{{ month }}</option>
+						{% endfor %}
+					</select>
+
+					{% spaceless %}
+					<select name="year">
+						{% for year in 1900.."now"|date("Y") %}
+							<option {% if birthY == year %}selected="true"{% endif %} value="{{ year }}">{{ year }}</option>
+						{% endfor %}
+					</select>
+					{% endspaceless %}
+					<span>показывать в профиле</span>
+					<input type="checkbox" {% if profile.userSettings.showBirthDate == 1 %}checked="true" {% endif %} value="1" name="show_bd">
+				</span>
+			</fieldset>
+			<label><strong>Страна</strong>
 				<select name="country">
-					{% for c in countries %}
-						<option value="{{ c.id }}" {% if profile.countryId == c.id %}selected="selected"{% endif %}>{{ c.name }}</option>
+					{% for country in countries %}
+						<option value="{{ country.id }}" {% if profile.userInfo.countryId == country.id %}selected="selected"{% endif %}>{{ country.name|e }}</option>
 					{% endfor %}
-					<option value="0" {% if profile.cityId == 0 %}selected="selected"{% endif %}>Другая...</option>
 				</select>
 			</label>
-			<br><label>
-				<strong>Город <sup>*</sup></strong>
-				<select name="city">
-				</select>
+			<label>
+				<strong>Город</strong>
+				<select name="city" class="city"></select>
 			</label>
-			<br><label>
+			<label>
 				<strong>Пол</strong>
 				<select name="sex">
-					<option value="0">-</option>
-					<option value="1" {% if profile.userInfo.sex == 1 %}selected="selected"{% endif %}>мужской</option>
-					<option value="2" {% if profile.userInfo.sex == 2 %}selected="selected"{% endif %}>женский</option>
+					{% for sex in ['-','мужской','женский'] %}
+						<option {% if profile.userInfo.sex == loop.index0 %}selected="true"{% endif %} value="{{ loop.index0 }}">{{ sex }}</option>
+					{% endfor %}
 				</select>
 			</label>
-			<br><label>
+			<label>
 				<strong>Семья</strong>
 				<select name="family">
-					<option value="0"{% if profile.userInfo.married == 0 %}selected="selected"{% endif %}>-</option>
-					<option value="1"{% if profile.userInfo.married == 1 %}selected="selected"{% endif %}>женат/замужем</option>
-					<option value="2"{% if profile.userInfo.married == 2 %}selected="selected"{% endif %}>холост/холоста</option>
+				{% for family in ['-','женат/замужем','холост/холоста'] %}
+					<option {% if profile.userInfo.married == loop.index0 %}selected="true"{% endif %} value="{{ loop.index0 }}">{{ family }}</option>
+				{% endfor %}
 				</select>
 			</label>
-			<br><label>
+			<label>
 				<strong>Я хотел{% if profile.userInfo.sex == 2 %}а{% endif %} бы встретиться с</strong>
+				{% spaceless %}
 				<select name="meet_actor">
 					<option value="0">ни с кем</option>
 					{% for person in persons %}
-						<option value="{{ person.id }}" {% if profile.userInfo.meetPerson.id == person.id %}selected="selected"{% endif %}>{{ person.name }}</option>
+						<option {% if profile.userInfo.meetPerson.id == person.id %}selected="true"{% endif %} value="{{ person.id }}">{{ person.name|e }}</option>
 					{% endfor %}
 				</select>
+				{% endspaceless %}
 			</label>
-			<br><label class="long">
-				<strong>Я хочу получать ежедневную рассылку новостей с сайта</strong>
-				<input type="checkbox" name="daily_sub" value="1" {% if profile.userSettings.dailySubscribe == 1 %}checked="checked"{% endif %}>
-			</label>
-			<br><label class="long">
-				<strong>Я хочу получать уведомления о новых сообщения</strong>
-				<input type="checkbox" name="alert_on_new_mail" value="1" {% if profile.userSettings.alertMessage == 1 %}checked="checked"{% endif %}>
-			</label>
-			<br><label class="long">
-				<strong>Я хочу получать уведомления о новых записях в гостевой</strong>
-				<input type="checkbox" name="alert_on_new_guest_items" value="1" {% if profile.userSettings.alertGuestBook == 1 %}checked="checked"{% endif %}>
-			</label>
-			<br><label class="long">
-				<strong>Принимать приглашения в группу</strong>
-				<input type="checkbox" name="can_invite_to_community_groups" value="1" {% if profile.userSettings.canInvite == 1 %}checked="checked"{% endif %}>
-			</label>
-			<br><input type="submit" value="сохранить" /><label></label>
+			<span><input type="checkbox" {% if profile.userSettings.dailySubscribe == 0 %}{% else %}checked="true"{% endif %} value="1" name="daily_sub">&nbsp;Я хочу получать ежедневную рассылку новостей с сайта </span><br><br>
+			<span><input type="checkbox" {% if profile.userSettings.alertMessage == 0 %}{% else %}checked="true"{% endif %} value="1" name="daily_sub">&nbsp;Я хочу получать уведомления о новых сообщения </span><br><br>
+			<span><input type="checkbox" {% if profile.userSettings.alertGuestBook == 0 %}{% else %}checked="true"{% endif %} value="1" name="daily_sub">&nbsp;Я хочу получать уведомления о новых записях в гостевой </span><br><br>
+			<span><input type="checkbox" {% if profile.userSettings.canInvite == 0 %}{% else %}checked="true"{% endif %} value="1" name="daily_sub">&nbsp;Принимать приглашения в группу </span><br><br>
+			<br><br>
+			<input type="submit" class="b-firm-grad" value="сохранить">
+			<div class=" loader "></div>
 		</form>
-
-	</div>
-
-	<div class="clearfix"></div>
+	</article>
+</div>
 
 {% endblock %}
