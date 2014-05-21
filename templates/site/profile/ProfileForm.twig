@@ -186,9 +186,9 @@
 				{% endspaceless %}
 			</label>
 			<span><input type="checkbox" {% if profile.userSettings.dailySubscribe == 0 %}{% else %}checked="true"{% endif %} value="1" name="daily_sub">&nbsp;Я хочу получать ежедневную рассылку новостей с сайта </span><br><br>
-			<span><input type="checkbox" {% if profile.userSettings.alertMessage == 0 %}{% else %}checked="true"{% endif %} value="1" name="daily_sub">&nbsp;Я хочу получать уведомления о новых сообщения </span><br><br>
-			<span><input type="checkbox" {% if profile.userSettings.alertGuestBook == 0 %}{% else %}checked="true"{% endif %} value="1" name="daily_sub">&nbsp;Я хочу получать уведомления о новых записях в гостевой </span><br><br>
-			<span><input type="checkbox" {% if profile.userSettings.canInvite == 0 %}{% else %}checked="true"{% endif %} value="1" name="daily_sub">&nbsp;Принимать приглашения в группу </span><br><br>
+			<span><input type="checkbox" {% if profile.userSettings.alertMessage == 0 %}{% else %}checked="true"{% endif %} value="1" name="alert_on_new_mail">&nbsp;Я хочу получать уведомления о новых сообщения </span><br><br>
+			<span><input type="checkbox" {% if profile.userSettings.alertGuestBook == 0 %}{% else %}checked="true"{% endif %} value="1" name="alert_on_new_guest_items">&nbsp;Я хочу получать уведомления о новых записях в гостевой </span><br><br>
+			<span><input type="checkbox" {% if profile.userSettings.canInvite == 0 %}{% else %}checked="true"{% endif %} value="1" name="can_invite_to_community_groups">&nbsp;Принимать приглашения в группу </span><br><br>
 			<br><br>
 			<input type="submit" class="b-firm-grad" value="сохранить">
 			<div class=" loader "></div>
