@@ -2,7 +2,7 @@
 
 namespace popcorn\cli\command\post;
 
-use popcorn\model\posts\PhotoArticlePost;
+use popcorn\model\posts\NewsPost;
 use Symfony\Component\Console\Command\Command,
 	Symfony\Component\Console\Input\InputArgument,
 	Symfony\Component\Console\Input\InputInterface,
@@ -29,7 +29,7 @@ class Publish extends Command {
 		$output->writeln('Поиск запланированных новостей...');
 
 
-		$findStmt->bindValue(':statusPlanned', PhotoArticlePost::STATUS_PLANNED, \PDO::PARAM_INT);
+		$findStmt->bindValue(':statusPlanned', NewsPost::STATUS_PLANNED, \PDO::PARAM_INT);
 		$findStmt->bindValue(':nowTime', time(), \PDO::PARAM_INT);
 		$findStmt->execute();
 
@@ -45,7 +45,7 @@ class Publish extends Command {
 
 		while ($table = $findStmt->fetch(\PDO::FETCH_ASSOC)) {
 
-			$updateStmt->bindValue(':statusPublished',PhotoArticlePost::STATUS_PUBLISHED,\PDO::PARAM_INT);
+			$updateStmt->bindValue(':statusPublished',NewsPost::STATUS_PUBLISHED,\PDO::PARAM_INT);
 			$updateStmt->bindValue(':postId',$table['id'],\PDO::PARAM_INT);
 			$updateStmt->execute();
 

@@ -14,7 +14,7 @@ use popcorn\model\posts\fashionBattle\FashionBattle;
 use popcorn\model\posts\fashionBattle\FashionBattleFactory;
 use popcorn\model\posts\Movie;
 use popcorn\model\posts\MovieFactory;
-use popcorn\model\posts\PhotoArticlePost;
+use popcorn\model\posts\NewsPost;
 use popcorn\model\posts\PostFactory;
 use popcorn\model\tags\Tag;
 use popcorn\model\tags\TagFactory;
@@ -154,7 +154,7 @@ class PostController extends GenericController implements ControllerInterface {
 			$post = $this->newsDataMap->findById($postId);
 			$post->setEditDate(new \DateTime('now'));
 		} else {
-			$post = new PhotoArticlePost();
+			$post = new NewsPost();
 		}
 
 		$post->setName($request->post('name'));

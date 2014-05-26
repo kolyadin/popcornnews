@@ -51,7 +51,7 @@ class ImportPhotoArticles extends Command {
 
 
 		$this->stmtInsertPost =
-			$this->pdo->prepare('insert into pn_photoarticles set id = :id, name = :name, createDate = :createDate, editDate = :editDate, views = :views');
+			$this->pdo->prepare('insert into pn_photoarticles set id = :id, name = :name, createDate = :createDate, editDate = :editDate, views = :views, imagesCount = :imagesCount');
 
 		$this->stmtInsertPhoto =
 			$this->pdo->prepare('insert into pn_photoarticles_images set postId = :postId, imageId = :imageId, seq = :seq, oldId = :oldId');
@@ -60,7 +60,7 @@ class ImportPhotoArticles extends Command {
 			$this->pdo->prepare('insert into pn_photoarticles_tags set postId = :postId, type = :type, entityId = :entityId');
 
 		$this->stmtInsertPerson =
-			$this->pdo->prepare('insert into pn_photoarticles_images_persons set imageId = :imageId, personId = :personId');
+			$this->pdo->prepare('insert into pn_photoarticles_images_persons set postId = :postId, imageId = :imageId, personId = :personId');
 	}
 
 	private function insertPosts(InputInterface $input, OutputInterface $output) {
@@ -71,13 +71,6 @@ class ImportPhotoArticles extends Command {
 
 			$output->writeln("\t<info>Фото-статья #{$table['id']}");
 
-			$this->stmtInsertPost->execute([
-				':id'         => $table['id'],
-				':name'       => $table['title'],
-				':createDate' => $table['date'],
-				':editDate'   => $table['date'],
-				':views'      => $table['views']
-			]);
 
 			//region теги
 			$this->stmtFindTags->execute([':articleId' => $table['id']]);
@@ -139,12 +132,17 @@ class ImportPhotoArticles extends Command {
 
 					while ($personId = $this->stmtFindPersons->fetch(\PDO::FETCH_COLUMN)) {
 						$this->stmtInsertPerson->execute([
+							':postId'   => $table['id'],
 							':imageId'  => $image->getId(),
 							':personId' => $personId
 						]);
 					}
 
 					$output->writeln(" готово</comment>");
+
+					$output->write("\t\t<info>Генерим мелкую фотку 200x для админки");
+					$image->getThumb('200x'); //Мелкая фотка для админки (все-равно понадобится)
+					$output->writeln(" готово</info>");
 
 				} catch (Exception $e) {
 					$output->write(" неудачно</comment>\n");
@@ -155,6 +153,15 @@ class ImportPhotoArticles extends Command {
 
 			//endregion
 
+			$this->stmtInsertPost->execute([
+				':id'          => $table['id'],
+				':name'        => $table['title'],
+				':createDate'  => $table['date'],
+				':editDate'    => $table['date'],
+				':views'       => $table['views'],
+				':imagesCount' => $seq-1
+			]);
+
 		}
 	}
 
@@ -164,7 +171,7 @@ class ImportPhotoArticles extends Command {
 			$output->write('<info>Чистим таблицы</info>');
 
 			PDOHelper::truncate([
-				'pn_photoarticles', 'pn_photoarticles_images', 'pn_photoarticles_tags'
+				'pn_photoarticles', 'pn_photoarticles_images', 'pn_photoarticles_tags', 'pn_photoarticles_images_persons'
 			]);
 
 			$output->writeln('<comment> готово</comment>');

@@ -10,7 +10,7 @@ use popcorn\model\dataMaps\NewsCommentDataMap;
 use popcorn\model\dataMaps\NewsPostDataMap;
 use popcorn\model\dataMaps\PersonDataMap;
 use popcorn\model\dataMaps\TagDataMap;
-use popcorn\model\posts\PhotoArticlePost;
+use popcorn\model\posts\NewsPost;
 use popcorn\model\posts\PostCategory;
 use popcorn\model\posts\PostFactory;
 use popcorn\model\tags\TagFactory;
@@ -122,7 +122,7 @@ class PostController extends GenericController implements ControllerInterface {
 
 		$posts = PostFactory::findByCategory(
 			$categoryId,
-			['status' => PhotoArticlePost::STATUS_PUBLISHED],
+			['status' => NewsPost::STATUS_PUBLISHED],
 			($page - 1) * $onPage,
 			$onPage,
 			$totalFound
@@ -154,7 +154,7 @@ class PostController extends GenericController implements ControllerInterface {
 
 		$posts = PostFactory::findByTag(
 			$tagId,
-			['status' => PhotoArticlePost::STATUS_PUBLISHED],
+			['status' => NewsPost::STATUS_PUBLISHED],
 			($page - 1) * $onPage,
 			$onPage,
 			$totalFound
@@ -187,7 +187,7 @@ class PostController extends GenericController implements ControllerInterface {
 		$totalFound = 0;
 
 		$posts = PostFactory::getPosts(
-			['status' => PhotoArticlePost::STATUS_PUBLISHED],
+			['status' => NewsPost::STATUS_PUBLISHED],
 			($page - 1) * $onPage,
 			$onPage,
 			$totalFound
@@ -269,7 +269,7 @@ class PostController extends GenericController implements ControllerInterface {
 	 */
 	public function post($postId) {
 
-		$post = PostFactory::getPost($postId, ['status' => PhotoArticlePost::STATUS_PUBLISHED]);
+		$post = PostFactory::getPost($postId, ['status' => NewsPost::STATUS_PUBLISHED]);
 
 		if (!$post) {
 			$this->getSlim()->notFound();

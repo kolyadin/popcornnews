@@ -1,4 +1,4 @@
-{% extends '/news/PostGeneric.twig' %}
+{% extends '/news/photoArticle/PhotoArticleGeneric.twig' %}
 
 {% block HeadEnd %}
 
@@ -27,7 +27,7 @@
 						<p><input class="form-control" style="width:450px;" name="imagesTitle[{{ imageId }}]" type="text" placeholder="Название фото" value="{{ title }}"/></p>
 						<p><input class="form-control" style="width:450px;" name="imagesSource[{{ imageId }}]" type="text" placeholder="Источник фото" value="{{ source }}"/></p>
 						<p>
-							<textarea class="form-control" style="width:450px;" name="imagesCaption[{{ imageId }}]" required="true" placeholder="Подпись к фото" cols="30" rows="6">{{ caption }}</textarea>
+							<textarea class="form-control" style="width:450px;" name="imagesCaption[{{ imageId }}]" placeholder="Подпись к фото" cols="30" rows="6">{{ caption }}</textarea>
 						</p>
 						<p>
 							<input type="hidden" name="imagesPerson[{{ imageId }}]" value="{{ persons }}"/>
@@ -40,6 +40,53 @@
 		</div>
 	</script>
 	{% endraw %}
+
+	<script type="text/javascript">
+		var personTags = {
+			handler: function(){
+				var persons = {};
+
+				{% for person in persons %}
+					persons[{{ person.id }}] = '{{ person.name|e("js") }}';
+				{% endfor %}
+
+				$('input[name=persons],input[name^=imagesPerson]').select2({
+					width: '480px',
+					multiple: true,
+					placeholder: "Начни вводить имя персоны...",
+					initSelection: function (element, callback) {
+						{% if persons|length %}
+
+						var data = [];
+
+						$(element.val().split(";")).each(function () {
+							var personId = this;
+
+							data.push({id:personId,text:persons[personId]});
+
+						});
+
+						callback(data);
+						{% endif %}
+					},
+					ajax: {
+						url: '/office/ajax/post/persons',
+						dataType: 'json',
+						data: function (term) {
+							return {
+								term: term
+							};
+						},
+						results: function (data) {
+							return {
+								results: data.persons
+							};
+						}
+					}
+				});
+			}
+		};
+	</script>
 
 
 	{#Приложенные фотки#}
@@ -91,8 +138,11 @@
 									url: data.url,
 									thumbUrl: data.thumb.url,
 									title: '',
-									caption: ''
+									caption: '',
+									persons: ''
 								});
+
+								personTags.handler();
 
 							},
 
@@ -232,46 +282,7 @@
 				}
 			});
 
-			var persons = {};
-
-			{% for person in persons %}
-				persons[{{ person.id }}] = '{{ person.name|e("js") }}';
-     		{% endfor %}
-
-			$('input[name=persons],input[name^=imagesPerson]').select2({
-				width: '480px',
-				multiple: true,
-				placeholder: "Начни вводить имя персоны...",
-				initSelection: function (element, callback) {
-					{% if persons|length %}
-
-					var data = [];
-
-					$(element.val().split(";")).each(function () {
-						var personId = this;
-
-						data.push({id:personId,text:persons[personId]});
-
-					});
-
-					callback(data);
-					{% endif %}
-				},
-				ajax: {
-					url: '/office/ajax/post/persons',
-					dataType: 'json',
-					data: function (term) {
-						return {
-							term: term
-						};
-					},
-					results: function (data) {
-						return {
-							results: data.persons
-						};
-					}
-				}
-			});
+			personTags.handler();
 
 			$('input[name=movies]').select2({
 				width: '480px',
@@ -389,14 +400,14 @@
 		<div class="form-body">
 
 			{% if app.request.get('status') == 'updated' %}
-				<div class="alert alert-success">
+				<div class="alert alert-success alert-hide">
 					<i class="fa fa-check"></i>
 					<strong>Новость обновлена</strong>
 				</div>
 			{% endif %}
 
 			{% if app.request.get('status') == 'created' %}
-				<div class="alert alert-success">
+				<div class="alert alert-success alert-hide">
 					<i class="fa fa-check"></i>
 					<strong>Новость создана</strong>
 				</div>
@@ -521,7 +532,7 @@
 
 			{% if post %}
 
-				<button class="btn btn-m btn-danger" type="button" data-action="poll-remove">Удалить фото-статью</button>
+				<a href="/office/photoarticle{{ post.id }}/remove" class="btn btn-m btn-danger">Удалить фото-статью</a>
 				<button class="btn btn-m btn-success" type="submit">Обновить фото-статью&nbsp;<i class="fa fa-check"></i></button>
 
 			{% else %}

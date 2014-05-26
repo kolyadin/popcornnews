@@ -1,12 +1,13 @@
 <?php
 
-namespace popcorn\model\dataMaps;
+namespace popcorn\model\posts\photoArticle;
 
 use popcorn\lib\mmc\MMC;
 use popcorn\model\content\ImageFactory;
-use popcorn\model\im\CommentKid;
+use popcorn\model\dataMaps\DataMap;
+use popcorn\model\im\CommentPhotoArticle;
 
-class KidsCommentDataMap extends DataMap {
+class PhotoArticleCommentDataMap extends DataMap {
 
 	//region Statements
 
@@ -47,32 +48,32 @@ class KidsCommentDataMap extends DataMap {
 
 	public function __construct() {
 		parent::__construct();
-		$this->class = "popcorn\\model\\im\\CommentKid";
+		$this->class = "popcorn\\model\\im\\CommentPhotoArticle";
 		$this->insertStatement =
-			$this->prepare("INSERT INTO pn_comments_kids (kidId, date, owner, parent, content, editDate, ip, abuse, deleted, level, ratingUp, ratingDown, imagesCount) VALUES (:kidId, :date, :owner, :parent, :content, :editDate, :ip, :abuse, :deleted, :level, :ratingUp, :ratingDown, :imagesCount)");
+			$this->prepare("INSERT INTO pn_comments_photoarticles (postId, date, owner, parent, content, editDate, ip, abuse, deleted, level, ratingUp, ratingDown, imagesCount) VALUES (:postId, :date, :owner, :parent, :content, :editDate, :ip, :abuse, :deleted, :level, :ratingUp, :ratingDown, :imagesCount)");
 
 		$this->updateStatement =
-			$this->prepare("UPDATE pn_comments_kids SET kidId=:kidId, date=:date, owner=:owner, parent=:parent, content=:content, editDate=:editDate, ip=:ip, abuse=:abuse, deleted=:deleted, level=:level, ratingUp=:ratingUp, ratingDown=:ratingDown, imagesCount=:imagesCount WHERE id=:id");
-		$this->deleteStatement = $this->prepare("DELETE FROM pn_comments_kids WHERE id=:id");
-		$this->findOneStatement = $this->prepare("SELECT * FROM pn_comments_kids WHERE id=:id");
-		$this->countStatement = $this->prepare("SELECT count(id) FROM pn_comments_kids WHERE kidId = :kidId");
-		$this->findChildsStatement = $this->prepare("SELECT * FROM pn_comments_kids WHERE parent = :parent AND kidId = :kidId");
+			$this->prepare("UPDATE pn_comments_photoarticles SET postId=:postId, date=:date, owner=:owner, parent=:parent, content=:content, editDate=:editDate, ip=:ip, abuse=:abuse, deleted=:deleted, level=:level, ratingUp=:ratingUp, ratingDown=:ratingDown, imagesCount=:imagesCount WHERE id=:id");
+		$this->deleteStatement = $this->prepare("DELETE FROM pn_comments_photoarticles WHERE id=:id");
+		$this->findOneStatement = $this->prepare("SELECT * FROM pn_comments_photoarticles WHERE id=:id");
+		$this->countStatement = $this->prepare("SELECT count(id) FROM pn_comments_photoarticles WHERE postId = :postId");
+		$this->findChildsStatement = $this->prepare("SELECT * FROM pn_comments_photoarticles WHERE parent = :parent AND postId = :postId");
 		$this->subscribeStatement =
-			$this->prepare("INSERT INTO pn_comments_kids_subscribe (kidId, userId) VALUES (:kidId, :userId)");
+			$this->prepare("INSERT INTO pn_comments_photoarticles_subscribe (postId, userId) VALUES (:postId, :userId)");
 		$this->isSubscribedStatement =
-			$this->prepare("SELECT * FROM pn_comments_kids_subscribe WHERE kidId = :kidId AND userId = :userId");
+			$this->prepare("SELECT * FROM pn_comments_photoarticles_subscribe WHERE postId = :postId AND userId = :userId");
 		$this->subscribedStatement =
-			$this->prepare("SELECT userId FROM pn_comments_kids_subscribe WHERE kidId = :kidId");
+			$this->prepare("SELECT userId FROM pn_comments_photoarticles_subscribe WHERE postId = :postId");
 		$this->unSubscribeStatement =
-			$this->prepare("DELETE FROM pn_comments_kids_subscribe WHERE kidId = :kidId AND userId = :userId");
+			$this->prepare("DELETE FROM pn_comments_photoarticles_subscribe WHERE postId = :postId AND userId = :userId");
 		$this->abuseStatement =
-			$this->prepare("INSERT INTO pn_comments_kids_abuse (commentId, userId) VALUES (:commentId, :userId)");
+			$this->prepare("INSERT INTO pn_comments_photoarticles_abuse (commentId, userId) VALUES (:commentId, :userId)");
 		$this->rateStatement =
-			$this->prepare("INSERT INTO pn_comments_kids_vote (commentId, userId) VALUES (:commentId, :userId)");
+			$this->prepare("INSERT INTO pn_comments_photoarticles_vote (commentId, userId) VALUES (:commentId, :userId)");
 	}
 
 	/**
-	 * @param CommentKid $item
+	 * @param CommentPhotoArticle $item
 	 */
 	protected function itemCallback($item) {
 
@@ -83,9 +84,9 @@ class KidsCommentDataMap extends DataMap {
 	}
 
 	/**
-	 * @param CommentKid $item
+	 * @param CommentPhotoArticle $item
 	 *
-	 * @return CommentKid
+	 * @return CommentPhotoArticle
 	 */
 	protected function prepareItem($item) {
 		if (is_null($item->getId())) {
@@ -102,7 +103,7 @@ class KidsCommentDataMap extends DataMap {
 	}
 
 	/**
-	 * @param CommentKid $item
+	 * @param CommentPhotoArticle $item
 	 */
 	protected function onInsert($item) {
 		$this->attachImages($item);
@@ -111,7 +112,7 @@ class KidsCommentDataMap extends DataMap {
 	}
 
 	/**
-	 * @param CommentKid $item
+	 * @param CommentPhotoArticle $item
 	 */
 	protected function onUpdate($item) {
 		$this->attachImages($item);
@@ -127,27 +128,27 @@ class KidsCommentDataMap extends DataMap {
 
 
 	/**
-	 * @param CommentKid $item
+	 * @param CommentPhotoArticle $item
 	 */
 	private function updateKidCommentsCount($item) {
 
 		$stmt = $this->prepare('UPDATE pn_kids SET commentsCount = commentsCount+1 WHERE id = ?');
-		$stmt->bindValue(1, $item->getKidId(), \PDO::PARAM_INT);
+		$stmt->bindValue(1, $item->getpostId(), \PDO::PARAM_INT);
 		$stmt->execute();
 
 	}
 
 	/**
-	 * @param CommentKid $item
+	 * @param CommentPhotoArticle $item
 	 */
 	private function attachImages($item) {
 
 
-		$stmt = $this->prepare('DELETE FROM pn_comments_kids_images WHERE commentId = ?');
+		$stmt = $this->prepare('DELETE FROM pn_comments_photoarticles_images WHERE commentId = ?');
 		$stmt->bindValue(1, $item->getId(), \PDO::PARAM_INT);
 		$stmt->execute();
 
-		$stmt = $this->prepare('INSERT INTO pn_comments_kids_images SET commentId = ?, imageId = ?');
+		$stmt = $this->prepare('INSERT INTO pn_comments_photoarticles_images SET commentId = ?, imageId = ?');
 
 		foreach ($item->getImages() as $image) {
 			$stmt->bindValue(1, $item->getId(), \PDO::PARAM_INT);
@@ -159,7 +160,7 @@ class KidsCommentDataMap extends DataMap {
 
 	private function getAttachedImages($commentId) {
 
-		$stmt = $this->prepare('SELECT imageId FROM pn_comments_kids_images WHERE commentId = ?');
+		$stmt = $this->prepare('SELECT imageId FROM pn_comments_photoarticles_images WHERE commentId = ?');
 		$stmt->bindValue(1, $commentId, \PDO::PARAM_INT);
 		$stmt->execute();
 
@@ -174,19 +175,20 @@ class KidsCommentDataMap extends DataMap {
 		return $images;
 	}
 
-	public function count($kidId) {
-		$this->countStatement->bindValue(':kidId', $kidId);
+	public function count($postId) {
+		$this->countStatement->bindValue(':postId', $postId);
 		$this->countStatement->execute();
 		$count = $this->countStatement->fetchColumn(0);
 
 		return $count;
 	}
 
-	public function getAllComments($kidId) {
+	public function getAllComments(PhotoArticlePost $post) {
 
-		$stmt = $this->prepare('SELECT id FROM pn_comments_kids WHERE kidId = ? ORDER BY date ASC');
-		$stmt->bindValue(1, $kidId, \PDO::PARAM_INT);
-		$stmt->execute();
+		$stmt = $this->prepare('SELECT id FROM pn_comments_photoarticles WHERE postId = :postId ORDER BY date ASC');
+		$stmt->execute([
+			':postId' => $post->getId()
+		]);
 
 		$comments = [];
 
@@ -194,12 +196,14 @@ class KidsCommentDataMap extends DataMap {
 
 		while ($commentId = $stmt->fetch(\PDO::FETCH_COLUMN)) {
 
-			$cacheKey = MMC::genKey($this->class, $commentId);
+			$comments[] = $this->findById($commentId);
+
+//			$cacheKey = MMC::genKey($this->class, $commentId);
 
 //			MMC::del(md5("comment_kid_$commentId"));
-			$comments[] = MMC::getSet($cacheKey, strtotime('+1 month'), function () use ($commentId) {
-				return $this->findById($commentId);
-			});
+//			$comments[] = MMC::getSet($cacheKey, strtotime('+1 month'), function () use ($commentId) {
+//				return $this->findById($commentId);
+//			});
 
 		}
 
@@ -212,19 +216,25 @@ class KidsCommentDataMap extends DataMap {
 	}
 
 	/**
-	 * @param $kidId
-	 * @return CommentKid
+	 * @param $postId
+	 * @return CommentPhotoArticle
 	 */
-	public function getLastComment($kidId) {
+	public function getLastComment($postId) {
 
-		$stmt = $this->prepare('SELECT id FROM pn_comments_kids WHERE kidId = ? ORDER BY id DESC LIMIT 1');
-		$stmt->bindValue(1, $kidId, \PDO::PARAM_INT);
-		$stmt->execute();
+		$stmt = $this->prepare('SELECT id FROM pn_comments_photoarticles WHERE postId = :postId ORDER BY id DESC LIMIT 1');
+		$stmt->execute([
+			':postId' => $postId
+		]);
 
 		return $this->findById($stmt->fetchColumn());
 
 	}
 
+	/**
+	 * @param CommentPhotoArticle[] $comments
+	 * @param int $parentId
+	 * @return array
+	 */
 	private function makeTree(array &$comments, $parentId = 0) {
 
 		$branch = array();
@@ -245,13 +255,13 @@ class KidsCommentDataMap extends DataMap {
 
 	/**
 	 * @param int $parentId
-	 * @param int $kidId
+	 * @param int $postId
 	 *
-	 * @return CommentKid[]
+	 * @return CommentPhotoArticle[]
 	 */
-	public function findChilds($parentId, $kidId) {
+	public function findChilds($parentId, $postId) {
 		$this->findChildsStatement->bindValue(':parent', $parentId);
-		$this->findChildsStatement->bindValue(':kidId', $kidId);
+		$this->findChildsStatement->bindValue(':postId', $postId);
 		$this->findChildsStatement->execute();
 		$items = $this->findChildsStatement->fetchAll(\PDO::FETCH_CLASS, $this->class);
 		foreach ($items as &$item) {
@@ -266,13 +276,13 @@ class KidsCommentDataMap extends DataMap {
 	 * @param $userId
 	 */
 	public function subscribe($roomId, $userId) {
-		$this->subscribeStatement->bindParam(':kidId', $roomId);
+		$this->subscribeStatement->bindParam(':postId', $roomId);
 		$this->subscribeStatement->bindParam(':userId', $userId);
 		$this->subscribeStatement->execute();
 	}
 
 	public function isSubscribed($roomId, $userId) {
-		$this->isSubscribedStatement->bindValue(':kidId', $roomId);
+		$this->isSubscribedStatement->bindValue(':postId', $roomId);
 		$this->isSubscribedStatement->bindValue(':userId', $userId);
 		$this->isSubscribedStatement->execute();
 
@@ -280,14 +290,14 @@ class KidsCommentDataMap extends DataMap {
 	}
 
 	public function getSubscribed($roomId) {
-		$this->subscribedStatement->bindParam(':kidId', $roomId);
+		$this->subscribedStatement->bindParam(':postId', $roomId);
 		$this->subscribedStatement->execute();
 
 		return $this->subscribedStatement->fetchAll(\PDO::FETCH_COLUMN, 0);
 	}
 
 	public function unSubscribe($roomId, $userId) {
-		$this->unSubscribeStatement->bindParam(':kidId', $roomId);
+		$this->unSubscribeStatement->bindParam(':postId', $roomId);
 		$this->unSubscribeStatement->bindParam(':userId', $userId);
 		$this->unSubscribeStatement->execute();
 
@@ -321,10 +331,10 @@ class KidsCommentDataMap extends DataMap {
 	}
 
 	/**
-	 * @param CommentKid $item
+	 * @param CommentPhotoArticle $item
 	 */
 	protected function insertBindings($item) {
-		$this->insertStatement->bindValue(":kidId", $item->getKidId());
+		$this->insertStatement->bindValue(":postId", $item->getPostId());
 		$this->insertStatement->bindValue(":date", $item->getDate());
 		$this->insertStatement->bindValue(":owner", $item->getOwner()->getId());
 		$this->insertStatement->bindValue(":parent", $item->getParent());
@@ -340,10 +350,10 @@ class KidsCommentDataMap extends DataMap {
 	}
 
 	/**
-	 * @param CommentKid $item
+	 * @param CommentPhotoArticle $item
 	 */
 	protected function updateBindings($item) {
-		$this->updateStatement->bindValue(":kidId", $item->getKidId());
+		$this->updateStatement->bindValue(":postId", $item->getPostId());
 		$this->updateStatement->bindValue(":date", $item->getDate());
 		$this->updateStatement->bindValue(":owner", $item->getOwner()->getId());
 		$this->updateStatement->bindValue(":parent", $item->getParent());

@@ -28,7 +28,39 @@
 					<h1 style="margin-bottom: 20px;">{{ tag.name|e }}</h1>
 				{% endif %}
 
-				{% include '/news/Posts590.twig' with {'posts':posts} %}
+				<section class="b-large-news">
+					<ul class="b-large-news__list">
+						{% for post in posts %}
+							{% set photo = post.mainImageId.thumb('590x') %}
+							<li class="b-large-news__item" style="width:590px;">
+								<h2 class="b-large-news__title">
+									<a href="/news/{{ post.id }}">{{ post.name|e }}</a>
+								</h2>
+								<a href="/news/{{ post.id }}" class="b-large-news__img">
+									<img alt="" src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}">
+								</a>
+
+								<p class="b-large-news__text">
+									{{ post.announceFriendly }}
+								</p>
+								<div class="b-large-news__info">
+									<a href="/news/{{ post.id }}#comments" class="b-large-news__comments b-comments-status">
+										{% if post.comments == 0 %}
+											<span class="b-comments-status__title">нет комментариев</span>
+										{% else %}
+											<span class="b-comments-status__num">{{ post.comments }}</span>
+											<span class="b-comments-status__title">{{ post.comments|ruNumber('%s',['комментарий','комментария','комментариев','нет комментариев']) }}</span>
+										{% endif %}
+									</a>
+
+									<span class="b-single-article__views-title">Просмотров: {{ post.views|number_format(0,'',' ') }}</span>
+
+									{% include '/news/TagsBar.twig' with {'post':post} only %}
+								</div>
+							</li>
+						{% endfor %}
+					</ul>
+				</section>
 
 				{{
 					html.paginator(

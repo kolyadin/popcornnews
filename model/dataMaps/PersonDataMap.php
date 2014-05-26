@@ -20,7 +20,6 @@ class PersonDataMap extends DataMap {
 	const WITH_PHOTO = 4;
 	const WITH_ALL = 7;
 
-
 	/**
 	 * @var NewsImageDataMap
 	 */
@@ -28,22 +27,17 @@ class PersonDataMap extends DataMap {
 	private $checksum;
 	private $pdo;
 
-	public function __construct(DataMapHelper $helper = null) {
+	private $modifier;
 
-		if ($helper instanceof DataMapHelper) {
-			DataMap::setHelper($helper);
-		}
+	public function __construct($modifier = self::WITH_NONE) {
 
 		parent::__construct();
 
-		$ip = $_SERVER['REMOTE_ADDR'];
-		$browser = $_SERVER['HTTP_USER_AGENT'];
-
-		$this->checksum = md5(implode('', [$ip, $browser]));
-		$this->pdo = PDOHelper::getPDO();
+		$this->modifier = $modifier;
 
 		$this->class = "popcorn\\model\\persons\\Person";
 		$this->initStatements();
+
 		$this->imagesDataMap = new PersonImageDataMap();
 	}
 
@@ -155,13 +149,11 @@ class PersonDataMap extends DataMap {
 	 * @param Person $item
 	 * @param int $modifier
 	 */
-	protected function itemCallback($item, $modifier = self::WITH_PHOTO) {
-
-		$modifier = $this->getModifier($this, $modifier);
+	protected function itemCallback($item) {
 
 		parent::itemCallback($item);
 
-		if ($modifier & self::WITH_PHOTO) {
+		if ($this->modifier & self::WITH_PHOTO) {
 			$item->setPhoto(ImageFactory::getImage($item->getPhoto()));
 		}
 
@@ -171,7 +163,7 @@ class PersonDataMap extends DataMap {
 			$item->setBirthDate(null);
 		}
 
-		if ($modifier & self::WITH_IMAGES) {
+		if ($this->modifier & self::WITH_IMAGES) {
 			$item->setImages($this->getAttachedImages($item->getId()));
 		}
 	}

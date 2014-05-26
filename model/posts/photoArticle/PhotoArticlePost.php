@@ -54,6 +54,9 @@ class PhotoArticlePost extends Model {
 	protected $comments = 0;
 
 
+	protected $imagesCount = 0;
+
+
 	//endregion
 
 	function __construct() {
@@ -106,6 +109,10 @@ class PhotoArticlePost extends Model {
 		return $this->views;
 	}
 
+	public function getImagesCount() {
+		return $this->imagesCount;
+	}
+
 	/**
 	 * @return \popcorn\model\content\Image[]
 	 */
@@ -114,9 +121,8 @@ class PhotoArticlePost extends Model {
 	}
 
 
-
 	public function getMainImage() {
-//		foreach ($this->images as)
+		return $this->images[0];
 	}
 
 	/**
@@ -176,6 +182,11 @@ class PhotoArticlePost extends Model {
 	 */
 	public function setViews($views) {
 		$this->views = $views;
+		$this->changed();
+	}
+
+	public function setImagesCount($count) {
+		$this->imagesCount = $count;
 		$this->changed();
 	}
 

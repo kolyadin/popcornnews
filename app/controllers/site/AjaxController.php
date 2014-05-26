@@ -26,6 +26,7 @@ use popcorn\model\groups\Topic;
 use popcorn\model\im\Comment;
 use popcorn\model\im\CommentKid;
 use popcorn\model\im\CommentMeeting;
+use popcorn\model\im\CommentPhotoArticle;
 use popcorn\model\im\CommentTopic;
 use popcorn\model\persons\Kid;
 use popcorn\model\persons\KidFactory;
@@ -34,6 +35,7 @@ use popcorn\model\persons\MeetingFactory;
 use popcorn\model\persons\PersonFactory;
 use popcorn\model\poll\Poll;
 use popcorn\model\poll\PollDataMap;
+use popcorn\model\posts\photoArticle\PhotoArticleCommentDataMap;
 use popcorn\model\posts\PostFactory;
 use popcorn\model\system\users\GuestUser;
 use popcorn\model\system\users\UserFactory;
@@ -43,7 +45,7 @@ use popcorn\lib\PDOHelper;
 use popcorn\model\voting\UpDownVoting;
 use popcorn\model\persons\Person;
 use popcorn\model\groups\Group;
-use popcorn\model\posts\PhotoArticlePost;
+use popcorn\model\posts\NewsPost;
 use popcorn\model\system\users\User;
 
 class AjaxController extends GenericController implements ControllerInterface {
@@ -783,6 +785,9 @@ class AjaxController extends GenericController implements ControllerInterface {
 			} elseif ($entity == 'news') {
 				$dataMap = new NewsCommentDataMap();
 				$comment = new Comment();
+			} elseif ($entity == 'photoarticle') {
+				$dataMap = new PhotoArticleCommentDataMap();
+				$comment = new CommentPhotoArticle();
 			}
 
 			$comment->setOwner($currentUser);
@@ -805,6 +810,8 @@ class AjaxController extends GenericController implements ControllerInterface {
 				$comment->setPostId($entityId);
 			} elseif ($entity == 'topics') {
 				$comment->setTopicId($entityId);
+			} elseif ($entity == 'photoarticle') {
+				$comment->setPostId($entityId);
 			}
 
 			$comment->setContent($content);

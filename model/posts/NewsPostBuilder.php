@@ -44,7 +44,7 @@ class NewsPostBuilder implements IBuilder {
         if(is_null($this->mainImage)) {
             $this->mainImage = new NullImage();
         }
-        $post = new PhotoArticlePost();
+        $post = new NewsPost();
         $post->setName($this->name);
         $post->setAnnounce($this->announce);
         $post->setSource($this->source);

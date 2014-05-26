@@ -4,7 +4,7 @@ namespace popcorn\model\dataMaps;
 
 use popcorn\model\exceptions\Exception;
 use popcorn\model\im\Comment;
-use popcorn\model\posts\PhotoArticlePost;
+use popcorn\model\posts\NewsPost;
 
 class NewsCommentDataMap extends DataMap {
 
@@ -114,7 +114,7 @@ class NewsCommentDataMap extends DataMap {
         return $count;
     }
 
-	public function getAllComments(PhotoArticlePost $post) {
+	public function getAllComments(NewsPost $post) {
 
 		$stmt = $this->prepare('SELECT id FROM pn_comments_news WHERE postId = ? ORDER BY date ASC');
 		$stmt->bindValue(1, $post->getId(), \PDO::PARAM_INT);

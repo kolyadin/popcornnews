@@ -33,13 +33,12 @@ class PersonFactory {
 	 * @return Person
 	 */
 	public static function getPerson($personId, array $options = []) {
+
 		$options = array_merge([
-			'itemCallback' => [
-				'popcorn\\model\\dataMaps\\PersonDataMap' => PersonDataMap::WITH_PHOTO
-			]
+			'with' => PersonDataMap::WITH_NONE
 		], $options);
 
-		$dataMap = new PersonDataMap(new DataMapHelper($options['itemCallback']));
+		$dataMap = new PersonDataMap($options['with']);
 
 		return $dataMap->findById($personId);
 	}

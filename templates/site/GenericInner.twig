@@ -41,6 +41,7 @@
     <script type="text/javascript" src="/assets/js/jsHtmlToText.js"></script>
     <script type="text/javascript" src="/assets/res/emojify.js/emojify.js"></script>
     <script type="text/javascript" src="http://masonry.desandro.com/masonry.pkgd.min.js"></script>
+    <script type="text/javascript" src="/assets/js/news_gallery.js"></script>
 
     <script src="http://fotorama.s3.amazonaws.com/4.4.9/fotorama.js"></script>
 
@@ -395,7 +396,8 @@
         <li class="b-sub-menu__item {% if slim.path[1] == 'category' and slim.path[2] == 'music' %}b-sub-menu__item_active{% endif %}"><a class="b-sub-menu__link" href="/category/music" title="Перейти в категорию новостей &quot;музыка&quot;">музыка</a></li>
         <li class="b-sub-menu__item {% if slim.path[1] == 'category' and slim.path[2] == 'gadget' %}b-sub-menu__item_active{% endif %}"><a class="b-sub-menu__link" href="/category/gadget" title="Перейти в категорию новостей &quot;гаджеты&quot;">гаджеты</a></li>
         <!--<li class="b-sub-menu__item"><a class="b-sub-menu__link" href="#">фитнес</a></li>-->
-        <li class="b-sub-menu__item"><a class="b-sub-menu__link" href="#">киноафиша</a></li>
+	    <li class="b-sub-menu__item {% if slim.request.path starts with '/photo-article' %}b-sub-menu__item_active{% endif %}"><a class="b-sub-menu__link" href="/photo-articles">фотогалереи</a></li>
+        <li class="b-sub-menu__item"><a class="b-sub-menu__link" href="http://www.kinoafisha.info/" rel="nofollow">киноафиша</a></li>
     </ul>
 </nav>
 

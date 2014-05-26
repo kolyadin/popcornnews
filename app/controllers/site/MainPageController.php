@@ -9,9 +9,8 @@ use popcorn\model\dataMaps\NewsPostDataMap;
 use popcorn\model\dataMaps\PersonDataMap;
 use popcorn\model\dataMaps\TagDataMap;
 use popcorn\model\persons\KidFactory;
-use popcorn\model\posts\PhotoArticlePost;
+use popcorn\model\posts\NewsPost;
 use popcorn\model\posts\PostFactory;
-use popcorn\model\posts\PostFactory2;
 
 /**
  * Class PopcornController
@@ -57,7 +56,7 @@ class MainPageController extends GenericController implements ControllerInterfac
 	private function buildLastPosts() {
 
 		$posts = PostFactory::getPosts([
-			'status' => PhotoArticlePost::STATUS_PUBLISHED,
+			'status' => NewsPost::STATUS_PUBLISHED,
 			'itemCallback' => [
 				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE ^ NewsPostDataMap::WITH_MAIN_IMAGE
 			]

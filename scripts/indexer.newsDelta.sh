@@ -7,6 +7,5 @@ action=`mysql -uroot -p123 popcorn -e "select if (count(*)>0,'update','freeze') 
 if [[ $action == "update" ]];
 then
 	echo && echo [ `date "+%Y-%m-%d %H:%M:%S"` ] && echo
-	sudo indexer --rotate --config $pwd/../config/sphinxsearch.conf newsDelta
-	#sudo indexer --merge news newsDelta --rotate --config $pwd/../config/sphinxsearch.conf
+  	sudo indexer --rotate --config $pwd/../config/sphinxsearch.conf newsDelta
 fi

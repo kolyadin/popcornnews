@@ -8,7 +8,7 @@ class DataMapHelper {
 	private $relationships = [];
 
 	public function __construct(array $relationship = null) {
-		if ($relationship){
+		if ($relationship !== null){
 			$this->relationships = $relationship;
 		}
 	}

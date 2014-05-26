@@ -10,6 +10,7 @@ use popcorn\app\controllers\site\community\CommunityController;
 use popcorn\app\controllers\site\KidsController;
 use popcorn\app\controllers\site\MainPageController;
 use popcorn\app\controllers\site\MeetController;
+use popcorn\app\controllers\site\PhotoArticleController;
 use popcorn\app\controllers\site\PostController;
 use popcorn\app\controllers\site\ProfileController;
 use popcorn\app\controllers\site\ProfileManagerController;
@@ -150,6 +151,7 @@ class Popcorn extends Application {
 		$this->registerController(new ProfileController());
 		$this->registerController(new PersonController());
 		$this->registerController(new PostController());
+		$this->registerController(new PhotoArticleController());
 		$this->registerController(new StaticController());
 		$this->registerController(new CommunityController());
 		$this->registerController(new MeetController());

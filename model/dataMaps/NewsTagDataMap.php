@@ -11,7 +11,7 @@ use popcorn\model\persons\Person;
 use popcorn\model\persons\PersonFactory;
 use popcorn\model\posts\Movie;
 use popcorn\model\posts\MovieFactory;
-use popcorn\model\posts\PhotoArticlePost;
+use popcorn\model\posts\NewsPost;
 use popcorn\model\tags\Tag;
 use popcorn\model\tags\TagFactory;
 

@@ -214,8 +214,11 @@ class ImageGenerator {
 				$genPath = $this->getDirByMaskHash(current($rules[$maskKey]), $autoFilename);
 			}
 
-			if (!is_dir($genPath))
+			if (!is_dir($genPath)){
+				$old = umask(0);
 				mkdir($genPath, 0770, true);
+				umask($old);
+			}
 
 			$outFile = $genPath . '/' . $autoFilename;
 		}

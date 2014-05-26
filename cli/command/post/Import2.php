@@ -273,19 +273,22 @@ class Import2 extends Command {
 					$output->writeln(" готово</comment>");
 
 					{
-						$output->write("\t\t<info>Генерим мелкую фотку 200x для админки");
+						$output->write("\t\t<info>Генерим фотку 110x для поиска");
+						$image->getThumb('110x'); //Мелкая фотка для админки (все-равно понадобится)
+						$output->writeln(" готово</info>");
+					}
+
+					{
+						$output->write("\t\t<info>Генерим фотку 200x для админки");
 						$image->getThumb('200x'); //Мелкая фотка для админки (все-равно понадобится)
 						$output->writeln(" готово</info>");
 					}
 
 					{
-						$output->write("\t\t<info>Генерим мелкую фотку 620x для новостей");
+						$output->write("\t\t<info>Генерим фотку 620x для новостей");
 						$image->getThumb('620x');//Фотка в подробной новости
 						$output->writeln(" готово</info>");
 					}
-
-
-
 
 				} catch (Exception $e) {
 					$output->write(" неудачно</comment>\n");

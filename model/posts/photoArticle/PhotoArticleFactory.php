@@ -3,10 +3,10 @@
 namespace popcorn\model\posts\photoArticle;
 
 use popcorn\model\content\Image;
+use popcorn\model\dataMaps\DataMap;
 use popcorn\model\dataMaps\DataMapHelper;
 use popcorn\model\dataMaps\PersonDataMap;
 use popcorn\model\persons\Person;
-use popcorn\model\posts\photoArticle\PhotoArticleDataMap;
 
 class PhotoArticleFactory {
 
@@ -51,13 +51,10 @@ class PhotoArticleFactory {
 	public static function getPhotoArticle($postId, array $options = []) {
 
 		$options = array_merge([
-			'itemCallback' => [
-				'popcorn\\model\\posts\\photoArticle\\PhotoArticleDataMap' => PhotoArticleDataMap::WITH_ALL,
-				'popcorn\\model\\dataMaps\\PersonDataMap'                  => PersonDataMap::WITH_NONE
-			]
+			'with' => PhotoArticleDataMap::WITH_IMAGES ^ PhotoArticleDataMap::WITH_TAGS
 		], $options);
 
-		$dataMap = new PhotoArticleDataMap(new DataMapHelper($options['itemCallback']));
+		$dataMap = new PhotoArticleDataMap($options['with']);
 
 		return $dataMap->findById($postId, $options);
 	}
@@ -75,14 +72,10 @@ class PhotoArticleFactory {
 	public static function getPhotoArticles(array $options = [], $from = 0, $count = 10, &$totalFound = 0) {
 
 		$options = array_merge([
-			'itemCallback' => [
-				'popcorn\\model\\dataMaps\\PhotoArticlePostDataMap' => PhotoArticleDataMap::WITH_NONE,
-				'popcorn\\model\\dataMaps\\PersonDataMap'           => PersonDataMap::WITH_NONE
-			]
+			'with' => PhotoArticleDataMap::WITH_NONE ^ PhotoArticleDataMap::WITH_MAIN_IMAGE
 		], $options);
 
-		$dataMap = new PhotoArticleDataMap(new DataMapHelper($options['itemCallback']));
-
+		$dataMap = new PhotoArticleDataMap($options['with']);
 		return $dataMap->findByLimit($options, $from, $count, $totalFound);
 	}
 

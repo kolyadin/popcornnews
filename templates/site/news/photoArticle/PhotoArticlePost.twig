@@ -1,0 +1,94 @@
+{% extends '/GenericInner.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% block head %}
+	<title>Фотогалереи  - popcornnews</title>
+
+	<script type="text/javascript">
+		var commentSetup = {
+			entity: 'photoarticle',
+			entityId: {{ post.id }}
+		};
+	</script>
+	<script type="text/javascript" src="/assets/js/popcorn.comments.js"></script>
+{% endblock %}
+
+{% block content %}
+
+	<div class="b-grid__g8">
+	<article class="b-single-article">
+		<section class="b-single-article__content clearfix">
+			<div class="b-grid__g6 b-grid__a clearfix">
+				<h1 class="b-single-article__title b-rubrics-title b-rubrics-title_s48"></h1>
+			</div>
+
+			<div class="b-grid__g6 b-grid__a">
+				<div class="b-single-article__slider-photo-cont loaded">
+					<div id="zoom1" class="b-single-article__slider-photo cloud-zoom">
+						<img src="http://v1.popcorn-news.ru/k/photo_articles/500x700/upload/photo_articles/2013/05/22/83d2379cdeafb75520d9ae36bba8cdba.jpg" style="">
+					</div>
+				</div>
+			</div>
+			<div class="b-grid__g2 b-grid__z">
+				<div class="b-single-article__slider-photo-descr">
+					<div class="b-single-article__slider-photo-arrows-cont">
+						<span class="b-single-article__slider-photo-arrows b-single-article__slider-photo-arrows_left" style="display: none;"></span>
+						<span class="b-single-article__slider-photo-arrows b-single-article__slider-photo-arrows_right"></span>
+					</div>
+
+					<div class="b-single-article__slider-photo-counter">
+						<span class="b-single-article__slider-photo-counter-current">1</span> из <span class="b-single-article__slider-photo-counter-total">10</span>
+					</div>
+
+					<div class="b-single-article__slider-photo-lead"><p>Одна из самых последних диет называется Палео, рацион которой состоит из продуктов, употреблявшихся в пищу нашими предками, пещерными людьми в эпоху палеолита (отсюда и название). Это мясо, рыба и свежие фрукты и овощи. Меган Фокс, говорят, фанат этой диеты.</p></div>
+
+					<div class="b-single-article__slider-photo-source">www.legion-media.ru</div>
+					<div class="b-single-article__slider-photo-date">22 мая</div>
+				</div>
+			</div>
+
+			<script type="text/javascript">
+
+				var photoList = [];
+
+				{% for image in post.images %}
+
+					{% set photo = image.thumb('500x') %}
+
+					photoList.push({
+						"img":"{{ photo.url }}",
+						"description":"{{ image.description|e('js') }}",
+						"date":"{{ image.createTime|ruDate('j f2') }}",
+						"zoomable":false,
+						"title":"{{ image.title|e('js') }}",
+						"source":"{{ image.source|e('js') }}",
+						"persons":[
+							{"name":"Меган Фокс","link":"\/persons\/Megan-Fox"}
+						]
+					});
+
+				{% endfor %}
+
+				var currentPhotoInList = 0;
+			</script>
+		</section>
+		<section class="b-single-article__info-cont">
+			<div class="b-single-article__info">
+				<a class="b-single-article__info-comments" href="/photo-article/{{ post.id }}#comments">Комментариев: {{ post.comments }}</a>
+				<span class="b-single-article__info-views">Просмотров: {{ post.views }}</span>
+			</div>
+			<div class="b-single-article__tags">
+				<span class="b-single-article__tags-title">Тэги: </span>
+				<ul class="b-single-article__tags-list">
+					<li class="b-single-article__tags-item_0"><a href=""></a></li>
+				</ul>
+			</div>
+		</section>
+
+		{% include '/comments/CommentsBlock.twig' with { 'commentsTree': commentsTree } %}
+
+
+	</article>
+	</div>
+
+{% endblock %}

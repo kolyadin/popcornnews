@@ -64,7 +64,7 @@ abstract class DataMap {
 		return self::$helper;
 	}
 
-	protected function getModifier(DataMap $map, $default) {
+	protected function getModifier(DataMap $map, $default = null) {
 
 		if (self::getHelper() instanceof DataMapHelper) {
 			$rel = self::getHelper()->getRelationship();
@@ -73,6 +73,7 @@ abstract class DataMap {
 				return $rel[get_class($map)];
 			}
 		}
+
 
 		return $default;
 
@@ -265,6 +266,7 @@ abstract class DataMap {
 	}
 
 	protected function fetchAll($sql, $bindings = array(), $asArray = false) {
+
 		$stmt = $this->prepare($sql);
 		if (count($bindings) > 0) {
 			foreach ($bindings as $key => $value) {

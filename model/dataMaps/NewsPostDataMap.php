@@ -6,7 +6,7 @@ use popcorn\lib\mmc\MMC;
 use popcorn\model\content\ImageFactory;
 use popcorn\model\posts\fashionBattle\FashionBattle;
 use popcorn\model\posts\fashionBattle\FashionBattleDataMap;
-use popcorn\model\posts\PhotoArticlePost;
+use popcorn\model\posts\NewsPost;
 use popcorn\model\posts\PostCategory;
 use popcorn\model\tags\Tag;
 
@@ -244,7 +244,7 @@ class NewsPostDataMap extends DataMap {
 	public function findByLimit(array $options = [], $from = 0, $count = -1, &$totalFound = 0) {
 
 		$options = array_merge([
-			'status'  => PhotoArticlePost::STATUS_PUBLISHED,
+			'status'  => NewsPost::STATUS_PUBLISHED,
 			'orderBy' => [
 				'createDate' => 'desc'
 			]
@@ -270,7 +270,7 @@ class NewsPostDataMap extends DataMap {
 	public function findByDate($from, $to, $limit = 0) {
 		$sql = "SELECT *
 				FROM pn_news
-				WHERE status = " . PhotoArticlePost::STATUS_PUBLISHED . " and createDate BETWEEN $from AND $to
+				WHERE status = " . NewsPost::STATUS_PUBLISHED . " and createDate BETWEEN $from AND $to
 				ORDER BY createDate DESC";
 
 		if ($limit) {
@@ -286,11 +286,11 @@ class NewsPostDataMap extends DataMap {
 	 * @param NewsPost $post
 	 * @return array
 	 */
-	public function findEarlier(PhotoArticlePost $post) {
+	public function findEarlier(NewsPost $post) {
 
 		$currentDate = date('Y-m-d H:i:s', $post->getCreateDate());
 
-		$sql = "SELECT * FROM pn_news WHERE status = " . PhotoArticlePost::STATUS_PUBLISHED . " and
+		$sql = "SELECT * FROM pn_news WHERE status = " . NewsPost::STATUS_PUBLISHED . " and
 				YEAR(from_unixtime(createDate)) = YEAR('$currentDate' - INTERVAL :month MONTH) AND
 				MONTH(from_unixtime(createDate)) = MONTH('$currentDate' - INTERVAL :month MONTH)
 			 ORDER BY comments DESC LIMIT 5";
@@ -305,7 +305,7 @@ class NewsPostDataMap extends DataMap {
 	/**
 	 * @param NewsPost $post
 	 */
-	public function updateViews(PhotoArticlePost $post) {
+	public function updateViews(NewsPost $post) {
 
 		$stmt = $this->prepare('UPDATE pn_news SET views = views+1 WHERE id = :postId LIMIT 1');
 		$stmt->execute([
@@ -369,7 +369,7 @@ EOL;
 	 */
 	public function findById($postId, array $options = []) {
 		$options = array_merge([
-			'status' => PhotoArticlePost::STATUS_PUBLISHED
+			'status' => NewsPost::STATUS_PUBLISHED
 		], $options);
 
 		return $this->fetchOne('SELECT * FROM pn_news WHERE id = :postId AND status = :status LIMIT 1', [
@@ -389,7 +389,7 @@ EOL;
 	public function findByCategory($categoryId, array $options = [], $from = 0, $count = -1, &$totalFound) {
 
 		$options = array_merge([
-			'status' => PhotoArticlePost::STATUS_PUBLISHED
+			'status' => NewsPost::STATUS_PUBLISHED
 		], $options);
 
 		$sql = 'SELECT %s FROM pn_news WHERE id IN
@@ -423,7 +423,7 @@ EOL;
 	public function findByTag($tagId, array $options = [], $from = 0, $count = -1, &$totalFound) {
 
 		$options = array_merge([
-			'status' => PhotoArticlePost::STATUS_PUBLISHED
+			'status' => NewsPost::STATUS_PUBLISHED
 		], $options);
 
 		$sql = 'SELECT %s FROM pn_news WHERE id IN
