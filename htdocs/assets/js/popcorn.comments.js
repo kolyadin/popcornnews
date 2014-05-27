@@ -103,7 +103,9 @@ $(function () {
         $this = $(this).closest('.b-comment');
 
         var params = {
-            commentId: $this.attr('data-comment-id')
+            commentId: $this.attr('data-comment-id'),
+            entity: commentSetup['entity'],
+            entityId: commentSetup['entityId']
         };
 
         var handler = function (response) {
@@ -115,7 +117,7 @@ $(function () {
             });
         };
 
-        $.post('/ajax/comment/'+ commentSetup['entity'] +'/delete', params, handler, 'json');
+        $.post('/ajax/comment/delete', params, handler, 'json');
 
         return false;
     });

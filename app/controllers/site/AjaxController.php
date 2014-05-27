@@ -203,7 +203,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 			->getApp()
 			->getTwigString()
 			->render('<a href="/search/news/{{ searchString|url_encode }}">{{ newsCount|ruNumber(["новость","новости","новостей"]) }}</a>', [
-				'newsCount' => $newsTotalFound,
+				'newsCount'    => $newsTotalFound,
 				'searchString' => $searchString
 			]);
 		//endregion
@@ -846,11 +846,17 @@ class AjaxController extends GenericController implements ControllerInterface {
 				throw new NotAuthorizedException();
 			}
 
-			$dataMap = new KidsCommentDataMap();
-
+			$entity = $this->getSlim()->request()->post('entity');
+			$entityId = $this->getSlim()->request()->post('entityId');
 			$commentId = $this->getSlim()->request()->post('commentId');
 
-			/** @var CommentKid $comment */
+			switch ($entity) {
+				case 'photoarticle':
+					$dataMap = new PhotoArticleCommentDataMap();
+					break;
+			}
+
+			/** @var CommentPhotoArticle $comment */
 			$comment = $dataMap->findById($commentId);
 
 			if ($comment->getOwner()->getId() != $currentUser->getId()) {

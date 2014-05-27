@@ -287,8 +287,10 @@ class PhotoArticleDataMap extends DataMap {
 		$sql = 'SELECT %s FROM pn_photoarticles WHERE 1=1';
 
 		$stmt = $this->prepare(sprintf($sql, 'count(*)'));
+		$stmt->execute();
 
 		$totalFound = $stmt->fetchColumn();
+
 
 		$sql .= $this->getOrderString($options['orderBy']);
 		$sql .= $this->getLimitString($from, $count);

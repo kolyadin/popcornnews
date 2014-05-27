@@ -76,6 +76,7 @@ class PhotoArticleFactory {
 		], $options);
 
 		$dataMap = new PhotoArticleDataMap($options['with']);
+
 		return $dataMap->findByLimit($options, $from, $count, $totalFound);
 	}
 
