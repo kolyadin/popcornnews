@@ -4,6 +4,7 @@ namespace popcorn\app\controllers\site;
 
 use popcorn\app\controllers\ControllerInterface;
 use popcorn\app\controllers\GenericController;
+use popcorn\model\dataMaps\comments\KidCommentDataMap;
 use popcorn\model\dataMaps\DataMapHelper;
 use popcorn\model\dataMaps\KidDataMap;
 use popcorn\model\dataMaps\KidsCommentDataMap;
@@ -62,7 +63,7 @@ class KidsController extends GenericController implements ControllerInterface {
 
 		$kid = KidFactory::get($kidId);
 
-		$dataMap = new KidsCommentDataMap();
+		$dataMap = new KidCommentDataMap();
 		$commentsTree = $dataMap->getAllComments($kidId);
 
 		$this

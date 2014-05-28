@@ -123,8 +123,8 @@
 						</div>
 						<p class="text" data-default-text="Всего {{ textDefault }}">Всего {{ textDefault }}</p>
 					</div>
-					{% if kid.commentsCount > 0 %}
-						{% set comments = kid.commentsCount|ruNumber(['комментарий','комментария','комментариев']) %}
+					{% if kid.comments > 0 %}
+						{% set comments = kid.comments|ruNumber(['комментарий','комментария','комментариев']) %}
 					{% else %}
 						{% set comments = 'Нет комментариев' %}
 					{% endif %}

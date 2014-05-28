@@ -1,6 +1,6 @@
 <?php
 
-namespace popcorn\model\im;
+namespace popcorn\model\comments;
 
 use popcorn\model\Model;
 use popcorn\model\system\users\User;
@@ -10,7 +10,6 @@ use popcorn\model\content\Image;
 /**
  * Class Comment
  * @package popcorn\model\im
- * @table pn_comments_news
  */
 class Comment extends Model {
 
@@ -21,86 +20,82 @@ class Comment extends Model {
 	 * @var int
 	 * @export
 	 */
-	private $postId;
-
-	/**
-	 * @var int
-	 * @export
-	 */
-	private $date;
+	protected $date;
 
 	/**
 	 * @var User
 	 * @export
 	 */
-	private $owner = 0;
+	protected $owner = 0;
 
 	/**
 	 * @var int
 	 * @export
 	 */
-	private $parent = 0;
+	protected $parent = 0;
 
 	/**
 	 * @var string
 	 * @export
 	 */
-	private $content;
+	protected $content;
 
 	/**
 	 * @var int
 	 * @export
 	 */
-	private $editDate = 0;
+	protected $editDate = 0;
 
 	/**
 	 * @var string
 	 * @export
 	 */
-	private $ip;
+	protected $ip;
 
 	/**
 	 * @var int
 	 * @export
 	 */
-	private $abuse = 0;
+	protected $abuse = 0;
 
 	/**
 	 * @var bool
 	 * @export
 	 */
-	private $deleted = 0;
+	protected $deleted = 0;
 
-	private $childs = [];
-	private $images = [];
-
-	/**
-	 * @var int
-	 * @export
-	 */
-	private $level = 0;
+	protected $childs = [];
+	protected $images = [];
 
 	/**
 	 * @var int
 	 * @export
 	 */
-	private $ratingUp = 0;
+	protected $level = 0;
 
 	/**
 	 * @var int
 	 * @export
 	 */
-	private $ratingDown = 0;
+	protected $ratingUp = 0;
 
 	/**
 	 * @var int
 	 * @export
 	 */
-	private $imagesCount = 0;
+	protected $ratingDown = 0;
+
 
 	//endregion
 
 	//region Getters
+
+	/**
+	 *
+	 */
+	public function getEntityId() {
+
+	}
 
 	/**
 	 * @return int
@@ -119,7 +114,7 @@ class Comment extends Model {
 	/**
 	 * @return Image[]
 	 */
-	public function getImages(){
+	public function getImages() {
 		return $this->images;
 	}
 
@@ -130,12 +125,12 @@ class Comment extends Model {
 		return $this->content;
 	}
 
-	public function getContentFriendly(){
+	public function getContentFriendly() {
 
 		$content = $this->getContent();
 
 		$content = nl2br($content);
-		$content = strip_tags($content,'<br>');
+		$content = strip_tags($content, '<br>');
 
 		//Убираем двойной перевод строк
 		$content = preg_replace('@(<br\s*\/?>\s*)+@is', '<br/>', $content);
@@ -180,13 +175,6 @@ class Comment extends Model {
 	}
 
 	/**
-	 * @return int
-	 */
-	public function getPostId() {
-		return $this->postId;
-	}
-
-	/**
 	 * @return \popcorn\model\system\users\User
 	 */
 	public function getOwner() {
@@ -217,8 +205,8 @@ class Comment extends Model {
 	/**
 	 * @return int
 	 */
-	public function getImagesCount(){
-		return $this->imagesCount;
+	public function getImagesCount() {
+		return count($this->images);
 	}
 
 
@@ -267,14 +255,6 @@ class Comment extends Model {
 	}
 
 	/**
-	 * @param int $postId
-	 */
-	public function setPostId($postId) {
-		$this->postId = $postId;
-		$this->changed();
-	}
-
-	/**
 	 * @param \popcorn\model\system\users\User $owner
 	 */
 	public function setOwner($owner) {
@@ -282,40 +262,33 @@ class Comment extends Model {
 		$this->changed();
 	}
 
-	/**
-	 * @param string $ip
-	 */
-	public function setIp($ip) {
-		$this->ip = $ip;
-		$this->changed();
-	}
-
 	//endregion
 
 	function __construct() {
+
 		$this->ip = $_SERVER['REMOTE_ADDR'];
-		if($this->owner == 0) {
+
+		if ($this->owner == 0) {
 			$this->owner = UserFactory::getCurrentUser();
-		}
-		else {
+		} else {
 			$this->owner = UserFactory::getUser($this->owner);
 		}
 	}
 
 	/**
-	 * @param CommentKid $msg
+	 * @param Comment $msg
 	 */
 	public function setParent($msg) {
 		$this->parent = $msg->getId();
 		$this->level = $msg->getLevel() + 1;
 
-		if ($this->level > 7){
+		if ($this->level > 7) {
 			$this->level = 7;
 		}
 	}
 
 	/**
-	 * @param CommentKid $msg
+	 * @param Comment $msg
 	 */
 	public function addChild($msg) {
 		$this->childs[] = $msg;
@@ -325,10 +298,10 @@ class Comment extends Model {
 	/**
 	 * @param $id
 	 *
-	 * @return CommentKid
+	 * @return Comment
 	 */
 	public function getChild($id) {
-		if(isset($this->childs[$id])) {
+		if (isset($this->childs[$id])) {
 			return $this->childs[$id];
 		}
 
@@ -354,17 +327,9 @@ class Comment extends Model {
 	}
 
 	/**
-	 * @param int $count
-	 */
-	public function setImagesCount($count){
-		$this->imagesCount = $count;
-		$this->changed();
-	}
-
-	/**
 	 * @param Image $image
 	 */
-	public function setImage($image){
+	public function setImage($image) {
 		$this->images[] = $image;
 		$this->changed();
 	}
@@ -372,7 +337,7 @@ class Comment extends Model {
 	/**
 	 * @param Image[] $images
 	 */
-	public function setImages(array $images = []){
+	public function setImages(array $images = []) {
 		$this->images = $images;
 		$this->changed();
 	}

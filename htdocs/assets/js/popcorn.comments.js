@@ -266,10 +266,10 @@ $(function () {
 
                     //Коммент вставили, подсветим его (обратим внимание пользователя)
                     $('body,html')
-                    .animate({scrollTop:$newComment.offset().top-10},'fast')
+                    .animate({scrollTop:$newComment.offset().top-30},'fast')
                     .promise()
                     .done(function(){
-						$newComment.effect('highlight',{},3500);
+						$newComment.effect('highlight',{color:'#eed8e3'},3500);
                     });
 
                     
@@ -296,103 +296,99 @@ $(function () {
     });
     
     
-			//emojify.run();
+    //emojify.run();
 
-			emojify.run($('.b-comments').get(0));
-			emojify.run($('.b-smiles-bar').get(0));
+    emojify.run($('.b-comments').get(0));
+    emojify.run($('.b-smiles-bar').get(0));
 
-			var box=$('.b-new-message-box__message'),
-				  isAdd=false,
-				  eventName;
+    var box=$('.b-new-message-box__message'),
+          isAdd=false,
+          eventName;
 
-			$('.b-new-message-box__smile-toogle').on('click', function (e) {
-					
+    $('.b-new-message-box__smile-toogle').on('click', function (e) {
 
-				var $smileIcon = $(this);
-				var $parentBox = $('.b-new-message-box');
 
-				var $width = $parentBox.width();
-				var $offset = $parentBox.offset();
+        var $smileIcon = $(this);
+        var $parentBox = $('.b-new-message-box');
 
-				$('.b-smiles-bar')
-					  .css({
-						  'width': $width,
-						  'top': $offset.top - 156 + 'px',
-						  'left': $offset.left + 'px'
-					  })
-					  .find('.b-smiles-bar__arrow')
-					  .css('margin-left', $width - 40)
-					  .end()
-					  .find('ul li').on('click', function () {
-						  if (!$(this).hasClass('b-smiles-bar__close')) {
-							  $(this).parent().find('li').removeClass('active');
-							  $(this).addClass('active');
-						  }
-					  })
-					  .end()
-					  .fadeIn('fast')
-				;
+        var $width = $parentBox.width();
+        var $offset = $parentBox.offset();
+
+        $('.b-smiles-bar')
+              .css({
+                  'width': $width,
+                  'top': $offset.top - 156 + 'px',
+                  'left': $offset.left + 'px'
+              })
+              .find('.b-smiles-bar__arrow')
+              .css('margin-left', $width - 40)
+              .end()
+              .find('ul li').on('click', function () {
+                  if (!$(this).hasClass('b-smiles-bar__close')) {
+                      $(this).parent().find('li').removeClass('active');
+                      $(this).addClass('active');
+                  }
+              })
+              .end()
+              .fadeIn('fast')
+        ;
 
 //				$('.b-new-message-box__message').focus();
 
 
-			});
+    });
 
 
-			$('.b-smiles-bar__close').on('click', function () {
-				$('.b-smiles-bar').fadeOut('fast');
-			});
+    $('.b-smiles-bar__close').on('click', function () {
+        $('.b-smiles-bar').fadeOut('fast');
+    });
 
 
 
 
-			box.on('focus',function(){
-				isAdd = true;
-			}).on('blur',function(){
-				isAdd = false;
-			});
+    box.on('focus',function(){
+        isAdd = true;
+    }).on('blur',function(){
+        isAdd = false;
+    });
 
-			var addSmile = function(el){
-				if (window.navigator.pointerEnabled) eventName='onpointerdown';
-				else if(window.navigator.msPointerEnabled) eventName='onMSPointerDown';
-				else if('ontouchstart' in document.documentElement) eventName='ontouchstart';
-				else eventName='onmousedown';
-
-
-				var sel = rangy.getSelection();
-				var range = sel.rangeCount ? sel.getRangeAt(0) : null;
-				if (range) {
-					range.deleteContents();
-
-					var clone = $(el).clone();
-
-					clone = clone.get(0);
-
-					range.insertNode(clone);
-					range.selectNode(clone);
-					sel.collapseToEnd();
-					range.detach();
-					clone.onmousedown = function(event){
-						event=event||window.event;
-						event.preventDefault ? event.preventDefault() : event.returnValue=false;
-					}
-				}
-			};
+    var addSmile = function(el){
+        if (window.navigator.pointerEnabled) eventName='onpointerdown';
+        else if(window.navigator.msPointerEnabled) eventName='onMSPointerDown';
+        else if('ontouchstart' in document.documentElement) eventName='ontouchstart';
+        else eventName='onmousedown';
 
 
-			$('.b-smiles-bar').on('mousedown', '.b-smiles-bar__smiles img', function (e) {
+        var sel = rangy.getSelection();
+        var range = sel.rangeCount ? sel.getRangeAt(0) : null;
+        if (range) {
+            range.deleteContents();
 
-				e.preventDefault();
+            var clone = $(el).clone();
 
-				if (isAdd){
-					addSmile(this);
-				}
+            clone = clone.get(0);
 
-			});
-    
-    
-    
+            range.insertNode(clone);
+            range.selectNode(clone);
+            sel.collapseToEnd();
+            range.detach();
+            clone.onmousedown = function(event){
+                event=event||window.event;
+                event.preventDefault ? event.preventDefault() : event.returnValue=false;
+            }
+        }
+    };
 
+
+    $('.b-smiles-bar').on('mousedown', '.b-smiles-bar__smiles img', function (e) {
+
+        e.preventDefault();
+
+        if (isAdd){
+            addSmile(this);
+        }
+
+    });
 
     var uploader = new plupload.Uploader({
         runtimes: 'html5,flash,silverlight,html4',

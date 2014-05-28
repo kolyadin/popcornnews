@@ -38,6 +38,7 @@
 	<script type="text/javascript" src="/assets/js/jquery.lazyload.min.js"></script>
     <script type="text/javascript" src="/assets/js/jquery.caret.js"></script>
     <script type="text/javascript" src="/assets/js/jquery-gp-gallery.js"></script>
+    <script type="text/javascript" src="/assets/js/jquery.pulsate.min.js"></script>
     <script type="text/javascript" src="/assets/js/jsHtmlToText.js"></script>
     <script type="text/javascript" src="/assets/res/emojify.js/emojify.js"></script>
     <script type="text/javascript" src="http://masonry.desandro.com/masonry.pkgd.min.js"></script>
@@ -74,6 +75,25 @@
 			    'CODE': 1
 		    }
 	    });
+
+
+	    var focusAtAuthForm = function(){
+		    var email = $('#form-authorization input[name=email]');
+
+		    $('body,html').animate({scrollTop:email.offset().top-20},'fast').promise().done(function(){
+			    email.focus();
+
+			    email.pulsate({
+				    color:'#ee2c90',
+				    reach: 40,
+				    speed: 400,
+				    pause: 0,
+				    glow: true,
+				    repeat: 3
+			    });
+
+		    });
+	    };
 
         $(function(){
 
@@ -131,17 +151,7 @@
             });
 
 	        $('.need-auth a:first').on('click',function(){
-
-		        var email = $('#form-authorization input[name=email]');
-
-		        $('body,html').animate({scrollTop:email.offset().top-20},'fast').promise().done(function(){
-			        email.focus();
-
-			        email.effect('highlight',{},500);
-			        email.effect('pulsate',{},500);
-		        });
-
-
+		        focusAtAuthForm();
 	        });
 
 	        $('#global-search')
@@ -222,7 +232,7 @@
 							        }else{
 								        selN.hide();
 							        }
-						        }
+						        };
 
 						        if (res.counters.persons == 0 && res.counters.news == 0 && res.counters.users == 0){
 							        if ($('#global-search-results').css('display') != 'none'){
@@ -242,7 +252,7 @@
 			        search: function (event, ui){
 				        //$('#global-search-results').fadeIn('fast');
 			        }
-	            })
+	            });
 
 
 	        var globalSearchPositioning = function(){
@@ -263,12 +273,6 @@
 	        };
 
 	        globalSearchPositioning();
-
-
-
-
-
-
 
         });
 

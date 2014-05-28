@@ -1,0 +1,20 @@
+<section class="b-freeze-frame__persons clearfix b-side__vertical-margin">
+	<div class="b-freeze-frame__rubrics-title-cont">
+		<div class="b-freeze-frame__persons-rubrics-title b-rubrics-title b-rubrics-title_s18">персоны</div>
+		<span class="b-freeze-frame__rubrics-counter b-counter">{{ count }}</span>
+	</div>
+	<div class="b-grid__g2 b-grid__a">
+		<ul class="b-freeze-frame__list">
+			{% for person in persons[:25] %}
+				<li class="b-freeze-frame__item"><a href="/persons/{{ person.urlName }}" class="b-freeze-frame__link b-freeze-frame__link_color{{ person.color }}">{{ person.name|e }}</a></li>
+			{% endfor %}
+		</ul>
+	</div>
+	<div class="b-grid__g2 b-grid__z">
+		<ul class="b-freeze-frame__list">
+			{% for person in persons[25:] %}
+				<li class="b-freeze-frame__item"><a href="/persons/{{ person.urlName }}" class="b-freeze-frame__link b-freeze-frame__link_color{{ person.color }}">{{ person.name|e }}</a></li>
+			{% endfor %}
+		</ul>
+	</div>
+</section>

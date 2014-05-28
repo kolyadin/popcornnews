@@ -16,30 +16,42 @@
 	});
 </script>
 
-<a id="new-comment" name="new-comment" href="#"></a>
+{% if currentUser.id %}
 
-<div class="b-new-message-box" data-reply-to="0" data-level-id="0">
-	<div class="b-new-message-box__ava"><img src="/assets/img/no-photo/small.png" alt=""/></div>
+	<a id="new-comment" name="new-comment" href="#"></a>
 
-	<div class="b-new-message-box__message-container">
-		<div class="b-new-message-box__smile-toogle"></div>
-		<div class="b-new-message-box__message" contenteditable="true" spellcheck="false"></div>
+	<div class="b-new-message-box" data-reply-to="0" data-level-id="0">
+		<div class="b-new-message-box__ava"><img src="/assets/img/no-photo/small.png" alt=""/></div>
 
-		<div class="b-new-message-box__attach"></div>
+		<div class="b-new-message-box__message-container">
+			<div class="b-new-message-box__smile-toogle"></div>
+			<div class="b-new-message-box__message" contenteditable="true" spellcheck="false"></div>
+
+			<div class="b-new-message-box__attach"></div>
+		</div>
+		<div class="clearfix"></div>
+
+		<input class="b-new-message-box__add-attach" id="new-message-add-photo" value="добавить фотографии" type="button"/>
+
+		<div style="float:left;margin:13px 0 0 40px;">
+			<label><input type="checkbox"/><span style="position: relative;top:-3px;">&nbsp;Уведомлять о новых комментариях</span></label>
+		</div>
+
+		<input type="button" class="b-new-message-box__send-button" value="отправить"/>
+
+		<div class="clearfix"></div>
 	</div>
-	<div class="clearfix"></div>
 
-	<input class="b-new-message-box__add-attach" id="new-message-add-photo" value="добавить фотографии" type="button"/>
-	<input type="button" class="b-new-message-box__send-button" value="отправить"/>
+	<div class="b-comments__new-comment">
+		<a href="#">Написать комментарий</a>
+	</div>
 
-	<div class="clearfix"></div>
-</div>
+{% else %}
 
-<div class="b-comments__new-comment">
-	<a href="#">Написать комментарий</a>
-</div>
+	<!--noindex-->
+	<div class="b-comments__auth-form">
+		<a href="/" onclick="focusAtAuthForm();return false;">Авторизуйтесь</a> или <a href="/register">зарегистрируйтесь</a> для того, чтобы оставлять комментарии
+	</div>
+	<!--/noindex-->
 
-<label><input name="subscribe" type="checkbox" value="1">Присылать мне уведомления о новых комментариях</label>
-
-<hr/>
-<strong>где-то тут должна быть подписка на новые комменты</strong>
+{% endif %}

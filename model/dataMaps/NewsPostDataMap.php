@@ -32,16 +32,17 @@ class NewsPostDataMap extends DataMap {
 	 */
 	private $fashionBattleDataMap;
 
-	public function __construct(DataMapHelper $helper = null) {
+	private $modifier;
 
-		if ($helper instanceof DataMapHelper) {
-			DataMap::setHelper($helper);
-		}
+	public function __construct($modifier = self::WITH_NONE) {
 
 		parent::__construct();
 
+		$this->modifier = $modifier;
+
 		$this->class = "popcorn\\model\\posts\\NewsPost";
 		$this->initStatements();
+
 		$this->imagesDataMap = new NewsImageDataMap();
 		$this->tagsDataMap = new NewsTagDataMap();
 		$this->fashionBattleDataMap = new FashionBattleDataMap();
@@ -120,29 +121,26 @@ class NewsPostDataMap extends DataMap {
 
 	/**
 	 * @param NewsPost $item
-	 * @param int $modifier
 	 */
-	public function itemCallback($item, $modifier = self::WITH_MAIN_IMAGE) {
+	public function itemCallback($item) {
 
 		parent::itemCallback($item);
 
-		$modifier = $this->getModifier($this, $modifier);
-
-		if ($modifier & self::WITH_MAIN_IMAGE) {
+		if ($this->modifier & self::WITH_MAIN_IMAGE) {
 			if (!is_object($item->getMainImageId())) {
 				$item->setMainImageId(ImageFactory::getImage($item->getMainImageId()));
 			}
 		}
 
-		if ($modifier & self::WITH_TAGS) {
+		if ($this->modifier & self::WITH_TAGS) {
 			$item->setTags($this->getAttachedTags($item->getId()));
 		}
 
-		if ($modifier & self::WITH_IMAGES) {
+		if ($this->modifier & self::WITH_IMAGES) {
 			$item->setImages($this->getAttachedImages($item->getId()));
 		}
 
-		if ($modifier & self::WITH_FASHION_BATTLE) {
+		if ($this->modifier & self::WITH_FASHION_BATTLE) {
 			$item->addFashionBattle($this->getFashionBattle($item->getId()));
 		}
 
@@ -182,6 +180,7 @@ class NewsPostDataMap extends DataMap {
 	protected function onRemove($postId) {
 
 		$this->getPDO()->prepare('
+			DELETE FROM pn_images WHERE id IN(SELECT imageId FROM pn_news_images WHERE newsId = :postId);
 			DELETE FROM pn_news_images WHERE newsId = :postId;
 			DELETE FROM pn_news_tags WHERE newsId = :postId;
 			DELETE FROM pn_news_poll WHERE newsId = :postId;

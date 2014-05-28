@@ -147,7 +147,6 @@ class PersonDataMap extends DataMap {
 
 	/**
 	 * @param Person $item
-	 * @param int $modifier
 	 */
 	protected function itemCallback($item) {
 

@@ -144,6 +144,10 @@ class ImportPhotoArticles extends Command {
 					$image->getThumb('200x'); //Мелкая фотка для админки (все-равно понадобится)
 					$output->writeln(" готово</info>");
 
+					$output->write("\t\t<info>Генерим фотку 500x для сайта");
+					$image->getThumb('500x');
+					$output->writeln(" готово</info>");
+
 				} catch (Exception $e) {
 					$output->write(" неудачно</comment>\n");
 					continue;

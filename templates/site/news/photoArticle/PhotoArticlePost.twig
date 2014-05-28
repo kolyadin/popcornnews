@@ -13,6 +13,13 @@
 	<script type="text/javascript" src="/assets/js/popcorn.comments.js"></script>
 {% endblock %}
 
+{% block bodyStart %}
+
+	{#Подключаем плашку со смайлами#}
+	{% include '/comments/SmilesBar.twig' %}
+
+{% endblock %}
+
 {% block content %}
 
 	<div class="b-grid__g8">

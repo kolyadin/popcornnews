@@ -188,19 +188,6 @@ class KidDataMap extends DataMap {
 	}
 
 	/**
-	 * @param Kid $kid
-	 */
-	public function updateCommentsCount($kid) {
-
-		$stmt = $this->prepare('update pn_kids set commentsCount = commentsCount+1 where id = ?');
-		$stmt->bindValue(1, $kid->getId(), \PDO::PARAM_INT);
-		$stmt->execute();
-
-		return true;
-
-	}
-
-	/**
 	 * @param $id
 	 *
 	 * @return null|Kid

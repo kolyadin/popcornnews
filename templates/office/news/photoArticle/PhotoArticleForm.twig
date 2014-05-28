@@ -88,7 +88,6 @@
 		};
 	</script>
 
-
 	{#Приложенные фотки#}
 	<script type="text/javascript">
 		$(function () {
@@ -127,11 +126,19 @@
 							BeforeUpload: function (up, file) {
 							},
 							FilesAdded: function (up, files) {
+
+//								for (x in up.files){
+//									$('#add-images').closest('.form-group').before('<h3 class="photo-loading">Ждите...</h3>');
+//								}
+
 								up.start();
+
 							},
 							FileUploaded: function (upldir, file, object) {
 
 								var data = $.parseJSON(object.response);
+
+//								$('div[data-element=post-images] .photo-loading:first').remove();
 
 								$this.addImage({
 									imageId: data.id,
@@ -143,6 +150,8 @@
 								});
 
 								personTags.handler();
+
+
 
 							},
 

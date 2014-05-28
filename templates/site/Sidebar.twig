@@ -1,46 +1,9 @@
 <aside class="b-grid__g4 b-side">
     <section class="b-side-large-banner b-side__vertical-margin"></section>
 
-    <section class="b-freeze-frame__persons clearfix b-side__vertical-margin">
-        <div class="b-freeze-frame__rubrics-title-cont">
-            <div class="b-freeze-frame__persons-rubrics-title b-rubrics-title b-rubrics-title_s18">персоны</div>
-            <span class="b-freeze-frame__rubrics-counter b-counter">{{ sidebar.personsCount }}</span>
-        </div>
-        <div class="b-grid__g2 b-grid__a">
-            <ul class="b-freeze-frame__list">
-	            {% for person in sidebar.persons[:25] %}
-		            <li class="b-freeze-frame__item"><a href="/persons/{{ person.urlName }}" class="b-freeze-frame__link b-freeze-frame__link_color{{ person.color }}">{{ person.name|e }}</a></li>
-	            {% endfor %}
-            </ul>
-        </div>
-        <div class="b-grid__g2 b-grid__z">
-            <ul class="b-freeze-frame__list">
-	            {% for person in sidebar.persons[25:] %}
-		            <li class="b-freeze-frame__item"><a href="/persons/{{ person.urlName }}" class="b-freeze-frame__link b-freeze-frame__link_color{{ person.color }}">{{ person.name|e }}</a></li>
-	            {% endfor %}
-            </ul>
-        </div>
-    </section>
+	{% include '/sidebar/Persons.twig' with {persons:sidebar.persons,count:sidebar.personsCount} only %}
 
-    <section class="b-freeze-frame__tags clearfix b-side__vertical-margin">
-        <div class="b-freeze-frame__rubrics-title-cont">
-            <div class="b-freeze-frame__tags-rubrics-title b-rubrics-title b-rubrics-title_s18">теги</div>
-        </div>
-        <div class="b-grid__g2 b-grid__a">
-            <ul class="b-freeze-frame__list">
-	            {% for tag in sidebar.tags[:15] %}
-		            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;{{ tag.name|e }}&quot;" href="/tag/{{ tag.tagId }}" class="b-freeze-frame__link b-freeze-frame__link_color{{ tag.color }}">{{ tag.name|e }}</a></li>
-	            {% endfor %}
-            </ul>
-        </div>
-        <div class="b-grid__g2 b-grid__z">
-            <ul class="b-freeze-frame__list">
-	            {% for tag in sidebar.tags[15:] %}
-		            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;{{ tag.name|e }}&quot;" href="/tag/{{ tag.tagId }}" class="b-freeze-frame__link b-freeze-frame__link_color{{ tag.color }}">{{ tag.name|e }}</a></li>
-	            {% endfor %}
-            </ul>
-        </div>
-    </section>
+	{% include '/sidebar/Tags.twig' with {tags:sidebar.tags} only %}
 
     <section class="b-freeze-frame__groups clearfix b-side__vertical-margin b-side__vertical-margin_60 ">
         <div class="b-freeze-frame__rubrics-title-cont">
@@ -68,21 +31,7 @@
         </div>
     </section>
 
-    <section class="b-photo-articles clearfix b-side__vertical-margin b-side__vertical-margin_35">
-        <div class="b-photo-articles__title-cont b-grid__g4 b-grid__a b-grid__z">
-            <h1 class="b-photo-articles__title b-rubrics-title b-rubrics-title_s18">фото-статьи</h1>
-            <span class="b-photo-articles__counter b-counter">{{ sidebar.photoArticleCount }}</span>
-        </div>
-
-	    {% set photo = sidebar.photoArticle.mainImage.thumb('300x') %}
-
-        <div class="b-grid__g4 b-grid__a b-grid__z">
-            <a href="/photo-article/{{ sidebar.photoArticle.id }}" class="b-photo-articles__photo-cont"><img src="{{ photo.url }}" alt=""></a>
-            <div class="b-photo-articles__photo-count">{{ sidebar.photoArticle.imagesCount|ruNumber('%d %s',['фотография','фотографии','фотографий','нет комментариев']) }}</div>
-            <h2 class="b-photo-articles__news-title"><a href="/photo-article/{{ sidebar.photoArticle.id }}">{{ sidebar.photoArticle.name|e }}</a></h2>
-        </div>
-
-    </section>
+    {% include '/sidebar/PhotoArticle.twig' with {post:sidebar.photoArticle,count:sidebar.photoArticleCount} only %}
 
     <div class="b-grid__g4 b-grid__a b-grid__z clearfix b-side__vertical-margin b-side__vertical-margin_30">
         <section class="b-create-your-style">

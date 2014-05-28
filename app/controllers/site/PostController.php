@@ -3,15 +3,10 @@ namespace popcorn\app\controllers\site;
 
 use popcorn\app\controllers\ControllerInterface;
 use popcorn\app\controllers\GenericController;
-use popcorn\lib\SphinxClient;
-use popcorn\lib\SphinxHelper;
 use popcorn\model\dataMaps\DataMapHelper;
-use popcorn\model\dataMaps\NewsCommentDataMap;
+use popcorn\model\dataMaps\comments\NewsCommentDataMap;
 use popcorn\model\dataMaps\NewsPostDataMap;
-use popcorn\model\dataMaps\PersonDataMap;
-use popcorn\model\dataMaps\TagDataMap;
 use popcorn\model\posts\NewsPost;
-use popcorn\model\posts\PostCategory;
 use popcorn\model\posts\PostFactory;
 use popcorn\model\tags\TagFactory;
 use popcorn\lib\RuHelper;
@@ -285,7 +280,7 @@ class PostController extends GenericController implements ControllerInterface {
 		];
 
 		$dataMap = new NewsCommentDataMap();
-		$commentsTree = $dataMap->getAllComments($post);
+		$commentsTree = $dataMap->getAllComments($post->getId());
 
 		$this
 			->getTwig()

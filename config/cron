@@ -1,2 +1,3 @@
 * * * * * /usr/bin/flock -xn ~/popcorn/var/tmp/indexer.newsDelta.lock /bin/bash ~/popcorn/scripts/indexer.newsDelta.sh >> ~/popcorn/var/log/indexer.newsDelta.log
 0 22 * * 1-5 /usr/bin/flock -xn ~/popcorn/var/tmp/indexer.newsFull.lock /bin/bash ~/popcorn/scripts/indexer.newsFull.sh >> ~/popcorn/var/log/indexer.newsFull.log
+@reboot sudo /usr/bin/searchd --config ~/popcorn/config/sphinxsearch.conf

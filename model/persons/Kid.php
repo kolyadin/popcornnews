@@ -88,7 +88,7 @@ class Kid extends Model {
 	 * @var int
 	 * @export
 	 */
-	private $commentsCount;
+	private $comments;
 
 	//endregion
 
@@ -193,8 +193,8 @@ class Kid extends Model {
 		return $this->votesUp - $this->votesDown;
 	}
 
-	public function getCommentsCount() {
-		return $this->commentsCount;
+	public function getComments() {
+		return $this->comments;
 	}
 
 	//endregion
@@ -296,10 +296,10 @@ class Kid extends Model {
 	}
 
 	/**
-	 * @param int $commentsCount
+	 * @param int $count
 	 */
-	public function setCommentsCount($commentsCount) {
-		$this->commentsCount = $commentsCount;
+	public function setComments($count) {
+		$this->comments = $count;
 	}
 
 	//endregion

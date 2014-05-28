@@ -121,13 +121,4 @@ class KidFactory {
 		return self::$dataMap->delete($id);
 	}
 
-	/**
-	 * @param Kid $kid
-	 */
-	public static function updateCommentsCount($kid) {
-		self::checkDataMap();
-
-		return self::$dataMap->updateCommentsCount($kid);
-	}
-
 }

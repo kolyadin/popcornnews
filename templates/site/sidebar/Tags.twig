@@ -1,0 +1,19 @@
+<section class="b-freeze-frame__tags clearfix b-side__vertical-margin">
+	<div class="b-freeze-frame__rubrics-title-cont">
+		<div class="b-freeze-frame__tags-rubrics-title b-rubrics-title b-rubrics-title_s18">теги</div>
+	</div>
+	<div class="b-grid__g2 b-grid__a">
+		<ul class="b-freeze-frame__list">
+			{% for tag in tags[:15] %}
+				<li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;{{ tag.name|e }}&quot;" href="/tag/{{ tag.tagId }}" class="b-freeze-frame__link b-freeze-frame__link_color{{ tag.color }}">{{ tag.name|e }}</a></li>
+			{% endfor %}
+		</ul>
+	</div>
+	<div class="b-grid__g2 b-grid__z">
+		<ul class="b-freeze-frame__list">
+			{% for tag in tags[15:] %}
+				<li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;{{ tag.name|e }}&quot;" href="/tag/{{ tag.tagId }}" class="b-freeze-frame__link b-freeze-frame__link_color{{ tag.color }}">{{ tag.name|e }}</a></li>
+			{% endfor %}
+		</ul>
+	</div>
+</section>

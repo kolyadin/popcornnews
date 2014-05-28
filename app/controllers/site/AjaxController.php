@@ -4,13 +4,21 @@ namespace popcorn\app\controllers\site;
 use popcorn\app\controllers\ControllerInterface;
 use popcorn\app\controllers\GenericController;
 use popcorn\lib\SphinxHelper;
+
+use popcorn\model\comments\KidComment;
+use popcorn\model\comments\MeetComment;
+use popcorn\model\comments\NewsPostComment;
+use popcorn\model\comments\PhotoArticleComment;
+
 use popcorn\model\content\ImageFactory;
-use popcorn\model\dataMaps\DataMapHelper;
 use popcorn\model\dataMaps\GroupDataMap;
 use popcorn\model\dataMaps\GroupMembersDataMap;
-use popcorn\model\dataMaps\KidsCommentDataMap;
-use popcorn\model\dataMaps\MeetingsCommentDataMap;
-use popcorn\model\dataMaps\NewsCommentDataMap;
+
+use popcorn\model\dataMaps\comments\KidCommentDataMap;
+use popcorn\model\dataMaps\comments\NewsCommentDataMap;
+use popcorn\model\dataMaps\comments\PhotoArticleCommentDataMap;
+use popcorn\model\dataMaps\comments\MeetCommentDataMap;
+
 use popcorn\model\dataMaps\NewsPostDataMap;
 use popcorn\model\dataMaps\PersonDataMap;
 use popcorn\model\dataMaps\TagDataMap;
@@ -20,14 +28,7 @@ use popcorn\model\dataMaps\UpDownDataMap;
 use popcorn\model\dataMaps\UserDataMap;
 use popcorn\model\exceptions\Exception;
 use popcorn\model\exceptions\NotAuthorizedException;
-use popcorn\model\groups\GroupFactory;
-use popcorn\model\groups\GroupMembers;
 use popcorn\model\groups\Topic;
-use popcorn\model\im\Comment;
-use popcorn\model\im\CommentKid;
-use popcorn\model\im\CommentMeeting;
-use popcorn\model\im\CommentPhotoArticle;
-use popcorn\model\im\CommentTopic;
 use popcorn\model\persons\Kid;
 use popcorn\model\persons\KidFactory;
 use popcorn\model\persons\Meeting;
@@ -35,7 +36,6 @@ use popcorn\model\persons\MeetingFactory;
 use popcorn\model\persons\PersonFactory;
 use popcorn\model\poll\Poll;
 use popcorn\model\poll\PollDataMap;
-use popcorn\model\posts\photoArticle\PhotoArticleCommentDataMap;
 use popcorn\model\posts\PostFactory;
 use popcorn\model\system\users\GuestUser;
 use popcorn\model\system\users\UserFactory;
@@ -774,20 +774,20 @@ class AjaxController extends GenericController implements ControllerInterface {
 			$images = $this->getSlim()->request()->post('images');
 
 			if ($entity == 'kids') {
-				$dataMap = new KidsCommentDataMap();
-				$comment = new CommentKid();
+				$dataMap = new KidCommentDataMap();
+				$comment = new KidComment();
 			} elseif ($entity == 'topics') {
 				$dataMap = new TopicCommentDataMap();
 				$comment = new CommentTopic();
 			} elseif ($entity == 'meetings') {
-				$dataMap = new MeetingsCommentDataMap();
-				$comment = new CommentMeeting();
+				$dataMap = new MeetCommentDataMap();
+				$comment = new MeetComment();
 			} elseif ($entity == 'news') {
 				$dataMap = new NewsCommentDataMap();
-				$comment = new Comment();
+				$comment = new NewsPostComment();
 			} elseif ($entity == 'photoarticle') {
 				$dataMap = new PhotoArticleCommentDataMap();
-				$comment = new CommentPhotoArticle();
+				$comment = new PhotoArticleComment();
 			}
 
 			$comment->setOwner($currentUser);
@@ -851,6 +851,9 @@ class AjaxController extends GenericController implements ControllerInterface {
 			$commentId = $this->getSlim()->request()->post('commentId');
 
 			switch ($entity) {
+				case 'news':
+					$dataMap = new NewsCommentDataMap();
+					break;
 				case 'photoarticle':
 					$dataMap = new PhotoArticleCommentDataMap();
 					break;

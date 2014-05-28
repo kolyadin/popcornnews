@@ -1,0 +1,14 @@
+<section class="b-photo-articles clearfix b-side__vertical-margin b-side__vertical-margin_35">
+	<div class="b-photo-articles__title-cont b-grid__g4 b-grid__a b-grid__z">
+		<h1 class="b-photo-articles__title b-rubrics-title b-rubrics-title_s18">фото-статьи</h1>
+		<span class="b-photo-articles__counter b-counter">{{ count }}</span>
+	</div>
+
+	{% set photo = post.mainImage.thumb('300x') %}
+
+	<div class="b-grid__g4 b-grid__a b-grid__z">
+		<a href="/photo-article/{{ post.id }}" class="b-photo-articles__photo-cont-big" title="{{ post.name|e }}"><img src="{{ photo.url }}" alt="{{ post.name|e }}"></a>
+		<div class="b-photo-articles__photo-count">{{ post.imagesCount|ruNumber('%d %s',['фотография','фотографии','фотографий','нет комментариев']) }}</div>
+		<h2 class="b-photo-articles__news-title"><a href="/photo-article/{{ post.id }}">{{ post.name|e }}</a></h2>
+	</div>
+</section>

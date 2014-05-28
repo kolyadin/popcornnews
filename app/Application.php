@@ -84,6 +84,7 @@ class Application {
 			'request' => $this->slim->request,
 			'path' => explode('/', $this->slim->request->getPath())
 		));
+
 	}
 
 	public function run() {

@@ -123,9 +123,7 @@ class SearchController extends GenericController implements ControllerInterface 
 			])
 			->run(function ($personId) {
 				return PersonFactory::getPerson($personId, [
-					'itemCallback' => [
-						'popcorn\\model\\dataMaps\\PersonDataMap' => PersonDataMap::WITH_NONE ^ PersonDataMap::WITH_PHOTO
-					]
+					'with' => PersonDataMap::WITH_PHOTO
 				]);
 			}, $totalFound);
 

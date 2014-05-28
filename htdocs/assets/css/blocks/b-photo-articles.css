@@ -25,10 +25,19 @@
 }
 .b-photo-articles__photo-cont {
   display: block;
-  width: 300px;
-  height: 300px;
+  width: 180px;
+  height: 180px;
   overflow: hidden;
   margin-bottom: 6px;
+}
+.b-photo-articles__photo-cont-big {
+  display: block;
+  width: 180px;
+  height: 180px;
+  overflow: hidden;
+  margin-bottom: 6px;
+  width: 300px;
+  height: 300px;
 }
 .b-photo-articles__photo-count {
   font-size: 12px;

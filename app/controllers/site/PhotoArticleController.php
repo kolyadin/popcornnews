@@ -3,18 +3,8 @@ namespace popcorn\app\controllers\site;
 
 use popcorn\app\controllers\ControllerInterface;
 use popcorn\app\controllers\GenericController;
-use popcorn\model\dataMaps\DataMapHelper;
-use popcorn\model\dataMaps\NewsCommentDataMap;
-use popcorn\model\dataMaps\NewsPostDataMap;
-use popcorn\model\dataMaps\PersonDataMap;
-use popcorn\model\dataMaps\TagDataMap;
-use popcorn\model\posts\NewsPost;
-use popcorn\model\posts\photoArticle\PhotoArticleCommentDataMap;
+use popcorn\model\dataMaps\comments\PhotoArticleCommentDataMap;
 use popcorn\model\posts\photoArticle\PhotoArticleFactory;
-use popcorn\model\posts\PostCategory;
-use popcorn\model\posts\PostFactory;
-use popcorn\model\tags\TagFactory;
-use popcorn\lib\RuHelper;
 
 /**
  * Class PhotoArticleController
@@ -60,7 +50,7 @@ class PhotoArticleController extends GenericController implements ControllerInte
 		PhotoArticleFactory::incrementViews($post);
 
 		$dataMap = new PhotoArticleCommentDataMap();
-		$commentsTree = $dataMap->getAllComments($post);
+		$commentsTree = $dataMap->getAllComments($post->getId());
 
 		$this
 			->getTwig()

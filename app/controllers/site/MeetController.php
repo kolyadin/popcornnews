@@ -4,6 +4,7 @@ namespace popcorn\app\controllers\site;
 
 use popcorn\app\controllers\ControllerInterface;
 use popcorn\app\controllers\GenericController;
+use popcorn\model\dataMaps\comments\MeetCommentDataMap;
 use popcorn\model\dataMaps\DataMapHelper;
 use popcorn\model\dataMaps\MeetingDataMap;
 use popcorn\model\dataMaps\MeetingsCommentDataMap;
@@ -51,7 +52,7 @@ class MeetController extends GenericController implements ControllerInterface {
 
 		$meet = MeetingFactory::get($meetId);
 
-		$dataMap = new MeetingsCommentDataMap();
+		$dataMap = new MeetCommentDataMap();
 		$commentsTree = $dataMap->getAllComments($meetId);
 
 		$this

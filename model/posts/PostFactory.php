@@ -70,15 +70,12 @@ class PostFactory {
 	public static function getPost($postId, array $options = []) {
 
 		$options = array_merge([
-			'itemCallback' => [
-				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_ALL,
-				'popcorn\\model\\dataMaps\\PersonDataMap'   => PersonDataMap::WITH_NONE
-			]
+			'with' => NewsPostDataMap::WITH_ALL
 		], $options);
 
-		$newsPostDataMap = new NewsPostDataMap(new DataMapHelper($options['itemCallback']));
+		$dataMap = new NewsPostDataMap($options['with']);
 
-		return $newsPostDataMap->findById($postId, $options);
+		return $dataMap->findById($postId, $options);
 	}
 
 
@@ -94,15 +91,12 @@ class PostFactory {
 	public static function getPosts(array $options = [], $from = 0, $count = 10, &$totalFound = 0) {
 
 		$options = array_merge([
-			'itemCallback' => [
-				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE ^ NewsPostDataMap::WITH_MAIN_IMAGE ^ NewsPostDataMap::WITH_TAGS,
-				'popcorn\\model\\dataMaps\\PersonDataMap'   => PersonDataMap::WITH_NONE
-			]
+			'with' => NewsPostDataMap::WITH_NONE ^ NewsPostDataMap::WITH_MAIN_IMAGE ^ NewsPostDataMap::WITH_TAGS
 		], $options);
 
-		$newsPostDataMap = new NewsPostDataMap(new DataMapHelper($options['itemCallback']));
+		$dataMap = new NewsPostDataMap($options['with']);
 
-		return $newsPostDataMap->findByLimit($options, $from, $count, $totalFound);
+		return $dataMap->findByLimit($options, $from, $count, $totalFound);
 	}
 
 	/**
@@ -118,15 +112,12 @@ class PostFactory {
 		$categoryId = PostCategory::getCategoryIdByAlias($categoryAlias);
 
 		$options = array_merge([
-			'itemCallback' => [
-				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE ^ NewsPostDataMap::WITH_MAIN_IMAGE ^ NewsPostDataMap::WITH_TAGS,
-				'popcorn\\model\\dataMaps\\PersonDataMap'   => PersonDataMap::WITH_NONE
-			]
+			'with' => NewsPostDataMap::WITH_NONE ^ NewsPostDataMap::WITH_MAIN_IMAGE ^ NewsPostDataMap::WITH_TAGS
 		], $options);
 
-		$newsPostDataMap = new NewsPostDataMap(new DataMapHelper($options['itemCallback']));
+		$dataMap = new NewsPostDataMap($options['with']);
 
-		return $newsPostDataMap->findByCategory($categoryId, $options, $from, $count, $totalFound);
+		return $dataMap->findByCategory($categoryId, $options, $from, $count, $totalFound);
 	}
 
 	/**
@@ -140,35 +131,25 @@ class PostFactory {
 	public static function findByTag($tagId, array $options = [], $from = 0, $count = -1, &$totalFound = 0) {
 
 		$options = array_merge([
-			'itemCallback' => [
-				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE ^ NewsPostDataMap::WITH_MAIN_IMAGE ^ NewsPostDataMap::WITH_TAGS,
-				'popcorn\\model\\dataMaps\\PersonDataMap'   => PersonDataMap::WITH_NONE
-			]
+			'with' => NewsPostDataMap::WITH_NONE ^ NewsPostDataMap::WITH_MAIN_IMAGE ^ NewsPostDataMap::WITH_TAGS
 		], $options);
 
+		$dataMap = new NewsPostDataMap($options['with']);
 
-		$newsPostDataMap = new NewsPostDataMap(new DataMapHelper($options['itemCallback']));
-
-		return $newsPostDataMap->findByTag($tagId, $options, $from, $count, $totalFound);
+		return $dataMap->findByTag($tagId, $options, $from, $count, $totalFound);
 
 	}
 
 
-	public static function findEarlier(NewsPost $post, array $relationships = []) {
+	public static function findEarlier(NewsPost $post, array $options = []) {
 
-		$dataMapHelper = new DataMapHelper();
+		$options = array_merge([
+			'with' => NewsPostDataMap::WITH_NONE ^ NewsPostDataMap::WITH_MAIN_IMAGE ^ NewsPostDataMap::WITH_TAGS
+		], $options);
 
-		if (count($relationships)) {
-			$dataMapHelper->setRelationship($relationships);
-		} else {
-			$dataMapHelper->setRelationship([
-				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE
-			]);
-		}
+		$dataMap = new NewsPostDataMap($options['with']);
 
-		$newsPostDataMap = new NewsPostDataMap($dataMapHelper);
-
-		return $newsPostDataMap->findEarlier($post);
+		return $dataMap->findEarlier($post);
 
 	}
 

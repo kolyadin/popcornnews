@@ -259,11 +259,6 @@ class PhotoArticleDataMap extends DataMap {
 	 * @return PhotoArticlePost
 	 */
 	public function findById($postId, array $options = []) {
-
-		$sql = 'SELECT * FROM pn_photoarticles WHERE id = :postId LIMIT 1';
-
-		$stmt = $this->prepare($sql);
-
 		return $this->fetchOne('SELECT * FROM pn_photoarticles WHERE id = :postId LIMIT 1', [
 			':postId' => $postId
 		]);
