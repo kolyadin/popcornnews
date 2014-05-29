@@ -847,19 +847,24 @@ class AjaxController extends GenericController implements ControllerInterface {
 			}
 
 			$entity = $this->getSlim()->request()->post('entity');
-			$entityId = $this->getSlim()->request()->post('entityId');
 			$commentId = $this->getSlim()->request()->post('commentId');
 
 			switch ($entity) {
 				case 'news':
 					$dataMap = new NewsCommentDataMap();
 					break;
+				case 'kids':
+					$dataMap = new KidCommentDataMap();
+					break;
+				case 'meetings':
+					$dataMap = new MeetCommentDataMap();
+					break;
 				case 'photoarticle':
 					$dataMap = new PhotoArticleCommentDataMap();
 					break;
 			}
 
-			/** @var CommentPhotoArticle $comment */
+			/** @var \popcorn\model\comments\Comment $comment */
 			$comment = $dataMap->findById($commentId);
 
 			if ($comment->getOwner()->getId() != $currentUser->getId()) {

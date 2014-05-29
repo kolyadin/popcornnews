@@ -3,7 +3,11 @@
 
 {% block head %}
 
-    <title>Звездные дети - popcornnews</title>
+	{% if paginator.active > 1 %}
+		{% set paginatorTitle = 'Страница ' ~ paginator.active ~ ' - ' %}
+	{% endif %}
+
+    <title>Звездные дети - {{ paginatorTitle }}popcornnews</title>
 
 	<script type="text/javascript">
 		$(function(){

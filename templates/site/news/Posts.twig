@@ -1,14 +1,18 @@
 {% extends '/GenericInner.twig' %}
 {% import '/Mixins.twig' as html %}
 
+{% if paginator.active > 1 %}
+	{% set paginatorTitle = 'Страница ' ~ paginator.active ~ ' - ' %}
+{% endif %}
+
 {% if slim.path[1] == 'category' %}
-	{% set title = 'Новости - popcornnews' %}
+	{% set title = 'Новости - '~ category.name|e ~' - ' ~ paginatorTitle ~ 'popcornnews' %}
 	{% set paginatorMask = '/category/%s/page%%u'|format(slim.path[2]) %}
 {% elseif slim.path[1] == 'tag' %}
-	{% set title = 'Новости - '~ tag.name|e ~' - popcornnews' %}
+	{% set title = 'Новости - '~ tag.name|e ~' - ' ~ paginatorTitle ~ 'popcornnews' %}
 	{% set paginatorMask = '/tag/%s/page%%u'|format(slim.path[2]) %}
 {% else %}
-	{% set title = 'Новости - popcornnews' %}
+	{% set title = 'Новости - ' ~ paginatorTitle ~ 'popcornnews' %}
 	{% set paginatorMask = '/news/page%u' %}
 {% endif %}
 

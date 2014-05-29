@@ -228,7 +228,12 @@ class Import2 extends Command {
 
 				{
 					$output->write("\t\t<info>Генерим мелкую фотку поиска</info>");
-					$mainImage->getThumb('110x');//Фотка для результатов поиска
+					$mainImage->getThumb('110x');
+				}
+
+				{
+					$output->write("\t\t<info>Генерим основную фотку</info>");
+					$mainImage->getThumb('590x');
 				}
 
 				$this->stmtInsertPost->bindValue(':mainImageId', $mainImage->getId());
@@ -271,12 +276,6 @@ class Import2 extends Command {
 					]);
 
 					$output->writeln(" готово</comment>");
-
-					{
-						$output->write("\t\t<info>Генерим фотку 110x для поиска");
-						$image->getThumb('110x'); //Мелкая фотка для админки (все-равно понадобится)
-						$output->writeln(" готово</info>");
-					}
 
 					{
 						$output->write("\t\t<info>Генерим фотку 200x для админки");

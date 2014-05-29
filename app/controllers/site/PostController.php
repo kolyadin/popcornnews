@@ -7,6 +7,7 @@ use popcorn\model\dataMaps\DataMapHelper;
 use popcorn\model\dataMaps\comments\NewsCommentDataMap;
 use popcorn\model\dataMaps\NewsPostDataMap;
 use popcorn\model\posts\NewsPost;
+use popcorn\model\posts\PostCategory;
 use popcorn\model\posts\PostFactory;
 use popcorn\model\tags\TagFactory;
 use popcorn\lib\RuHelper;
@@ -127,6 +128,7 @@ class PostController extends GenericController implements ControllerInterface {
 			->getTwig()
 			->display('/news/Posts.twig', [
 				'posts'     => $posts,
+				'category'  => PostCategory::getCategory(PostCategory::getCategoryIdByAlias($categoryId)),
 				'paginator' => [
 					'pages'  => ceil($totalFound / $onPage),
 					'active' => $page

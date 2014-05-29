@@ -18,34 +18,34 @@ use TwigExtensionRuNumber\TwigExtensionRuNumber;
 
 class Application {
 
-    /**
-     * @var \Slim\Slim
-     */
-    private $slim;
-	private $twig,$twigString;
+	/**
+	 * @var \Slim\Slim
+	 */
+	private $slim;
+	private $twig, $twigString;
 	private $imageGenerator;
 
-    public function __construct($settings = []) {
+	public function __construct($settings = []) {
 
 		$this->slim = new Slim();
 
-		switch ($settings['mode']){
+		switch ($settings['mode']) {
 			case 'production':
-				ini_set('display_errors',false);
+				ini_set('display_errors', false);
 				error_reporting(0);
 				break;
 			default:
-				ini_set('display_errors',true);
+				ini_set('display_errors', true);
 				error_reporting(E_ALL ^ E_STRICT);
 				break;
 		}
 
 		$twigSettings = [
 			'templates.path' => $settings['templates.path'],
-			'autoescape' => false,
-			'cache' => "/tmp/twig/{$settings['mode']}/cache",
-			'debug' => $settings['mode'] == 'production' ? false : true,
-			'auto_reload' => $settings['mode'] == 'production' ? false : true,
+			'autoescape'     => false,
+			'cache'          => __DIR__ . "/../var/cache/twig/{$settings['mode']}",
+			'debug'          => $settings['mode'] == 'production' ? false : true,
+			'auto_reload'    => $settings['mode'] == 'production' ? false : true,
 		];
 
 		$twigLoader = new \Twig_Loader_Filesystem($twigSettings['templates.path']);
@@ -67,22 +67,22 @@ class Application {
 
 		ImageGenerator::setup([
 			'bin' => [
-				'convert' => '/usr/bin/convert',
+				'convert'  => '/usr/bin/convert',
 				'identify' => '/usr/bin/identify',
-				'mogrify' => '/usr/bin/mogrify',
-				'lock' => '/usr/bin/flock -n'
+				'mogrify'  => '/usr/bin/mogrify',
+				'lock'     => '/usr/bin/flock -n'
 			],
 			'dir' => [
 				'documentRoot' => __DIR__ . '/../htdocs',
-				'source' => __DIR__ . '/../htdocs/upload',
-				'output' => __DIR__ . '/../htdocs/k/%%/%%',
-				'locks' => '/tmp',
+				'source'       => __DIR__ . '/../htdocs/upload',
+				'output'       => __DIR__ . '/../htdocs/k/%%/%%',
+				'locks'        => '/tmp',
 			]
 		]);
 
 		$this->twig->addGlobal('slim', array(
 			'request' => $this->slim->request,
-			'path' => explode('/', $this->slim->request->getPath())
+			'path'    => explode('/', $this->slim->request->getPath())
 		));
 
 	}

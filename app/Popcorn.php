@@ -37,8 +37,8 @@ class Popcorn extends Application {
 	public function __construct() {
 
 		parent::__construct([
-			'mode' => Config::getMode(),
-			'templates.path' => '../templates/site'
+			'mode'           => Config::getMode(),
+			'templates.path' => __DIR__ . '/../templates/site'
 		]);
 
 

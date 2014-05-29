@@ -1,6 +1,6 @@
 AddDefaultCharset utf-8
 
-SetEnv ENV_MODE development
+SetEnv POPCORN_MODE development
 
 DirectoryIndex index.php
 
