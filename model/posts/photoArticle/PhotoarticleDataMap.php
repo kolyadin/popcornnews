@@ -306,6 +306,44 @@ class PhotoArticleDataMap extends DataMap {
 	}
 
 	/**
+	 * @param \popcorn\model\persons\Person $person
+	 * @param array $options
+	 * @param int $from
+	 * @param $count
+	 * @param int $totalFound
+	 * @return PhotoArticlePost[]
+	 */
+	public function findByPerson(Person $person, array $options = [], $from = 0, $count = -1, &$totalFound = -1) {
+
+		$options = array_merge([
+			'orderBy' => [
+				'createDate' => 'desc'
+			]
+		], $options);
+
+		$sql = 'SELECT %s FROM pn_photoarticles t_p
+			JOIN pn_photoarticles_tags t_pt ON (t_pt.postId = t_p.id)
+			WHERE t_pt.type = :type AND t_pt.entityId = :personId';
+
+		$binds = [
+			':type'     => Tag::PERSON,
+			':personId' => $person->getId()
+		];
+
+		if ($totalFound != -1) {
+			$stmt = $this->prepare(sprintf($sql, 'count(*)'));
+			$stmt->execute($binds);
+
+			$totalFound = $stmt->fetchColumn();
+		}
+
+		$sql .= $this->getOrderString($options['orderBy']);
+		$sql .= $this->getLimitString($from, $count);
+
+		return $this->fetchAll(sprintf($sql, 't_p.*'),$binds);
+	}
+
+	/**
 	 * @param $from
 	 * @param $to
 	 * @param int $limit

@@ -6,11 +6,11 @@
 				{% for tag in post.tags %}
 					{% if tag.isPerson %}
 						{% set person = tag %}
-						<a title="Перейти к персоне &quot;{{ person.name|e }}&quot;" href="/persons/{{ person.urlName }}">{{ person.name|e }}</a>&nbsp;{% if loop.last == false %},{% endif %}
+						<a title="Перейти к персоне &quot;{{ person.name|e }}&quot;" href="/persons/{{ person.urlName }}">{{ person.name|e }}</a>&nbsp;
 					{% elseif tag.isArticle %}
-						<a title="Показать новости с рубрикой &quot;{{ tag.name|e }}&quot;" href="/category/{{ tag.articleAlias }}">{{ tag.name|e }}</a>&nbsp;{% if loop.last == false %},{% endif %}
+						<a title="Показать новости с рубрикой &quot;{{ tag.name|e }}&quot;" href="/category/{{ tag.articleAlias }}">{{ tag.name|e }}</a>&nbsp;
 					{% elseif tag.isEvent %}
-						<a title="Показать новости с тегом &quot;{{ tag.name|e }}&quot;" href="/tag/{{ tag.id }}">{{ tag.name|e }}</a>&nbsp;{% if loop.last == false %},{% endif %}
+						<a title="Показать новости с тегом &quot;{{ tag.name|e }}&quot;" href="/tag/{{ tag.id }}">{{ tag.name|e }}</a>&nbsp;
 					{% endif %}
 				{% endfor %}
 			</li>

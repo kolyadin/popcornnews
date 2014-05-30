@@ -60,7 +60,7 @@
 								{% for post in posts %}
 
 									{% set commentsCount = post.comments %}
-									{% set commentsCountStr = post.comments|ruNumber(['комментарий','комментария','комментариев'])|replace({(post.comments): ''}) %}
+									{% set commentsCountStr = post.comments|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) %}
 
 									<li class="b-grid__g2 b-grid__a">
 

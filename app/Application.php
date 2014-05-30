@@ -7,14 +7,12 @@
 
 namespace popcorn\app;
 
-use Assetic\Extension\Twig\AsseticExtension;
-use Assetic\Factory\AssetFactory;
 use popcorn\lib\twigExtensions\TwigExtensionRuAge;
 use popcorn\lib\twigExtensions\TwigExtensionRuDate;
 use popcorn\lib\twigExtensions\TwigExtensionRuDateFriendly;
 use Slim\Slim;
 use popcorn\lib\ImageGenerator;
-use TwigExtensionRuNumber\TwigExtensionRuNumber;
+use popcorn\lib\twigExtensions\TwigExtensionRuNumber;
 
 class Application {
 
@@ -59,12 +57,6 @@ class Application {
 		$this->twig->addExtension(new TwigExtensionRuDateFriendly());
 		$this->twig->addExtension(new TwigExtensionRuAge());
 
-		$this->twigString = new \Twig_Environment($twigLoaderString);
-		$this->twigString->addExtension(new TwigExtensionRuNumber());
-		$this->twigString->addExtension(new TwigExtensionRuDate());
-		$this->twigString->addExtension(new TwigExtensionRuDateFriendly());
-		$this->twigString->addExtension(new TwigExtensionRuAge());
-
 		ImageGenerator::setup([
 			'bin' => [
 				'convert'  => '/usr/bin/convert',
@@ -104,9 +96,5 @@ class Application {
 
 	final public function getTwig() {
 		return $this->twig;
-	}
-
-	final public function getTwigString() {
-		return $this->twigString;
 	}
 }

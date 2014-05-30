@@ -24,7 +24,6 @@
         "facebook/xhprof": "dev-master",
         "danielstjules/stringy": "dev-master",
         "phpmailer/phpmailer": "v5.2.7",
-        "kolyadin/twig-ru-number-extension": "dev-master",
         "mobiledetect/mobiledetectlib": "2.7.8"
     },
     "autoload": {

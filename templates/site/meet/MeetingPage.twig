@@ -105,7 +105,7 @@
 
 		{% spaceless %}
 
-			{% set textDefault = meet.votesOverall|ruNumber(['голос','голоса','голосов']) %}
+			{% set textDefault = meet.votesOverall|ruNumber(['нет голосов','%u голос','%u голоса','%u голосов']) %}
 
 			{% if meet.firstPerson.photo.name %}
 				{% set photoFirst = meet.firstPerson.photo.thumb('192x') %}
@@ -142,13 +142,8 @@
 						</div>
 						<p class="text" data-default-text="Всего {{ textDefault }}">Всего {{ textDefault }}</p>
 					</div>
-					{% if meet.commentsCount > 0 %}
-						{% set comments = meet.commentsCount|ruNumber(['комментарий','комментария','комментариев']) %}
-					{% else %}
-						{% set comments = 'Нет комментариев' %}
-					{% endif %}
 					<div class="under">
-						<p><a href="/meet/{{ meet.id }}#comments"><strong>{{ comments }}</strong></a></p>
+						<p><a href="/meet/{{ meet.id }}#comments"><strong>{{ meet.comments|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) }}</strong></a></p>
 
 						<p><a href="/meet/{{ meet.id }}#new-comment">Написать комментарий</a></p>
 					</div>

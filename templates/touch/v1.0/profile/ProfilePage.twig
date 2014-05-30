@@ -4,7 +4,7 @@
 
 	<div class="column-title column-title_highlighted">
 		<div class="column-title__cell">
-			<span class="xx-large">{{ wallMessages|length|ruNumber(['запись','записи','записей']) }}</span>
+			<span class="xx-large">{{ wallMessages|length|ruNumber(['нет записей','%u запись','%u записи','%u записей']) }}</span>
 		</div>
 		<div class="column-title__cell right">
 			<a class="icon-text xx-large" href="/profile/{{ profile.id }}/newWallMessage">

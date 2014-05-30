@@ -16,6 +16,7 @@
 			<p><strong>Размеры (ширина)</strong>:<br/>
 			* В списках - 590px<br/>
 			* Полная новость - 620px<br/>
+			* Fashion Battle - 460px (на главной странице)<br/>
 			* Главная страница - 620px
 		</div>
 		<div class="well well-lg">
@@ -388,17 +389,24 @@
 
 				var $width = $('#main-image-preview').attr('data-full-width');
 
+				jcropApi.setOptions({aspectRatio: 62/40});
 				jcropApi.setSelect([0,0,$width,0]);
 
 			});
 
 			$('button[data-action=jcrop-select-default]').on('click',function(){
 
+				jcropApi.setOptions({aspectRatio: 62/40});
 				jcropApi.setSelect([0,0,620,0]);
 
 			});
 
+			$('button[data-action=jcrop-select-fashion-battle]').on('click',function(){
 
+				jcropApi.setOptions({aspectRatio: 460/636});
+				jcropApi.setSelect([0,0,620,0]);
+
+			});
 
 			//Событие на кнопку "выбрать другое фото" у основного фото
 			$('body').on('click','input[data-action=remove-main-image]',function(){
@@ -742,6 +750,8 @@
 				<div class="modal-footer">
 					<button class="btn btn-info" aria-hidden="true" data-action="jcrop-select-all-width">Подогнать под ширину</button>
 					<button class="btn btn-info" aria-hidden="true" data-action="jcrop-select-default">Выбрать минимальный &quot;кусок&quot;</button>
+					<br/><br/>
+					<button class="btn btn-info" aria-hidden="true" data-action="jcrop-select-fashion-battle">Выбрать кусок для fashion battle</button>
 				</div>
 				<div class="modal-footer">
 					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Отмена</button>

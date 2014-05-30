@@ -57,7 +57,7 @@
 					<li class="b-person__statistic__item-first">
 						<div class="b-person__statistic__title">
 							<div class="b-person__statistic__title-text">Популярность</div>
-							<div class="b-person__statistic__vote-count">уже принято: {{ person.votesCount|ruNumber(['голос','голоса','голосов']) }}</div>
+							<div class="b-person__statistic__vote-count">уже принято: {{ person.votesCount|ruNumber(['нет голосов','%u голос','%u голоса','%u голосов']) }}</div>
 						</div>
 						<div class="b-person__statistic__val">{{ person.totalRating }}</div>
 					</li>
@@ -341,37 +341,31 @@
 		</div>
 	</section>
 
-	<section class="b-photo-articles clearfix b-person__photo-articles">
-		<div class="b-photo-articles__title-cont b-grid__g8 b-grid__a">
-			<h1 class="b-photo-articles__title b-rubrics-title b-rubrics-title_s24">Фото-статьи</h1>
-			<span class="b-photo-articles__counter b-counter">5941</span>
-		</div>
-		<div class="b-grid__g4 b-grid__a">
-			<a class="b-photo-articles__photo-cont" href="#"><img alt="" src="./img/content/large_front.jpg"></a>
+	{% if photoArticles|length %}
 
-			<div class="b-photo-articles__photo-count">3 фотографии</div>
-			<h2 class="b-photo-articles__news-title"><a href="#">Голлисвудский роман Николь Кидман и Тома Круза</a></h2>
-		</div>
-		<div class="b-grid__g4 b-grid__z">
-			<a class="b-photo-articles__photo-cont" href="#"><img alt="" src="./img/content/large_front.jpg"></a>
+		<section class="b-photo-articles clearfix b-person__photo-articles">
+			<div class="b-photo-articles__title-cont b-grid__g8 b-grid__a">
+				<h1 class="b-photo-articles__title b-rubrics-title b-rubrics-title_s24">Фото-статьи</h1>
+				<span class="b-photo-articles__counter b-counter">{{ photoArticlesTotal }}</span>
+			</div>
+			{% for post in photoArticles[:2] %}
+				{% set photo = post.mainImage.thumb('300x') %}
 
-			<div class="b-photo-articles__photo-count">17 фотографий</div>
-			<h2 class="b-photo-articles__news-title"><a href="#">Миллионы Тэйлор Свифт</a></h2>
-		</div>
-		<div class="clear"></div>
-		<div class="b-grid__g4 b-grid__a">
-			<a class="b-photo-articles__photo-cont" href="#"><img alt="" src="./img/content/large_front.jpg"></a>
+				{% if loop.first %}
+					{% set class = 'b-grid__a' %}
+				{% elseif loop.last %}
+					{% set class = 'b-grid__z' %}
+				{% endif %}
 
-			<div class="b-photo-articles__photo-count">67 фотографий</div>
-			<h2 class="b-photo-articles__news-title"><a href="#">Эволюция тела Майкла Фелпса</a></h2>
-		</div>
-		<div class="b-grid__g4 b-grid__z">
-			<a class="b-photo-articles__photo-cont" href="#"><img alt="" src="./img/content/large_front.jpg"></a>
+				<div class="b-grid__g4 {{ class }}">
+					<a class="b-photo-articles__photo-cont-big" href="/photo-article/{{ post.id }}"><img alt="{{ post.name|e }}" src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}"></a>
+					<div class="b-photo-articles__photo-count">{{ post.imagesCount|ruNumber(['нет фотографий','%u фотография','%u фотографии','%u фотографий']) }}</div>
+					<h2 class="b-photo-articles__news-title"><a href="/photo-article/{{ post.id }}">{{ post.name|e }}</a></h2>
+				</div>
+			{% endfor %}
+		</section>
 
-			<div class="b-photo-articles__photo-count">3 фотографии</div>
-			<h2 class="b-photo-articles__news-title"><a href="#">Голлисвудский роман Николь Кидман и Тома Круза</a></h2>
-		</div>
-	</section>
+	{% endif %}
 
 	<section class="b-person__simple-gallery b-person__sets">
 		<div class="b-person__sets__title-cont b-grid__g8 b-grid__a">

@@ -91,14 +91,7 @@
 
 	{% for meeting in meetings %}
 
-		{% if meeting.commentsCount > 0 %}
-			{% set comments = meeting.commentsCount|ruNumber(['комментарий','комментария','комментариев']) %}
-		{% else %}
-			{% set comments = 'Нет комментариев' %}
-		{% endif %}
-
-
-		{% set textDefault = meeting.votesOverall|ruNumber(['голос','голоса','голосов']) %}
+		{% set textDefault = meeting.votesOverall|ruNumber(['нет голосов','%u голос','%u голоса','%u голосов']) %}
 
 		{% if meeting.firstPerson.photo.name %}
 			{% set photoFirst = meeting.firstPerson.photo.thumb('192x') %}
@@ -116,13 +109,12 @@
 			<h2><a href="/meet/{{ meeting.id }}">{{ meeting.title|e }}</a></h2>
 			<div class="pics">
 				<ul class="b-column-news">
-                                	<li class="b-grid__g13">
-						<a href="/meet/{{ meeting.id }}"><img src="{{ photoFirst.url }}" alt="{{ meeting.name|e }}" width="{{ photoFirst.width }}" height="{{ photoFirst.height }}"/></a>
-                                		<div>{{ meeting.firstPerson.birthDate|ruAge }}</div>
-				        </li>
-				        <li class="b-grid__g13">
+                    <li class="b-grid__g13">
+						<a href="/meet/{{ meeting.id }}"><img src="{{ photoFirst.url }}" alt="{{ meeting.name|e }}" width="{{ photoFirst.width }}" height="{{ photoFirst.height }}"/></a>                                		<div>{{ meeting.firstPerson.birthDate|ruAge }}</div>
+			        </li>
+			        <li class="b-grid__g13">
 						<a href="/meet/{{ meeting.id }}"><img src="{{ photoSecond.url }}" alt="{{ meeting.name|e }}" width="{{ photoSecond.width }}" height="{{ photoSecond.height }}"/></a>
-                                		<div>{{ meeting.secondPerson.birthDate|ruAge }}</div>
+                        <div>{{ meeting.secondPerson.birthDate|ruAge }}</div>
 					</li>
 				</ul>
 			</div>
@@ -136,7 +128,7 @@
 					<p class="text" data-default-text="Всего {{ textDefault }}">Всего {{ textDefault }}</p>
 				</div>
 				<div class="under">
-					<p><a href="/meet/{{ meeting.id }}#comments"><strong>{{ comments }}</strong></a></p>
+					<p><a href="/meet/{{ meeting.id }}#comments"><strong>{{ meeting.comments|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) }}</strong></a></p>
 					<p><a href="/meet/{{ meeting.id }}#new-comment">Написать комментарий</a></p>
 				</div>
 			</div>

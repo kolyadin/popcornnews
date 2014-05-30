@@ -14,6 +14,7 @@ use popcorn\model\dataMaps\DataMapHelper;
 use popcorn\model\dataMaps\NewsPostDataMap;
 use popcorn\model\dataMaps\NewsTagDataMap;
 use popcorn\model\dataMaps\PersonDataMap;
+use popcorn\model\persons\Person;
 use popcorn\model\tags\Tag;
 
 class PostFactory {
@@ -140,6 +141,26 @@ class PostFactory {
 
 	}
 
+	/**
+	 * @param Person $person
+	 * @param array $options
+	 * @param int $from
+	 * @param $count
+	 * @param $totalFound
+	 * @return NewsPost[]
+	 */
+	public static function findByPerson(Person $person, array $options = [], $from = 0, $count = -1, &$totalFound = -1) {
+
+		$options = array_merge([
+			'with' => NewsPostDataMap::WITH_NONE ^ NewsPostDataMap::WITH_MAIN_IMAGE ^ NewsPostDataMap::WITH_TAGS
+		], $options);
+
+		$dataMap = new NewsPostDataMap($options['with']);
+
+		return $dataMap->findByPerson($person, $options, $from, $count, $totalFound);
+
+	}
+
 
 	public static function findEarlier(NewsPost $post, array $options = []) {
 
@@ -152,6 +173,7 @@ class PostFactory {
 		return $dataMap->findEarlier($post);
 
 	}
+
 
 	/**
 	 * Обновим количество показов у новости
@@ -195,34 +217,27 @@ class PostFactory {
 
 	public static function getStopShot($from = 0, $count = 2) {
 
-		$newsPostDataMap = new NewsPostDataMap(new DataMapHelper(['popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE ^ NewsPostDataMap::WITH_IMAGES]));
+		$dataMap = new NewsPostDataMap(NewsPostDataMap::WITH_NONE ^ NewsPostDataMap::WITH_IMAGES);
 
 //		$cacheKey = MMC::genKey($newsPostDataMap->getClass(), __METHOD__, func_get_args());
 
 //		return MMC::getSet($cacheKey, strtotime('+1 day'), ['post'], function () use ($newsPostDataMap, $from, $count) {
-			return $newsPostDataMap->findRaw('name like "Стоп-кадр%" and status = ' . NewsPost::STATUS_PUBLISHED, ['createDate' => 'desc'], $from, $count);
+		return $dataMap->findRaw('name like "Стоп-кадр%" and status = ' . NewsPost::STATUS_PUBLISHED, ['createDate' => 'desc'], $from, $count);
 //		});
 
 
 	}
 
 	/**
+	 * @param $from
 	 * @param $count
 	 *
 	 * @return NewsPost[]
 	 */
-	public static function getTopPosts($count) {
-		self::checkDataMap();
+	public static function getTopPosts($from, $count) {
+		$dataMap = new NewsPostDataMap(NewsPostDataMap::WITH_NONE ^ NewsPostDataMap::WITH_MAIN_IMAGE);
 
-		$cacheKey = MMC::genKey(self::$dataMap->getClass(), __METHOD__, func_get_args());
-
-		return MMC::getSet($cacheKey, strtotime('+1 day'), ['post'], function () use ($count) {
-			return self::$dataMap->findRaw("status = " . NewsPost::STATUS_PUBLISHED . " AND createDate > " . strtotime("-2 week"),
-				array('comments' => DataMap::DESC, 'createDate' => DataMap::DESC),
-				0, $count);
-		});
-
-
+		return $dataMap->getTopPosts($from, $count);
 	}
 
 

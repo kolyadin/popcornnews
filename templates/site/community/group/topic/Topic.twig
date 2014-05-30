@@ -90,7 +90,7 @@
 
 {% block communityContent %}
 
-	{% set textDefault = topic.votesOverall|ruNumber(['голос','голоса','голосов']) %}
+	{% set textDefault = topic.votesOverall|ruNumber(['нет голосов','%u голос','%u голоса','%u голосов']) %}
 
 	<div class="b-grid__g8 no-mg">
 

@@ -66,20 +66,10 @@ class PersonFactory {
 	}
 
 
-	public static function getFilmography(Person $person, $from = 0, $count = -1) {
+	public static function getFilmography(Person $person, $from = 0, $count = -1, &$totalFound = -1) {
 		self::checkDataMap();
 
-		return self::$dataMap->getFilmography($person->getId(), $from, $count);
-	}
-
-	/**
-	 * @param Person $person
-	 * @return int
-	 */
-	public static function getFilmographyCount(Person $person) {
-		self::checkDataMap();
-
-		return self::$dataMap->getFilmographyCount($person->getId());
+		return self::$dataMap->getFilmography($person->getId(), $from, $count, $totalFound);
 	}
 
 	/**

@@ -225,7 +225,7 @@
 								<span style="width:30px;" class="btn btn-xs btn-warning tooltips" data-original-title="Новость запланирована" data-placement="top"><i class="fa fa-calendar"></i></span>
 							{% endif %}
 						</td>
-						<td><a class="btn btn-info tooltips" data-original-title="{{ post.comments|ruNumber('%s',['комментарий','комментария','комментариев']) }}" href="/office/post{{ post.id }}/comments">{{ post.comments }}</a></td>
+						<td><a class="btn btn-info tooltips" data-original-title="{{ post.comments|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) }}" href="/office/post{{ post.id }}/comments">{{ post.comments }}</a></td>
 						{% if post.status == constant('popcorn\\model\\posts\\NewsPost::STATUS_PLANNED') %}
 							<td class="item-link"><a class="btn btn-warning tooltips" data-original-title="Новость запланирована" data-placement="top" href="/office/post{{ post.id }}">{{ post.name|e }}</a></td>
 						{% elseif post.status == constant('popcorn\\model\\posts\\NewsPost::STATUS_NOT_PUBLISHED') %}

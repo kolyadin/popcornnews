@@ -130,7 +130,7 @@
 						<a href="/news/{{ post.id }}#comments" title="{{ post.name|e }}"
 						   class="b-column-news__comments b-comments-status">
 							<span class="b-comments-status__num">{{ post.comments }}</span>
-							<span class="b-comments-status__title">{{ post.comments|ruNumber('%s',['комментарий','комментария','комментариев','нет комментариев']) }}</span>
+							<span class="b-comments-status__title">{{ post.comments|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) }}</span>
 						</a>
 					</div>
 				</li>
@@ -141,21 +141,21 @@
 	<section class="b-freeze-frame">
 		<script type="text/javascript">
 			var freezeList = [
-					  {% for post in stopShots %}
+				  {% for post in stopShots %}
 
-						  {
-							  "header": "{{ post.name|e }}",
-							  "photos": [
-								  {% for image in post.images %}
-								        {"img": "{{ image.thumb('60x').url }}", "link": "#"},
-								  {% endfor %}
-							  ]
-						  },
+					  {
+						  "header": "{{ post.name|e }}",
+						  "photos": [
+							  {% for image in post.images %}
+							        {"img": "{{ image.thumb('60x').url }}", "link": "#"},
+							  {% endfor %}
+						  ]
+					  },
 
-					  {% endfor %}
+				  {% endfor %}
 
-				  ],
-				  currentFreezeInList = 0;
+			  ],
+			  currentFreezeInList = 0;
 		</script>
 		<div class="b-freeze-frame__top clearfix loaded">
 			<div class="b-grid__g4">
@@ -189,8 +189,7 @@
 					<div class="b-grid__g2 b-grid__a">
 						<ul class="b-freeze-frame__list">
 							{% for person in sidebar.persons[:10] %}
-								<li class="b-freeze-frame__item"><a href="/persons/{{ person.urlName }}"
-								                                    class="b-freeze-frame__link b-freeze-frame__link_color{{ person.color }}">{{ person.name|e }}</a>
+								<li class="b-freeze-frame__item"><a href="/persons/{{ person.urlName }}" class="b-freeze-frame__link b-freeze-frame__link_color{{ person.color }}">{{ person.name|e }}</a>
 								</li>
 							{% endfor %}
 						</ul>
@@ -198,8 +197,7 @@
 					<div class="b-grid__g2 b-grid__z">
 						<ul class="b-freeze-frame__list">
 							{% for person in sidebar.persons[10:10] %}
-								<li class="b-freeze-frame__item"><a href="/persons/{{ person.urlName }}"
-								                                    class="b-freeze-frame__link b-freeze-frame__link_color{{ person.color }}">{{ person.name|e }}</a>
+								<li class="b-freeze-frame__item"><a href="/persons/{{ person.urlName }}" class="b-freeze-frame__link b-freeze-frame__link_color{{ person.color }}">{{ person.name|e }}</a>
 								</li>
 							{% endfor %}
 						</ul>
@@ -337,10 +335,10 @@
 							<h2 class="b-column-news__title"><a href="/news/{{ post.id }}"
 							                                    title="{{ post.name|e }}">{{ post.name|e }}</a></h2>
 
-							<p class="b-column-news__text">{{ post.announceFriendly(180) }}</p>
+							<p class="b-column-news__text">{{ post.announceFriendly(200) }}</p>
 							<a href="/news/{{ post.id }}#comments" class="b-column-news__comments b-comments-status">
 								<span class="b-comments-status__num">{{ post.comments }}</span>
-								<span class="b-comments-status__title">{{ post.comments|ruNumber('%s',['комментарий','комментария','комментариев','нет комментариев']) }}</span>
+								<span class="b-comments-status__title">{{ post.comments|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) }}</span>
 							</a>
 						</div>
 					</li>
@@ -360,18 +358,16 @@
 
 					<li class="b-grid__g2 {{ addClass }}">
 						<a href="/news/{{ post.id }}" class="b-column-news__head" title="{{ post.name|e }}">
-							<img src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}"
-							     alt="{{ post.name|e }}"/>
+							<img src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}" alt="{{ post.name|e }}"/>
 						</a>
 
 						<div class="b-column-news__body">
-							<h2 class="b-column-news__title"><a href="/news/{{ post.id }}"
-							                                    title="{{ post.name|e }}">{{ post.name|e }}</a></h2>
+							<h2 class="b-column-news__title"><a href="/news/{{ post.id }}" title="{{ post.name|e }}">{{ post.name|e }}</a></h2>
 
-							<p class="b-column-news__text">{{ post.announceFriendly(180) }}</p>
+							<p class="b-column-news__text">{{ post.announceFriendly(200) }}</p>
 							<a href="/news/{{ post.id }}#comments" class="b-column-news__comments b-comments-status">
 								<span class="b-comments-status__num">{{ post.comments }}</span>
-								<span class="b-comments-status__title">{{ post.comments|ruNumber('%s',['комментарий','комментария','комментариев','нет комментариев']) }}</span>
+								<span class="b-comments-status__title">{{ post.comments|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) }}</span>
 							</a>
 						</div>
 					</li>
@@ -381,20 +377,17 @@
 		<div class="b-grid__g6 clearfix">
 			<section class="b-fashion-battle">
 				<div class="b-fashion-battle__title-cont">
-					<h1 class="b-fashion-battle__rubrics-title b-rubrics-title b-rubrics-title_s30">Fashion battle <span
-							  class="b-fashion-battle__rubrics-number">№273</span></h1>
-
+					<h1 class="b-fashion-battle__rubrics-title b-rubrics-title b-rubrics-title_s30">Fashion battle <span class="b-fashion-battle__rubrics-number">№273</span></h1>
 					<div class="b-fashion-battle__title-arrows-cont b-title-arrows">
 						<div class="b-title-arrows__arrow b-title-arrows__arrow_left"></div>
 						<div class="b-title-arrows__arrow b-title-arrows__arrow_right"></div>
 					</div>
 				</div>
-				<h2 class="b-fashion-battle__news-title"><a href="#">Моника Беллуччи и Мадонна</a></h2>
-
-				<h3 class="b-fashion-battle__news-description">Кто лучше в этом платье?</h3>
-
+				<h2 class="b-fashion-battle__news-title"><a href="/news/{{ fashionBattle.id }}">{{ fashionBattle.name|e }}</a></h2>
+				<h3 class="b-fashion-battle__news-description">{{ fashionBattle.announce }}</h3>
 				<div class="b-fashion-battle__photo-cont clearfix">
-					<img src="/assets/img/content/compare_img.jpg" alt="" class="b-fashion-battle__img"/>
+					{% set photo = fashionBattle.mainImageId.thumb('460x') %}
+					<a href="/news/{{ fashionBattle.id }}"><img src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}" alt="{{ fashionBattle.name|e }}" class="b-fashion-battle__img"/></a>
 				</div>
 			</section>
 		</div>
@@ -447,7 +440,7 @@
 						<a href="/news/{{ post.id }}#comments" title="{{ post.name|e }}"
 						   class="b-column-news__comments b-comments-status">
 							<span class="b-comments-status__num">{{ post.comments }}</span>
-							<span class="b-comments-status__title">{{ post.comments|ruNumber('%s',['комментарий','комментария','комментариев','нет комментариев']) }}</span>
+							<span class="b-comments-status__title">{{ post.comments|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) }}</span>
 						</a>
 					</div>
 				</li>

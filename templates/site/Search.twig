@@ -55,7 +55,7 @@
 											{% else %}
 
 												<span class="b-comments-status__num">{{ post.comments }}</span>
-												<span class="b-comments-status__title">{{ post.comments|ruNumber('%s',['комментарий','комментария','комментариев','нет комментариев']) }}</span>
+												<span class="b-comments-status__title">{{ post.comments|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) }}</span>
 
 											{% endif %}
 										</a>

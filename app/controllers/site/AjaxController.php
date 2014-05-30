@@ -3,6 +3,7 @@ namespace popcorn\app\controllers\site;
 
 use popcorn\app\controllers\ControllerInterface;
 use popcorn\app\controllers\GenericController;
+use popcorn\lib\RuHelper;
 use popcorn\lib\SphinxHelper;
 
 use popcorn\model\comments\KidComment;
@@ -199,13 +200,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 			}
 		}
 
-		$newsFound = $this
-			->getApp()
-			->getTwigString()
-			->render('<a href="/search/news/{{ searchString|url_encode }}">{{ newsCount|ruNumber(["новость","новости","новостей"]) }}</a>', [
-				'newsCount'    => $newsTotalFound,
-				'searchString' => $searchString
-			]);
+		$newsFound = sprintf('<a href="/search/news/%s">%s</a>', urlencode($searchString), RuHelper::ruNumber($newsTotalFound, ['нет новостей', '%u новость', '%u новости', '%u новостей']));
 		//endregion
 
 		//region ищем пользователей
@@ -226,14 +221,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 			}
 		}
 
-
-		$usersFound = $this
-			->getApp()
-			->getTwigString()
-			->render('<a href="/users/search/{{ searchString|url_encode }}">{{ usersCount|ruNumber(["пользователь","пользователя","пользователей"]) }}&nbsp;&gt;</a>', [
-				'usersCount'   => $usersTotalFound,
-				'searchString' => $searchString
-			]);
+		$usersFound = sprintf('<a href="/users/search/%s">%s</a>', urlencode($searchString), RuHelper::ruNumber($usersTotalFound, ['нет пользователей', '%u пользователь', '%u пользователя', '%u пользователей']));
 		//endregion
 
 		//region ищем персон
@@ -268,13 +256,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 			}
 		}
 
-		$personsFound = $this
-			->getApp()
-			->getTwigString()
-			->render('<a href="/search/persons/{{ searchString|url_encode }}">{{ personsCount|ruNumber(["персона","персоны","персон"]) }}</a>', [
-				'personsCount' => $personsTotalFound,
-				'searchString' => $searchString
-			]);
+		$personsFound = sprintf('<a href="/search/persons/%s">%s</a>', urlencode($searchString), RuHelper::ruNumber($personsTotalFound, ['нет персон', '%u персона', '%u персоны', '%u персон']));
 		//endregion
 
 		$this->getApp()->exitWithJsonSuccessMessage([
@@ -546,12 +528,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 				KidFactory::save($kid);
 
-				$pointsOverall = $this
-					->getApp()
-					->getTwigString()
-					->render('Всего {{ overall|ruNumber(["голос","голоса","голосов"]) }}', [
-						'overall' => $kid->getVotesOverall()
-					]);
+				$pointsOverall = sprintf('Всего %s', RuHelper::ruNumber($kid->getVotesOverall(), ['нет голосов', '%u голос', '%u голоса', '%u голосов']));
 
 				$this->getApp()->exitWithJsonSuccessMessage([
 					'points'        => $kid->getVotes(),
@@ -596,12 +573,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 				$upDownDataMap->save($voting);
 				$topicDataMap->save($topic);
 
-				$pointsOverall = $this
-					->getApp()
-					->getTwigString()
-					->render('Всего {{ overall|ruNumber(["голос","голоса","голосов"]) }}', [
-						'overall' => $topic->getVotesOverall()
-					]);
+				$pointsOverall = sprintf('Всего %s', RuHelper::ruNumber($topic->getVotesOverall(), ['нет голосов', '%u голос', '%u голоса', '%u голосов']));
 
 				$this->getApp()->exitWithJsonSuccessMessage([
 					'points'        => $topic->getVotes(),
@@ -648,12 +620,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 				MeetingFactory::save($meet);
 
-				$pointsOverall = $this
-					->getApp()
-					->getTwigString()
-					->render('Всего {{ overall|ruNumber(["голос","голоса","голосов"]) }}', [
-						'overall' => $meet->getVotesOverall()
-					]);
+				$pointsOverall = sprintf('Всего %s', RuHelper::ruNumber($meet->getVotesOverall(), ['нет голосов', '%u голос', '%u голоса', '%u голосов']));
 
 				$this->getApp()->exitWithJsonSuccessMessage([
 					'points'        => $meet->getVotes(),

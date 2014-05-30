@@ -17,7 +17,7 @@
 
 				<div class="b-photo-articles__post">
 					<a href="/photo-article/{{ post.id }}" title="{{ post.name|e }}" class="b-photo-articles__photo-cont"><img alt="{{ post.name|e }}" src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}"></a>
-					<div class="b-photo-articles__photo-count">{{ post.imagesCount|ruNumber('%d %s',['фотография','фотографии','фотографий','нет комментариев']) }}</div>
+					<div class="b-photo-articles__photo-count">{{ post.imagesCount|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) }}</div>
 					<h2 class="b-photo-articles__news-title">
 						<a href="/photo-article/{{ post.id }}" title="{{ post.name|e }}">{{ post.name|e }}</a>
 					</h2>

@@ -16,6 +16,8 @@ use popcorn\model\exceptions\NotAuthorizedException;
 use popcorn\model\persons\PersonFactory;
 use popcorn\model\persons\Person;
 use popcorn\model\content\Image;
+use popcorn\model\posts\photoArticle\PhotoArticleFactory;
+use popcorn\model\posts\PostFactory;
 use popcorn\model\system\users\GuestUser;
 use popcorn\model\system\users\UserFactory;
 use Slim\Route;
@@ -34,7 +36,6 @@ class PersonController extends GenericController implements ControllerInterface 
 	static protected $personId = null;
 
 	public function getRoutes() {
-
 
 		$slim = $this->getSlim();
 
@@ -59,12 +60,12 @@ class PersonController extends GenericController implements ControllerInterface 
 
 		};
 
-
 		$slim->get('/persons', [$this, 'persons']);
 		$slim->get('/persons/all', [$this, 'personsAll']);
 
 		$slim->group('/persons/:name', $personExists, $isFan, function () use ($slim) {
 
+			/*
 			$authorizationNeeded = function (Route $route) {
 				if (UserFactory::getCurrentUser()->getId() > 0) {
 					return true;
@@ -73,7 +74,7 @@ class PersonController extends GenericController implements ControllerInterface 
 				$this->getSlim()->error(new NotAuthorizedException());
 
 			};
-
+			*/
 
 			//Главная страница персоны
 			$slim->get('', [$this, 'personPage']);
@@ -89,7 +90,8 @@ class PersonController extends GenericController implements ControllerInterface 
 
 			$slim->get('/photo', [$this, 'personPhoto']);
 
-			$slim->group('/fans', function () use ($slim, $authorizationNeeded) {
+			$slim->group('/fans', function () use ($slim) {
+
 
 				$slim->get('(/page:page)', function ($personUrl, $page = null) {
 					if ($page == 1) {
@@ -101,7 +103,7 @@ class PersonController extends GenericController implements ControllerInterface 
 
 				$slim->get('/new', [$this, 'fansNewPage']);
 
-				$slim->get('/local(/page:page)', $authorizationNeeded, function ($personUrl, $page = null) {
+				$slim->get('/local(/page:page)', 'popcorn\\lib\\Middleware::authorizationNeeded', function ($personUrl, $page = null) {
 					if ($page == 1) {
 						$this->getSlim()->redirect(sprintf('/persons/%s/fans/local', $personUrl));
 					}
@@ -109,8 +111,8 @@ class PersonController extends GenericController implements ControllerInterface 
 					$this->fansLocalPage(self::$personId, $page);
 				});
 
-				$slim->get('/subscribe', $authorizationNeeded, [$this, 'fanSubscribePage']);
-				$slim->get('/unsubscribe', $authorizationNeeded, [$this, 'fanUnSubscribePage']);
+				$slim->get('/subscribe', 'popcorn\\lib\\Middleware::authorizationNeeded', [$this, 'fanSubscribePage']);
+				$slim->get('/unsubscribe', 'popcorn\\lib\\Middleware::authorizationNeeded', [$this, 'fanUnSubscribePage']);
 			});
 
 			$slim->group('/fanfics', function () use ($slim) {
@@ -219,19 +221,12 @@ class PersonController extends GenericController implements ControllerInterface 
 	 */
 	public function personPage() {
 
-		$person = $this->getPersonLight();
+		$person = PersonFactory::getPerson(self::$personId, ['with' => PersonDataMap::WITH_ALL]);
 
-		//Выбираем новости (нужны просто заголовки)
-		{
-			$dataMapHelper = new DataMapHelper();
-			$dataMapHelper->setRelationship([
-				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE
-			]);
+		//Немного новостей с персонами
+		$posts = PostFactory::findByPerson($person, ['with' => PersonDataMap::WITH_NONE], 0, 6, $postsTotal);
 
-			$dataMap = new NewsTagDataMap($dataMapHelper);
-			$news['paginator'] = [0, 6];
-			$news['posts'] = $dataMap->findByPerson($person, $news['paginator']);
-		}
+		$photoArticles = PhotoArticleFactory::getByPerson($person, [], 0, 2, $photoArticlesTotal);
 
 		//Связи
 		{
@@ -257,22 +252,21 @@ class PersonController extends GenericController implements ControllerInterface 
 		}
 
 		//Фильмография
-		{
-			$filmography = PersonFactory::getFilmography($person, 0, 7);
-			$filmographyCount = PersonFactory::getFilmographyCount($person);
-		}
+		$filmography = PersonFactory::getFilmography($person, 0, 7, $filmographyCount);
 
 		$this
 			->getTwig()
 			->display('/person/PersonPage.twig', [
-				'person'           => $person,
-				'posts'            => $news['posts'],
-				'postsTotal'       => $news['paginator']['overall'],
-				'fans'             => $fans['fans'],
-				'fansTotal'        => $fans['paginator']['overall'],
-				'links'            => $links,
-				'filmography'      => $filmography,
-				'filmographyTotal' => $filmographyCount
+				'person'             => $person,
+				'posts'              => $posts,
+				'postsTotal'         => $postsTotal,
+				'photoArticles'      => $photoArticles,
+				'photoArticlesTotal' => $photoArticlesTotal,
+				'fans'               => $fans['fans'],
+				'fansTotal'          => $fans['paginator']['overall'],
+				'links'              => $links,
+				'filmography'        => $filmography,
+				'filmographyTotal'   => $filmographyCount
 			]);
 	}
 
@@ -281,12 +275,7 @@ class PersonController extends GenericController implements ControllerInterface 
 	 */
 	public function persons() {
 
-		$dataMapHelper = new DataMapHelper();
-		$dataMapHelper->setRelationship([
-			'popcorn\\model\\dataMaps\\PersonDataMap' => PersonDataMap::WITH_NONE | PersonDataMap::WITH_PHOTO
-		]);
-
-		$dataMap = new PersonDataMap($dataMapHelper);
+		$dataMap = new PersonDataMap(PersonDataMap::WITH_NONE | PersonDataMap::WITH_PHOTO);
 		$persons = $dataMap->find([], 0, 9);
 
 		$this
@@ -301,12 +290,7 @@ class PersonController extends GenericController implements ControllerInterface 
 	 */
 	public function personsAll() {
 
-		$dataMapHelper = new DataMapHelper();
-		$dataMapHelper->setRelationship([
-			'popcorn\\model\\dataMaps\\PersonDataMap' => PersonDataMap::WITH_NONE
-		]);
-
-		$dataMap = new PersonDataMap($dataMapHelper);
+		$dataMap = new PersonDataMap(PersonDataMap::WITH_NONE);
 
 		$persons = $dataMap->find([], 0, -1, ['name' => 'asc']);
 
@@ -364,47 +348,18 @@ class PersonController extends GenericController implements ControllerInterface 
 			$page = 1;
 		}
 
-		$person = $this->getPersonLight();
+		$person = PersonFactory::getPerson(self::$personId, ['with' => PersonDataMap::WITH_NONE]);
 
-		//Выбираем основные новости (большие)
-		{
-			$dataMapHelper = new DataMapHelper();
-			$dataMapHelper->setRelationship([
-				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_TAGS,
-				'popcorn\\model\\dataMaps\\TagDataMap'      => TagDataMap::WITH_ENTITY,
-				'popcorn\\model\\dataMaps\\PersonDataMap'   => PersonDataMap::WITH_NONE
-			]);
-
-			$dataMap = new NewsTagDataMap($dataMapHelper);
-
-			$onPage = 10;
-			$paginator = [($page - 1) * $onPage, $onPage];
-			$posts = $dataMap->findByPerson($person, $paginator);
-		}
-
-		if ($page > $paginator['pages']) {
-			$this->getSlim()->notFound();
-		}
-
-		//Выбираем новости для правой колонки (мелкие)
-		{
-			$dataMapHelper = new DataMapHelper();
-			$dataMapHelper->setRelationship([
-				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE
-			]);
-
-			$dataMap = new NewsPostDataMap($dataMapHelper);
-			$postsSmall = $dataMap->findByLimit(0, count($posts) < 10 ? count($posts) * 2 : 18);
-		}
+		$onPage = 6;
+		$posts = PostFactory::findByPerson($person, ['with' => NewsPostDataMap::WITH_MAIN_IMAGE ^ NewsPostDataMap::WITH_TAGS], ($page - 1) * $onPage, $onPage, $postsTotal);
 
 		$this
 			->getTwig()
 			->display('/person/PersonNews.twig', [
-				'person'     => $person,
-				'posts'      => $posts,
-				'postsSmall' => $postsSmall,
-				'paginator'  => [
-					'pages'  => $paginator['pages'],
+				'person'    => $person,
+				'posts'     => $posts,
+				'paginator' => [
+					'pages'  => ceil($postsTotal / $onPage),
 					'active' => $page
 				]
 			]);

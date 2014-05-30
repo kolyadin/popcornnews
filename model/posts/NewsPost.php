@@ -30,6 +30,13 @@ class NewsPost extends Model {
 	const STATUS_PLANNED = 2;
 
 
+	const TAGS_FILTER_ARTICLES = 1;
+	const TAGS_FILTER_EVENTS = 2;
+	const TAGS_FILTER_PERSONS = 4;
+	const TAGS_FILTER_MOVIES = 8;
+	const TAGS_FILTER_ALL = 15;
+
+
 	private $encoding = 'utf-8';
 
 	//region Fields
@@ -243,10 +250,46 @@ class NewsPost extends Model {
 	}
 
 	/**
+	 * @param int $filter
 	 * @return \popcorn\model\tags\Tag[]
 	 */
-	public function getTags() {
-		return $this->tags;
+	public function getTags($filter = self::TAGS_FILTER_ALL) {
+
+		$tags = [];
+
+		if ($filter & self::TAGS_FILTER_ALL) {
+			$tags = $this->tags;
+		} elseif ($filter & self::TAGS_FILTER_ARTICLES) {
+			/** @var Tag $tag */
+			foreach ($this->tags as $tag) {
+				if ($tag->isArticle()){
+					$tags[] = $tag;
+				}
+			}
+		} elseif ($filter & self::TAGS_FILTER_EVENTS) {
+			/** @var Tag $tag */
+			foreach ($this->tags as $tag) {
+				if ($tag->isEvent()){
+					$tags[] = $tag;
+				}
+			}
+		} elseif ($filter & self::TAGS_FILTER_PERSONS) {
+			/** @var \popcorn\model\persons\Person $tag */
+			foreach ($this->tags as $tag) {
+				if ($tag->isPerson()){
+					$tags[] = $tag;
+				}
+			}
+		} elseif ($filter & self::TAGS_FILTER_MOVIES) {
+			/** @var \popcorn\model\posts\Movie $tag */
+			foreach ($this->tags as $tag) {
+				if ($tag->isMovie()){
+					$tags[] = $tag;
+				}
+			}
+		}
+
+		return $tags;
 	}
 
 	/**

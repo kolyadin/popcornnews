@@ -15,10 +15,10 @@
 							<a class="popular-sets__big-title-link" href="/yourstyle/set/{{ topSets[0].id }}">{{ topSets[0].title }}</a>
 						</div>
 						<div class="popular-sets__big-voices">
-							{{ topSets[0].rating|ruNumber(['голос', 'голоса', 'голосов']) }}
+							{{ topSets[0].rating|ruNumber(['нет голосов','%u голос','%u голоса','%u голосов']) }}
 						</div>
 						<div class="popular-sets__big-comments">
-							<a class="popular-sets__comments-counter" href="/yourstyle/set/{{ topSets[0].id }}#comments">{{ topSets[0].comments|ruNumber(['комментарий', 'комментария', 'комментариев']) }}</a>,
+							<a class="popular-sets__comments-counter" href="/yourstyle/set/{{ topSets[0].id }}#comments">{{ topSets[0].comments|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) }}</a>,
 							<div class="rating-count">{{ topSets[0].urating }}</div>
 						</div>
 					</div>
@@ -41,10 +41,10 @@
 										<a class="popular-sets__big-title-link" href="/yourstyle/set/{{ topSet.id }}">{{ topSet.title }}</a>
 									</div>
 									<div class="popular-sets__big-voices">
-										{{ topSet.votes|ruNumber(['голос', 'голоса', 'голосов']) }}
+										{{ topSet.votes|ruNumber(['нет голосов','%u голос','%u голоса','%u голосов']) }}
 									</div>
 									<div class="popular-sets__big-comments">
-										<a class="popular-sets__comments-counter" href="/yourstyle/set/{{ topSet.id }}#comments">{{ topSet.comments|ruNumber(['комментарий', 'комментария', 'комментариев']) }}</a>,
+										<a class="popular-sets__comments-counter" href="/yourstyle/set/{{ topSet.id }}#comments">{{ topSet.comments|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) }}</a>,
 										<a class="popular-sets__comments-username" href="/profile/{{ topSet.uid }}">{{ topSet.unick }}</a>,
 										<div class="rating-count">{{ topSet.urating }}</div>
 									</div>

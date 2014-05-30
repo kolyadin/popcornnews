@@ -139,7 +139,7 @@ class NewsTagDataMap extends CrossLinkedDataMap {
 	 */
 	public function findByPerson(Person $person, array &$paginator, $modifier = null) {
 
-		$dm = new NewsPostDataMap();
+		$dm = new NewsPostDataMap(NewsPostDataMap::WITH_MAIN_IMAGE ^ NewsPostDataMap::WITH_TAGS);
 
 		$sql = "select %s from pn_news where id in (
 			select newsId from pn_news_tags where type = :type and entityId = :personId

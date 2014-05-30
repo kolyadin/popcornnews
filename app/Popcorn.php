@@ -22,6 +22,7 @@ use popcorn\app\controllers\site\YourStyleController;
 use popcorn\app\controllers\SiteMain;
 use popcorn\app\controllers\site\person\PersonController;
 use popcorn\lib\GenericHelper;
+use popcorn\lib\Middleware;
 use popcorn\model\exceptions\BadAuthorizationException;
 use popcorn\model\exceptions\NotAuthorizedException;
 use popcorn\model\exceptions\RemindWrongEmailException;
@@ -63,6 +64,7 @@ class Popcorn extends Application {
 
 		GenericHelper::setApp($this);
 		GenericController::setApp($this);
+		Middleware::setApp($this);
 
 		{
 			$this->getTwig()->addGlobal('showSidebar', true);
@@ -158,6 +160,11 @@ class Popcorn extends Application {
 		$this->registerController(new YourStyleController());
 
 
+		//Обработчик для 404 ошибки
+		$this->getSlim()->notFound(function () {
+			$this->getTwig()->display('/errors/Error404.twig');
+		});
+
 		$this->getSlim()->get('/version/desktop', function () {
 
 			$this->getSlim()->setCookie('popcorn-mobile-version', 'off', strtotime('+1 year'), '/');
@@ -165,10 +172,7 @@ class Popcorn extends Application {
 
 		});
 
-		//Обработчик для 404 ошибки
-		$this->getSlim()->notFound(function () {
-			$this->getTwig()->display('/errors/Error404.twig');
-		});
+
 	}
 
 	protected function getUser() {

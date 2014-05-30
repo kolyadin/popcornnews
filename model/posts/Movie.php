@@ -32,6 +32,10 @@ class Movie extends Model {
 		return $this->year;
 	}
 
+	public function isMovie() {
+		return true;
+	}
+
 
 	//endregion
 

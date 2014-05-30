@@ -4,6 +4,7 @@ namespace popcorn\model\dataMaps;
 
 use popcorn\lib\mmc\MMC;
 use popcorn\model\content\ImageFactory;
+use popcorn\model\persons\Person;
 use popcorn\model\posts\fashionBattle\FashionBattle;
 use popcorn\model\posts\fashionBattle\FashionBattleDataMap;
 use popcorn\model\posts\NewsPost;
@@ -178,7 +179,6 @@ class NewsPostDataMap extends DataMap {
 	 * @param $postId
 	 */
 	protected function onRemove($postId) {
-
 		$this->getPDO()->prepare('
 			DELETE FROM pn_images WHERE id IN(SELECT imageId FROM pn_news_images WHERE newsId = :postId);
 			DELETE FROM pn_news_images WHERE newsId = :postId;
@@ -364,7 +364,8 @@ EOL;
 	/**
 	 * @param $postId
 	 * @param array $options
-	 * @return NewsPost
+	 *
+	 * @return null|\popcorn\model\Model
 	 */
 	public function findById($postId, array $options = []) {
 		$options = array_merge([
@@ -391,8 +392,9 @@ EOL;
 			'status' => NewsPost::STATUS_PUBLISHED
 		], $options);
 
-		$sql = 'SELECT %s FROM pn_news WHERE id IN
-		(SELECT newsId FROM pn_news_tags WHERE type = :type AND entityId = :categoryId) AND status = :status';
+		$sql = 'SELECT %s FROM pn_news t_n
+			JOIN pn_news_tags t_nt ON (t_nt.newsId = t_n.id)
+			WHERE t_nt.type = :type AND t_nt.entityId = :categoryId AND t_n.status = :status';
 
 		$binds = [
 			':type'       => Tag::ARTICLE,
@@ -408,7 +410,7 @@ EOL;
 		$sql .= $this->getOrderString(['createDate' => 'desc']);
 		$sql .= $this->getLimitString($from, $count);
 
-		return $this->fetchAll(sprintf($sql, '*'), $binds);
+		return $this->fetchAll(sprintf($sql, 't_n.*'), $binds);
 	}
 
 	/**
@@ -425,8 +427,9 @@ EOL;
 			'status' => NewsPost::STATUS_PUBLISHED
 		], $options);
 
-		$sql = 'SELECT %s FROM pn_news WHERE id IN
-		(SELECT newsId FROM pn_news_tags WHERE type = :type AND entityId = :tagId) AND status = :status';
+		$sql = 'SELECT %s FROM pn_news t_n
+			JOIN pn_news_tags t_nt ON (t_nt.newsId = t_n.id)
+			WHERE t_nt.type = :type AND t_nt.entityId = :tagId AND t_n.status = :status';
 
 		$binds = [
 			':type'   => Tag::EVENT,
@@ -442,7 +445,71 @@ EOL;
 		$sql .= $this->getOrderString(['createDate' => 'desc']);
 		$sql .= $this->getLimitString($from, $count);
 
-		return $this->fetchAll(sprintf($sql, '*'), $binds);
+		return $this->fetchAll(sprintf($sql, 't_n.*'), $binds);
 	}
 
+	/**
+	 * @param \popcorn\model\persons\Person $person
+	 * @param int $from
+	 * @param $count
+	 * @param array $options
+	 * @param $totalFound
+	 * @return NewsPost[]
+	 */
+	public function findByPerson(Person $person, array $options = [], $from = 0, $count = -1, &$totalFound = -1) {
+
+		$options = array_merge([
+			'status' => NewsPost::STATUS_PUBLISHED
+		], $options);
+
+		$sql = 'SELECT %s FROM pn_news t_n
+			JOIN pn_news_tags t_nt ON (t_nt.newsId = t_n.id)
+			WHERE t_nt.type = :type AND t_nt.entityId = :personId AND t_n.status = :status';
+
+		$binds = [
+			':type'     => Tag::PERSON,
+			':personId' => $person->getId(),
+			':status'   => $options['status']
+		];
+
+		if ($totalFound != -1) {
+			$stmt = $this->prepare(sprintf($sql, 'count(*)'));
+			$stmt->execute($binds);
+
+			$totalFound = $stmt->fetchColumn();
+		}
+
+		$sql .= $this->getOrderString(['createDate' => 'desc']);
+		$sql .= $this->getLimitString($from, $count);
+
+		return $this->fetchAll(sprintf($sql, 't_n.*'), $binds);
+	}
+
+	public function getTopPosts($from = 0, $count = -1) {
+
+		$sql = 'select t_n.* from pn_news t_n
+			where t_n.status = :status and
+				t_n.createDate <= :dateTill and t_n.createDate >= :dateFrom
+			order by t_n.comments desc, t_n.createDate desc';
+
+		$sql .= $this->getLimitString($from, $count);
+
+		$cacheKey = MMC::genKey($this->class, __METHOD__, func_get_args());
+
+//		return MMC::getSet($cacheKey, strtotime('+3 hour'), function () use ($sql) {
+
+		$stmt = $this->prepare('select createDate from pn_news where status = :status order by createDate desc limit 1');
+		$stmt->execute([
+			':status' => NewsPost::STATUS_PUBLISHED
+		]);
+
+		$lastTime = $stmt->fetchColumn();
+
+		return $this->fetchAll($sql, [
+			':status'   => NewsPost::STATUS_PUBLISHED,
+			':dateFrom' => strtotime("-2 weeks", $lastTime),
+			':dateTill' => $lastTime
+		]);
+//		});
+	}
 }

@@ -8,7 +8,7 @@
 
 	<div class="b-grid__g4 b-grid__a b-grid__z">
 		<a href="/photo-article/{{ post.id }}" class="b-photo-articles__photo-cont-big" title="{{ post.name|e }}"><img src="{{ photo.url }}" alt="{{ post.name|e }}"></a>
-		<div class="b-photo-articles__photo-count">{{ post.imagesCount|ruNumber('%d %s',['фотография','фотографии','фотографий','нет комментариев']) }}</div>
+		<div class="b-photo-articles__photo-count">{{ post.imagesCount|ruNumber(['нет фотографий','%u фотография','%u фотографии','%u фотографий']) }}</div>
 		<h2 class="b-photo-articles__news-title"><a href="/photo-article/{{ post.id }}">{{ post.name|e }}</a></h2>
 	</div>
 </section>

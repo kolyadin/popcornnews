@@ -42,10 +42,10 @@
 	{% endif %}
 
 	{% set friendsCount = realFriendsCount %}
-	{% set friendCountStr = friendsCount|ruNumber(['друг','друга','друзей'])|replace({(friendsCount): ''}) %}
+	{% set friendCountStr = friendsCount|ruNumber(['нет друзей','%u друг',' %u друга','%u друзей'])|replace({(friendsCount): ''}) %}
 
 	{% set notifyFriendsCount = profileHelper.notifyCounter.friends %}
-	{% set notifyFriendsCountStr = notifyFriendsCount|ruNumber(['запрос','запроса','запросов'])|replace({(notifyFriendsCount): ''}) %}
+	{% set notifyFriendsCountStr = notifyFriendsCount|ruNumber(['нет запросов','%u запрос','%u запроса','%u запросов'])|replace({(notifyFriendsCount): ''}) %}
 
 	<div class="private-about">
 		<img class="private-about__photo" src="{{ src }}" alt="" />

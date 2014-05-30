@@ -36,6 +36,7 @@ class MainPageController extends GenericController implements ControllerInterfac
 		$this->buildLastPosts();
 		$this->buildRandomKid();
 		$this->buildStopShot();
+		$this->buildFashionBattle();
 
 		$this->twigData['showSidebar'] = false;
 
@@ -48,6 +49,14 @@ class MainPageController extends GenericController implements ControllerInterfac
 		$this->twigData['stopShots'] = $post;
 	}
 
+	private function buildFashionBattle() {
+		$post = PostFactory::findByTag(72409,[
+			'with' => NewsPostDataMap::WITH_MAIN_IMAGE,
+			'status' => NewsPost::STATUS_PUBLISHED,
+		],0,1)[0];
+		$this->twigData['fashionBattle'] = $post;
+	}
+
 	private function buildRandomKid() {
 		$kid = KidFactory::getRandomKid();
 		$this->twigData['randomKid'] = $kid;
@@ -56,17 +65,17 @@ class MainPageController extends GenericController implements ControllerInterfac
 	private function buildLastPosts() {
 
 		$posts = PostFactory::getPosts([
-			'status' => NewsPost::STATUS_PUBLISHED,
+			'status'       => NewsPost::STATUS_PUBLISHED,
 			'itemCallback' => [
 				'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE ^ NewsPostDataMap::WITH_MAIN_IMAGE
 			]
-		],0,17);
+		], 0, 17);
 
 		$this->twigData['lastPosts'] = $posts;
 	}
 
 	private function buildTopPosts() {
-		$topPosts = PostFactory::getTopPosts(10);
+		$topPosts = PostFactory::getTopPosts(0,10);
 		$this->twigData['topPosts'] = $topPosts;
 	}
 

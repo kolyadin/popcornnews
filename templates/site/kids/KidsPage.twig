@@ -94,13 +94,7 @@
 
 	    {% for kid in kids %}
 
-		    {% if kid.comments > 0 %}
-			    {% set comments = kid.comments|ruNumber(['комментарий','комментария','комментариев']) %}
-		    {% else %}
-			    {% set comments = 'Нет комментариев' %}
-		    {% endif %}
-
-		    {% set textDefault = kid.votesOverall|ruNumber(['голос','голоса','голосов']) %}
+		    {% set textDefault = kid.votesOverall|ruNumber(['нет голосов','%u голос','%u голоса','%u голосов']) %}
 		    {% set photo = kid.photo.thumb('393x') %}
 
 		    <div class="kid" data-kid-id="{{ kid.id }}">
@@ -118,7 +112,7 @@
 					    <p class="text" data-default-text="Всего {{ textDefault }}">Всего {{ textDefault }}</p>
 				    </div>
 				    <div class="under">
-					    <p><a href="/kid/{{ kid.id }}#comments"><strong>{{ comments }}</strong></a></p>
+					    <p><a href="/kid/{{ kid.id }}#comments"><strong>{{ kid.comments|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) }}</strong></a></p>
 					    <p><a href="/kid/{{ kid.id }}#new-comment">Написать комментарий</a></p>
 				    </div>
 			    </div>

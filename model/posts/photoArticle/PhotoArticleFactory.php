@@ -80,6 +80,16 @@ class PhotoArticleFactory {
 		return $dataMap->findByLimit($options, $from, $count, $totalFound);
 	}
 
+	public static function getByPerson(Person $person, array $options = [], $from = 0, $count = 10, &$totalFound = -1) {
+		$options = array_merge([
+			'with' => PhotoArticleDataMap::WITH_NONE ^ PhotoArticleDataMap::WITH_MAIN_IMAGE
+		], $options);
+
+		$dataMap = new PhotoArticleDataMap($options['with']);
+
+		return $dataMap->findByPerson($person, $options, $from, $count, $totalFound);
+	}
+
 
 	/**
 	 * Обновим количество показов у фото-статьи

@@ -4,7 +4,7 @@
 
 		<div class="column-title column-title_highlighted">
 			<div class="column-title__cell xx-large">
-				<span class="xx-large">{{ statusList|length|ruNumber(['статус','статуса','статусов']) }}</span>
+				<span class="xx-large">{{ statusList|length|ruNumber(['','%u статус','%u статуса','%u статусов']) }}</span>
 			</div>
 
 			{% if profileHelper.isMyProfile %}

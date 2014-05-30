@@ -84,112 +84,101 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 		$searchString = $this->getSlim()->request()->post('searchString');
 
-		$sphinx = SphinxHelper::getSphinx();
+		$sphinx = new SphinxHelper;
 
-		$persons = $users = $news = [];
+		$personsTotalFound = $usersTotalFound = $newsTotalFound = 0;
 
-		//region ищем пользователей
-		$resultUsers = $sphinx
-			->query('@nick %1$s', $searchString)
-			->in('usersIndex')
+		//region ищем новости
+		/** @var NewsPost[] $posts */
+		$posts = $sphinx
+			->query('(@name %1$s) | (@content %1$s) | (@announce %1$s)', $searchString)
+			->in('news newsDelta')
 			->offset(0, 5)
-			->fetch(['popcorn\model\system\users\UserFactory', 'getUser'])
-			->run();
+			->weights([
+				'name'     => 100,
+				'content'  => 50,
+				'announce' => 50
+			])
+			->run(function ($postId) {
+				return PostFactory::getPost($postId, [
+					'itemCallback' => [
+						'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE
+					]
+				]);
+			}, $newsTotalFound);
 
-		if ($resultUsers->matchesFound > 0) {
-			foreach ($resultUsers->matches as $user) {
-				$userNick = $user->getNick();
-				$userNick = preg_replace("@$searchString@iu", "<i>\$0</i>", $userNick);
-				$users[] = sprintf('<a href="/profile/%u">%s</a>', $user->getId(), $userNick);
+		if (count($posts)) {
+			foreach ($posts as &$post) {
+				$postName = $post->getName();
+				$postName = preg_replace("@$searchString@iu", "<i>\$0</i>", $postName);
+				$post = sprintf('<a href="/news/%u">%s</a>', $post->getId(), $postName);
 			}
 		}
 
-		$usersFound = $this
-			->getApp()
-			->getTwigString()
-			->render('<a href="/users/search/{{ searchString|url_encode }}">{{ usersCount|ruNumber(["пользователь","пользователя","пользователей"]) }}&nbsp;&gt;</a>', [
-				'usersCount' => $resultUsers->matchesFound,
-				'searchString' => $searchString
-			]);
+		$newsFound = sprintf('<a href="/search/news/%s">%s</a>', urlencode($searchString), RuHelper::ruNumber($newsTotalFound, ['нет новостей', '%u новость', '%u новости', '%u новостей']));
+		//endregion
+
+		//region ищем пользователей
+		/** @var User[] $users */
+		$users = $sphinx
+			->query('@nick %1$s', $searchString)
+			->in('users')
+			->offset(0, 5)
+			->run(function ($userId) {
+				return UserFactory::getUser($userId);
+			}, $usersTotalFound);
+
+		if (count($users)) {
+			foreach ($users as &$user) {
+				$userNick = $user->getNick();
+				$userNick = preg_replace("@$searchString@iu", "<i>\$0</i>", $userNick);
+				$user = sprintf('<a href="/profile/%u">%s</a>', $user->getId(), $userNick);
+			}
+		}
+
+		$usersFound = sprintf('<a href="/users/search/%s">%s</a>', urlencode($searchString), RuHelper::ruNumber($usersTotalFound, ['нет пользователей', '%u пользователь', '%u пользователя', '%u пользователей']));
 		//endregion
 
 		//region ищем персон
 		$query = [
-			'(@name               ^%1$s | %1$s)',
-			'(@englishName        ^%1$s | %1$s)',
-			'(@genitiveName       ^%1$s | %1$s)',
-			'(@prepositionalName  ^%1$s | %1$s)',
-			'(@vkPage             ^%1$s | %1$s)',
-			'(@twitterLogin       ^%1$s | %1$s)',
-			'(@urlName            ^%1$s | %1$s)'
+			'(@name ^%1$s | %1$s)',
+			'(@englishName ^%1$s | %1$s)',
+			'(@genitiveName ^%1$s | %1$s)',
+			'(@prepositionalName ^%1$s | %1$s)',
+			'(@vkPage ^%1$s | %1$s)',
+			'(@twitterLogin ^%1$s | %1$s)',
+			'(@urlName ^%1$s | %1$s)'
 		];
 
-		$resultPersons = $sphinx
+		/** @var Person[] $persons */
+		$persons = $sphinx
 			->query(implode(' | ', $query), $searchString)
-			->in('personsIndex')
+			->in('persons')
 			->weights([
-				'name' => 70,
-				'genitiveName' => 30,
+				'name'              => 70,
+				'genitiveName'      => 30,
 				'prepositionalName' => 30
 			])
-			->fetch(['popcorn\model\persons\PersonFactory', 'getPerson'])
-			->run();
+			->run(function ($personId) {
+				return PersonFactory::getPerson($personId);
+			}, $personsTotalFound);
 
-		if ($resultPersons->matchesFound > 0) {
-			/** @var Person $person */
-			foreach ($resultPersons->matches as $person) {
+		if (count($persons)) {
+			foreach ($persons as &$person) {
 				$personName = $person->getName();
 				$personName = preg_replace("@$searchString@iu", "<i>\$0</i>", $personName);
-				$persons[] = sprintf('<a href="/person/%s">%s</a>', $person->getUrlName(), $personName);
+				$person = sprintf('<a href="/persons/%s">%s</a>', $person->getUrlName(), $personName);
 			}
 		}
 
-		$personsFound = $this
-			->getApp()
-			->getTwigString()
-			->render('{{ personsCount|ruNumber(["персона","персоны","персон"]) }}', [
-				'personsCount' => $resultPersons->matchesFound
-			]);
+		$personsFound = sprintf('<a href="/search/persons/%s">%s</a>', urlencode($searchString), RuHelper::ruNumber($personsTotalFound, ['нет персон', '%u персона', '%u персоны', '%u персон']));
 		//endregion
 
-		//region ищем новости
-		$resultNews = $sphinx
-			->query('(@name ^%1$s | %1$s) | @content %1$s | @announce %1$s', $searchString)
-			->in('newsIndex')
-			->offset(0, 5)
-			->fetch(['popcorn\model\posts\PostFactory', 'getPost'])
-			->run();
-
-		if ($resultNews->matchesFound > 0) {
-			/** @var Person $person */
-			foreach ($resultNews->matches as $post) {
-				$postName = $post->getName();
-				$postName = preg_replace("@$searchString@iu", "<i>\$0</i>", $postName);
-				$news[] = sprintf('<a href="/news/%u">%s</a>', $post->getId(), $postName);
-			}
-		}
-
-		$newsFound = $this
-			->getApp()
-			->getTwigString()
-			->render('{{ newsCount|ruNumber(["новость","новости","новостей"]) }}', [
-				'newsCount' => $resultNews->matchesFound
-			]);
-		//endregion
-
-
-		$this->popcornApp->exitWithJsonSuccessMessage([
-			'data' => ['persons' => $persons, 'news' => $news, 'users' => $users],
-			'headers' => ['persons' => $personsFound, 'news' => $newsFound, 'users' => $usersFound],
-			'counters' => ['persons' => $resultPersons->matchesFound, 'news' => $resultNews->matchesFound, 'users' => $resultUsers->matchesFound]
+		$this->getApp()->exitWithJsonSuccessMessage([
+			'data'     => ['persons' => $persons, 'news' => $posts, 'users' => $users],
+			'headers'  => ['persons' => $personsFound, 'news' => $newsFound, 'users' => $usersFound],
+			'counters' => ['persons' => $personsTotalFound, 'news' => $newsTotalFound, 'users' => $usersTotalFound]
 		]);
-
-		/*
-		$resultNews = $sphinx
-			->in('newsIndex')
-			->query('@name *%1$s* | @content *%1$s* | @announce *%1$s*', $searchString)
-			->run()
-		;*/
 
 
 	}
@@ -494,12 +483,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 				KidFactory::save($kid);
 
-				$pointsOverall = $this
-					->getApp()
-					->getTwigString()
-					->render('Всего {{ overall|ruNumber(["голос","голоса","голосов"]) }}', [
-						'overall' => $kid->getVotesOverall()
-					]);
+				$pointsOverall = sprintf('Всего %s', RuHelper::ruNumber($kid->getVotesOverall(), ['нет голосов', '%u голос', '%u голоса', '%u голосов']));
 
 				$this->popcornApp->exitWithJsonSuccessMessage([
 					'points' => $kid->getVotes(),

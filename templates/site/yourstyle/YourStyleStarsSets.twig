@@ -43,10 +43,10 @@
 											<a class="popular-sets__big-title-link" href="/yourstyle/set/{{ set.id }}">{{ set.title }}</a>
 										</div>
 										<div class="popular-sets__big-voices">
-											{{ set.votes|ruNumber(['голос', 'голоса', 'голосов']) }}
+											{{ set.votes|ruNumber(['нет голосов','%u голос','%u голоса','%u голосов']) }}
 										</div>
 										<div class="popular-sets__big-comments">
-											<a class="popular-sets__comments-counter" href="/yourstyle/set/{{ set.id }}#comments">{{ set.comments|ruNumber(['комментарий', 'комментария', 'комментариев']) }}</a>,
+											<a class="popular-sets__comments-counter" href="/yourstyle/set/{{ set.id }}#comments">{{ set.comments|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) }}</a>,
 											<div class="rating-count">{{ set.urating }}</div>
 										</div>
 									</div>

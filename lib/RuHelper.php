@@ -36,14 +36,17 @@ class RuHelper{
 
 	}
 
-	public static function ruNumber($n, array $text = []){
 
-		$pluralNum = ($n%10==1 && $n%100!=11 ? 0 : $n%10>=2 && $n%10<=4 && ($n%100<10 || $n%100>=20) ? 1 : 2);
+	public static function ruNumber($number, $ru) {
+		$pluralNum = $number % 10 == 1 && $number % 100 != 11 ? 0 : ($number % 10 >= 2 && $number % 10 <= 4 && ($number % 100 < 10 || $number % 100 >= 20) ? 1 : 2);
 
-		if ($n == 1) $pluralNum = 0;
+		if ($number == 0) {
+			$pluralNum = 0;
+		} else {
+			$pluralNum++;
+		}
 
-		return $n . ' ' . $text[$pluralNum];
-
+		return sprintf($ru[$pluralNum], $number);
 	}
 
 	/**
@@ -64,11 +67,11 @@ class RuHelper{
 		$diff = $date1->diff($date2);
 
 		if ($diff->format('%Y') > 0){
-			return self::ruNumber((int)$diff->format('%Y'),['год','года','лет']);
+			return self::ruNumber((int)$diff->format('%Y'),['','год','года','лет']);
 		}elseif ($diff->format('%m') > 0){
-			return self::ruNumber((int)$diff->format('%m'),['месяц','месяца','месяцев']);
+			return self::ruNumber((int)$diff->format('%m'),['','месяц','месяца','месяцев']);
 		}elseif ($diff->format('%d') > 0){
-			return self::ruNumber((int)$diff->format('%d'),['день','дня','дней']);
+			return self::ruNumber((int)$diff->format('%d'),['','день','дня','дней']);
 		}else{
 			return '1 день';
 		}

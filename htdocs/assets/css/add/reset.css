@@ -99,13 +99,6 @@ h1 {
   line-height: 36px;
   font-weight: bold;
 }
-h1 span {
-  color: #b2b2b2;
-  display: block;
-  font-size: 18px;
-  font-weight: normal;
-  line-height: 18px;
-}
 /* Stuff */
 .ie7 img {
   -ms-interpolation-mode: bicubic;

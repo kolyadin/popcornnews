@@ -92,7 +92,7 @@
 							   data-placement="top" href="/office/photoarticle{{ post.id }}/remove"><i class="fa fa-trash-o"></i></a>
 						</td>
 						<td class="item-date">{{ post.createDate|ruDate('j.m.Y H:i') }}</td>
-						<td><a class="btn btn-info tooltips" data-original-title="{{ post.comments|ruNumber('%s',['комментарий','комментария','комментариев']) }}" href="/office/post{{ post.id }}/comments">{{ post.comments }}</a></td>
+						<td><a class="btn btn-info tooltips" data-original-title="{{ post.comments|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) }}" href="/office/post{{ post.id }}/comments">{{ post.comments }}</a></td>
 						<td class="item-link"><a class="btn btn-default" href="/office/photoarticle{{ post.id }}">{{ post.name|e }}</a></td>
 					</tr>
 				{% endfor %}

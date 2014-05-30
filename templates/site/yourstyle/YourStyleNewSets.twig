@@ -24,10 +24,10 @@
 								<a class="popular-sets__big-title-link" href="/yourstyle/set/{{ newSet.id }}">{{ newSet.title }}</a>
 							</div>
 							<div class="popular-sets__big-voices">
-								{{ newSet.votes }} {{ newSet.votes|ruNumber(['голос', 'голоса', 'голосов']) }}
+								{{ newSet.votes }} {{ newSet.votes|ruNumber(['нет голосов','%u голос','%u голоса','%u голосов']) }}
 							</div>
 							<div class="popular-sets__big-comments">
-								<a class="popular-sets__comments-counter" href="/yourstyle/set/{{ newSet.id }}#comments">{{ newSet.comments }} {{ newSet.comments|ruNumber(['комментарий', 'комментария', 'комментариев']) }}</a>,
+								<a class="popular-sets__comments-counter" href="/yourstyle/set/{{ newSet.id }}#comments">{{ newSet.comments }} {{ newSet.comments|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) }}</a>,
 								<div class="rating-count">{{ newSet.urating }}</div>
 							</div>
 						</div>

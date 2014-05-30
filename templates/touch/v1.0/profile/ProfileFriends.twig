@@ -2,7 +2,7 @@
 
 {% block subContent %}
 
-	{% set friendCountStr = friends|length|ruNumber(['друг','друга','друзей']) %}
+	{% set friendCountStr = friends|length|ruNumber(['нет друзей','%u друг',' %u друга','%u друзей']) %}
 
 	<div class="column-title column-title_highlighted">
 		<div class="column-title__cell">

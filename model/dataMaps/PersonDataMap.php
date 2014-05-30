@@ -327,9 +327,19 @@ class PersonDataMap extends DataMap {
 	 * @param $personId
 	 * @param $from
 	 * @param $count
+	 * @param int $totalFound
 	 * @return array
 	 */
-	public function getFilmography($personId, $from, $count) {
+	public function getFilmography($personId, $from, $count, &$totalFound = -1) {
+
+		if ($totalFound != -1) {
+			$stmt = $this->prepare('select count(*) from ka_movies movie join pn_persons_movies p_movie on (p_movie.movieId = movie.id) where p_movie.personId = :personId');
+			$stmt->execute([
+				':personId' => $personId
+			]);
+
+			$totalFound = $stmt->fetchColumn();
+		}
 
 		$sql = 'select movie.* from ka_movies movie join pn_persons_movies p_movie on (p_movie.movieId = movie.id) where p_movie.personId = :personId order by movie.year desc';
 
@@ -341,21 +351,6 @@ class PersonDataMap extends DataMap {
 		]);
 
 		return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-	}
-
-	/**
-	 * @param $personId
-	 * @return int
-	 */
-	public function getFilmographyCount($personId) {
-
-		$stmt = $this->prepare('select count(*) from ka_movies movie join pn_persons_movies p_movie on (p_movie.movieId = movie.id) where p_movie.personId = :personId');
-		$stmt->execute([
-			':personId' => $personId
-		]);
-
-		return $stmt->fetchColumn();
 
 	}
 
