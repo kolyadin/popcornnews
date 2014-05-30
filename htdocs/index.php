@@ -6,6 +6,7 @@ date_default_timezone_set('Europe/Moscow');
 require '../vendor/autoload.php';
 
 if (\popcorn\lib\Config::getMode() != 'production') {
+	ini_set('xhprof.output_dir', __DIR__ . '/../var/tmp/xhprof');
 	xhprof_enable();
 }
 

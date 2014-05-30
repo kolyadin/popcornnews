@@ -479,7 +479,7 @@ EOL;
 			$totalFound = $stmt->fetchColumn();
 		}
 
-		$sql .= $this->getOrderString(['createDate' => 'desc']);
+		$sql .= $this->getOrderString(['t_n.createDate' => 'desc']);
 		$sql .= $this->getLimitString($from, $count);
 
 		return $this->fetchAll(sprintf($sql, 't_n.*'), $binds);
