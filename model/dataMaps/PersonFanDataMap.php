@@ -10,11 +10,8 @@ class PersonFanDataMap extends CrossLinkedDataMap {
 	private $findStatement;
 
 
-	public function __construct(DataMapHelper $helper = null) {
+	public function __construct() {
 
-		if ($helper instanceof DataMapHelper) {
-			DataMap::setHelper($helper);
-		}
 
 		parent::__construct();
 

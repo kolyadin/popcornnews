@@ -240,12 +240,12 @@
 
 	{% if person %}
 		<h3 class="page-title">
-			Персона
-			<small>&quot;{{ person.name|e }} ({{ person.englishName|e }})&quot;</small>
+			&quot;{{ person.name|e }} ({{ person.englishName|e }})&quot;
+			<small>персона</small>
 		</h3>
 	{% else %}
 		<h3 class="page-title">
-			Создание персоны
+			Добавление персоны
 		</h3>
 	{% endif %}
 
@@ -259,9 +259,15 @@
 			<a href="/office/persons">Персоны</a>
 			<i class="fa fa-angle-right"></i>
 		</li>
-		<li>
-			<a href="/office/person_create">Создание персоны</a>
-		</li>
+		{% if person %}
+			<li>
+				<a href="/office/person_create">{{ person.name|e }}</a>
+			</li>
+		{% else %}
+			<li>
+				<a href="/office/person_create">Добавление персоны</a>
+			</li>
+		{% endif %}
 	</ul>
 
 	{{ parent() }}

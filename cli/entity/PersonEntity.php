@@ -13,6 +13,7 @@ class PersonEntity {
             new command\person\RemoveAll(),
             new command\person\Import(),
 			new command\person\ImportFans(),
+			new command\person\ImportFacts(),
 			new command\person\UpdateCounters()
         );
 

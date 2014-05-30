@@ -421,7 +421,7 @@ EOL;
 	 * @param $totalFound
 	 * @return NewsPost[]
 	 */
-	public function findByTag($tagId, array $options = [], $from = 0, $count = -1, &$totalFound) {
+	public function findByTag($tagId, array $options = [], $from = 0, $count = -1, &$totalFound = -1) {
 
 		$options = array_merge([
 			'status' => NewsPost::STATUS_PUBLISHED
@@ -437,10 +437,12 @@ EOL;
 			':status' => $options['status']
 		];
 
-		$stmt = $this->prepare(sprintf($sql, 'count(*)'));
-		$stmt->execute($binds);
+		if ($totalFound != -1) {
+			$stmt = $this->prepare(sprintf($sql, 'count(*)'));
+			$stmt->execute($binds);
 
-		$totalFound = $stmt->fetchColumn();
+			$totalFound = $stmt->fetchColumn();
+		}
 
 		$sql .= $this->getOrderString(['createDate' => 'desc']);
 		$sql .= $this->getLimitString($from, $count);

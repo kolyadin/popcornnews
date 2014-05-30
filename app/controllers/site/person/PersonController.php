@@ -3,7 +3,6 @@ namespace popcorn\app\controllers\site\person;
 
 use popcorn\app\controllers\ControllerInterface;
 use popcorn\app\controllers\GenericController;
-use popcorn\model\dataMaps\DataMapHelper;
 use popcorn\model\dataMaps\NewsPostDataMap;
 use popcorn\model\dataMaps\NewsTagDataMap;
 use popcorn\model\dataMaps\PersonDataMap;
@@ -35,11 +34,27 @@ class PersonController extends GenericController implements ControllerInterface 
 
 	static protected $personId = null;
 
+	/**
+	 * Проверяем существование персоны и преобразуем имя персоны в ID из базы
+	 *
+	 * @param Route $route
+	 */
+	final public function personExistsMiddleware(Route $route) {
+
+		$personId = PersonFactory::checkByUrl($route->getParam('name'));
+
+		//Не нашли персону в базе, показываем 404 ошибку
+		if ($personId) {
+			self::$personId = $personId;
+		} else {
+			$this->getSlim()->notFound();
+		}
+	}
+
 	public function getRoutes() {
 
 		$slim = $this->getSlim();
 
-		//Проверяем существование персоны и преобразуем имя персоны в ID из базы
 		$personExists = function (Route $route) use ($slim) {
 			$personId = PersonFactory::checkByUrl($route->getParam('name'));
 
@@ -129,28 +144,6 @@ class PersonController extends GenericController implements ControllerInterface 
 				});
 			});
 
-			$slim->group('/facts', function () use ($slim) {
-				$slim->get('', function () {
-
-				});
-
-				$slim->group('/for_test', function () use ($slim) {
-					$slim
-						->get('/page/:id', function ($personId, $pageNum) use ($slim) {
-							print_r(func_get_args());
-						})
-						->conditions(array('id' => '\d+'));
-				});
-
-				$slim->get('/all', function () {
-
-				});
-
-				$slim->get('/add', function () {
-
-				});
-			});
-
 			$slim->group('/talks', function () use ($slim) {
 
 				$slim->get('', [new PersonTalksController(), 'talksPage']);
@@ -193,28 +186,6 @@ class PersonController extends GenericController implements ControllerInterface 
 			'personLink' => sprintf('/persons/%s', $person->getUrlName())
 		];
 	}
-
-	/**
-	 * @param $personId
-	 * @return Person
-	 */
-	protected function getPersonLight($personId = null) {
-
-		if (is_null($personId)) {
-			$personId = self::$personId;
-		}
-
-		$dataMapHelper = new DataMapHelper();
-		$dataMapHelper->setRelationship([
-			'popcorn\\model\\dataMaps\\PersonDataMap' => PersonDataMap::WITH_ALL ^ PersonDataMap::WITH_IMAGES
-		]);
-
-		$personDataMap = new PersonDataMap($dataMapHelper);
-
-		return $personDataMap->findById($personId);
-
-	}
-
 
 	/**
 	 * Основная страница персоны
@@ -381,19 +352,14 @@ class PersonController extends GenericController implements ControllerInterface 
 			$page = 1;
 		}
 
-		$person = $this->getPersonLight();
-
-		$dataMapHelper = new DataMapHelper();
-		$dataMapHelper->setRelationship([
-			'popcorn\\model\\dataMaps\\UserDataMap' => UserDataMap::WITH_NONE | UserDataMap::WITH_INFO
-		]);
+		$person = PersonFactory::getPerson($personId);
 
 		{
 			$onPage = 50;
 			$paginator = [($page - 1) * $onPage, $onPage];
 		}
 
-		$dataMap = new PersonFanDataMap($dataMapHelper);
+		$dataMap = new PersonFanDataMap();
 		$users = $dataMap->findById(self::$personId, ['id' => 'asc'], $paginator);
 
 		if ($page > $paginator['pages']) {
@@ -426,14 +392,9 @@ class PersonController extends GenericController implements ControllerInterface 
 	 */
 	public function fansNewPage() {
 
-		$person = $this->getPersonLight();
+		$person = PersonFactory::getPerson(self::$personId);
 
-		$dataMapHelper = new DataMapHelper();
-		$dataMapHelper->setRelationship([
-			'popcorn\\model\\dataMaps\\UserDataMap' => UserDataMap::WITH_NONE | UserDataMap::WITH_INFO
-		]);
-
-		$dataMap = new PersonFanDataMap($dataMapHelper);
+		$dataMap = new PersonFanDataMap();
 
 		$paginator = [0, 50];
 
@@ -465,12 +426,7 @@ class PersonController extends GenericController implements ControllerInterface 
 			$page = 1;
 		}
 
-		$person = $this->getPersonLight();
-
-		$dataMapHelper = new DataMapHelper();
-		$dataMapHelper->setRelationship([
-			'popcorn\\model\\dataMaps\\UserDataMap' => UserDataMap::WITH_NONE | UserDataMap::WITH_INFO
-		]);
+		$person = PersonFactory::getPerson(self::$personId);
 
 		{
 			$onPage = 50;
@@ -479,7 +435,7 @@ class PersonController extends GenericController implements ControllerInterface 
 
 		$cityId = UserFactory::getCurrentUser()->getUserInfo()->getCityId();
 
-		$dataMap = new PersonFanDataMap($dataMapHelper);
+		$dataMap = new PersonFanDataMap();
 		$users = $dataMap->find(self::$personId, ['info.cityId' => $cityId], ['id' => 'asc'], $paginator);
 
 		if ($page > $paginator['pages']) {
@@ -511,7 +467,7 @@ class PersonController extends GenericController implements ControllerInterface 
 	 */
 	public function fanSubscribePage() {
 
-		$person = $this->getPersonLight();
+		$person = PersonFactory::getPerson(self::$personId);
 
 		$dataMap = new PersonFanDataMap();
 
@@ -530,7 +486,7 @@ class PersonController extends GenericController implements ControllerInterface 
 	 */
 	public function fanUnSubscribePage() {
 
-		$person = $this->getPersonLight();
+		$person = PersonFactory::getPerson(self::$personId);
 
 		$dataMap = new PersonFanDataMap();
 

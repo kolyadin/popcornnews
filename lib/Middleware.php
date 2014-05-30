@@ -2,6 +2,9 @@
 
 namespace popcorn\lib;
 
+use popcorn\model\exceptions\NotAuthorizedException;
+use popcorn\model\system\users\UserFactory;
+
 class Middleware {
 
 	/** @var \popcorn\app\Popcorn $app */
@@ -16,6 +19,10 @@ class Middleware {
 	}
 
 	static public function authorizationNeeded() {
-		return true;
+		if (UserFactory::getCurrentUser()->getId() > 0) {
+			return true;
+		}
+
+		self::getApp()->getSlim()->error(new NotAuthorizedException());
 	}
 }

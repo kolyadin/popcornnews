@@ -10,6 +10,7 @@ use popcorn\model\dataMaps\PersonDataMap;
 use popcorn\model\dataMaps\PersonsLinkDataMap;
 use popcorn\model\exceptions\Exception;
 use popcorn\model\persons\Person;
+use popcorn\model\persons\PersonFactory;
 
 class PersonController extends GenericController implements ControllerInterface {
 
@@ -86,28 +87,18 @@ class PersonController extends GenericController implements ControllerInterface 
 			$page = 1;
 		}
 
-		$dataMapHelper = new DataMapHelper();
-		$dataMapHelper->setRelationship([
-			'popcorn\\model\\dataMaps\\PersonDataMap' => PersonDataMap::WITH_NONE
-		]);
-
-		$personDataMap = new PersonDataMap($dataMapHelper);
-
 		$onPage = 100;
-		$paginator = [($page - 1) * $onPage, $onPage];
-
-		$persons = $personDataMap->findWithPaginator([], $paginator);
+		$persons = PersonFactory::getPersons([], ($page - 1) * $onPage, $onPage, $totalFound);
 
 		$this
 			->getTwig()
 			->display('persons/List.twig', [
-				'persons' => $persons,
+				'persons'   => $persons,
 				'paginator' => [
-					'pages' => $paginator['pages'],
+					'pages'  => ceil($totalFound / $onPage),
 					'active' => $page
 				]
 			]);
-
 	}
 
 	public function personEditGet($personId = null) {
@@ -118,7 +109,7 @@ class PersonController extends GenericController implements ControllerInterface 
 
 		if ($personId > 0) {
 			/** @var Person $post */
-			$person = $this->personDataMap->findById($personId);
+			$person = PersonFactory::getPerson($personId, ['with' => PersonDataMap::WITH_ALL]);
 
 			if (!$person) {
 				$this->getSlim()->notFound();
@@ -219,7 +210,7 @@ class PersonController extends GenericController implements ControllerInterface 
 			->getTwig()
 			->display('persons/PersonsLinking.twig', [
 				'person' => $person,
-				'links' => $links
+				'links'  => $links
 			]);
 
 	}

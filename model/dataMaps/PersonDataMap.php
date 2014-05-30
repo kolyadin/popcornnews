@@ -264,23 +264,24 @@ class PersonDataMap extends DataMap {
 
 	}
 
-	public function findWithPaginator(array $orders = [], array &$paginator = []) {
+	public function getPersons(array $options = [], $from = 0, $count = -1, &$totalFound = -1) {
 
-		$orders = array_merge([
-			'name' => 'asc'
-		], $orders);
+		$options = array_merge([
+			'orderBy' => [
+				'name' => 'asc'
+			]
+		], $options);
 
 		$sql = 'SELECT %s FROM pn_persons';
 
-		$stmt = $this->prepare(sprintf($sql, 'count(*)'));
-		$stmt->execute();
-		$totalFound = $stmt->fetchColumn();
+		if ($totalFound != -1) {
+			$stmt = $this->prepare(sprintf($sql, 'count(*)'));
+			$stmt->execute();
+			$totalFound = $stmt->fetchColumn();
+		}
 
-		$sql .= $this->getOrderString($orders);
-		$sql .= $this->getLimitString($paginator[0], $paginator[1]);
-
-		$paginator['overall'] = $totalFound;
-		$paginator['pages'] = ceil($totalFound / $paginator[1]);
+		$sql .= $this->getOrderString($options['orderBy']);
+		$sql .= $this->getLimitString($from, $count);
 
 		return $this->fetchAll(sprintf($sql, '*'));
 

@@ -364,7 +364,7 @@
 		</li>
 		{% if post %}
 			<li>
-				<a href="/office/photoarticle{{ post.id }}">Редактирование</a>
+				<a href="/office/photoarticle{{ post.id }}">{{ post.name|e }}</a>
 			</li>
 		{% else %}
 			<li>

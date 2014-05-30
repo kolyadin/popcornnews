@@ -2,3 +2,13 @@ iframe[id^='twitter-widget-'] {
   width: 100%;
   height: 430px;
 }
+.b-facts__post-form {
+  margin-top: 20px;
+}
+.b-facts__post-form textarea {
+  font-family: "PT Sans";
+  width: 100%;
+  font-size: 18px;
+  padding: 5px;
+  box-sizing: border-box;
+}

@@ -702,12 +702,12 @@
 
 	{% if post %}
 		<h3 class="page-title">
-			Новость
-			<small>&quot;{{ post.name|e }}&quot;</small>
+			&quot;{{ post.name|e }}&quot;
+			<small>Новость</small>
 		</h3>
 	{% else %}
 		<h3 class="page-title">
-			Создание новости
+			Добавление новости
 		</h3>
 	{% endif %}
 
@@ -723,11 +723,11 @@
 		</li>
 		{% if post %}
 			<li>
-				<a href="/office/post{{ post.id }}">Редактирование</a>
+				<a href="/office/post{{ post.id }}">{{ post.name|e }}</a>
 			</li>
 		{% else %}
 			<li>
-				<a href="/office/post_create">Создание новости</a>
+				<a href="/office/post_create">Добавление новости</a>
 			</li>
 		{% endif %}
 	</ul>

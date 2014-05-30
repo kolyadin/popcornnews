@@ -73,17 +73,21 @@ class PersonFactory {
 	}
 
 	/**
-	 * @param array $query
+	 * @param array $options
 	 * @param int $from
 	 * @param int $count
-	 * @param array $orders
+	 * @param $totalFound
 	 *
 	 * @return Person[]
 	 */
-	public static function getPersons(array $query = [], $from = 0, $count = -1, array $orders = []) {
-		self::checkDataMap();
+	public static function getPersons(array $options = [], $from = 0, $count = -1, &$totalFound = -1) {
+		$options = array_merge([
+			'with' => PersonDataMap::WITH_NONE
+		], $options);
 
-		return self::$dataMap->find($query, $from, $count, $orders);
+		$dataMap = new PersonDataMap($options['with']);
+
+		return $dataMap->getPersons($options,$from,$count,$totalFound);
 	}
 
 	/**

@@ -112,9 +112,15 @@
 
 	{% if persons|length %}
 
+		<div style="float:left;margin-top:17px;">
+			<a class="btn btn-success" href="/office/person_create"><i class="fa fa-plus" style="position:relative;top:1px;padding-right: 10px;"></i>добавить персону</a>
+		</div>
+
 		<div style="text-align: right;">
 			{{ html.paginator(paginator.pages,paginator.active,'/office/persons/page%u') }}
 		</div>
+
+		<div class="clearfix"></div>
 
 		<div class="table-responsive">
 			<table class="table table-hover table-items">
@@ -147,9 +153,15 @@
 			</table>
 		</div>
 
+		<div style="float:left;margin-top:17px;">
+			<a class="btn btn-success" href="/office/person_create"><i class="fa fa-plus" style="position:relative;top:1px;padding-right: 10px;"></i>добавить персону</a>
+		</div>
+
 		<div style="text-align: right;">
 			{{ html.paginator(paginator.pages,paginator.active,'/office/persons/page%u') }}
 		</div>
+
+		<div class="clearfix"></div>
 
 	{% else %}
 
