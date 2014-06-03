@@ -278,6 +278,7 @@ abstract class DataMap {
 			$items = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 		} else {
 			$items = $stmt->fetchAll(\PDO::FETCH_CLASS, $this->class);
+
 			foreach ($items as &$item) {
 				$this->itemCallback($item);
 			}

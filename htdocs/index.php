@@ -6,8 +6,13 @@ date_default_timezone_set('Europe/Moscow');
 require '../vendor/autoload.php';
 
 if (\popcorn\lib\Config::getMode() != 'production') {
-	ini_set('xhprof.output_dir', __DIR__ . '/../var/tmp/xhprof');
-	xhprof_enable();
+	xhprof_enable(XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY, ['ignored_functions' => [
+		'Slim\Middleware\PrettyExceptions::call',
+		'Slim\Middleware\MethodOverride::call',
+		'Slim\Middleware\Flash::call',
+		'Slim\Slim::call',
+		'Slim\Slim::run'
+	]]);
 }
 
 session_name('popcorn-session');
@@ -22,7 +27,7 @@ if (\popcorn\lib\Config::getMode() != 'production') {
 	require_once '../vendor/facebook/xhprof/xhprof_lib/utils/xhprof_lib.php';
 	require_once '../vendor/facebook/xhprof/xhprof_lib/utils/xhprof_runs.php';
 
-	$namespace = $_SERVER['SERVER_NAME'];
+	$namespace = 'popcorn';
 	$xhprof_runs = new XHProfRuns_Default();
 	$run_id = $xhprof_runs->save_run($xhprof_data, $namespace);
 

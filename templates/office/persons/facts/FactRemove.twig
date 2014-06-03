@@ -1,0 +1,35 @@
+{% extends '/Generic.twig' %}
+
+{% block BodyEnd %}
+
+
+{% endblock %}
+
+{% block PageContent %}
+
+	<h3 class="page-title">
+		Подтвердите удаление
+		<small>Факт о {{ person.prepositionalName|e }}</small>
+	</h3>
+
+	<form method="post" action="/office/person{{ person.id }}/fact{{ fact.id }}/remove">
+		<input type="hidden" name="factId" value="{{ fact.id }}"/>
+		<input type="hidden" name="personId" value="{{ person.id }}"/>
+
+		<blockquote>{{ fact.fact|e }}</blockquote>
+
+		<div class="note note-danger">
+			<p><strong>Удаление приведет к:</strong></p>
+			<p>
+				<ul>
+					<li>удалению статистики голосов за этот факт</li>
+				</ul>
+			</p>
+			<p style="text-align: right;">
+				<a class="btn btn-info" href="/office/person{{ person.id }}/facts">Вернуться к списку фактов {{ person.prepositionalName|e }}</a>
+				<input type="submit" class="btn btn-danger" value="Подтверждаю удаление"/>
+			</p>
+		</div>
+	</form>
+
+{% endblock %}

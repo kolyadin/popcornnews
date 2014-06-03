@@ -1,9 +1,4 @@
 <?php
-/**
- * User: anubis
- * Date: 12.08.13
- * Time: 14:56
- */
 
 namespace popcorn\app;
 
@@ -20,7 +15,7 @@ class Application {
 	 * @var \Slim\Slim
 	 */
 	private $slim;
-	private $twig, $twigString;
+	private $twig;
 	private $imageGenerator;
 
 	public function __construct($settings = []) {
@@ -47,7 +42,6 @@ class Application {
 		];
 
 		$twigLoader = new \Twig_Loader_Filesystem($twigSettings['templates.path']);
-		$twigLoaderString = new \Twig_Loader_String();
 
 		$this->twig = new \Twig_Environment($twigLoader, $twigSettings);
 		$this->twig->addExtension(new \Twig_Extension_Debug());
@@ -70,6 +64,12 @@ class Application {
 				'output'       => __DIR__ . '/../htdocs/k/%%/%%',
 				'locks'        => '/tmp',
 			]
+		]);
+
+		$this->getTwig()->addGlobal('app', [
+			'request' => $this->getSlim()->request,
+			'session' => $_SESSION,
+			'flash'   => isset($_SESSION['slim.flash']) ? $_SESSION['slim.flash'] : null
 		]);
 
 		$this->twig->addGlobal('slim', array(

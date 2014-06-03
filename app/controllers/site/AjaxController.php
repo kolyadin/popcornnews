@@ -30,6 +30,7 @@ use popcorn\model\dataMaps\UserDataMap;
 use popcorn\model\exceptions\Exception;
 use popcorn\model\exceptions\NotAuthorizedException;
 use popcorn\model\groups\Topic;
+use popcorn\model\persons\facts\FactFactory;
 use popcorn\model\persons\Kid;
 use popcorn\model\persons\KidFactory;
 use popcorn\model\persons\Meeting;
@@ -158,6 +159,10 @@ class AjaxController extends GenericController implements ControllerInterface {
 		$this
 			->getSlim()
 			->post('/ajax/persons/vote', [$this, 'personsVote']);
+
+		$this
+			->getSlim()
+			->post('/ajax/persons/facts/vote', [$this, 'personsFactsVote']);
 
 		$this
 			->getSlim()
@@ -1082,6 +1087,47 @@ class AjaxController extends GenericController implements ControllerInterface {
 		} catch (AjaxException $e) {
 			$e->exitWithJsonException();
 		}
+
+	}
+
+	public function personsFactsVote() {
+
+		$request = $this->getSlim()->request;
+
+		{
+			$factId = $request->post('factId');
+			$vote = $request->post('vote');
+			$category = $request->post('category');
+		}
+
+		$category = strtr($category, [
+			'trust' => 1,
+			'vote'  => 2
+		]);
+
+		try {
+			$fact = FactFactory::getFact($factId);
+
+			if (UserFactory::getCurrentUser() instanceof GuestUser) {
+				throw new NotAuthorizedException();
+			}
+
+			if (FactFactory::isVotingAllow($fact, UserFactory::getCurrentUser(), $category)) {
+				FactFactory::addVote($fact, UserFactory::getCurrentUser(), $category, $vote);
+
+				//Берем факт с новыми рейтингами
+				$fact = FactFactory::getFact($factId);
+
+				$this->getApp()->exitWithJsonSuccessMessage([
+					'factId'      => $fact->getId(),
+					'trustRating' => $fact->getTrustRating(),
+					'voteRating'  => $fact->getVoteRating()
+				]);
+			}
+		} catch (AjaxException $e) {
+			$e->exitWithJsonException();
+		}
+
 
 	}
 

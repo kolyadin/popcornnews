@@ -241,7 +241,7 @@
 	{% if person %}
 		<h3 class="page-title">
 			&quot;{{ person.name|e }} ({{ person.englishName|e }})&quot;
-			<small>персона</small>
+			<small>персона, основные данные</small>
 		</h3>
 	{% else %}
 		<h3 class="page-title">
@@ -518,7 +518,7 @@
 
 			{% if person %}
 
-				<button class="btn btn-m btn-danger" type="button" data-action="person-remove">Удалить персону</button>
+				<a href="/office/person{{ person.id }}/remove" class="btn btn-m btn-danger">Удалить персону</a>
 				<button class="btn btn-m btn-success" type="submit">Обновить персону&nbsp;<i class="fa fa-check"></i></button>
 
 			{% else %}

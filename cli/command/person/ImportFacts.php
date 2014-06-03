@@ -2,6 +2,7 @@
 
 namespace popcorn\cli\command\person;
 
+use popcorn\cli\helpers\OutputHelper;
 use popcorn\lib\PDOHelper;
 use popcorn\model\tags\Tag;
 use Symfony\Component\Console\Command\Command;
@@ -18,9 +19,11 @@ class ImportFacts extends Command {
 	/**
 	 * @var \PDOStatement
 	 */
-	private $stmtFindFacts, $stmtFindFactsVotes, $stmtInsertFacts, $stmtInsertFactsVotes;
+	private $stmtFindFacts, $stmtFindFactsVotes, $stmtFindFactRating,
+		$stmtInsertFacts, $stmtInsertFactsVotes, $stmtCleanFacts, $stmtCleanVotes;
 
 	protected function configure() {
+
 		$this->setName('import:persons:facts')
 			->setDescription("Импорт фактов о персонах");
 
@@ -29,38 +32,61 @@ class ImportFacts extends Command {
 		$this->stmtFindFacts =
 			$this->pdo->prepare('SELECT * FROM popcornnews.popcornnews_facts');
 
-		$this->stmtFindFactsVotes =
-			$this->pdo->prepare('SELECT * FROM popcornnews.popcornnews_fact_votes');
+		$this->stmtCleanFacts =
+			$this->pdo->prepare('DELETE FROM popcornnews.popcornnews_facts WHERE uid NOT IN(SELECT id FROM popcorn.pn_users)');
+
+		$this->stmtCleanVotes =
+			$this->pdo->prepare('DELETE FROM popcornnews.popcornnews_fact_votes WHERE uid NOT IN(SELECT id FROM popcorn.pn_users)');
+
+		$this->stmtFindFactRating =
+			$this->pdo->prepare('SELECT FLOOR(SUM(vote)/COUNT(vote)) FROM pn_persons_facts_votes WHERE category = :categoryId and factId = :factId');
+
+		$subquery1 = 'SELECT IFNULL(FLOOR(SUM(vote)/COUNT(vote)),0) FROM pn_persons_facts_votes WHERE category = 1 AND factId = :id';
+		$subquery2 = 'SELECT IFNULL(FLOOR(SUM(vote)/COUNT(vote)),0) FROM pn_persons_facts_votes WHERE category = 2 AND factId = :id';
 
 		$this->stmtInsertFacts =
-			$this->pdo->prepare('insert into pn_persons_facts set id = :id, fact = :fact, personId = :personId,
-			 createdAt = :createdAt, userId = :userId, trust = :trust,
-			  trustVotes = :trustVotes, likes = :likes, likesVotes = :likesVotes');
+			$this->pdo->prepare("INSERT INTO pn_persons_facts SET id = :id, fact = :fact, personId = :personId,
+			 createdAt = :createdAt, userId = :userId, trustRating = ($subquery1), voteRating = ($subquery2)");
 
 		$this->stmtInsertFactsVotes =
-			$this->pdo->prepare('insert into pn_persons_facts_votes set factId = :factId, userId = :userId, category = :category, vote = :vote');
+			$this->pdo->query('INSERT INTO popcorn.pn_persons_facts_votes (factId,userId,category,vote) SELECT fid, uid, rubric, vote/10 FROM popcornnews.popcornnews_fact_votes');
 
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
 
-		$output->write('<info>Чистим таблицы...');
+		{
+			$output->write('<info>Подготовим данные для импорта...');
 
-		PDOHelper::truncate(['pn_persons_facts', 'pn_persons_facts_votes']);
+			$this->stmtCleanFacts->execute();
+			$this->stmtCleanVotes->execute();
 
-		$output->writeln(' готово</info>');
+			$output->writeln(' готово</info>');
+		}
 
-		$output->write('<info>Импорт фактов...');
+		{
+			$output->write('<info>Чистим таблицы...');
 
-		$this->importFacts();
+			PDOHelper::truncate(['pn_persons_facts', 'pn_persons_facts_votes']);
 
-		$output->writeln(' готово</info>');
+			$output->writeln(' готово</info>');
+		}
 
-		$output->write('<info>Импорт голосований фактов...');
+		{
+			$output->write('<info>Импорт голосований фактов...');
 
-		$this->importFactsVotes();
+			$this->stmtInsertFactsVotes->execute();
 
-		$output->writeln(' готово</info>');
+			$output->writeln(' готово</info>');
+		}
+
+		{
+			$output->write('<info>Импорт фактов...');
+
+			$this->importFacts();
+
+			$output->writeln(' готово</info>');
+		}
 	}
 
 	private function importFacts() {
@@ -68,28 +94,11 @@ class ImportFacts extends Command {
 
 		while ($faсt = $this->stmtFindFacts->fetch(\PDO::FETCH_ASSOC)) {
 			$this->stmtInsertFacts->execute([
-				':id'         => $faсt['id'],
-				':fact'       => $faсt['content'],
-				':personId'   => $faсt['person1'],
-				':createdAt'  => $faсt['cdate'],
-				':userId'     => $faсt['uid'],
-				':trust'      => $faсt['trust'],
-				':trustVotes' => $faсt['trust_votes'],
-				':likes'      => $faсt['liked'],
-				':likesVotes' => $faсt['liked_votes']
-			]);
-		}
-	}
-
-	private function importFactsVotes() {
-		$this->stmtFindFactsVotes->execute();
-
-		while ($vote = $this->stmtFindFactsVotes->fetch(\PDO::FETCH_ASSOC)) {
-			$this->stmtInsertFactsVotes->execute([
-				':factId'   => $vote['fid'],
-				':userId'   => $vote['uid'],
-				':category' => $vote['rubric'],
-				':vote'     => $vote['vote'] / 10
+				':id'        => $faсt['id'],
+				':fact'      => $faсt['content'],
+				':personId'  => $faсt['person1'],
+				':createdAt' => $faсt['cdate'],
+				':userId'    => $faсt['uid']
 			]);
 		}
 	}

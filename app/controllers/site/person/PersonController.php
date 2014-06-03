@@ -51,6 +51,7 @@ class PersonController extends GenericController implements ControllerInterface 
 		}
 	}
 
+
 	public function getRoutes() {
 
 		$slim = $this->getSlim();
@@ -108,26 +109,7 @@ class PersonController extends GenericController implements ControllerInterface 
 			$slim->group('/fans', function () use ($slim) {
 
 
-				$slim->get('(/page:page)', function ($personUrl, $page = null) {
-					if ($page == 1) {
-						$this->getSlim()->redirect(sprintf('/persons/%s/fans', $personUrl));
-					}
 
-					$this->fansPage(self::$personId, $page);
-				});
-
-				$slim->get('/new', [$this, 'fansNewPage']);
-
-				$slim->get('/local(/page:page)', 'popcorn\\lib\\Middleware::authorizationNeeded', function ($personUrl, $page = null) {
-					if ($page == 1) {
-						$this->getSlim()->redirect(sprintf('/persons/%s/fans/local', $personUrl));
-					}
-
-					$this->fansLocalPage(self::$personId, $page);
-				});
-
-				$slim->get('/subscribe', 'popcorn\\lib\\Middleware::authorizationNeeded', [$this, 'fanSubscribePage']);
-				$slim->get('/unsubscribe', 'popcorn\\lib\\Middleware::authorizationNeeded', [$this, 'fanUnSubscribePage']);
 			});
 
 			$slim->group('/fanfics', function () use ($slim) {
@@ -343,162 +325,7 @@ class PersonController extends GenericController implements ControllerInterface 
 
 	}
 
-	/**
-	 * Все фаны персоны
-	 */
-	public function fansPage($personId, $page = null) {
 
-		if (is_null($page)) {
-			$page = 1;
-		}
-
-		$person = PersonFactory::getPerson($personId);
-
-		{
-			$onPage = 50;
-			$paginator = [($page - 1) * $onPage, $onPage];
-		}
-
-		$dataMap = new PersonFanDataMap();
-		$users = $dataMap->findById(self::$personId, ['id' => 'asc'], $paginator);
-
-		if ($page > $paginator['pages']) {
-			$this->getSlim()->notFound();
-		}
-
-		{
-
-			$i = 1;
-			foreach ($users as &$user) {
-				$user->setExtra('row', $i++ + $paginator[0]);
-			}
-			unset($i);
-		}
-
-		$this->getTwig()->display('/person/fans/PersonFans.twig', [
-			'person'    => $person,
-			'fans'      => $users,
-			'customNum' => 1,
-			'paginator' => [
-				'pages'  => $paginator['pages'],
-				'active' => $page
-			]
-		]);
-
-	}
-
-	/**
-	 * Новыне фаны персоны
-	 */
-	public function fansNewPage() {
-
-		$person = PersonFactory::getPerson(self::$personId);
-
-		$dataMap = new PersonFanDataMap();
-
-		$paginator = [0, 50];
-
-		$users = $dataMap->findById(self::$personId, ['id' => 'desc'], $paginator);
-
-		{
-
-			$i = 1;
-			foreach ($users as &$user) {
-				$user->setExtra('row', $paginator['overall']--);
-			}
-			unset($i);
-		}
-
-		$this->getTwig()->display('/person/fans/PersonNewFans.twig', [
-			'person'    => $person,
-			'fans'      => $users,
-			'customNum' => 1,
-		]);
-
-	}
-
-	/**
-	 * Фаны "в твоем городе"
-	 */
-	public function fansLocalPage($personId, $page = null) {
-
-		if (is_null($page)) {
-			$page = 1;
-		}
-
-		$person = PersonFactory::getPerson(self::$personId);
-
-		{
-			$onPage = 50;
-			$paginator = [($page - 1) * $onPage, $onPage];
-		}
-
-		$cityId = UserFactory::getCurrentUser()->getUserInfo()->getCityId();
-
-		$dataMap = new PersonFanDataMap();
-		$users = $dataMap->find(self::$personId, ['info.cityId' => $cityId], ['id' => 'asc'], $paginator);
-
-		if ($page > $paginator['pages']) {
-			$this->getSlim()->notFound();
-		}
-
-		{
-			$i = 1;
-			foreach ($users as &$user) {
-				$user->setExtra('row', $i++ + $paginator[0]);
-			}
-			unset($i);
-		}
-
-		$this->getTwig()->display('/person/fans/PersonLocalFans.twig', [
-			'person'    => $person,
-			'fans'      => $users,
-			'customNum' => 1,
-			'paginator' => [
-				'pages'  => $paginator['pages'],
-				'active' => $page
-			]
-		]);
-
-	}
-
-	/**
-	 * Предлагаем стать поклонником
-	 */
-	public function fanSubscribePage() {
-
-		$person = PersonFactory::getPerson(self::$personId);
-
-		$dataMap = new PersonFanDataMap();
-
-		if ($dataMap->isFan(UserFactory::getCurrentUser(), $person)) {
-			$this->getSlim()->redirect(sprintf('/persons/%s/fans/unsubscribe', $person->getUrlName()));
-		}
-
-		$this->getTwig()->display('/person/fans/PersonFansSubscribe.twig', [
-			'person' => $person
-		]);
-
-	}
-
-	/**
-	 * Предлагаем выйти из группы
-	 */
-	public function fanUnSubscribePage() {
-
-		$person = PersonFactory::getPerson(self::$personId);
-
-		$dataMap = new PersonFanDataMap();
-
-		if (!$dataMap->isFan(UserFactory::getCurrentUser(), $person)) {
-			$this->getSlim()->redirect(sprintf('/persons/%s/fans/subscribe', $person->getUrlName()));
-		}
-
-		$this->getTwig()->display('/person/fans/PersonFansUnSubscribe.twig', [
-			'person' => $person
-		]);
-
-	}
 
 	/**
 	 * @param $personId

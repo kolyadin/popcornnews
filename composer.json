@@ -14,7 +14,7 @@
     ],
     "require": {
         "phpunit/phpunit": "3.7.19",
-        "slim/slim": "2.4.0",
+        "slim/slim": "2.4.3",
         "twig/twig": "1.15",
         "twig/extensions": "v1.0.1",
         "slim/extras": "2.0.3",
@@ -24,7 +24,7 @@
         "facebook/xhprof": "dev-master",
         "danielstjules/stringy": "dev-master",
         "phpmailer/phpmailer": "v5.2.7",
-        "mobiledetect/mobiledetectlib": "2.7.8"
+        "mobiledetect/mobiledetectlib": "dev-master"
     },
     "autoload": {
         "psr-4": {

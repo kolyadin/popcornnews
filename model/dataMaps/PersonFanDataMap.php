@@ -88,8 +88,8 @@ class PersonFanDataMap extends CrossLinkedDataMap {
 	public function isFan(User $user, Person $person) {
 
 		$stmt = $this->prepare('select count(*) from pn_persons_fans where userId = :userId and personId = :personId');
-		$stmt->bindValue(':userId',$user->getId(),\PDO::PARAM_INT);
-		$stmt->bindValue(':personId',$person->getId(),\PDO::PARAM_INT);
+		$stmt->bindValue(':userId', $user->getId(), \PDO::PARAM_INT);
+		$stmt->bindValue(':personId', $person->getId(), \PDO::PARAM_INT);
 		$stmt->execute();
 
 		return ($stmt->fetchColumn() ? true : false);
@@ -152,6 +152,6 @@ SQL;
 
 
 	protected function mainDataMap() {
-		return new UserDataMap();
+		return new UserDataMap(UserDataMap::WITH_ALL);
 	}
 }

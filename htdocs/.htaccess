@@ -1,19 +1,16 @@
-AddDefaultCharset utf-8
+php_value upload_max_filesize 10M
+php_value post_max_filesize   10M
+php_value xhprof.output_dir /data/sites/popcorn/var/tmp/xhprof
 
 SetEnv POPCORN_MODE development
 
-DirectoryIndex index.php
+AddDefaultCharset utf-8
+Options -Indexes
 
-php_value upload_max_filesize 10M
-php_value post_max_filesize   10M
+DirectoryIndex index.php
 
 RewriteEngine On
 
-# Some hosts may require you to use the `RewriteBase` directive.
-# If you need to use the `RewriteBase` directive, it should be the
-# absolute physical path to the directory that contains this htaccess file.
-#
-# RewriteBase /
-
+RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^ index.php [QSA,L]

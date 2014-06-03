@@ -31,12 +31,14 @@
 
 	{% spaceless %}
 	<div class="user-info__ava-nick-rating">
-        {% if profile.avatar.id %}
-            {% set src = profile.avatar.url('profileSmall') %}
-        {% else %}
-            {% set src = '/assets/img/no-photo/small.png' %}
-        {% endif %}
-        <div class="ava"><a href="/profile/{{ profile.id }}"><img src="{{ src }}" alt=""/></a></div>
+		{% if options.hideAvatar != true %}
+	        {% if profile.avatar.id %}
+	            {% set src = profile.avatar.url('profileSmall') %}
+	        {% else %}
+	            {% set src = '/assets/img/no-photo/small.png' %}
+	        {% endif %}
+	        <div class="ava"><a href="/profile/{{ profile.id }}"><img src="{{ src }}" alt=""/></a></div>
+		{% endif %}
 		<div class="nick-rating rating-small rating-{{ profile.rating.rank }}">
 			<div class="nick rating-{{ profile.rating.rank }}">
 				<a href="/profile/{{ profile.id }}">{{ profile.nick|e }}</a>

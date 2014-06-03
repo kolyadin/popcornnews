@@ -1,13 +1,111 @@
 {% extends '/person/facts/PersonFactsGeneric.twig' %}
+{% import '/Mixins.twig' as html %}
+
 
 {% block head %}
 
-	<title>Факты {{ person.genitiveName|e }}</title>
+	{% if paginator.active > 1 %}
+		{% set paginatorTitle = 'Страница ' ~ paginator.active ~ ' - ' %}
+	{% endif %}
+
+	<title>Факты о {{ person.prepositionalName|e }} - {{ paginatorTitle }}popcornnews</title>
+
+	<script type="text/javascript">
+		$(function () {
+
+			$('.b-person__statistic__star-rating a').on('click', function () {
+
+				var params = {
+					factId: $(this).closest('.b-facts__fact').attr('data-fact-id'),
+					vote: $(this).attr('rel'),
+					category: $(this).closest('ul[data-category]').attr('data-category')
+				};
+
+				var handler = function (response) {
+
+					if (response.status == 'error'){
+						alert(response.exception.message);
+					} else {
+						$('.b-facts__fact[data-fact-id='+response.factId+'] .b-facts__fact-trust .mark').text(response.trustRating);
+						$('.b-facts__fact[data-fact-id='+response.factId+'] .b-facts__fact-like .mark').text(response.voteRating);
+					}
+
+					return false;
+				};
+
+				$.post('/ajax/persons/facts/vote', params, handler, 'json');
+
+				return false;
+			});
+
+		});
+	</script>
 
 {% endblock %}
 
 {% block personContent %}
 
-	123
+	{% if app.flash.factAdded %}
+		<script type="text/javascript">
+			$(function () {
+				setTimeout(function(){
+					location.href = '/persons/{{ person.urlName }}/facts';
+				},3000);
+			});
+		</script>
+
+		<div class="system-message b-text">
+			<p>Факт добавлен, сейчас ты вернешься к списку фактов...</p>
+			<p><a href="/persons/{{ person.urlName }}/facts">вернуться к списку фактов</a></p>
+		</div>
+	{% else %}
+
+		<div class="b-facts">
+
+			{% for fact in facts %}
+
+				<div class="b-facts__fact" data-fact-id="{{ fact.id }}">
+					<div class="b-facts__fact-content">{{ fact.fact|e }}</div>
+					<div class="b-facts__fact-trust">
+						<span class="mark">{{ fact.trustRating }}</span>
+						<h4>достоверность</h4>
+						<span class="action">Верю</span>
+						<ul class="b-person__statistic__star-rating" data-category="trust">
+							{% for class in ['one','two','three','four','five','six','seven','eight','nine','ten'] %}
+								<li class="{{ class }} "><a rel="{{ loop.index }}" href="#">{{ loop.index }}</a></li>
+							{% endfor %}
+						</ul>
+					</div>
+					<div class="b-facts__fact-like">
+						<span class="mark">{{ fact.voteRating }}</span>
+						<h4>оценка</h4>
+						<span class="action">Нравится</span>
+						<ul class="b-person__statistic__star-rating" data-category="vote">
+							{% for class in ['one','two','three','four','five','six','seven','eight','nine','ten'] %}
+								<li class="{{ class }} "><a rel="{{ loop.index }}" href="#">{{ loop.index }}</a></li>
+							{% endfor %}
+						</ul>
+					</div>
+					<div class="b-facts__fact-sender">
+						{% if fact.user.avatar.id %}
+							{% set src = fact.user.avatar.url('profileSmall') %}
+						{% else %}
+							{% set src = '/assets/img/no-photo/small.png' %}
+						{% endif %}
+						<a href="/profile/{{ fact.user.id }}" rel="nofollow" class="ava"><img src="{{ src }}" alt=""></a>
+						<div class="details">
+							<span>Прислал</span>
+							{{ html.profileInfo(fact.user,{'hidePoints' : true, 'hideAvatar' : true}) }}
+						</div>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+			{% endfor %}
+
+			{{ html.paginator(paginator.pages,paginator.active,'/persons/' ~ person.urlName ~ '/facts/page%u') }}
+
+		</div>
+
+	{% endif %}
 
 {% endblock %}

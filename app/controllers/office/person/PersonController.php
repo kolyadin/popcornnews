@@ -1,20 +1,16 @@
 <?php
-namespace popcorn\app\controllers\office;
+namespace popcorn\app\controllers\office\person;
 
 use popcorn\app\controllers\ControllerInterface;
 use popcorn\app\controllers\GenericController;
-use popcorn\model\content\Image;
 use popcorn\model\content\ImageFactory;
-use popcorn\model\dataMaps\DataMapHelper;
 use popcorn\model\dataMaps\PersonDataMap;
 use popcorn\model\dataMaps\PersonsLinkDataMap;
-use popcorn\model\exceptions\Exception;
+use popcorn\model\persons\facts\FactFactory;
 use popcorn\model\persons\Person;
 use popcorn\model\persons\PersonFactory;
 
 class PersonController extends GenericController implements ControllerInterface {
-
-	private $personDataMap;
 
 	public function getRoutes() {
 		$this
@@ -75,10 +71,7 @@ class PersonController extends GenericController implements ControllerInterface 
 				':personId' => '[1-9][0-9]*'
 			])
 			->via('GET', 'POST');
-	}
 
-	public function __construct() {
-		$this->personDataMap = new PersonDataMap();
 	}
 
 	public function persons($page = null) {
@@ -137,7 +130,7 @@ class PersonController extends GenericController implements ControllerInterface 
 		$personId = $request->post('personId');
 
 		if ($personId > 0) {
-			$person = $this->personDataMap->findById($personId);
+			$person = PersonFactory::getPerson($personId);
 		} else {
 			$person = new Person();
 		}
@@ -185,7 +178,7 @@ class PersonController extends GenericController implements ControllerInterface 
 		$person->setTwitterLogin($request->post('twitterLogin'));
 		$person->setInstagramLogin($request->post('instagramLogin'));
 
-		$this->personDataMap->save($person);
+		PersonFactory::savePerson($person);
 
 		if ($person->getId()) {
 			if ($personId) {
@@ -198,10 +191,7 @@ class PersonController extends GenericController implements ControllerInterface 
 
 	public function linkingEditGet($personId) {
 
-		/** @var Person $post */
-		$person = $this->personDataMap->findById($personId);
-
-		$links = [];
+		$person = PersonFactory::getPerson($personId, ['with' => PersonDataMap::WITH_PHOTO]);
 
 		$dataMap = new PersonsLinkDataMap();
 		$links = $dataMap->find($person->getId());
@@ -236,4 +226,6 @@ class PersonController extends GenericController implements ControllerInterface 
 
 		$this->getSlim()->redirect(sprintf('/office/person%u/linking?status=updated', $personId));
 	}
+
+
 }

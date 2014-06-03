@@ -34,13 +34,14 @@ class UserDataMap extends DataMap {
 	 */
 	private $findByEmailStatement;
 
-	public function __construct(DataMapHelper $helper = null) {
+	private $modifier;
 
-		if ($helper instanceof DataMapHelper) {
-			DataMap::setHelper($helper);
-		}
+	public function __construct($modifier = self::WITH_ALL) {
 
 		parent::__construct();
+
+		$this->modifier = $modifier;
+
 		$this->class = "popcorn\\model\\system\\users\\User";
 
 		$this->userInfo = new UserInfoDataMap();
@@ -136,29 +137,26 @@ class UserDataMap extends DataMap {
 
 	/**
 	 * @param User $item
-	 * @param int $modifier
 	 * @return User
 	 */
-	protected function itemCallback($item, $modifier = self::WITH_ALL) {
+	protected function itemCallback($item) {
 		parent::itemCallback($item);
 
 		$item->setRating($item->getRating()->getPoints());
 
-		$modifier = $this->getModifier($this, $modifier);
-
-		if ($modifier & self::WITH_AVATAR) {
+		if ($this->modifier & self::WITH_AVATAR) {
 			$item->setAvatar(ImageFactory::getImage($item->getAvatar()));
 		}
 
-		if ($modifier & self::WITH_INFO) {
+		if ($this->modifier & self::WITH_INFO) {
 			$item->setUserInfo($this->userInfo->findById($item->getUserInfo()));
 		}
 
-		if ($modifier & self::WITH_SETTINGS) {
+		if ($this->modifier & self::WITH_SETTINGS) {
 			$item->setUserSettings($this->userSettings->findById($item->getUserSettings()));
 		}
 
-		if ($modifier & self::WITH_HASH) {
+		if ($this->modifier & self::WITH_HASH) {
 			$item->setUserHash($this->userHash->findById($item->getUserHash()));
 		}
 

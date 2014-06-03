@@ -25,21 +25,23 @@ class PopcornCliApp extends Application {
 
 	function __construct() {
 		parent::__construct('Popcorn CLI Application', '1.0');
+
+
 	}
 }
 
 ImageGenerator::setup([
 	'bin' => [
-		'convert' => '/usr/bin/convert',
+		'convert'  => '/usr/bin/convert',
 		'identify' => '/usr/bin/identify',
-		'mogrify' => '/usr/bin/mogrify',
-		'lock' => '/usr/bin/flock -n'
+		'mogrify'  => '/usr/bin/mogrify',
+		'lock'     => '/usr/bin/flock -n'
 	],
 	'dir' => [
 		'documentRoot' => __DIR__ . '/../htdocs',
-		'source' => __DIR__ . '/../htdocs/upload',
-		'output' => __DIR__ . '/../htdocs/k/%%/%%',
-		'locks' => '/tmp',
+		'source'       => __DIR__ . '/../htdocs/upload',
+		'output'       => __DIR__ . '/../htdocs/k/%%/%%',
+		'locks'        => '/tmp',
 	]
 ]);
 

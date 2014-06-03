@@ -1,0 +1,142 @@
+{% extends '/persons/PersonGeneric.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% block HeadEnd %}
+
+	<style type="text/css">
+
+		.table-items a {
+			font-size: 13px;
+		}
+
+		.table-items .stat .progress {
+			margin-bottom: 5px;
+		}
+
+		.table-items .stat .progress-bar strong {
+			padding-left: 5px;
+		}
+
+		.table-items .stat .label {
+			margin-right: 5px;
+		}
+	</style>
+
+{% endblock %}
+
+{% block BodyEnd %}
+
+	{% if app.flash.factRemoved %}
+		<script type="text/javascript">
+			$(function () {
+				setTimeout(function(){
+					location.href = '/office/person{{ person.id }}/facts';
+				},3000);
+			});
+		</script>
+	{% endif %}
+
+{% endblock %}
+
+{% block PageTop %}
+
+	{% if person %}
+		<h3 class="page-title">
+			&quot;{{ person.name|e }} ({{ person.englishName|e }})&quot;
+			<small>факты о персоне</small>
+		</h3>
+	{% else %}
+		<h3 class="page-title">
+			Создание персоны
+		</h3>
+	{% endif %}
+
+	<ul class="page-breadcrumb breadcrumb">
+		<li>
+			<i class="fa fa-home"></i>
+			<a href="/office">Консоль</a>
+			<i class="fa fa-angle-right"></i>
+		</li>
+		<li>
+			<a href="/office/persons">Персоны</a>
+			<i class="fa fa-angle-right"></i>
+		</li>
+		<li>
+			<a href="/office/person{{ person.id }}">{{ person.name|e }}</a>
+			<i class="fa fa-angle-right"></i>
+		</li>
+		<li>
+			<a href="/office/person{{ person.id }}/facts">Факты</a>
+		</li>
+	</ul>
+
+	{{ parent() }}
+
+{% endblock %}
+
+{% block PageContent %}
+
+	{% if app.flash.factRemoved %}
+
+		<div class="note note-success">
+			<p><strong>Факт удален</strong>, сейчас ты вернешься к списку фактов {{ person.prepositionalName|e }}</p>
+			<p><a class="btn btn-info" href="/office/person{{ person.id }}/facts">вернуться к списку фактов</a></p>
+		</div>
+
+	{% else %}
+
+		{% if facts|length %}
+
+			<div style="text-align: right;">
+				{{ html.paginator(paginator.pages,paginator.active,'/office/person' ~ person.id ~ '/facts/page%u') }}
+			</div>
+
+			<div class="clearfix"></div>
+
+			<div class="table-responsive">
+				<table class="table table-hover table-items">
+					<thead>
+					<tr>
+						<th></th>
+						<th style="white-space: nowrap;">Дата добавления</th>
+						<th>Факт</th>
+						<th>Доверие</th>
+						<th>Оценка</th>
+					</tr>
+					</thead>
+					<tbody>
+					{% for fact in facts %}
+						<tr>
+							<td style="white-space: nowrap;">
+								{#<a class="btn btn-default btn-xs tooltips" data-original-title="Редактировать"#}
+								{#data-placement="top" href="/office/person{{ person.id }}"><i class="fa fa-edit"></i></a>#}
+								<a class="btn btn-danger btn-xs tooltips" data-original-title="Удалить факт"
+								   data-placement="top" href="/office/person{{ person.id }}/fact{{ fact.id }}/remove"><i class="fa fa-trash-o"></i></a>
+							</td>
+							<td>{{ fact.createdAt|date('d.m.Y H:i') }}</td>
+							<td style="">{{ fact.fact|e }}</td>
+							<td>{{ fact.trustRating }}</td>
+							<td>{{ fact.voteRating}}</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+
+			<div style="text-align: right;">
+				{{ html.paginator(paginator.pages,paginator.active,'/office/person' ~ person.id ~ '/facts/page%u') }}
+			</div>
+
+			<div class="clearfix"></div>
+
+		{% else %}
+
+			<div class="note note-info">
+				<h4 class="note-heading">Нет добавленных фактов</h4>
+			</div>
+
+		{% endif %}
+
+	{% endif %}
+
+{% endblock %}

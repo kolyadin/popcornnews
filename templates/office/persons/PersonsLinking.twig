@@ -128,16 +128,10 @@
 
 {% block PageTop %}
 
-	{% if person %}
-		<h3 class="page-title">
-			Персона
-			<small>&quot;{{ person.name|e }} ({{ person.englishName|e }})&quot;</small>
-		</h3>
-	{% else %}
-		<h3 class="page-title">
-			Создание персоны
-		</h3>
-	{% endif %}
+	<h3 class="page-title">
+		&quot;{{ person.name|e }} ({{ person.englishName|e }})&quot;
+		<small>связи с персонами</small>
+	</h3>
 
 	<ul class="page-breadcrumb breadcrumb">
 		<li>
@@ -150,7 +144,11 @@
 			<i class="fa fa-angle-right"></i>
 		</li>
 		<li>
-			<a href="/office/person_create">Создание персоны</a>
+			<a href="/office/person{{ person.id }}">{{ person.name|e }}</a>
+			<i class="fa fa-angle-right"></i>
+		</li>
+		<li>
+			<a href="/office/person{{ person.id }}/linking">Связи с персонами</a>
 		</li>
 	</ul>
 

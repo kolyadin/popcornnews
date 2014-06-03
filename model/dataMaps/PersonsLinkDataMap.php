@@ -19,7 +19,8 @@ class PersonsLinkDataMap extends PersonDataMap {
     private $unlinkStatement,$unlinkAllStatement = null;
 
     public function __construct() {
-        parent::__construct();
+        parent::__construct(PersonDataMap::WITH_PHOTO);
+
         $this->insertStatement =
             $this->getPDO()->prepare("INSERT INTO pn_persons_link (firstId, secondId) VALUES (:first, :second)");
         $this->deleteStatement = $this->getPDO()->prepare("DELETE FROM pn_persons_link WHERE firstId = :id OR secondId = :id");
