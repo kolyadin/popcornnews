@@ -1,6 +1,6 @@
 php_value upload_max_filesize 10M
 php_value post_max_filesize   10M
-php_value xhprof.output_dir /data/sites/popcorn/var/tmp/xhprof
+php_value xhprof.output_dir   /data/sites/popcorn/var/tmp/xhprof
 
 SetEnv POPCORN_MODE development
 

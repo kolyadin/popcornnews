@@ -6,13 +6,7 @@ date_default_timezone_set('Europe/Moscow');
 require '../vendor/autoload.php';
 
 if (\popcorn\lib\Config::getMode() != 'production') {
-	xhprof_enable(XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY, ['ignored_functions' => [
-		'Slim\Middleware\PrettyExceptions::call',
-		'Slim\Middleware\MethodOverride::call',
-		'Slim\Middleware\Flash::call',
-		'Slim\Slim::call',
-		'Slim\Slim::run'
-	]]);
+	xhprof_enable();
 }
 
 session_name('popcorn-session');
