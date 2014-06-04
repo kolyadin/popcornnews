@@ -1,14 +1,14 @@
 <?php
 
-namespace popcorn\model\persons\facts;
+namespace popcorn\model\persons\fanfics;
 
+use popcorn\model\persons\fanfics\FanFicDataMap;
 use popcorn\model\persons\Person;
-use popcorn\model\system\users\User;
 
-class FactFactory {
+class FanFicFactory {
 
 	/**
-	 * @var \popcorn\model\persons\facts\FactDataMap
+	 * @var \popcorn\model\persons\fanfics\FanFicDataMap
 	 */
 	private static $dataMap = null;
 
@@ -31,22 +31,22 @@ class FactFactory {
 
 	private static function checkDataMap() {
 		if (is_null(self::$dataMap)) {
-			self::setDataMap(new FactDataMap());
+			self::setDataMap(new FanFicDataMap());
 		}
 	}
 
 	public static function resetDataMap() {
-		self::$dataMap = new FactDataMap();
+		self::$dataMap = new FanFicDataMap();
 	}
 
 	/**
-	 * @param $factId
-	 * @return \popcorn\model\persons\facts\Fact
+	 * @param $fanficId
+	 * @return \popcorn\model\persons\fanfics\FanFic
 	 */
-	public static function getFact($factId) {
+	public static function getFanFic($fanficId) {
 		self::checkDataMap();
 
-		return self::$dataMap->findById($factId);
+		return self::$dataMap->findById($fanficId);
 	}
 
 
@@ -60,27 +60,9 @@ class FactFactory {
 	 * @param int $totalFound
 	 * @return \popcorn\model\persons\facts\Fact[]
 	 */
-	public static function getFactsByPerson(Person $person, array $options = [], $from = 0, $count = 10, &$totalFound = -1) {
+	public static function getFanFicsByPerson(Person $person, array $options = [], $from = 0, $count = 10, &$totalFound = -1) {
 		self::checkDataMap();
 
 		return self::$dataMap->findByPerson($person, $options, $from, $count, $totalFound);
-	}
-
-	/**
-	 * @param Fact $fact
-	 * @param User $user
-	 * @param $category
-	 * @return bool
-	 */
-	public static function isVotingAllow(Fact $fact, User $user, $category) {
-		self::checkDataMap();
-
-		return self::$dataMap->isVotingAllow($fact, $user, $category);
-	}
-
-	public static function addVote(Fact $fact, User $user, $category, $vote) {
-		self::checkDataMap();
-
-		self::$dataMap->addVote($fact, $user, $category, $vote);
 	}
 }

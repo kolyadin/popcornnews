@@ -2,7 +2,6 @@
 namespace popcorn\app\controllers\site\person;
 
 use popcorn\app\controllers\ControllerInterface;
-use popcorn\lib\Middleware;
 use popcorn\model\persons\facts\Fact;
 use popcorn\model\persons\facts\FactFactory;
 use popcorn\model\persons\PersonFactory;
@@ -99,7 +98,7 @@ class PersonFactsController extends PersonController implements ControllerInterf
 			$page = 1;
 		}
 
-		$facts = FactFactory::getFacts($person, [], ($page - 1) * self::FACTS_PER_PAGE, self::FACTS_PER_PAGE, $totalFound);
+		$facts = FactFactory::getFactsByPerson($person, [], ($page - 1) * self::FACTS_PER_PAGE, self::FACTS_PER_PAGE, $totalFound);
 
 		if (!count($facts)) {
 			$this->getSlim()->notFound();

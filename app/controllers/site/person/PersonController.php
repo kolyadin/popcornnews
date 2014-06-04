@@ -92,17 +92,6 @@ class PersonController extends GenericController implements ControllerInterface 
 
 		$slim->group('/persons/:name', $personExists, $isFan, function () use ($slim) {
 
-			/*
-			$authorizationNeeded = function (Route $route) {
-				if (UserFactory::getCurrentUser()->getId() > 0) {
-					return true;
-				}
-
-				$this->getSlim()->error(new NotAuthorizedException());
-
-			};
-			*/
-
 			//Главная страница персоны
 			$slim->get('', [$this, 'personPage']);
 
@@ -117,42 +106,6 @@ class PersonController extends GenericController implements ControllerInterface 
 
 			$slim->get('/photo', [$this, 'personPhoto']);
 
-			$slim->group('/fans', function () use ($slim) {
-
-
-			});
-
-			$slim->group('/fanfics', function () use ($slim) {
-				$slim->get('', function () {
-
-				});
-
-				$slim->get('/all', function () {
-
-				});
-
-				$slim->get('/add', function () {
-
-				});
-			});
-
-			$slim->group('/talks', function () use ($slim) {
-
-				$slim->get('', [new PersonTalksController(), 'talksPage']);
-				$slim->get('/topic/:topicId', [new PersonTalksController(), 'topicPage']);
-
-				$slim
-					->map('/post', function () {
-
-						if (UserFactory::getCurrentUser() instanceof GuestUser) {
-							$this->getSlim()->error(new NotAuthorizedException());
-						}
-
-						$ctr = new PersonTalksController();
-						$ctr->talksCreate();
-					})
-					->via('GET', 'POST');
-			});
 		});
 
 	}
@@ -328,54 +281,4 @@ class PersonController extends GenericController implements ControllerInterface 
 			]);
 	}
 
-	/**
-	 * @param $personId
-	 */
-	public function photoPage($personId) {
-
-	}
-
-
-	/**
-	 * @param $personId
-	 */
-	public function puzzlePage($personId) {
-
-	}
-
-	/**
-	 * @param $personId
-	 */
-	public function wallpaperPage($personId) {
-
-	}
-
-	/**
-	 * @param $personId
-	 */
-	public function fanficsPage($personId) {
-
-	}
-
-	/**
-	 * @param $personId
-	 */
-	public function factsPage($personId) {
-
-	}
-
-
-	/**
-	 * @param $personId
-	 */
-	public function videoPage($personId) {
-
-	}
-
-	/**
-	 * @param $personId
-	 */
-	public function setsPage($personId) {
-
-	}
 }

@@ -42,10 +42,10 @@ class CommentDataMap extends DataMap {
 
 	protected function initStatements() {
 		$this->insertStatement =
-			$this->prepare("INSERT INTO pn_comments_{$this->tablePrefix} (entityId, date, owner, parent, content, editDate, ip, abuse, deleted, level, ratingUp, ratingDown) VALUES (:entityId, :date, :owner, :parent, :content, :editDate, :ip, :abuse, :deleted, :level, :ratingUp, :ratingDown)");
+			$this->prepare("INSERT INTO pn_comments_{$this->tablePrefix} (entityId, createdAt, owner, parent, content, editDate, ip, abuse, deleted, level, votesUp, votesDown) VALUES (:entityId, :createdAt, :owner, :parent, :content, :editDate, :ip, :abuse, :deleted, :level, :votesUp, :votesDown)");
 
 		$this->updateStatement =
-			$this->prepare("UPDATE pn_comments_{$this->tablePrefix} SET entityId=:entityId, date=:date, owner=:owner, parent=:parent, content=:content, editDate=:editDate, ip=:ip, abuse=:abuse, deleted=:deleted, level=:level, ratingUp=:ratingUp, ratingDown=:ratingDown WHERE id=:id");
+			$this->prepare("UPDATE pn_comments_{$this->tablePrefix} SET entityId=:entityId, createdAt=:createdAt, owner=:owner, parent=:parent, content=:content, editDate=:editDate, ip=:ip, abuse=:abuse, deleted=:deleted, level=:level, votesUp=:votesUp, votesDown=:votesDown WHERE id=:id");
 
 		$this->deleteStatement = $this->prepare("DELETE FROM pn_comments_{$this->tablePrefix} WHERE id=:id");
 
@@ -74,7 +74,7 @@ class CommentDataMap extends DataMap {
 			$this->prepare("INSERT INTO pn_comments_{$this->tablePrefix}_vote (commentId, userId) VALUES (:commentId, :userId)");
 
 		$this->stmtGetAllComments =
-			$this->prepare("SELECT id FROM pn_comments_{$this->tablePrefix} WHERE entityId = :entityId ORDER BY date ASC");
+			$this->prepare("SELECT id FROM pn_comments_{$this->tablePrefix} WHERE entityId = :entityId ORDER BY createdAt ASC");
 
 		$this->stmtGetLastComment =
 			$this->prepare("SELECT id FROM pn_comments_{$this->tablePrefix} WHERE entityId = :entityId ORDER BY id DESC LIMIT 1");
@@ -161,7 +161,7 @@ class CommentDataMap extends DataMap {
 	 */
 	protected function prepareItem($item) {
 		if (is_null($item->getId())) {
-			$item->setDate(time());
+			$item->setCreatedAt(time());
 		}
 		if ($item->isChanged()) {
 			$item->setEditDate(time());
@@ -307,7 +307,7 @@ class CommentDataMap extends DataMap {
 	 */
 	protected function insertBindings($item) {
 		$this->insertStatement->bindValue(":entityId", $item->getEntityId());
-		$this->insertStatement->bindValue(":date", $item->getDate());
+		$this->insertStatement->bindValue(":createdAt", $item->getCreatedAt());
 		$this->insertStatement->bindValue(":owner", $item->getOwner()->getId());
 		$this->insertStatement->bindValue(":parent", $item->getParent());
 		$this->insertStatement->bindValue(":content", $item->getContent());
@@ -316,8 +316,8 @@ class CommentDataMap extends DataMap {
 		$this->insertStatement->bindValue(":abuse", $item->getAbuse());
 		$this->insertStatement->bindValue(":deleted", $item->getDeleted());
 		$this->insertStatement->bindValue(":level", $item->getLevel());
-		$this->insertStatement->bindValue(":ratingUp", $item->getRatingUp());
-		$this->insertStatement->bindValue(":ratingDown", $item->getRatingDown());
+		$this->insertStatement->bindValue(":votesUp", $item->getVotesUp());
+		$this->insertStatement->bindValue(":votesDown", $item->getVotesDown());
 	}
 
 	/**
@@ -325,7 +325,7 @@ class CommentDataMap extends DataMap {
 	 */
 	protected function updateBindings($item) {
 		$this->updateStatement->bindValue(":entityId", $item->getEntityId());
-		$this->updateStatement->bindValue(":date", $item->getDate());
+		$this->updateStatement->bindValue(":createdAt", $item->getCreatedAt());
 		$this->updateStatement->bindValue(":owner", $item->getOwner()->getId());
 		$this->updateStatement->bindValue(":parent", $item->getParent());
 		$this->updateStatement->bindValue(":content", $item->getContent());
@@ -334,8 +334,8 @@ class CommentDataMap extends DataMap {
 		$this->updateStatement->bindValue(":abuse", $item->getAbuse());
 		$this->updateStatement->bindValue(":deleted", $item->getDeleted());
 		$this->updateStatement->bindValue(":level", $item->getLevel());
-		$this->updateStatement->bindValue(":ratingUp", $item->getRatingUp());
-		$this->updateStatement->bindValue(":ratingDown", $item->getRatingDown());
+		$this->updateStatement->bindValue(":votesUp", $item->getVotesUp());
+		$this->updateStatement->bindValue(":votesDown", $item->getVotesDown());
 		$this->updateStatement->bindValue(":id", $item->getId());
 	}
 

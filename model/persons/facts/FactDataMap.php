@@ -2,8 +2,6 @@
 
 namespace popcorn\model\persons\facts;
 
-use popcorn\lib\mmc\MMC;
-use popcorn\lib\PDOHelper;
 use popcorn\model\dataMaps\DataMap;
 use popcorn\model\exceptions\ajax\FactVotingNotAllowException;
 use popcorn\model\persons\Person;
@@ -107,7 +105,7 @@ class FactDataMap extends DataMap {
 	 * @param int $totalFound
 	 * @return \popcorn\model\persons\facts\Fact[]
 	 */
-	public function findByLimit(Person $person, array $options = [], $from = 0, $count = -1, &$totalFound = -1) {
+	public function findByPerson(Person $person, array $options = [], $from = 0, $count = -1, &$totalFound = -1) {
 
 		$options = array_merge([
 			'orderBy' => [

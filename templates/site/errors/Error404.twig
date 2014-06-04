@@ -8,8 +8,7 @@
     <meta name="viewport" content="width=device-width">
 
     <link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="/assets/css/add/reset.css" media="screen, projection, print">
-    <link rel="stylesheet" type="text/css" href="/assets/css/style.css" media="screen, projection, print">
+    <link rel="stylesheet" type="text/css" href="/assets/css/popcorn.css" media="screen, projection, print">
     <link rel="stylesheet" type="text/css" href="/assets/css/error.css" media="screen, projection, print">
 </head>
 <body>
@@ -26,32 +25,7 @@
         </p>
     </div>
     <div class="footer">
-        <nav class="b-grid__g12 b-navigation clearfix" role="navigation">
-            <ul class="b-main-menu clearfix">
-                <li class="b-main-menu__item"><a href="#" class="b-main-menu__link">новости</a></li>
-                <li class="b-main-menu__item"><a href="#" class="b-main-menu__link">персоны</a></li>
-                <li class="b-main-menu__item"><a href="#" class="b-main-menu__link">пары</a></li>
-                <li class="b-main-menu__item"><a href="#" class="b-main-menu__link">дети</a></li>
-                <li class="b-main-menu__item"><a href="#" class="b-main-menu__link">сообщество</a></li>
-                <li class="b-main-menu__item"><a href="#" class="b-main-menu__link">your.style</a></li>
-                <li class="b-main-menu__item"><a href="#" class="b-main-menu__link">пользователи</a><span class="b-main-menu__counter b-counter">336</span></li>
-                <li class="b-main-menu__item"><a href="#" class="b-main-menu__link">правила</a></li>
-                <li class="b-main-menu__item"><a href="#" class="b-main-menu__link">FAQ</a></li>
-            </ul>
-
-            <ul class="b-sub-menu clearfix">
-                <li class="b-sub-menu__item b-sub-menu__item_active"><a href="#" class="b-sub-menu__link">главная</a></li>
-                <li class="b-sub-menu__item"><a href="#" class="b-sub-menu__link">звезды</a></li>
-                <li class="b-sub-menu__item"><a href="#" class="b-sub-menu__link">мода</a></li>
-                <li class="b-sub-menu__item"><a href="#" class="b-sub-menu__link">красота</a></li>
-                <li class="b-sub-menu__item"><a href="#" class="b-sub-menu__link">кино</a></li>
-                <li class="b-sub-menu__item"><a href="#" class="b-sub-menu__link">тв и сериалы</a></li>
-                <li class="b-sub-menu__item"><a href="#" class="b-sub-menu__link">музыка</a></li>
-                <li class="b-sub-menu__item"><a href="#" class="b-sub-menu__link">гаджеты</a></li>
-                <li class="b-sub-menu__item"><a href="#" class="b-sub-menu__link">фитнес</a></li>
-                <li class="b-sub-menu__item"><a href="#" class="b-sub-menu__link">киноафиша</a></li>
-            </ul>
-        </nav>
+	    {% include '/GenericNavigation.twig' %}
     </div>
 </body>
 </html>

@@ -19,11 +19,50 @@ class PersonTalksController extends PersonController implements ControllerInterf
 
 	public function getRoutes() {
 
+		$this
+			->getSlim()
+			->group('/persons/:name/talks', [$this, 'personExistsMiddleware'], function () {
+
+				$this
+					->getSlim()
+					->get('(/page:page)', function ($urlName, $page = null) {
+						if ($page == 1) {
+							$this
+								->getSlim()
+								->redirect(sprintf('/persons/%s/talks', $urlName), 301);
+						}
+
+						$this->talksPage($page);
+					})
+					->conditions([
+						'page' => '[1-9][0-9]*'
+					]);
+
+
+				$this
+					->getSlim()
+					->get('/topic:topicId', function ($urlName, $topicId) {
+						$this->topicPage(self::$personId, $topicId);
+					})
+					->conditions([
+						'topicId' => '[1-9][0-9]*'
+					]);
+
+				$this
+					->getSlim()
+					->map('/post', 'popcorn\\lib\\Middleware::authorizationNeeded', function ($urlName) {
+						$this->talksCreate();
+					})
+					->via('GET', 'POST');
+
+			});
+
+
 	}
 
 	public function talksPage() {
 
-		$person = $this->getPersonLight(self::$personId);
+		$person = PersonFactory::getPerson(self::$personId);
 
 		$dataMap = new TalkDataMap();
 		$talks = $dataMap->findByPerson($person);
@@ -31,11 +70,11 @@ class PersonTalksController extends PersonController implements ControllerInterf
 		self::getTwig()
 			->display('/person/talks/PersonTalksPage.twig', [
 				'person' => $person,
-				'talks' => $talks
+				'talks'  => $talks
 			]);
 	}
 
-	public static function topicPage($person, $topicId) {
+	public static function topicPage($topicId) {
 
 		$dataMap = new TalkDataMap();
 		$topic = $dataMap->findById($topicId);
@@ -60,7 +99,7 @@ class PersonTalksController extends PersonController implements ControllerInterf
 
 	private function talksCreateGet() {
 
-		$person = $this->getPersonLight(self::$personId);
+		$person = PersonFactory::getPerson(self::$personId);
 
 		$this
 			->getTwig()

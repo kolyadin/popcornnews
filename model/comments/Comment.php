@@ -20,7 +20,7 @@ class Comment extends Model {
 	 * @var int
 	 * @export
 	 */
-	protected $date;
+	protected $createdAt;
 
 	/**
 	 * @var User
@@ -77,13 +77,13 @@ class Comment extends Model {
 	 * @var int
 	 * @export
 	 */
-	protected $ratingUp = 0;
+	protected $votesUp = 0;
 
 	/**
 	 * @var int
 	 * @export
 	 */
-	protected $ratingDown = 0;
+	protected $votesDown = 0;
 
 
 	//endregion
@@ -142,8 +142,8 @@ class Comment extends Model {
 	/**
 	 * @return int
 	 */
-	public function getDate() {
-		return $this->date;
+	public function getCreatedAt() {
+		return $this->createdAt;
 	}
 
 	/**
@@ -191,15 +191,15 @@ class Comment extends Model {
 	/**
 	 * @return int
 	 */
-	public function getRatingDown() {
-		return $this->ratingDown;
+	public function getVotesDown() {
+		return $this->votesDown;
 	}
 
 	/**
 	 * @return int
 	 */
-	public function getRatingUp() {
-		return $this->ratingUp;
+	public function getVotesUp() {
+		return $this->votesUp;
 	}
 
 	/**
@@ -225,8 +225,8 @@ class Comment extends Model {
 	/**
 	 * @param int $date
 	 */
-	public function setDate($date) {
-		$this->date = $date;
+	public function setCreatedAt($date) {
+		$this->createdAt = $date;
 		$this->changed();
 	}
 
@@ -316,13 +316,13 @@ class Comment extends Model {
 		$this->childs = $children;
 	}
 
-	public function ratingUp() {
-		$this->ratingUp++;
+	public function votesUp() {
+		$this->votesUp++;
 		$this->changed();
 	}
 
-	public function ratingDown() {
-		$this->ratingDown++;
+	public function votesDown() {
+		$this->votesDown++;
 		$this->changed();
 	}
 

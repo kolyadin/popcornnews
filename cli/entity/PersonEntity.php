@@ -14,6 +14,7 @@ class PersonEntity {
             new command\person\Import(),
 			new command\person\ImportFans(),
 			new command\person\ImportFacts(),
+			new command\person\ImportFanFics(),
 			new command\person\UpdateCounters()
         );
 

@@ -12,3 +12,17 @@ iframe[id^='twitter-widget-'] {
   padding: 5px;
   box-sizing: border-box;
 }
+.b-fanfics__post-form {
+  margin-top: 20px;
+}
+.b-fanfics__post-form p input,
+.b-fanfics__post-form p textarea {
+  font-family: "PT Sans";
+  font-size: 18px;
+  width: 100%;
+  padding: 5px;
+  box-sizing: border-box;
+}
+.b-fanfics__post-form p textarea {
+  font-size: 13px;
+}

@@ -1,0 +1,30 @@
+<nav role="navigation" class="b-grid__g12 b-navigation clearfix">
+	<ul class="b-main-menu clearfix">
+		<li class="b-main-menu__item"><a class="b-main-menu__link" href="/news">новости</a></li>
+		<li class="b-main-menu__item"><a class="b-main-menu__link" href="/persons">персоны</a></li>
+		<li class="b-main-menu__item"><a class="b-main-menu__link" href="/meet">пары</a></li>
+		<li class="b-main-menu__item"><a class="b-main-menu__link" href="/kids">дети</a></li>
+		<li class="b-main-menu__item"><a class="b-main-menu__link" href="/calendar">календарь</a></li>
+		<li class="b-main-menu__item"><a class="b-main-menu__link" href="/community/groups">сообщество</a></li>
+		<li class="b-main-menu__item"><a class="b-main-menu__link" href="/yourstyle">your.style</a></li>
+		<li class="b-main-menu__item">
+			<a class="b-main-menu__link" href="/users">пользователи</a>
+			<span class="b-main-menu__counter b-counter">{{ onlineUsersCount }}</span>
+		</li>
+		<li class="b-main-menu__item"><a class="b-main-menu__link" href="/rules">правила</a></li>
+		<li class="b-main-menu__item"><a class="b-main-menu__link" href="/faq">FAQ</a></li>
+	</ul>
+
+	<ul class="b-sub-menu clearfix">
+		<li class="b-sub-menu__item {% if app.request.path == '/' %}b-sub-menu__item_active{% endif %}"><a class="b-sub-menu__link" href="/">главная</a></li>
+		<li class="b-sub-menu__item {% if app.request.path starts with '/category/stars' %}b-sub-menu__item_active{% endif %}"><a class="b-sub-menu__link" href="/category/stars" title="Перейти в категорию новостей &quot;звезды&quot;">звезды</a></li>
+		<li class="b-sub-menu__item {% if app.request.path starts with '/category/fashion' %}b-sub-menu__item_active{% endif %}"><a class="b-sub-menu__link" href="/category/fashion" title="Перейти в категорию новостей &quot;мода&quot;">мода</a></li>
+		<li class="b-sub-menu__item {% if app.request.path starts with '/category/beauty' %}b-sub-menu__item_active{% endif %}"><a class="b-sub-menu__link" href="/category/beauty" title="Перейти в категорию новостей &quot;красота&quot;">красота</a></li>
+		<li class="b-sub-menu__item {% if app.request.path starts with '/category/movie' %}b-sub-menu__item_active{% endif %}"><a class="b-sub-menu__link" href="/category/movie" title="Перейти в категорию новостей &quot;кино&quot;">кино</a></li>
+		<li class="b-sub-menu__item {% if app.request.path starts with '/category/tvshow' %}b-sub-menu__item_active{% endif %}"><a class="b-sub-menu__link" href="/category/tvshow" title="Перейти в категорию новостей &quot;тв и сериалы&quot;">тв и сериалы</a></li>
+		<li class="b-sub-menu__item {% if app.request.path starts with '/category/music' %}b-sub-menu__item_active{% endif %}"><a class="b-sub-menu__link" href="/category/music" title="Перейти в категорию новостей &quot;музыка&quot;">музыка</a></li>
+		<li class="b-sub-menu__item {% if app.request.path starts with '/category/gadget' %}b-sub-menu__item_active{% endif %}"><a class="b-sub-menu__link" href="/category/gadget" title="Перейти в категорию новостей &quot;гаджеты&quot;">гаджеты</a></li>
+		<li class="b-sub-menu__item {% if slim.request.path starts with '/photo-article' %}b-sub-menu__item_active{% endif %}"><a class="b-sub-menu__link" href="/photo-articles">фотогалереи</a></li>
+		<li class="b-sub-menu__item"><a class="b-sub-menu__link" href="http://www.kinoafisha.info/" rel="nofollow">киноафиша</a></li>
+	</ul>
+</nav>

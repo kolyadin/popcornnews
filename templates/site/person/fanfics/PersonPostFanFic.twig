@@ -1,0 +1,67 @@
+{% extends '/person/fanfics/PersonFanFicGeneric.twig' %}
+
+{% block head %}
+
+	<title>Пришлите фанфик о {{ person.prepositionalName|e }} - popcornnews</title>
+
+	<script type="text/javascript">
+		$(function () {
+			var x = window.scrollX;
+			var y = window.scrollY;
+
+			var $block = $('.b-fanfics__post-form');
+
+			$('input[name=title]',$block).focus();
+
+			window.scrollTo(x,y);
+
+			$('#form-fanfic').on('submit',function(){
+				var len = $('textarea[name=content]',$block).val().length;
+
+				if (len < 4000){
+					alert("В графе «текст» размещается весь остальной рассказ, не менее 4000 знаков\n\nСейчас знаков: "+len);
+					$('textarea[name=content]',$block).focus();
+					return false;
+				}
+			});
+
+		})
+	</script>
+
+{% endblock %}
+
+{% block personContent %}
+
+	<h1 class="b-rubrics-title b-rubrics-title_s24">Новый фанфик о {{ person.prepositionalName }}</h1>
+
+	<form method="post" class="b-form b-text" id="form-fanfic">
+		<input type="hidden" name="personId" value="{{ person.id }}" />
+
+		<div class="b-site-rules">
+			<h2>Правила размещения фанфика:</h2>
+
+			<ul class="faq">
+				<li><span>Укажите заголовок вашего рассказа</span></li>
+				<li><span>В графе «анонс» пишутся первые несколько предложений из всего фанфика</span></li>
+				<li><span>В графе «текст» размещается весь остальной рассказ, не менее 4000 знаков</span></li>
+				<li><span>Загружаемое изображение должно соответствовать теме вашего фанфика</span></li>
+				<li><span>Двойной «Enter» означает начало нового абзаца в вашем тексте. На каждый абзац можно поставить закладку</span></li>
+				<li><span>Закладка нужна для того, чтобы в любой момент вернутся к тому месту, на котором вы остановились</span></li>
+				<li><span>При размещении чужого творчества, указывайте имя автора и источник. Уважайте авторские права</span></li>
+			</ul>
+
+			<p>Администрация сайта не несет ответственности за размещаемые пользователями материалы.</p>
+		</div>
+
+		<div class="b-fanfics__post-form">
+			<p><input type="text" placeholder="Напишите заголовок..." name="title" required/></p>
+			<p><input type="file" name="photo"/></p>
+			<p><textarea name="announce" rows="10" placeholder="Анонс..." required></textarea></p>
+			<p><textarea name="content" rows="10" placeholder="Текст..." required></textarea></p>
+
+			<input class="b-firm-grad b-button-save" data-action="yes" type="submit" value="отправить" style="margin-left: 0;"/>
+		</div>
+
+	</form>
+
+{% endblock %}
