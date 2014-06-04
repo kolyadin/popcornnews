@@ -354,7 +354,7 @@ class ProfileManagerController extends GenericController implements ControllerIn
 		$email = substr($email, 0, 150);
 
 		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-			$this->getSlim()->error(new RemindWrongEmailException('', array('email' => $email)));
+			$this->getSlim()->error(new RemindWrongEmailException(['email' => $email]));
 		}
 
 		$dataMap = new UserDataMap();
@@ -362,7 +362,7 @@ class ProfileManagerController extends GenericController implements ControllerIn
 		$user = $dataMap->findBy(array('email' => $email));
 
 		if (!($user instanceof User)) {
-			$this->getSlim()->error(new RemindWrongEmailException('', array('email' => $email)));
+			$this->getSlim()->error(new RemindWrongEmailException(['email' => $email]));
 		}
 
 		$changePasswordHash = sha1($user->getId() . $user->getPassword());

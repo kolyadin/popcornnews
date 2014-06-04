@@ -31,26 +31,22 @@ class PersonFactsController extends PersonController implements ControllerInterf
 								->redirect(sprintf('/persons/%s/facts', $urlName), 301);
 						}
 
-						$this->getTwig()->addGlobal('tab1',true);
 						$this->facts($page);
 					})
 					->conditions([
 						'page' => '[1-9][0-9]*'
 					]);
 
-				//@todo Если о персоне нельзя добавлять факты выводить middleware exception
 				$this
 					->getSlim()
-					->get('/post', 'popcorn\\lib\\Middleware::authorizationNeeded', function () {
+					->get('/post', 'popcorn\\lib\\Middleware::authorizationNeeded', [$this, 'personCanAcceptFacts'], function () {
 						switch ($this->getSlim()->request->getMethod()) {
 							case 'POST':
 								$this->factPostPost();
 								break;
 							default:
-								$this->getTwig()->addGlobal('tab2',true);
 								$this->factPostGet();
 								break;
-
 						}
 					})
 					->via('GET', 'POST');

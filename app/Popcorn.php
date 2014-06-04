@@ -2,7 +2,6 @@
 
 namespace popcorn\app;
 
-use popcorn\app\commands\SiteCommand;
 use popcorn\app\controllers\ControllerInterface;
 use popcorn\app\controllers\GenericController;
 use popcorn\app\controllers\site\AjaxController;
@@ -21,13 +20,11 @@ use popcorn\app\controllers\site\SidebarController;
 use popcorn\app\controllers\site\StaticController;
 use popcorn\app\controllers\site\UsersController;
 use popcorn\app\controllers\site\YourStyleController;
-use popcorn\app\controllers\SiteMain;
 use popcorn\app\controllers\site\person\PersonController;
 use popcorn\lib\GenericHelper;
 use popcorn\lib\Middleware;
-use popcorn\model\exceptions\BadAuthorizationException;
+use popcorn\model\exceptions\Exception;
 use popcorn\model\exceptions\NotAuthorizedException;
-use popcorn\model\exceptions\RemindWrongEmailException;
 use popcorn\model\system\users\GuestUser;
 use popcorn\model\system\users\User;
 use popcorn\model\system\users\UserFactory;
@@ -64,9 +61,12 @@ class Popcorn extends Application {
 			UserFactory::save($currentUser);
 		}
 
-		GenericHelper::setApp($this);
-		GenericController::setApp($this);
-		Middleware::setApp($this);
+		{
+			GenericHelper::setApp($this);
+			GenericController::setApp($this);
+			Middleware::setApp($this);
+			Exception::setApp($this);
+		}
 
 		{
 			$this->getTwig()->addGlobal('showSidebar', true);
@@ -107,29 +107,15 @@ class Popcorn extends Application {
 			return $out;
 		}));
 
-		$this->getSlim()->error(function (\Exception $e) {
-			if ($e instanceof NotAuthorizedException) {
-				$this->getSlim()->response()->status(401);
-				$this->getTwig()->display('/errors/NotAuthorized.twig');
-			} elseif ($e instanceof BadAuthorizationException) {
-				$this->getSlim()->response()->status(401);
-				$this->getTwig()->display('/errors/BadAuthorization.twig');
-			} elseif ($e instanceof RemindWrongEmailException) {
-				$this->getTwig()->display('/errors/RemindWrongEmail.twig', $e->getTpl());
-			}
-		});
-
 		$this->initControllers();
-	}
 
-	private function needAuthorization($role = USER::USER) {
-		return function () use ($role) {
-			$user = UserFactory::getCurrentUser();
-
-			if ($user->getType() != $role) {
-				$this->getSlim()->error(new NotAuthorizedException());
-			}
-		};
+		$this
+			->getSlim()
+			->error(function (Exception $e) {
+				if (method_exists($e, 'display')) {
+					$e->display();
+				}
+			});
 	}
 
 	public function exitWithJsonSuccessMessage(array $messages = []) {

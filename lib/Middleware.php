@@ -23,6 +23,8 @@ class Middleware {
 			return true;
 		}
 
-		self::getApp()->getSlim()->error(new NotAuthorizedException());
+		self::getApp()
+			->getSlim()
+			->error(new NotAuthorizedException());
 	}
 }

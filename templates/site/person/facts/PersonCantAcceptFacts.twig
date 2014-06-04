@@ -1,0 +1,19 @@
+{% extends '/person/facts/PersonFactsGeneric.twig' %}
+
+{% block head %}
+
+	<title>Нельзя писать факты о {{ person.prepositionalName|e }} - popcornnews</title>
+
+{% endblock %}
+
+{% block personContent %}
+
+	<h1 class="b-rubrics-title b-rubrics-title_s24">Новый факт о {{ person.prepositionalName }}</h1>
+
+	<div class="b-facts__post-form b-text">
+		<p class="system-message">
+			К сожалению, для этой звезды нельзя присылать факты
+		</p>
+	</div>
+
+{% endblock %}

@@ -1,9 +1,9 @@
 <ul class="b-inside__menu-secondlist">
-	<li{% if tab1 %} class="active" {% endif %}>
+	<li{% if app.request.path == '/persons/' ~ person.urlName ~ '/facts' or app.request.path starts with '/persons/' ~ person.urlName ~ '/facts/page' %} class="active" {% endif %}>
 		<a href="/persons/{{ person.urlName }}/facts">факты</a>
 	</li>
 
-	<li{% if tab2 %} class="active" {% endif %}>
+	<li{% if app.request.path == '/persons/' ~ person.urlName ~ '/facts/post' %} class="active" {% endif %}>
 		<a href="/persons/{{ person.urlName }}/facts/post">прислать факт</a>
 	</li>
 </ul>

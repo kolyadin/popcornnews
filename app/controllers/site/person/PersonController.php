@@ -12,6 +12,7 @@ use popcorn\model\dataMaps\PersonsLinkDataMap;
 use popcorn\model\dataMaps\TagDataMap;
 use popcorn\model\dataMaps\UserDataMap;
 use popcorn\model\exceptions\NotAuthorizedException;
+use popcorn\model\exceptions\PersonCantAcceptFactsException;
 use popcorn\model\persons\PersonFactory;
 use popcorn\model\persons\Person;
 use popcorn\model\content\Image;
@@ -49,6 +50,16 @@ class PersonController extends GenericController implements ControllerInterface 
 		} else {
 			$this->getSlim()->notFound();
 		}
+	}
+
+	final public function personCanAcceptFacts(Route $route) {
+
+		$person = PersonFactory::getPerson(self::$personId);
+
+		if (!$person->isAllowFacts()) {
+			$this->getSlim()->error(new PersonCantAcceptFactsException($person));
+		}
+
 	}
 
 
@@ -107,7 +118,6 @@ class PersonController extends GenericController implements ControllerInterface 
 			$slim->get('/photo', [$this, 'personPhoto']);
 
 			$slim->group('/fans', function () use ($slim) {
-
 
 
 			});
@@ -324,7 +334,6 @@ class PersonController extends GenericController implements ControllerInterface 
 	public function photoPage($personId) {
 
 	}
-
 
 
 	/**
