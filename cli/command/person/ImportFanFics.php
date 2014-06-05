@@ -67,6 +67,7 @@ class ImportFanFics extends Command {
 			$output->write('<info>Подготовим данные для импорта...');
 
 			$this->stmtCleanFanFics->execute();
+			$this->stmtCleanComments->execute();
 
 			$output->writeln(' готово</info>');
 		}
@@ -123,13 +124,21 @@ class ImportFanFics extends Command {
 
 			$comments = $this->stmtGetCommentsCountByFanFic->fetchColumn();
 
+			{//Преобразуем в новые BB коды
+				$content = html_entity_decode($table['content']);
+				$content = strip_tags($content, '<br><strong>');
+				$content = preg_replace('!(http|ftp|scp)(s)?:\/\/[a-zA-Z0-9.?%&_/]+!', "[url=\\0]\\0[/url]", $content); //Формируем BB-ссылки
+				$content = preg_replace('!\<strong\>(.+)\<\/strong\>!', "[b]\\1[/b]", $content);
+				$content = preg_replace('!(\<br\>|\<br\s*/\s*\>)!', "\n", $content);
+			}
+
 			$this->stmtInsertFanFic->execute([
 				':id'        => $table['id'],
 				':userId'    => $table['uid'],
 				':personId'  => $table['pid'],
 				':createdAt' => strtotime($table['time_create']),
 				':status'    => $table['enabled'],
-				':content'   => $table['content'],
+				':content'   => $content,
 				':photo'     => $photo,
 				':title'     => $table['name'],
 				':announce'  => $table['announce'],

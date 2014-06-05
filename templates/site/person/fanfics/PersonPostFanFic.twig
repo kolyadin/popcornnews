@@ -4,6 +4,12 @@
 
 	<title>Пришлите фанфик о {{ person.prepositionalName|e }} - popcornnews</title>
 
+	<link rel="stylesheet" href="/assets/res/markitup-1.1.14/markitup/skins/simple/style.css"/>
+	<link rel="stylesheet" href="/assets/res/markitup-1.1.14/markitup/sets/bbcode/style.css"/>
+
+	<script type="text/javascript" src="/assets/res/markitup-1.1.14/markitup/jquery.markitup.js"></script>
+	<script type="text/javascript" src="/assets/res/markitup-1.1.14/markitup/sets/bbcode/set.js"></script>
+
 	<script type="text/javascript">
 		$(function () {
 			var x = window.scrollX;
@@ -12,17 +18,18 @@
 			var $block = $('.b-fanfics__post-form');
 
 			$('input[name=title]',$block).focus();
-
 			window.scrollTo(x,y);
+
+			$('textarea[name=content]',$block).markItUp(mySettings);
 
 			$('#form-fanfic').on('submit',function(){
 				var len = $('textarea[name=content]',$block).val().length;
 
-				if (len < 4000){
+				/*if (len < 4000){
 					alert("В графе «текст» размещается весь остальной рассказ, не менее 4000 знаков\n\nСейчас знаков: "+len);
 					$('textarea[name=content]',$block).focus();
 					return false;
-				}
+				}*/
 			});
 
 		})

@@ -1,0 +1,39 @@
+{% extends '/GenericInner.twig' %}
+
+{% block head %}
+
+    <title>Произошла ошибка - popcornnews</title>
+
+    <meta name="robots" content="noindex, nofollow" />
+
+    <style type="text/css">
+        .system-message {
+            background-color: #f0f0f0;
+            padding: 20px 30px;
+        }
+    </style>
+
+    <script type="text/javascript">
+        $(function(){
+            $('.system-message a:last').on('click',function(){
+                history.back();
+                return false;
+            });
+        });
+    </script>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="b-grid__g8 b-text">
+
+        <h1>Произошла ошибка</h1>
+
+        <p class="system-message">
+            Простите, что-то пошло не так.<br/>Если вы часто видите подобное сообщение напишите нам письмо на <a href="mailto:info@popcornnews.ru">info@popcornnews.ru</a><br/><br/>
+	        <a href="/">Вернуться на главную страницу</a>
+        </p>
+    </div>
+
+{% endblock %}

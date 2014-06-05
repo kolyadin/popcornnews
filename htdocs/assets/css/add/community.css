@@ -108,6 +108,9 @@ a.pink:hover,
 .b-topic-text h2 {
   margin-bottom: 10px;
 }
+.b-topic-text p {
+  font-size: 13px;
+}
 .b-right-stats {
   float: left;
   width: 120px;

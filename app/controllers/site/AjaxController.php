@@ -6,12 +6,14 @@ use popcorn\app\controllers\GenericController;
 use popcorn\lib\RuHelper;
 use popcorn\lib\SphinxHelper;
 
+use popcorn\model\comments\FanFicComment;
 use popcorn\model\comments\KidComment;
 use popcorn\model\comments\MeetComment;
 use popcorn\model\comments\NewsPostComment;
 use popcorn\model\comments\PhotoArticleComment;
 
 use popcorn\model\content\ImageFactory;
+use popcorn\model\dataMaps\comments\FanFicCommentDataMap;
 use popcorn\model\dataMaps\GroupDataMap;
 use popcorn\model\dataMaps\GroupMembersDataMap;
 
@@ -760,6 +762,9 @@ class AjaxController extends GenericController implements ControllerInterface {
 			} elseif ($entity == 'photoarticle') {
 				$dataMap = new PhotoArticleCommentDataMap();
 				$comment = new PhotoArticleComment();
+			} elseif ($entity == 'fanfics') {
+				$dataMap = new FanFicCommentDataMap();
+				$comment = new FanFicComment();
 			}
 
 			$comment->setOwner($currentUser);
@@ -784,6 +789,8 @@ class AjaxController extends GenericController implements ControllerInterface {
 				$comment->setTopicId($entityId);
 			} elseif ($entity == 'photoarticle') {
 				$comment->setPostId($entityId);
+			} elseif ($entity == 'fanfics') {
+				$comment->setFanFicId($entityId);
 			}
 
 			$comment->setContent($content);

@@ -1,0 +1,67 @@
+{% extends '/person/fanfics/PersonFanFicGeneric.twig' %}
+{% import '/Mixins.twig' as html %}
+
+
+{% block head %}
+
+	{% if paginator.active > 1 %}
+		{% set paginatorTitle = 'Страница ' ~ paginator.active ~ ' - ' %}
+	{% endif %}
+
+	<title>{{ fanfic.title|e }} - Фанфики о {{ person.prepositionalName|e }} - popcornnews</title>
+
+	<script type="text/javascript">
+		var commentSetup = {
+			entity: 'fanfics',
+			entityId: {{ fanfic.id }}
+		};
+	</script>
+
+	<script type="text/javascript" src="/assets/js/popcorn.comments.js"></script>
+	<script type="text/javascript" src="/assets/js/jquery.upDownVoting.js"></script>
+	<script type="text/javascript">
+
+		$(function(){
+			$.upDownVoting({
+				element: '.fanfic',
+				id: 'data-fanfic-id',
+				url: '/ajax/fanfic/vote'
+			});
+		});
+
+	</script>
+
+{% endblock %}
+
+{% block personContent %}
+
+	{% set textDefault = fanfic.votesOverall|ruNumber(['нет голосов','Всего %u голос','Всего %u голоса','Всего %u голосов']) %}
+
+	<div class="clearfix fanfic" data-fanfic-id="{{ fanfic.id }}" style="width: 620px;overflow: hidden;">
+
+		{% if fanfic.photo.id %}
+			{% set photo = fanfic.photo.thumb('620x') %}
+			<p style="margin-bottom: 20px;"><img src="{{ photo.url }}" alt=""/></p>
+		{% endif %}
+
+		<div class="b-right-stats" style="float:right;">
+			<div class="vote">
+				<div class="col b-firm-grad">{{ fanfic.votes }}</div>
+				<div class="btn-wrap">
+					<a href="#" data-action="vote-up" class="b-firm-grad btn btn_plus">+</a>
+					<a href="#" data-action="vote-down" class="b-firm-grad btn btn_minus">&ndash;</a>
+				</div>
+
+				<p class="text" data-default-text="{{ textDefault }}">{{ textDefault }}</p>
+			</div>
+		</div>
+		<div class="b-topic-text" style="float: none;width: auto;">
+			<h2><a href="/persons/{{ person.urlName }}/fanfics/{{ fanfic.id }}">{{ fanfic.title|e }}</a></h2>
+
+			{{ fanfic.content('p') }}
+		</div>
+	</div>
+
+	{% include '/comments/CommentsBlock.twig' with { 'commentsTree': comments } %}
+
+{% endblock %}

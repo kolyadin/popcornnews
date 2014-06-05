@@ -2,6 +2,7 @@
 namespace popcorn\app\controllers\site\person;
 
 use popcorn\app\controllers\ControllerInterface;
+use popcorn\model\exceptions\CommonErrorException;
 use popcorn\model\persons\facts\Fact;
 use popcorn\model\persons\facts\FactFactory;
 use popcorn\model\persons\PersonFactory;
@@ -85,7 +86,7 @@ class PersonFactsController extends PersonController implements ControllerInterf
 			$this->getSlim()->flash('factAdded', true);
 			$this->getSlim()->redirect(sprintf('/persons/%s/facts', $person->getUrlName()));
 		} else {
-			$this->getSlim()->notFound();
+			$this->getSlim()->error(new CommonErrorException());
 		}
 
 	}

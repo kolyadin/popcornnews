@@ -2,6 +2,7 @@
 
 namespace popcorn\model\persons\fanfics;
 
+use popcorn\model\dataMaps\comments\FanFicCommentDataMap;
 use popcorn\model\persons\fanfics\FanFicDataMap;
 use popcorn\model\persons\Person;
 
@@ -12,15 +13,15 @@ class FanFicFactory {
 	 */
 	private static $dataMap = null;
 
-	public static function saveFact(Fact $fact) {
+	public static function saveFanFic(FanFic $fanfic) {
 		self::checkDataMap();
-		self::$dataMap->save($fact);
+		self::$dataMap->save($fanfic);
 	}
 
 	/**
 	 * @param int $id
 	 */
-	public static function removeFact($id) {
+	public static function removeFanFic($id) {
 		self::checkDataMap();
 		self::$dataMap->delete($id);
 	}
@@ -49,7 +50,6 @@ class FanFicFactory {
 		return self::$dataMap->findById($fanficId);
 	}
 
-
 	/**
 	 * Факты по дате, новые выше
 	 *
@@ -64,5 +64,12 @@ class FanFicFactory {
 		self::checkDataMap();
 
 		return self::$dataMap->findByPerson($person, $options, $from, $count, $totalFound);
+	}
+
+	public static function getComments(FanFic $fanfic) {
+
+		$dataMap = new FanFicCommentDataMap();
+
+		return $dataMap->getAllComments($fanfic->getId());
 	}
 }

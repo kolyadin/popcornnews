@@ -24,7 +24,8 @@
         "facebook/xhprof": "dev-master",
         "danielstjules/stringy": "dev-master",
         "phpmailer/phpmailer": "v5.2.7",
-        "mobiledetect/mobiledetectlib": "dev-master"
+        "mobiledetect/mobiledetectlib": "dev-master",
+        "mjohnson/decoda": "dev-master"
     },
     "autoload": {
         "psr-4": {

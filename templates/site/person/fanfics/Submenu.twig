@@ -1,5 +1,5 @@
 <ul class="b-inside__menu-secondlist">
-	<li{% if app.request.path == '/persons/' ~ person.urlName ~ '/fanfics' or app.request.path starts with '/persons/' ~ person.urlName ~ '/fanfics/page' %} class="active" {% endif %}>
+	<li{% if app.request.path != '/persons/' ~ person.urlName ~ '/fanfics/post' %} class="active" {% endif %}>
 		<a href="/persons/{{ person.urlName }}/fanfics">все фанфики</a>
 	</li>
 

@@ -2,6 +2,7 @@
 
 namespace popcorn\app;
 
+use popcorn\app\controllers\ControllerAjaxInterface;
 use popcorn\app\controllers\ControllerInterface;
 use popcorn\app\controllers\GenericController;
 use popcorn\app\controllers\site\AjaxController;
@@ -192,8 +193,12 @@ class Popcorn extends Application {
 		return $class;
 	}
 
-	private function registerController(ControllerInterface $ctr) {
-		$ctr->getRoutes();
+	private function registerController(ControllerInterface $controller) {
+		$controller->getRoutes();
+
+		if ($controller instanceof ControllerAjaxInterface) {
+			$controller->getAjaxRoutes();
+		}
 	}
 
 }

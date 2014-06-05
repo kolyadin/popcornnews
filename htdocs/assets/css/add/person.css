@@ -15,6 +15,12 @@ iframe[id^='twitter-widget-'] {
 .b-fanfics__post-form {
   margin-top: 20px;
 }
+.b-fanfics__post-form .markItUp {
+  width: auto;
+}
+.b-fanfics__post-form .markItUpEditor {
+  height: auto;
+}
 .b-fanfics__post-form p input,
 .b-fanfics__post-form p textarea {
   font-family: "PT Sans";

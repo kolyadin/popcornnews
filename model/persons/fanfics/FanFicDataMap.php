@@ -2,6 +2,8 @@
 
 namespace popcorn\model\persons\fanfics;
 
+use popcorn\model\content\Image;
+use popcorn\model\content\ImageFactory;
 use popcorn\model\dataMaps\DataMap;
 use popcorn\model\persons\Person;
 
@@ -38,7 +40,13 @@ class FanFicDataMap extends DataMap {
 		$this->insertStatement->bindValue(":createdAt", $item->getCreatedAt()->getTimestamp());
 		$this->insertStatement->bindValue(":status", $item->getStatus());
 		$this->insertStatement->bindValue(":content", $item->getContent());
-		$this->insertStatement->bindValue(":photo", $item->getPhoto()->getId());
+
+		if ($item->getPhoto() instanceof Image) {
+			$this->insertStatement->bindValue(":photo", $item->getPhoto()->getId());
+		} else {
+			$this->insertStatement->bindValue(":photo", 0);
+		}
+
 		$this->insertStatement->bindValue(":title", $item->getTitle());
 		$this->insertStatement->bindValue(":announce", $item->getAnnounce());
 		$this->insertStatement->bindValue(":views", $item->getViews());
@@ -56,7 +64,13 @@ class FanFicDataMap extends DataMap {
 		$this->updateStatement->bindValue(":createdAt", $item->getCreatedAt()->getTimestamp());
 		$this->updateStatement->bindValue(":status", $item->getStatus());
 		$this->updateStatement->bindValue(":content", $item->getContent());
-		$this->updateStatement->bindValue(":photo", $item->getPhoto()->getId());
+
+		if ($item->getPhoto() instanceof Image) {
+			$this->updateStatement->bindValue(":photo", $item->getPhoto()->getId());
+		} else {
+			$this->updateStatement->bindValue(":photo", 0);
+		}
+
 		$this->updateStatement->bindValue(":title", $item->getTitle());
 		$this->updateStatement->bindValue(":announce", $item->getAnnounce());
 		$this->updateStatement->bindValue(":views", $item->getViews());
@@ -69,9 +83,21 @@ class FanFicDataMap extends DataMap {
 
 	/**
 	 * @param \popcorn\model\persons\fanfics\FanFic $item
+	 * @return \popcorn\model\Model|void
+	 */
+	public function prepareItem($item) {
+		$item->setCreatedAt(\DateTime::createFromFormat('U', $item->getCreatedAt()));
+
+		return $item;
+	}
+
+	/**
+	 * @param \popcorn\model\persons\fanfics\FanFic $item
 	 */
 	public function itemCallback($item) {
 		parent::itemCallback($item);
+
+		$item->setPhoto(ImageFactory::getImage($item->getPhoto()));
 	}
 
 	/**

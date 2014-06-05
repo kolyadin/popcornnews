@@ -2,6 +2,7 @@
 
 namespace popcorn\model\persons\fanfics;
 
+use Decoda\Decoda;
 use popcorn\model\Model;
 use popcorn\model\persons\Person;
 use popcorn\model\persons\PersonFactory;
@@ -95,8 +96,23 @@ class FanFic extends Model {
 	/**
 	 * @return mixed
 	 */
-	public function getContent() {
-		return $this->content;
+	public function getContent($modify = null) {
+
+		$output = $this->content;
+
+		if ($modify == 'p') {
+			$output = preg_replace("@\n\s*\n@s", "<br/><br/>", $output);
+			$output = str_replace("\n", "</p>\n<p>", "<p>$output</p>");
+		}
+
+		$code = new Decoda($output,[
+			'escapeHtml' => false,
+			'lineBreaks' => false
+		]);
+
+		return $code
+			->defaults()
+			->parse();
 	}
 
 	/**
@@ -242,9 +258,13 @@ class FanFic extends Model {
 		$this->changed();
 	}
 
+	public function getVotesOverall() {
+		return $this->votesUp + $this->votesDown;
+	}
 
-
-
+	public function getVotes() {
+		return $this->votesUp - $this->votesDown;
+	}
 
 
 }
