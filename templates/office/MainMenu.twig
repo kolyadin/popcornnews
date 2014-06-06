@@ -5,6 +5,21 @@
 	</a>
 </li>
 
+<li class="{% if app.request.path starts with '/office/calendar' %}active{% endif %}">
+	<a href="javascript:;">
+		<i class="fa fa-cogs"></i>
+		<span class="title">Календарь</span>
+		<span class="arrow open"></span>
+	</a>
+	<ul class="sub-menu">
+		<li class="{% if app.request.path == '/office/calendar/event_add' %}active{% endif %}">
+			<a href="/office/calendar/event_add">
+				Добавить событие
+			</a>
+		</li>
+	</ul>
+</li>
+
 {#Новости, посты, fashionbattle#}
 <li class="{% if app.request.path starts with '/office/post' %}active{% endif %}">
 	<a href="javascript:;">

@@ -5,6 +5,7 @@ namespace popcorn\app;
 use popcorn\app\controllers\ControllerInterface;
 use popcorn\app\controllers\GenericController;
 use popcorn\app\controllers\office\AjaxController;
+use popcorn\app\controllers\office\CalendarController;
 use popcorn\app\controllers\office\KidController;
 use popcorn\app\controllers\office\person\PersonFactController;
 use popcorn\app\controllers\office\PhotoArticleController;
@@ -25,6 +26,10 @@ class OfficeApp extends Application {
 		GenericController::setApp($this);
 
 		$this->registerController(new AjaxController());
+
+
+		$this->registerController(new CalendarController());
+
 		$this->registerController(new PostController());
 		$this->registerController(new PhotoArticleController());
 
