@@ -17,6 +17,11 @@
 				Добавить событие
 			</a>
 		</li>
+		<li class="{% if app.request.path starts with '/office/calendar/events' %}active{% endif %}">
+			<a href="/office/calendar/events">
+				Все события
+			</a>
+		</li>
 	</ul>
 </li>
 

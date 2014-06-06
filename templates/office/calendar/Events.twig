@@ -1,0 +1,117 @@
+{% extends '/Generic.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% block HeadEnd %}
+
+	<style type="text/css">
+
+		.table-items a {
+			font-size: 13px;
+		}
+
+		.table-items .stat .progress {
+			margin-bottom: 5px;
+		}
+
+		.table-items .stat .progress-bar strong {
+			padding-left: 5px;
+		}
+
+		.table-items .stat .label {
+			margin-right: 5px;
+		}
+	</style>
+
+{% endblock %}
+
+{% block BodyEnd %}
+
+{% endblock %}
+
+{% block PageTop %}
+
+	<h3 class="page-title">
+		Список событий
+		<small>просмотр сводной информации</small>
+	</h3>
+
+	<ul class="page-breadcrumb breadcrumb">
+		<li>
+			<i class="fa fa-home"></i>
+			<a href="/office">Консоль</a>
+			<i class="fa fa-angle-right"></i>
+		</li>
+		<li>
+			<a href="/office/calendar/events">Календарь</a>
+			<i class="fa"></i>
+		</li>
+	</ul>
+
+{% endblock %}
+
+{% block PageContent %}
+
+
+	{% if events|length %}
+
+		<div style="float:left;margin-top:17px;">
+			<a class="btn btn-success" href="/office/calendar/event_add"><i class="fa fa-plus" style="position:relative;top:1px;padding-right: 10px;"></i>добавить событие</a>
+		</div>
+
+		<div style="text-align: right;">
+			{{ html.paginator(paginator.pages,paginator.active,'/office/calendar/events/page%u') }}
+		</div>
+
+		<div class="clearfix"></div>
+
+		<div class="table-responsive">
+			<table class="table table-hover table-items">
+				<thead>
+				<tr>
+					<th></th>
+					<th style="white-space: nowrap;">Время добавления</th>
+					<th style="white-space: nowrap;">Время события</th>
+					<th style="width: 100%;">Заголовок</th>
+				</tr>
+				</thead>
+				<tbody>
+				{% for event in events %}
+					<tr>
+						<td style="white-space: nowrap;">
+							<a class="btn btn-default btn-xs tooltips" data-original-title="Редактировать событие"
+							   data-placement="top" href="/office/calendar/event{{ event.id }}"><i class="fa fa-edit"></i></a>
+							<a class="btn btn-danger btn-xs tooltips" data-original-title="Удалить событие"
+							   data-placement="top" href="/office/calendar/event{{ event.id }}/remove"><i class="fa fa-trash-o"></i></a>
+						</td>
+						<td>{{ event.createdAt|date('d.m.Y') }}</td>
+						<td>{{ event.eventDate|date('d.m.Y H:i') }}</td>
+						<td><a class="btn btn-default" href="/office/calendar/event{{ event.id }}">{{ event.title|e }}</a></td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+
+		<div style="float:left;margin-top:17px;">
+			<a class="btn btn-success" href="/office/calendar/event_add"><i class="fa fa-plus" style="position:relative;top:1px;padding-right: 10px;"></i>добавить событие</a>
+		</div>
+
+		<div style="text-align: right;">
+			{{ html.paginator(paginator.pages,paginator.active,'/office/calendar/events/page%u') }}
+		</div>
+
+		<div class="clearfix"></div>
+
+	{% else %}
+
+		<div class="note note-info">
+			<h4 class="note-heading">Пока не создано ни одного события</h4>
+
+			<p>
+				<a class="btn btn-success" href="/office/calendar/event_add">Добавить событие</a>
+			</p>
+		</div>
+
+	{% endif %}
+
+{% endblock %}

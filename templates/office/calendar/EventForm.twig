@@ -4,6 +4,21 @@
 
 	<script type="text/javascript">
 		$(function () {
+			//Поставить сегодняшнее время и дату
+			$('body').on('click','input[data-action=set-now-date]',function(){
+
+				var currentDate = new Date();
+
+				var $date = sprintf('%02u.%02u.%04u %02u:%02u',
+					  currentDate.getDate(),
+					  currentDate.getMonth()+1,
+					  currentDate.getFullYear(),
+					  currentDate.getHours(),
+					  currentDate.getMinutes()
+				);
+				$('#eventDate').val($date);
+			});
+
 			$('#eventDate').datetimepicker({
 				language: 'ru',
 				format: 'dd.mm.yyyy hh:ii',
@@ -17,7 +32,7 @@
 
 {% block PageTop %}
 
-	{% if person %}
+	{% if event.id %}
 		<h3 class="page-title">
 			&quot;{{ event.title|e }}&quot;
 			<small>событие</small>
@@ -35,7 +50,7 @@
 			<i class="fa fa-angle-right"></i>
 		</li>
 		<li>
-			<a href="/office/calendar">Календарь</a>
+			<a href="/office/calendar/events">Календарь</a>
 			<i class="fa fa-angle-right"></i>
 		</li>
 		{% if event %}
@@ -132,7 +147,7 @@
 			{% if event %}
 
 				<a href="/office/calendar/event{{ event.id }}/remove" class="btn btn-m btn-danger">Удалить событие</a>
-				<button class="btn btn-m btn-success" type="submit">Обновить персону&nbsp;<i class="fa fa-check"></i></button>
+				<button class="btn btn-m btn-success" type="submit">Обновить событие&nbsp;<i class="fa fa-check"></i></button>
 
 			{% else %}
 

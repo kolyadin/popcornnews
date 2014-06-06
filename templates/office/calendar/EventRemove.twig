@@ -1,0 +1,28 @@
+{% extends '/Generic.twig' %}
+
+{% block BodyEnd %}
+
+
+{% endblock %}
+
+{% block PageContent %}
+
+	<h3 class="page-title">
+		Подтвердите удаление
+		<small>Событие {{ event.title|e }}</small>
+	</h3>
+
+	<form method="post" action="/office/calendar/event{{ event.id }}/remove">
+		<input type="hidden" name="eventId" value="{{ event.id }}"/>
+
+		<div class="note note-danger">
+			<h4>Событие <a class="btn btn-default" href="/office/calendar/event{{ event.id }}">{{ event.title|e }}</a></h4>
+
+			<p style="text-align: right;">
+				<a class="btn btn-info" href="/office/photoarticles">Вернуться к списку фото-статей</a>
+				<input type="submit" class="btn btn-danger" value="Подтверждаю удаление"/>
+			</p>
+		</div>
+	</form>
+
+{% endblock %}

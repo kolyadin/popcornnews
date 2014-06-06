@@ -56,8 +56,7 @@ class EventDataMap extends DataMap {
 	 * @return \popcorn\model\Model|void
 	 */
 	public function prepareItem($item) {
-		$item->setCreatedAt(\DateTime::createFromFormat('U', $item->getCreatedAt()));
-		$item->setEventDate(\DateTime::createFromFormat('U', $item->getEventDate()));
+		$item->setEventDate(\DateTime::createFromFormat('U', $item->getEventDate()->getTimestamp()));
 
 		return $item;
 	}
@@ -90,6 +89,36 @@ class EventDataMap extends DataMap {
 //		$this->attachFashionBattle($item);
 
 //		MMC::delByTag('post');
+	}
+
+	/**
+	 * @param array $options
+	 * @param int $from
+	 * @param $count
+	 * @param int $totalFound
+	 * @return \popcorn\model\calendar\Event[]
+	 */
+	public function find(array $options = [], $from = 0, $count = -1, &$totalFound = -1) {
+
+		$options = array_merge([
+			'orderBy' => [
+				'createdAt' => 'desc'
+			]
+		], $options);
+
+		$sql = 'SELECT %s FROM pn_calendar_events WHERE 1=1';
+
+		if ($totalFound != -1) {
+			$stmt = $this->prepare(sprintf($sql, 'count(*)'));
+			$stmt->execute();
+
+			$totalFound = $stmt->fetchColumn();
+		}
+
+		$sql .= $this->getOrderString($options['orderBy']);
+		$sql .= $this->getLimitString($from, $count);
+
+		return $this->fetchAll(sprintf($sql, '*'));
 	}
 
 
