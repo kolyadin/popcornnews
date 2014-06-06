@@ -9,6 +9,7 @@ use popcorn\cli\entity\KidEntity;
 use popcorn\cli\entity\PersonEntity;
 use popcorn\cli\entity\PollEntity;
 use popcorn\cli\entity\PostEntity;
+use popcorn\cli\entity\SystemEntity;
 use popcorn\cli\entity\TagEntity;
 use popcorn\cli\entity\UserEntity;
 use popcorn\lib\ImageGenerator;
@@ -47,6 +48,7 @@ ImageGenerator::setup([
 
 $cliApp = new PopcornCliApp();
 
+$cliApp->addCommands(SystemEntity::getCommands());
 $cliApp->addCommands(TagEntity::getCommands());
 $cliApp->addCommands(PersonEntity::getCommands());
 $cliApp->addCommands(PostEntity::getCommands());
