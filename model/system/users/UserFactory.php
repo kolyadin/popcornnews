@@ -84,6 +84,13 @@ class UserFactory {
 		return $stmt->fetchColumn();
 	}
 
+	public static function getCountries(){
+		$stmt = PDOHelper::getPDO()->prepare('select id, name from pn_countries order by rating');
+		$stmt->execute();
+
+		return $stmt->fetchAll(\PDO::FETCH_OBJ);
+	}
+
 	public static function getHeadersChecksum() {
 		$ip = $_SERVER['REMOTE_ADDR'];
 		$browser = $_SERVER['HTTP_USER_AGENT'];

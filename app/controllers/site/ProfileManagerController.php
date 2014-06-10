@@ -166,7 +166,7 @@ class ProfileManagerController extends GenericController implements ControllerIn
 			'rules' => (int)$request->post('rules'),
 		);
 
-		$params['birthday'] = sprintf('%u.%u.%04u', $params['day'], $params['month'], $params['year']);
+		$params['birthday'] = mktime(0, 0, 0, $params['month'], $params['day'], $params['year']);
 
 		$_SESSION['userData'] = $params;
 
