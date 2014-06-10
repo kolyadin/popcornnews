@@ -77,11 +77,11 @@
     {% if profileHelper.isMyProfile %}
         <div class="status" id="profile-status">
             <a href="#">
-                {% if profile.extra('status') %}
-                    <strong>{{ profile.extra('status').statusMessage }}</strong>
-                {% else %}
-                    <span>[ изменить статус ]</span>
-                {% endif %}
+                {#{% if profile.extra('status') %}#}
+                    {#<strong>{{ profile.extra('status').statusMessage }}</strong>#}
+                {#{% else %}#}
+                    {#<span>[ изменить статус ]</span>#}
+                {#{% endif %}#}
                 <img src="/assets/img/icons/profile-status.png" width="12" height="12" />
             </a>
         </div>

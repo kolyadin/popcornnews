@@ -7,6 +7,7 @@ use popcorn\lib\ImageGenerator;
 use popcorn\lib\PDOHelper;
 use popcorn\model\content\Image;
 use popcorn\model\content\ImageFactory;
+use popcorn\model\dataMaps\PersonDataMap;
 use popcorn\model\dataMaps\TagDataMap;
 use popcorn\model\persons\KidFactory;
 use popcorn\model\persons\PersonFactory;
@@ -52,7 +53,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 		$entityId = $this->getSlim()->request->post('entityId');
 
-		switch ($entity){
+		switch ($entity) {
 			case 'post':
 				PostFactory::removePost($entityId);
 				break;
@@ -90,11 +91,11 @@ class AjaxController extends GenericController implements ControllerInterface {
 	public function getPerson() {
 		$personId = $this->getSlim()->request->get('personId');
 
-		$person = PersonFactory::getPerson($personId);
+		$person = PersonFactory::getPerson($personId, ['with' => PersonDataMap::WITH_PHOTO]);
 
 		$this->getApp()->exitWithJsonSuccessMessage([
-			'id' => $person->getId(),
-			'name' => $person->getName(),
+			'id'    => $person->getId(),
+			'name'  => $person->getName(),
 			'photo' => $person->getPhoto()->getThumb('x100')->getUrl()
 		]);
 	}
@@ -111,7 +112,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 		while ($table = $stmt->fetch(\PDO::FETCH_ASSOC)) {
 			$persons[] = [
-				'id' => $table['id'],
+				'id'   => $table['id'],
 				'text' => $table['name']
 			];
 		}
@@ -124,7 +125,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 	public function postTags() {
 		$term = $this->getSlim()->request->get('term');
 
-		$stmt = PDOHelper::getPDO()->prepare('SELECT id,name FROM pn_tags WHERE name LIKE :query AND type = '.Tag::EVENT.' ORDER BY name ASC LIMIT 30');
+		$stmt = PDOHelper::getPDO()->prepare('SELECT id,name FROM pn_tags WHERE name LIKE :query AND type = ' . Tag::EVENT . ' ORDER BY name ASC LIMIT 30');
 		$stmt->execute([
 			':query' => '%' . $term . '%'
 		]);
@@ -133,7 +134,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 		while ($table = $stmt->fetch(\PDO::FETCH_ASSOC)) {
 			$tags[] = [
-				'id' => $table['id'],
+				'id'   => $table['id'],
 				'text' => $table['name']
 			];
 		}
@@ -247,15 +248,15 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 		die(json_encode([
 			'jsonrpc' => '2.0',
-			'thumb' => [
-				'url' => $thumb->getUrl(),
-				'width' => $thumb->getWidth(),
+			'thumb'   => [
+				'url'    => $thumb->getUrl(),
+				'width'  => $thumb->getWidth(),
 				'height' => $thumb->getHeight()
 			],
-			'url' => $img->getUrl(),
-			'width' => $img->getWidth(),
-			'height' => $img->getHeight(),
-			'id' => $img->getId()
+			'url'     => $img->getUrl(),
+			'width'   => $img->getWidth(),
+			'height'  => $img->getHeight(),
+			'id'      => $img->getId()
 		]));
 
 	}
@@ -283,9 +284,9 @@ class AjaxController extends GenericController implements ControllerInterface {
 			$newImage = ImageFactory::createFromUpload(__DIR__ . '/../../../htdocs' . $thumb->getRelPath());
 
 			$this->getApp()->exitWithJsonSuccessMessage([
-				'id' => $newImage->getId(),
-				'url' => $newImage->getUrl(),
-				'width' => $newImage->getWidth(),
+				'id'     => $newImage->getId(),
+				'url'    => $newImage->getUrl(),
+				'width'  => $newImage->getWidth(),
 				'height' => $newImage->getHeight()
 			]);
 

@@ -59,3 +59,9 @@
 .nav-pagination .pagination {
     float: right;
 }
+
+.nav-pagination .fa {
+    position:relative;
+    top:1px;
+    padding-right: 10px;
+}
