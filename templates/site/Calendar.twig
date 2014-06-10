@@ -1,0 +1,84 @@
+{% extends '/GenericInner.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% block head %}
+	<title>Календарь - popcornnews</title>
+{% endblock %}
+
+
+{% block content %}
+
+	<div class="b-grid__g8">
+		<article class="b-single-article">
+			<section class="b-single-article__content clearfix">
+				<h1 class="b-single-article__title b-rubrics-title b-rubrics-title_s48">Календарь</h1>
+
+
+				<section class="b-calendar__menu b-inside__menu">
+					<ul class="b-inside__menu-firstlist">
+						<li class="active">
+							<a href="#">все события</a>
+						</li>
+						<li>
+							<a href="#">дни рождения</a>
+						</li>
+						<li>
+							<a href="#">события</a>
+						</li>
+					</ul>
+				</section>
+
+				<section class="b-calendar">
+					<section class="b-calendar__nav">
+						<a class="b-calendar__nav__btn b-calendar__nav__btn_prev" href="/calendar/06.2014">
+							<span class="b-calendar__nav__btn-icon b-firm-grad"><</span>
+							<span class="b-calendar__nav__btn-name"></span>
+						</a>
+						<div class="b-calendar__nav__now"></div>
+						<a class="b-calendar__nav__btn b-calendar__nav__btn_next" href="#">
+							<span class="b-calendar__nav__btn-name"></span>
+							<span class="b-calendar__nav__btn-icon b-firm-grad">></span>
+						</a>
+					</section>
+
+					<script type="text/javascript">
+						var eventMas = [
+						{% for day,dates in events %}
+							{
+								'day': {{ day }},
+								'list': [
+									{% for event in dates %}
+										{'img': '/img/content/calendar_img.jpg', 'place': '12.00, стадион Петровский', 'name': '<a href="#">{{ event.title|e }}</a>'}{% if not loop.last %},{% endif %}
+									{% endfor %}
+								]
+							}{% if not loop.last %},{% endif %}
+						{% endfor %}
+						]
+					</script>
+
+					<section class="b-calendar__body clearfix">
+						<ul class="b-calendar__list">
+
+						</ul>
+
+						<div class="b-calendar__day-events-wrap b-grid__g8 b-grid__a b-grid__z">
+							<div class="b-calendar__day-events">
+								<div class="b-calendar__day-events-inner clearfix">
+									<div class="b-calendar__day-events__date b-grid__g2">
+										<div class="b-calendar__day-events__date-num"></div>
+										<div class="b-calendar__day-events__date-month"></div>
+									</div>
+									<ul class="b-calendar__day-events__list  b-grid__g6 b-grid__a b-grid__z">
+
+									</ul>
+								</div>
+							</div>
+						</div>
+					</section>
+
+				</section>
+			</section>
+		</article>
+	</div>
+
+{% endblock %}

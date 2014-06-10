@@ -96,10 +96,16 @@ class CalendarController extends GenericController implements ControllerInterfac
 			'title'     => $this->getSlim()->request->post('title'),
 			'eventDate' => vsprintf('%3$04u-%2$02u-%1$02u %4$02u:%5$02u:00', sscanf($this->getSlim()->request->post('eventDate'), '%02u.%02u.%04u %02u:%02u')),
 			'place'     => $this->getSlim()->request->post('place'),
-			'content'   => $this->getSlim()->request->post('content')
+			'content'   => $this->getSlim()->request->post('content'),
+			'eventId'   => $this->getSlim()->request->post('eventId', null)
 		];
 
-		$event = new Event();
+		if ($data['eventId'] === null) {
+			$event = new Event();
+		} else {
+			$event = EventFactory::getEvent($data['eventId']);
+		}
+
 		$event->setCreatedAt(new \DateTime('now'));
 		$event->setEventDate(new \DateTime($data['eventDate']));
 		$event->setTitle($data['title']);

@@ -53,6 +53,7 @@ class Event extends Model {
 	 */
 	public function setContent($content) {
 		$this->content = $content;
+		$this->changed();
 	}
 
 	/**
@@ -67,6 +68,7 @@ class Event extends Model {
 	 */
 	public function setCreatedAt($createdAt) {
 		$this->createdAt = $createdAt;
+		$this->changed();
 	}
 
 	/**
@@ -81,6 +83,7 @@ class Event extends Model {
 	 */
 	public function setEventDate($eventDate) {
 		$this->eventDate = $eventDate;
+		$this->changed();
 	}
 
 	/**
@@ -95,6 +98,7 @@ class Event extends Model {
 	 */
 	public function setPlace($place) {
 		$this->place = $place;
+		$this->changed();
 	}
 
 	/**
@@ -109,6 +113,7 @@ class Event extends Model {
 	 */
 	public function setTitle($title) {
 		$this->title = $title;
+		$this->changed();
 	}
 
 	//endregion

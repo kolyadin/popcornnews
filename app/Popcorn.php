@@ -6,6 +6,7 @@ use popcorn\app\controllers\ControllerAjaxInterface;
 use popcorn\app\controllers\ControllerInterface;
 use popcorn\app\controllers\GenericController;
 use popcorn\app\controllers\site\AjaxController;
+use popcorn\app\controllers\site\CalendarController;
 use popcorn\app\controllers\site\community\CommunityController;
 use popcorn\app\controllers\site\KidsController;
 use popcorn\app\controllers\site\MainPageController;
@@ -138,6 +139,9 @@ class Popcorn extends Application {
 		$this->registerController(new AjaxController());
 		$this->registerController(new SearchController());
 		$this->registerController(new MainPageController());
+
+		$this->registerController(new CalendarController());
+
 		$this->registerController(new ProfileManagerController());
 		$this->registerController(new KidsController());
 		$this->registerController(new UsersController());

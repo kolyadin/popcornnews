@@ -63,4 +63,10 @@ class EventFactory {
 		return self::$dataMap->find($options, $from, $count, $totalFound);
 	}
 
+	public static function getByMonth(\DateTime $dateTime) {
+		self::checkDataMap();
+
+		return self::$dataMap->getByMonth($dateTime);
+	}
+
 }

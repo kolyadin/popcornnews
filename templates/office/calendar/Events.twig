@@ -54,22 +54,17 @@
 
 	{% if events|length %}
 
-		<div style="float:left;margin-top:17px;">
+		<div class="nav-pagination">
 			<a class="btn btn-success" href="/office/calendar/event_add"><i class="fa fa-plus" style="position:relative;top:1px;padding-right: 10px;"></i>добавить событие</a>
-		</div>
-
-		<div style="text-align: right;">
 			{{ html.paginator(paginator.pages,paginator.active,'/office/calendar/events/page%u') }}
+			<div class="clearfix"></div>
 		</div>
-
-		<div class="clearfix"></div>
 
 		<div class="table-responsive">
 			<table class="table table-hover table-items">
 				<thead>
 				<tr>
 					<th></th>
-					<th style="white-space: nowrap;">Время добавления</th>
 					<th style="white-space: nowrap;">Время события</th>
 					<th style="width: 100%;">Заголовок</th>
 				</tr>
@@ -83,7 +78,6 @@
 							<a class="btn btn-danger btn-xs tooltips" data-original-title="Удалить событие"
 							   data-placement="top" href="/office/calendar/event{{ event.id }}/remove"><i class="fa fa-trash-o"></i></a>
 						</td>
-						<td>{{ event.createdAt|date('d.m.Y') }}</td>
 						<td>{{ event.eventDate|date('d.m.Y H:i') }}</td>
 						<td><a class="btn btn-default" href="/office/calendar/event{{ event.id }}">{{ event.title|e }}</a></td>
 					</tr>
@@ -92,15 +86,11 @@
 			</table>
 		</div>
 
-		<div style="float:left;margin-top:17px;">
+		<div class="nav-pagination">
 			<a class="btn btn-success" href="/office/calendar/event_add"><i class="fa fa-plus" style="position:relative;top:1px;padding-right: 10px;"></i>добавить событие</a>
-		</div>
-
-		<div style="text-align: right;">
 			{{ html.paginator(paginator.pages,paginator.active,'/office/calendar/events/page%u') }}
+			<div class="clearfix"></div>
 		</div>
-
-		<div class="clearfix"></div>
 
 	{% else %}
 

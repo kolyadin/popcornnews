@@ -50,11 +50,11 @@ class PersonDataMap extends DataMap {
 			$this->prepare("INSERT INTO pn_persons
             (name, englishName, genitiveName, prepositionalName, info, source,
             photo, birthDate, showInCloud, sex, isSinger, allowFacts, vkPage, twitterLogin,
-            instagramLogin, pageName, nameForBio, published, urlName,
+            instagramLogin, pageName, nameForBio, searchAlternatives, published, urlName,
             look, style, talent)
             VALUES (:name, :englishName, :genitiveName, :prepositionalName, :info, :source,
             :photo, :birthDate, :showInCloud, :sex, :isSinger, :allowFacts, :vkPage, :twitterLogin,
-             :instagramLogin, :pageName, :nameForBio, :published, :urlName,
+             :instagramLogin, :pageName, :nameForBio, :searchAlternatives, :published, :urlName,
             :look, :style, :talent)");
 		$this->updateStatement =
 			$this->prepare("UPDATE pn_persons
@@ -76,6 +76,7 @@ class PersonDataMap extends DataMap {
                 instagramLogin = :instagramLogin,
                 pageName = :pageName,
                 nameForBio = :nameForBio,
+                searchAlternatives = :searchAlternatives,
                 published = :published,
                 urlName = :urlName
             WHERE id = :id");
@@ -108,6 +109,7 @@ class PersonDataMap extends DataMap {
 		$this->insertStatement->bindValue(":instagramLogin", $item->getInstagramLogin());
 		$this->insertStatement->bindValue(":pageName", $item->getPageName());
 		$this->insertStatement->bindValue(":nameForBio", $item->getNameForBio());
+		$this->insertStatement->bindValue(":searchAlternatives", $item->getSearchAlternatives());
 		$this->insertStatement->bindValue(":published", $item->isPublished(), \PDO::PARAM_BOOL);
 		$this->insertStatement->bindValue(":urlName", $item->getUrlName());
 		$this->insertStatement->bindValue(":look", $item->getLook());
@@ -140,6 +142,7 @@ class PersonDataMap extends DataMap {
 		$this->updateStatement->bindValue(":instagramLogin", $item->getInstagramLogin());
 		$this->updateStatement->bindValue(":pageName", $item->getPageName());
 		$this->updateStatement->bindValue(":nameForBio", $item->getNameForBio());
+		$this->updateStatement->bindValue(":searchAlternatives", $item->getSearchAlternatives());
 		$this->updateStatement->bindValue(":published", $item->isPublished(), \PDO::PARAM_BOOL);
 		$this->updateStatement->bindValue(":urlName", $item->getUrlName());
 	}

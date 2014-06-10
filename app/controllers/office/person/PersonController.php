@@ -178,6 +178,8 @@ class PersonController extends GenericController implements ControllerInterface 
 		$person->setTwitterLogin($request->post('twitterLogin'));
 		$person->setInstagramLogin($request->post('instagramLogin'));
 
+		$person->setSearchAlternatives($request->post('searchAlternatives'));
+
 		PersonFactory::savePerson($person);
 
 		if ($person->getId()) {

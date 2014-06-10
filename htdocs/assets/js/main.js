@@ -155,7 +155,7 @@ var eventCalendar = (function() {
 			/**
 			 * кнопки туда-сюда
 			 */
-			$('.b-calendar__nav__btn:not(.b-calendar__nav__btn_disable)').on('click', function(e) {
+			/*$('.b-calendar__nav__btn:not(.b-calendar__nav__btn_disable)').on('click', function(e) {
 				e.preventDefault();
 
 				if ($(this).hasClass('b-calendar__nav__btn_prev')) {
@@ -175,7 +175,7 @@ var eventCalendar = (function() {
 				eventCalendar.calendarConstructor();
 				eventCalendar.changeMonth(currentMonth);
 
-			});
+			});*/
 
 		},
 

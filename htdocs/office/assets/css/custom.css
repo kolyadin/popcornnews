@@ -46,3 +46,16 @@
 .mix-filter li.active a {
     color: #fff;
 }
+
+.nav-pagination {
+    height: 70px;
+}
+
+.nav-pagination .btn {
+    float:left;
+    margin-top:17px;
+}
+
+.nav-pagination .pagination {
+    float: right;
+}

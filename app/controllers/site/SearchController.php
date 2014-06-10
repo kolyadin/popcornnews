@@ -107,7 +107,8 @@ class SearchController extends GenericController implements ControllerInterface 
 			'(@prepositionalName ^%1$s | %1$s)',
 			'(@vkPage ^%1$s | %1$s)',
 			'(@twitterLogin ^%1$s | %1$s)',
-			'(@urlName ^%1$s | %1$s)'
+			'(@urlName ^%1$s | %1$s)',
+			'(@searchAlternatives %1$s)'
 		];
 
 		$totalFound = 0;
@@ -117,9 +118,10 @@ class SearchController extends GenericController implements ControllerInterface 
 			->in('persons')
 			->offset(0, 30)
 			->weights([
-				'name'              => 70,
-				'genitiveName'      => 30,
-				'prepositionalName' => 30
+				'name'               => 70,
+				'searchAlternatives' => 50,
+				'genitiveName'       => 30,
+				'prepositionalName'  => 30
 			])
 			->run(function ($personId) {
 				return PersonFactory::getPerson($personId, [

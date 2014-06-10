@@ -511,6 +511,38 @@
 			</div>
 
 
+			<div class="portlet">
+				<div class="portlet-title">
+					<div class="caption">
+						<i class="fa fa-reorder"></i>Поиск
+					</div>
+					<div class="tools">
+						<a href="javascript:;" class="collapse"></a>
+					</div>
+				</div>
+				<div class="portlet-body">
+
+					<div class="note note-info">
+						<p>Следует указывать альтернативные имена персон, прозвища для того, чтобы поиск смог найти персон даже по таким данным.</p>
+						<p>Можно писать на английском и/или русском языках.</p>
+					</div>
+
+					<div class="form-group last">
+						<label class="control-label col-md-3">Как люди пытаются искать:</label>
+
+						<div class="col-md-9">
+							<textarea class="form-control" name="searchAlternatives" rows="10">{{ person.searchAlternatives|e }}</textarea>
+							<span class="help-block">
+								<p>Каждый вариант, лучше всего, писать на новой строке.</p>
+								<p>Изменения в поиске появятся через 2 минуты после сохранения персоны.</p>
+							</span>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+
 
 		</div>
 

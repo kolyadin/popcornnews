@@ -6,6 +6,7 @@ DirectoryIndex index.php
 
 php_value upload_max_filesize 10M
 php_value post_max_filesize   10M
+php_value date.timezone "Europe/Moscow"
 
 RewriteEngine On
 

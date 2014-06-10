@@ -56,17 +56,18 @@ class EventDataMap extends DataMap {
 	 * @return \popcorn\model\Model|void
 	 */
 	public function prepareItem($item) {
-		$item->setEventDate(\DateTime::createFromFormat('U', $item->getEventDate()->getTimestamp()));
+//		$item->setEventDate(\DateTime::createFromFormat('U', $item->getEventDate()));
 
 		return $item;
 	}
 
 	/**
-	 * @param \popcorn\model\persons\fanfics\FanFic $item
+	 * @param \popcorn\model\calendar\Event $item
 	 */
 	public function itemCallback($item) {
 		parent::itemCallback($item);
 
+		$item->setEventDate((new \DateTime())->setTimestamp($item->getEventDate()));
 	}
 
 	/**
@@ -121,5 +122,38 @@ class EventDataMap extends DataMap {
 		return $this->fetchAll(sprintf($sql, '*'));
 	}
 
+	public function getByMonth(\DateTime $datetime) {
 
+		$monthStart = $datetime
+			->modify('first day of this month')
+			->format('Y-m-d 00:00:00');
+
+		$monthStart = strtotime($monthStart);
+
+		$monthEnd = $datetime
+			->modify('last day of this month')
+			->format('Y-m-d 23:59:59');
+
+		$monthEnd = strtotime($monthEnd);
+
+		$sql = 'SELECT * FROM pn_calendar_events WHERE eventDate BETWEEN :monthStart AND :monthEnd';
+
+		$stmt = $this->prepare($sql);
+		$stmt->execute([
+			':monthStart' => $monthStart,
+			':monthEnd'   => $monthEnd
+		]);
+
+		$events = [];
+
+		/** @var \popcorn\model\calendar\Event $event */
+		while ($event = $stmt->fetchObject($this->class)) {
+
+			$this->itemCallback($event);
+
+			$events[$event->getEventDate()->format('d')][] = $event;
+		}
+
+		return $events;
+	}
 }

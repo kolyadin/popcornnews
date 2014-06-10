@@ -239,7 +239,8 @@ class AjaxController extends GenericController implements ControllerInterface {
 			'(@prepositionalName ^%1$s | %1$s)',
 			'(@vkPage ^%1$s | %1$s)',
 			'(@twitterLogin ^%1$s | %1$s)',
-			'(@urlName ^%1$s | %1$s)'
+			'(@urlName ^%1$s | %1$s)',
+			'(@searchAlternatives %1$s)'
 		];
 
 		/** @var Person[] $persons */
@@ -247,9 +248,10 @@ class AjaxController extends GenericController implements ControllerInterface {
 			->query(implode(' | ', $query), $searchString)
 			->in('persons')
 			->weights([
-				'name'              => 70,
-				'genitiveName'      => 30,
-				'prepositionalName' => 30
+				'name'               => 70,
+				'searchAlternatives' => 50,
+				'genitiveName'       => 30,
+				'prepositionalName'  => 30
 			])
 			->run(function ($personId) {
 				return PersonFactory::getPerson($personId);

@@ -52,7 +52,7 @@ class PersonFactController extends GenericController implements ControllerInterf
 
 		$person = PersonFactory::getPerson($personId);
 
-		$facts = FactFactory::getFacts($person, [], ($page - 1) * self::FACTS_PER_PAGE, self::FACTS_PER_PAGE, $totalFound);
+		$facts = FactFactory::getFactsByPerson($person, [], ($page - 1) * self::FACTS_PER_PAGE, self::FACTS_PER_PAGE, $totalFound);
 
 		$this
 			->getTwig()

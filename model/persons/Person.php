@@ -118,6 +118,14 @@ class Person extends Model {
 	private $nameForBio = '';
 
 	/**
+	 * Альтернативные имена для поиска
+	 *
+	 * @var string
+	 * @export
+	 */
+	private $searchAlternatives;
+
+	/**
 	 * @var bool
 	 * @export
 	 */
@@ -174,7 +182,7 @@ class Person extends Model {
 		return $this->allowFacts;
 	}
 
-	public function isPerson(){
+	public function isPerson() {
 		return true;
 	}
 
@@ -227,6 +235,10 @@ class Person extends Model {
 	 */
 	public function getNameForBio() {
 		return $this->nameForBio;
+	}
+
+	public function getSearchAlternatives() {
+		return $this->searchAlternatives;
 	}
 
 	/**
@@ -340,7 +352,7 @@ class Person extends Model {
 	}
 
 	public function getTotalRating($format = '%.1f') {
-		return sprintf($format, ($this->look + $this->style + $this->talent)/3);
+		return sprintf($format, ($this->look + $this->style + $this->talent) / 3);
 	}
 
 	/**
@@ -441,6 +453,14 @@ class Person extends Model {
 	 */
 	public function setNameForBio($nameForBio) {
 		$this->nameForBio = $nameForBio;
+		$this->changed();
+	}
+
+	/**
+	 * @param $string
+	 */
+	public function setSearchAlternatives($string){
+		$this->searchAlternatives = $string;
 		$this->changed();
 	}
 
