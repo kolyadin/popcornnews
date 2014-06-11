@@ -29,6 +29,16 @@ class CommunityController extends GenericController implements ControllerInterfa
 
 	static private $groupId = null;
 
+	public function registerIf() {
+		$request = $this->getSlim()->request;
+
+		if (preg_match('!^\/community!', $request->getPath())) {
+			return true;
+		}
+
+		return false;
+	}
+
 	public function getRoutes() {
 
 		$authorizedOnly = function (Route $route) {

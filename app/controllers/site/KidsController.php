@@ -7,7 +7,6 @@ use popcorn\app\controllers\GenericController;
 use popcorn\model\dataMaps\comments\KidCommentDataMap;
 use popcorn\model\dataMaps\DataMapHelper;
 use popcorn\model\dataMaps\KidDataMap;
-use popcorn\model\dataMaps\KidsCommentDataMap;
 use popcorn\model\persons\KidFactory;
 
 /**
@@ -19,19 +18,33 @@ class KidsController extends GenericController implements ControllerInterface {
 	public function getRoutes() {
 		$this
 			->getSlim()
-			->get('/kids(/page:pageId)', function($page = null){
-				if ($page == 1){
-					$this->getSlim()->redirect('/kids',301);
+			->get('/kids(/page:pageId)', function ($page = null) {
+				if ($page == 1) {
+					$this->getSlim()->redirect('/kids', 301);
 				}
 
-				$this->kidsPage($page?:1);
+				$this->kidsPage($page ? : 1);
 			})
-			->conditions(['pageId' => '\d+']);
+			->conditions(['pageId' => '[1-9][0-9]*']);
 
 		$this
 			->getSlim()
 			->get('/kid/:kidId', [$this, 'kidPage'])
-			->conditions(['pageId' => '\d+']);
+			->conditions(['kidId' => '[1-9][0-9]*']);
+	}
+
+	public function registerIf() {
+		$request = $this->getSlim()->request;
+
+		if ($request->getMethod() != 'GET') {
+			return false;
+		}
+
+		if (preg_match('!(\/kids|\/kids\/page[1-9][0-9]*)|\/kid\/[1-9][0-9]*!',$request->getPath())) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public function kidsPage($page = 1) {
@@ -51,9 +64,9 @@ class KidsController extends GenericController implements ControllerInterface {
 		$this
 			->getTwig()
 			->display('/kids/KidsPage.twig', [
-				'kids' => $kids,
+				'kids'      => $kids,
 				'paginator' => [
-					'pages' => $paginator['pages'],
+					'pages'  => $paginator['pages'],
 					'active' => $page
 				]
 			]);
@@ -69,7 +82,7 @@ class KidsController extends GenericController implements ControllerInterface {
 		$this
 			->getTwig()
 			->display('/kids/KidPage.twig', [
-				'kid' => $kid,
+				'kid'          => $kid,
 				'commentsTree' => $commentsTree
 			]);
 	}

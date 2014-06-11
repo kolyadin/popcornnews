@@ -43,6 +43,16 @@ class YourStyleController extends GenericController implements ControllerInterfa
 
 	private $currentUser;
 
+	public function registerIf() {
+		$request = $this->getSlim()->request;
+
+		if (preg_match('!^\/yourstyle!', $request->getPath())) {
+			return true;
+		}
+
+		return false;
+	}
+
 	public function getRoutes() {
 
 		$this

@@ -2,6 +2,7 @@
 
 namespace popcorn\model\dataMaps\comments;
 
+use popcorn\lib\mmc\MMC;
 use popcorn\model\content\ImageFactory;
 use popcorn\model\dataMaps\DataMap;
 use popcorn\model\comments\Comment;
@@ -74,7 +75,7 @@ class CommentDataMap extends DataMap {
 			$this->prepare("INSERT INTO pn_comments_{$this->tablePrefix}_vote (commentId, userId) VALUES (:commentId, :userId)");
 
 		$this->stmtGetAllComments =
-			$this->prepare("SELECT id FROM pn_comments_{$this->tablePrefix} WHERE entityId = :entityId ORDER BY createdAt ASC");
+			$this->prepare("SELECT id,parent FROM pn_comments_{$this->tablePrefix} WHERE entityId = :entityId ORDER BY createdAt ASC");
 
 		$this->stmtGetLastComment =
 			$this->prepare("SELECT id FROM pn_comments_{$this->tablePrefix} WHERE entityId = :entityId ORDER BY id DESC LIMIT 1");
@@ -189,13 +190,75 @@ class CommentDataMap extends DataMap {
 
 		$comments = [];
 
-		while ($commentId = $this->stmtGetAllComments->fetch(\PDO::FETCH_COLUMN)) {
-			$comments[] = $this->findById($commentId);
+		while ($comment = $this->stmtGetAllComments->fetch(\PDO::FETCH_ASSOC)) {
+//			$cacheKey = MMC::genKey($this->class, __METHOD__, $entityId, $commentId);
+
+//			$comments[] = MMC::getSet($cacheKey, strtotime('+1 month'), function () use ($commentId) {
+			$comments[] = $comment;
+//			});
 		}
 
-		$tree = $this->makeTree($comments, 0);
+		$cacheKey = MMC::genKey($this->class, __METHOD__, $entityId);
+
+		$tree = MMC::getSet($cacheKey, strtotime('+1 month'), function () use($comments) {
+			$tree = $this->makeArrayTree($comments);
+			$this->makeTree($tree);
+
+			return $tree;
+		});
+
 
 		return $tree;
+
+	}
+
+	private function makeTree(array &$comments) {
+
+		$branch = [];
+
+		foreach ($comments as &$element) {
+
+			$childs = null;
+
+			if (isset($element['childs'])) {
+				$childs = $this->makeTree($element['childs']);
+			}
+
+//			$cacheKey = MMC::genKey($this->class, __METHOD__, $element['id']);
+
+			/** @var \popcorn\model\comments\Comment $element */
+//			$element = MMC::getSet($cacheKey, strtotime('+1 month'), function () use ($element) {
+			$element = $this->findById($element['id']);
+//			});
+
+			$branch[$element->getId()] = $element;
+
+			if ($childs) {
+				$element->setChilds($childs);
+			}
+
+		}
+
+		return $branch;
+
+	}
+
+	protected function makeArrayTree(array &$comments, $parentId = 0) {
+
+		$branch = array();
+
+		/** @var \popcorn\model\comments\Comment $element */
+		foreach ($comments as $element) {
+			if ($element['parent'] == $parentId) {
+				$children = $this->makeArrayTree($comments, $element['id']);
+				if ($children) {
+					$element['childs'] = $children;
+				}
+				$branch[$element['id']] = $element;
+			}
+		}
+
+		return $branch;
 
 	}
 
@@ -205,24 +268,6 @@ class CommentDataMap extends DataMap {
 		]);
 
 		return $this->findById($this->stmtGetLastComment->fetchColumn());
-	}
-
-	protected function makeTree(array &$comments, $parentId = 0) {
-
-		$branch = array();
-
-		foreach ($comments as $element) {
-			if ($element->getParent() == $parentId) {
-				$children = $this->makeTree($comments, $element->getId());
-				if ($children) {
-					$element->setChilds($children);
-				}
-				$branch[$element->getId()] = $element;
-			}
-		}
-
-		return $branch;
-
 	}
 
 	/**

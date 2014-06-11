@@ -2,6 +2,7 @@
 
 namespace popcorn\model\comments;
 
+use popcorn\model\dataMaps\UserDataMap;
 use popcorn\model\Model;
 use popcorn\model\system\users\User;
 use popcorn\model\system\users\UserFactory;
@@ -271,7 +272,7 @@ class Comment extends Model {
 		if ($this->owner == 0) {
 			$this->owner = UserFactory::getCurrentUser();
 		} else {
-			$this->owner = UserFactory::getUser($this->owner);
+			$this->owner = UserFactory::getUser($this->owner, ['with' => UserDataMap::WITH_NONE]);
 		}
 	}
 

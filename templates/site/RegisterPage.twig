@@ -164,7 +164,7 @@
                     <label>
                         <strong>Я хотела бы встретиться с</strong>
                         {% spaceless %}
-                        <select name="meet_actor">
+                        <select name="meetPerson">
                             <option value="0">ни с кем</option>
                             {% for person in persons %}
                                 <option {% if userData.meet_actor == person.id %}selected="true"{% endif %} value="{{ person.id }}">{{ person.name|e }}</option>

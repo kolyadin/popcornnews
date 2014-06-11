@@ -32,6 +32,19 @@ class ProfileController extends GenericController implements ControllerInterface
 	static private $profile;
 	static private $twigData = [];
 
+	public function registerIf() {
+		$request = $this->getSlim()->request;
+
+		if (
+			preg_match('!^\/profile!', $request->getPath()) ||
+			preg_match('!^\/im!', $request->getPath())
+		) {
+			return true;
+		}
+
+		return false;
+	}
+
 	public function getRoutes() {
 
 		//callback для страницы пользователей и профиля

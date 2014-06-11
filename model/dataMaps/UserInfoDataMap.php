@@ -55,6 +55,7 @@ class UserInfoDataMap extends DataMap {
         $this->updateStatement->bindValue(":activist", $item->getActivist());
         $this->updateStatement->bindValue(":activistCount", $item->getActivistCount());
         $this->updateStatement->bindValue(":banDate", $item->getBanDate());
+
         $this->updateStatement->bindValue(":id", $item->getId());
     }
 

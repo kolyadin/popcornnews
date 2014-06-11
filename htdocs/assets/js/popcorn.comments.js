@@ -84,7 +84,7 @@ $(function () {
     };
     
 
-    $('.b-comments .comment .images img[data-lazy=true]').lazyload();
+//    $('.b-comments .comment .images img[data-lazy=true]').lazyload();
 
 
     $('.b-comments').on('click', '.comment .comment-like .like', function () {

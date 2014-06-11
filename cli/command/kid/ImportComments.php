@@ -24,126 +24,208 @@ class ImportComments extends Command {
 	/**
 	 * @var \PDOStatement
 	 */
-	private $selector;
+	private $stmtSelectComments, $stmtUpdateCommentsCount;
 
 	/**
 	 * @var \PDOStatement
 	 */
-	private $insert;
+	private $stmtInsertComment;
 
 	/**
 	 * @var \PDOStatement
 	 */
-	private $insertImage;
+	private $stmtInsertImage;
 
 	protected function configure() {
-		$this->setName('import:kids:comments')
-			->setDescription("Импорт детей");
+		$this
+			->setName('import:kids:comments')
+			->setDescription("Импорт комментариев для детей");
 
 		$this->pdo = PDOHelper::getPDO();
 
-		$this->selector = $this->pdo->prepare("SELECT * FROM popcornnews.pn_comments_kids ORDER BY id DESC");
-		$this->insert = $this->pdo->prepare("
-INSERT INTO pn_comments_kids (
-  id, kidId, date, owner,
-  parent, content, editDate,
-  ip, abuse, ratingDown, ratingUp,
-  deleted, level, imagesCount
-)
-VALUES (
-  :id, :kidId, :date, :owner,
-  :parent, :content, :editDate,
-  :ip, :abuse, :ratingDown, :ratingUp,
-  :deleted, :level, :imagesCount
-)");
-		$this->insertImage = $this->pdo->prepare("
-INSERT INTO pn_comments_kids_images (commentId, imageId)
-VALUES (:commentId, :imageId)
-");
+		$this->stmtSelectComments =
+			$this->pdo->prepare('SELECT * FROM popcornnews.pn_comments_kids');
+
+		$this->stmtUpdateCommentsCount =
+			$this->pdo->prepare('UPDATE pn_kids t_k SET t_k.comments = (SELECT count(*) FROM pn_comments_kids t_ck WHERE t_ck.entityId = t_k.id)');
+
+		$this->stmtInsertComment =
+			$this->pdo->prepare("
+				INSERT INTO pn_comments_kids (
+				  id, entityId, createdAt, owner,
+				  parent, content, editDate,
+				  ip, abuse, votesDown, votesUp,
+				  deleted, level, imagesCount
+				)
+				VALUES (
+				  :id, :entityId, :createdAt, :owner,
+				  :parent, :content, :editDate,
+				  :ip, :abuse, :votesDown, :votesUp,
+				  :deleted, :level, :imagesCount
+				)");
+
+		$this->stmtInsertImage =
+			$this->pdo->prepare("
+				INSERT INTO pn_comments_kids_images (commentId, imageId)
+				VALUES (:commentId, :imageId)
+			");
 
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output) {
+	private function generateCommentsLevels() {
+		$stmt = $this->pdo->prepare('SELECT id FROM pn_kids');
+		$stmt2 = $this->pdo->prepare('SELECT * FROM pn_comments_kids WHERE entityId=:kidId');
+		$stmt3 = $this->pdo->prepare('UPDATE pn_comments_kids SET `level`=:level WHERE id=:id LIMIT 1');
 
-		$output->writeln('<info>Импорт комментарий детей...</info>');
+		$stmt->execute();
 
-		$this->selector->execute();
+		while ($kidId = $stmt->fetch(\PDO::FETCH_COLUMN)) {
 
-		$count = 0;
-		$total = $this->selector->rowCount();
+			$stmt2->execute([
+				':kidId' => $kidId
+			]);
 
-		for($i = 0; $i < $total; $i++) {
+			$comments = $stmt2->fetchAll(\PDO::FETCH_ASSOC);
 
-			$item = $this->selector->fetch(\PDO::FETCH_ASSOC);
+			$this->makeLevels($comments);
 
-			$output->write("<info>Коммент #".$item['id']."...");
+			foreach ($comments as $comment) {
+				$stmt3->execute([
+					':level' => $comment['level'],
+					':id'    => $comment['id']
+				]);
+			}
+		}
+	}
+
+	private function makeLevels(array &$comments, $parentId = 0, $level = -1) {
+
+		$level++;
+
+		foreach ($comments as &$element) {
+			if ($element['parent'] == $parentId) {
+				$this->makeLevels($comments, $element['id'], $level);
+				$element['level'] = $level;
+			}
+		}
+
+		return $comments;
+
+	}
+
+	private function importComments(InputInterface $input, OutputInterface $output) {
+
+		$this->stmtSelectComments->execute();
+
+		$output->writeln(sprintf('Надейно комментариев: %u', $this->stmtSelectComments->rowCount()));
+
+		$currentCommentIterator = 0;
+
+		while ($item = $this->stmtSelectComments->fetch(\PDO::FETCH_ASSOC)) {
 
 			$content = $item['content'];
 
-			preg_match_all('@\[img\](.+)\[\/img\]@iU',$content,$matches);
+			preg_match_all('@\[img\](.+)\[\/img\]@iU', $content, $matches);
 
 			$imagesCount = 0;
 
-			if (isset($matches[1]) && count($matches[1])){
-				foreach ($matches[1] as $imageUrl){
-					try{
+			/*
+			if (isset($matches[1]) && count($matches[1])) {
+				foreach ($matches[1] as $imageUrl) {
+					try {
 						$output->write("\n\t<comment>Пытаемся скачать $imageUrl...</comment>");
 
 						$image = ImageFactory::createFromUrl($imageUrl);
 
-						$this->insertImage->bindValue(':commentId',$item['id']);
-						$this->insertImage->bindValue(':imageId',$image->getId());
+						$this->insertImage->bindValue(':commentId', $item['id']);
+						$this->insertImage->bindValue(':imageId', $image->getId());
 						$this->insertImage->execute();
 
 						$imagesCount++;
 
 						$output->write("<comment>ok</comment>\n");
 
-					} catch (FileNotFoundException $e){
+					} catch (FileNotFoundException $e) {
 						$output->write("<comment>неудачно</comment>\n");
+
 						continue;
 					}
 				}
 			}
 
-			$content = preg_replace('@\[img\].+\[\/img\]@iU','',$content);
+			*/
+			$content = preg_replace('@\[img\].+\[\/img\]@iU', '', $content);
 			$content = trim($content);
 
 			//Не будем добавлять коммент, если нет фоток и текст пустой
-			if ($imagesCount == 0 && empty($content)){
-				continue;
-			}
+//			if ($imagesCount == 0 && empty($content)) {
+//				$currentCommentIterator++;
+//				continue;
+//			}
 
 			$item['content'] = $content;
 
-			$this->insert->bindValue(':id', $item['id']);
-			$this->insert->bindValue(':kidId', $item['news_id']);
-			$this->insert->bindValue(':date', $item['date']);
-			$this->insert->bindValue(':owner', $item['owner']);
-			$this->insert->bindValue(':parent', $item['parent']);
-			$this->insert->bindValue(':content', $item['content']);
-			$this->insert->bindValue(':editDate', $item['edit_date']);
-			$this->insert->bindValue(':ip', $item['ip']);
-			$this->insert->bindValue(':abuse', $item['abuse']);
-			$this->insert->bindValue(':ratingDown', $item['rating_down']);
-			$this->insert->bindValue(':ratingUp', $item['rating_up']);
-			$this->insert->bindValue(':deleted', $item['deleted']);
-			$this->insert->bindValue(':level', 0);
-			$this->insert->bindValue(':imagesCount', $imagesCount);
+			$this->stmtInsertComment->bindValue(':id', $item['id']);
+			$this->stmtInsertComment->bindValue(':entityId', $item['news_id']);
+			$this->stmtInsertComment->bindValue(':createdAt', $item['date']);
+			$this->stmtInsertComment->bindValue(':owner', $item['owner']);
+			$this->stmtInsertComment->bindValue(':parent', $item['parent']);
+			$this->stmtInsertComment->bindValue(':content', $item['content']);
+			$this->stmtInsertComment->bindValue(':editDate', $item['edit_date']);
+			$this->stmtInsertComment->bindValue(':ip', $item['ip']);
+			$this->stmtInsertComment->bindValue(':abuse', $item['abuse']);
+			$this->stmtInsertComment->bindValue(':votesDown', $item['rating_down']);
+			$this->stmtInsertComment->bindValue(':votesUp', $item['rating_up']);
+			$this->stmtInsertComment->bindValue(':deleted', $item['deleted']);
+			$this->stmtInsertComment->bindValue(':level', 0);
+			$this->stmtInsertComment->bindValue(':imagesCount', $imagesCount);
 
-			if(!$this->insert->execute()) {
-				$output->writeln("</info>");
-				$output->writeln("<error>".print_r($this->insert->errorInfo(), true)."</error>");
-				exit;
-			}
-			else {
-				$output->writeln("готово</info>");
-			}
-			$count++;
+			$this->stmtInsertComment->execute();
+
+			$output->writeln(sprintf('Импортировано %u из %u', ++$currentCommentIterator, $this->stmtSelectComments->rowCount()));
 
 		}
 
-		$output->writeln("<info>Импортированно {$count} комментов из {$total}</info>");
-		$this->selector->closeCursor();
+	}
+
+	protected function execute(InputInterface $input, OutputInterface $output) {
+
+		{
+			$output->write('<info>Очистка таблиц...');
+
+			PDOHelper::truncate([
+				'pn_comments_kids',
+				'pn_comments_kids_abuse',
+				'pn_comments_kids_images',
+				'pn_comments_kids_subscribe',
+				'pn_comments_kids_vote'
+			]);
+
+			$output->writeln(' готово</info>');
+		}
+
+		{
+			$output->writeln('<info>Импорт комментарий детей...</info>');
+
+			$this->importComments($input, $output);
+
+			$output->writeln("<info>Импорт завершен</info>");
+		}
+
+		{
+			$output->writeln('<info>Строим структуру комментариев...');
+
+			$this->generateCommentsLevels();
+
+			$output->writeln(" готово</info>");
+		}
+
+		{
+			$output->write('<info>Обновляем количество комментариев у детей...');
+
+			$this->stmtUpdateCommentsCount->execute();
+
+			$output->writeln(" готово</info>");
+		}
 	}
 }

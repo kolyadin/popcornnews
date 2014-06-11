@@ -1,4 +1,4 @@
-{% extends '/profile/ProfileGeneric.twig' %}
+{% extends '/GenericInner.twig' %}
 
 {% block head %}
 
@@ -62,10 +62,10 @@
 
 {% endblock %}
 #}
-{% block profile %}
+{% block content %}
 
 <div class="b-grid__g8">
-	<article class="b-text b-register">
+	<article class="b-register">
 
 		<h1>{{ profile.nick|e }}</h1>
 

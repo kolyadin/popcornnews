@@ -110,6 +110,7 @@ class UserDataMap extends DataMap {
 		$this->updateStatement->bindValue(":userInfo", $item->getUserInfo()->getId());
 		$this->updateStatement->bindValue(":userSettings", $item->getUserSettings()->getId());
 		$this->updateStatement->bindValue(":userHash", $item->getUserHash()->getId());
+
 		$this->updateStatement->bindValue(":id", $item->getId());
 	}
 
@@ -637,7 +638,7 @@ SQL;
 	 */
 	public function findByHash($userId, $securityHash) {
 
-		$user = UserFactory::getUser($userId);
+		$user = UserFactory::getUser($userId, ['with' => UserDataMap::WITH_ALL]);
 
 		if (!($user instanceof User)) {
 			return null;

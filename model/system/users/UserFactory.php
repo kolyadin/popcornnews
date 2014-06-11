@@ -19,15 +19,21 @@ class UserFactory {
      */
     private static $dataMap = null;
 
-    /**
-     * @param int $id
-     *
-     * @return User
-     */
-    public static function getUser($id) {
-        self::checkDataMap();
+	/**
+	 * @param $userId
+	 * @param array $options
+	 *
+	 * @return User
+	 */
+    public static function getUser($userId, array $options = []) {
 
-        return self::$dataMap->findById($id);
+		$options = array_merge([
+			'with' => UserDataMap::WITH_AVATAR & UserDataMap::WITH_HASH
+		], $options);
+
+		$dataMap = new UserDataMap($options['with']);
+
+		return $dataMap->findById($userId);
     }
 
     /**

@@ -40,7 +40,7 @@ class ProfileManagerController extends GenericController implements ControllerIn
 			->get('/register/:userId/:hash', [$this, 'profileConfirmation'])
 			->conditions([
 				'userId' => '\d+',
-				'hash' => '[a-z0-9]{40}'
+				'hash'   => '[a-z0-9]{40}'
 			]);
 
 		$this
@@ -54,7 +54,7 @@ class ProfileManagerController extends GenericController implements ControllerIn
 			->get('/remind/:userId/:hash', [$this, 'remindUserPassword'])
 			->conditions([
 				'userId' => '\d+',
-				'hash' => '[a-z0-9]{40}'
+				'hash'   => '[a-z0-9]{40}'
 			]);
 
 		$this
@@ -147,23 +147,23 @@ class ProfileManagerController extends GenericController implements ControllerIn
 		$request = $this->getSlim()->request();
 
 		$params = array(
-			'name' => strip_tags(trim($request->post('name'))),
-			'nick' => strip_tags(trim($request->post('nick'))),
-			'email' => trim($request->post('email')),
-			'pass1' => trim($request->post('pass1')),
-			'pass2' => trim($request->post('pass2')),
-			'credo' => trim($request->post('credo')),
-			'city' => trim($request->post('city')),
-			'country' => trim($request->post('country')),
-			'sex' => (int)$request->post('sex'),
-			'show_bd' => (int)$request->post('show_bd'),
-			'family' => (int)$request->post('family'),
-			'meet_actor' => (int)$request->post('meet_actor'),
-			'day' => (int)$request->post('day'),
-			'month' => (int)$request->post('month'),
-			'year' => (int)$request->post('year'),
-			'daily_sub' => (int)$request->post('daily_sub'),
-			'rules' => (int)$request->post('rules'),
+			'name'       => strip_tags(trim($request->post('name'))),
+			'nick'       => strip_tags(trim($request->post('nick'))),
+			'email'      => trim($request->post('email')),
+			'pass1'      => trim($request->post('pass1')),
+			'pass2'      => trim($request->post('pass2')),
+			'credo'      => trim($request->post('credo')),
+			'city'       => trim($request->post('city')),
+			'country'    => trim($request->post('country')),
+			'sex'        => (int)$request->post('sex'),
+			'show_bd'    => (int)$request->post('show_bd'),
+			'family'     => (int)$request->post('family'),
+			'meetPerson' => (int)$request->post('meetPerson'),
+			'day'        => (int)$request->post('day'),
+			'month'      => (int)$request->post('month'),
+			'year'       => (int)$request->post('year'),
+			'daily_sub'  => (int)$request->post('daily_sub'),
+			'rules'      => (int)$request->post('rules'),
 		);
 
 		$params['birthday'] = mktime(0, 0, 0, $params['month'], $params['day'], $params['year']);
@@ -224,9 +224,7 @@ class ProfileManagerController extends GenericController implements ControllerIn
 		$user->setType(User::USER);
 
 		if (isset($_FILES) && isset($_FILES['avatara']) && !$_FILES['avatara']['error']) {
-			$user->setAvatar(
-				ImageFactory::createFromUpload($_FILES['avatara']['tmp_name'])
-			);
+			$user->setAvatar(ImageFactory::createFromUpload($_FILES['avatara']['tmp_name']));
 		} else {
 			//Аватарки нет
 			$user->setAvatar(new NullImage());
@@ -238,6 +236,7 @@ class ProfileManagerController extends GenericController implements ControllerIn
 		$user->getUserInfo()->setCityId($params['city']);
 		$user->getUserInfo()->setCountryId($params['country']);
 		$user->getUserInfo()->setCredo($params['credo']);
+		$user->getUserInfo()->setMeetPerson($params['meetPerson']);
 
 		$user->setUserSettings(new UserSettings());
 		$user->getUserSettings()->setDailySubscribe($params['daily_sub'] == 1 ? true : false);
@@ -263,7 +262,7 @@ class ProfileManagerController extends GenericController implements ControllerIn
 		$mail->msgHTML(
 			$this->getTwig()->render('/mail/Register.twig', array(
 				'user' => array(
-					'id' => $user->getId(),
+					'id'   => $user->getId(),
 					'hash' => $user->getRegCode()
 				)
 			))
@@ -282,15 +281,15 @@ class ProfileManagerController extends GenericController implements ControllerIn
 		$stmt->execute();
 		$countries = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-		$tpl = array(
-			'errors' => ($status == 'errors') ? true : false,
-			'success' => ($status == 'success') ? true : false,
-			'persons' => PersonFactory::getPersons([], 0, -1, ['name' => 'asc']),
+		$tpl = [
+			'errors'    => ($status == 'errors') ? true : false,
+			'success'   => ($status == 'success') ? true : false,
+			'persons'   => PersonFactory::getPersons([], 0, -1),
 			'countries' => $countries,
 
-			'userData' => isset($_SESSION['userData']) ? $_SESSION['userData'] : array('daily_sub' => 1),
-			'userError' => isset($_SESSION['userError']) ? $_SESSION['userError'] : array()
-		);
+			'userData'  => isset($_SESSION['userData']) ? $_SESSION['userData'] : ['daily_sub' => 1],
+			'userError' => isset($_SESSION['userError']) ? $_SESSION['userError'] : []
+		];
 
 		$this->getTwig()->display('RegisterPage.twig', $tpl);
 	}
@@ -307,7 +306,11 @@ class ProfileManagerController extends GenericController implements ControllerIn
 	}
 
 	public function remindPage($status) {
-		$this->getTwig()->display('/RemindPasswordPage.twig', array('status' => $status));
+		$this
+			->getTwig()
+			->display('/RemindPasswordPage.twig', [
+				'status' => $status
+			]);
 	}
 
 	public function remindUserPassword($userId, $securityHash) {
@@ -336,7 +339,7 @@ class ProfileManagerController extends GenericController implements ControllerIn
 		$mail->msgHTML(
 			$this->getTwig()->render('mail/RemindFinish.twig', array(
 				'user' => array(
-					'id' => $user->getId(),
+					'id'          => $user->getId(),
 					'newPassword' => $randomPass
 				)
 			))
@@ -374,7 +377,7 @@ class ProfileManagerController extends GenericController implements ControllerIn
 		$mail->msgHTML(
 			$this->getTwig()->render('mail/RemindStart.twig', array(
 				'user' => array(
-					'id' => $user->getId(),
+					'id'                 => $user->getId(),
 					'changePasswordHash' => $changePasswordHash
 				)
 			))

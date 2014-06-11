@@ -1,12 +1,10 @@
 <a href="#" id="comments" name="comments"></a>
 
-{% spaceless %}
-	<section class="b-comments">
-		<ul>
-			{% include '/comments/Comments.twig' with {'comments':commentsTree} %}
-		</ul>
-	</section>
-{% endspaceless %}
+<section class="b-comments">
+	<ul>
+		{% include '/comments/Comments.twig' with {'comments':commentsTree} %}
+	</ul>
+</section>
 
 <script type="text/javascript">
 	$(function(){
@@ -21,7 +19,14 @@
 	<a id="new-comment" name="new-comment" href="#"></a>
 
 	<div class="b-new-message-box" data-reply-to="0" data-level-id="0">
-		<div class="b-new-message-box__ava"><img src="/assets/img/no-photo/small.png" alt=""/></div>
+		<div class="b-new-message-box__ava">
+			{% if currentUser.avatar.id %}
+				{% set photo = currentUser.avatar.thumb('32x') %}
+				<img src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}" alt="{{ currentUser.nick|e }}"/>
+			{% else %}
+				<img src="/assets/img/no-photo/small.png" alt=""/>
+			{% endif %}
+		</div>
 
 		<div class="b-new-message-box__message-container">
 			<div class="b-new-message-box__smile-toogle"></div>

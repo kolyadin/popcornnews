@@ -136,14 +136,18 @@ class Popcorn extends Application {
 
 	protected function initControllers() {
 
+//		echo $this->getSlim()->request->getPath();
+
 		$this->registerController(new AjaxController());
+
+		$this->registerController(new KidsController());
 		$this->registerController(new SearchController());
 		$this->registerController(new MainPageController());
 
 		$this->registerController(new CalendarController());
 
 		$this->registerController(new ProfileManagerController());
-		$this->registerController(new KidsController());
+
 		$this->registerController(new UsersController());
 		$this->registerController(new ProfileController());
 
@@ -159,7 +163,6 @@ class Popcorn extends Application {
 		$this->registerController(new CommunityController());
 		$this->registerController(new MeetController());
 		$this->registerController(new YourStyleController());
-
 
 		//Обработчик для 404 ошибки
 		$this->getSlim()->notFound(function () {
@@ -198,11 +201,23 @@ class Popcorn extends Application {
 	}
 
 	private function registerController(ControllerInterface $controller) {
-		$controller->getRoutes();
 
-		if ($controller instanceof ControllerAjaxInterface) {
-			$controller->getAjaxRoutes();
+		$registerRoutes = function (ControllerInterface $controller) {
+			$controller->getRoutes();
+
+			if ($controller instanceof ControllerAjaxInterface) {
+				$controller->getAjaxRoutes();
+			}
+		};
+
+		if (method_exists($controller, 'registerIf')) {
+			if ($controller->registerIf()) {
+				$registerRoutes($controller);
+			}
+		} else {
+			$registerRoutes($controller);
 		}
+
 	}
 
 }

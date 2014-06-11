@@ -76,11 +76,12 @@
 
                 <div class="ava">
                     {% if profile.avatar.id %}
-                        {% set src = profile.avatar.url('140x') %}
+                        {% set photo = profile.avatar.thumb('140x') %}
+	                    <a href="/profile/{{ profile.id }}"><img src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}"/></a>
                     {% else %}
-                        {% set src = '/assets/img/no-photo/large.png' %}
+	                    <a href="/profile/{{ profile.id }}"><img src="/assets/img/no-photo/large.png"/></a>
                     {% endif %}
-                    <a href="/profile/{{ profile.id }}"><img src="{{ src }}"/></a>
+
                 </div>
 				<div class="last-visit">
 					<div>Последний визит:</div>

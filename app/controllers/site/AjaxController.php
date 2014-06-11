@@ -54,6 +54,16 @@ use popcorn\model\system\users\User;
 
 class AjaxController extends GenericController implements ControllerInterface {
 
+	public function registerIf() {
+		$request = $this->getSlim()->request;
+
+		if (preg_match('!^\/ajax!', $request->getPath())) {
+			return true;
+		}
+
+		return false;
+	}
+
 	public function getRoutes() {
 
 		$this
