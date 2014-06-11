@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<!--[if lte IE 6]><html class="ie6"><!--[if gt IE 8]><!-->
+<html><!--<![endif]-->
+<head>
+    <title>Rangy Selection save/restore module demo</title>
+    <script type="text/javascript" src="/assets/js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="/assets/res/rangy-1.2.3/rangy-core.js"></script>
+    <script type="text/javascript" src="/assets/res/rangy-1.2.3/rangy-selectionsaverestore.js"></script>
+
+    <script type="text/javascript">
+
+        function commentEditor(options) {
+
+            // Turn multiple selections on in IE
+            try {
+                document.execCommand("MultipleSelection", null, true);
+            } catch (ex) {
+            }
+
+            rangy.init();
+
+            $this = this;
+
+            options['smileSelector'].on('click', function () {
+
+                var range = $this.getSelectedRangeWithin(options['editor'].get(0));
+
+                if (range) {
+                    $this.pasteSmile(range, $(this));
+                } else {
+                    var endRange = $this.placeCaretAtEnd(options['editor'].get(0));
+                    $this.pasteSmile(endRange, $(this));
+                }
+
+            });
+
+            this.placeCaretAtEnd = function (el) {
+                el.focus();
+
+                var range = rangy.createRange();
+                range.selectNodeContents(el);
+                range.collapse(false);
+                var sel = rangy.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);
+
+                return range;
+
+            };
+
+            this.getSelectedRangeWithin = function (el) {
+                var selectedRange = null;
+                var sel = rangy.getSelection();
+                var elRange = rangy.createRange();
+                elRange.selectNodeContents(el);
+                if (sel.rangeCount) {
+                    selectedRange = sel.getRangeAt(0).intersection(elRange);
+                }
+                elRange.detach();
+                return selectedRange;
+            };
+
+            this.pasteSmile = function (range, smile) {
+                range.deleteContents();
+
+                var clone = smile.clone().get(0);
+                var sel = rangy.getSelection();
+
+                range.collapse(false);
+                range.insertNode(clone);
+                range.collapseAfter(clone);
+                sel.setSingleRange(range);
+
+                options['editor'].focus();
+
+
+                clone.onmousedown = function (event) {
+                    event = event || window.event;
+                    event.preventDefault ? event.preventDefault() : event.returnValue = false;
+                }
+            };
+
+        }
+
+        $(function () {
+            commentEditor({
+                editor: $('#editor'),
+                smileSelector: $('#smiles').find('img')
+            });
+        });
+
+    </script>
+</head>
+<body>
+
+<div id="editor" contenteditable="true" spellcheck="false" style="width: 400px;height:200px;border:1px solid navy;">
+    There are many competitions for football, for both football clubs and countries. Football clubs usually play
+    other teams in their own country, with a few exceptions. <b>Cardiff City F.C.</b> from Wales for example, play
+    in the English leagues and in the English FA Cup.
+</div>
+
+<br/><br/>
+
+<div id="smiles">
+    <img src="http://hassankhan.github.io/emojify.js/images/emoji/laughing.png" width="32" alt=""/>
+    <img src="http://hassankhan.github.io/emojify.js/images/emoji/relaxed.png" width="32" alt=""/>
+</div>
+
+
+</body>
+</html>
