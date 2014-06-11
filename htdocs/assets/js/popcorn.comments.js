@@ -1,9 +1,15 @@
 
+
 $(function () {
 
+    rangy.init();
 
     var messageBox = $('.b-new-message-box__message');
     var defVal = messageBox.attr('data-default-value');
+
+    var savedSel = null;
+    var savedSelActiveElement = null;
+
 
     if (navigator.userAgent.match(/opera/i)) {
         var st;
@@ -18,6 +24,7 @@ $(function () {
         });
     }
 
+    /*
     messageBox
         .css('color', '#999')
         .text(defVal)
@@ -30,8 +37,8 @@ $(function () {
             if (!$(this).text()) {
                 $(this).text(defVal).css('color', '#999');
             }
-        })
-    ;
+        });*/
+
 
     /**
      * Сброс формы отправки в изначальное состояние
@@ -301,12 +308,9 @@ $(function () {
     emojify.run($('.b-comments').get(0));
     emojify.run($('.b-smiles-bar').get(0));
 
-    var box=$('.b-new-message-box__message'),
-          isAdd=false,
-          eventName;
+    var box=$('.b-new-message-box__message'), isAdd=false, eventName;
 
     $('.b-new-message-box__smile-toogle').on('click', function (e) {
-
 
         var $smileIcon = $(this);
         var $parentBox = $('.b-new-message-box');
@@ -338,17 +342,19 @@ $(function () {
 
     });
 
-
     $('.b-smiles-bar__close').on('click', function () {
         $('.b-smiles-bar').fadeOut('fast');
     });
 
-
-
-
     box.on('focus',function(){
         isAdd = true;
+        rangy.restoreSelection(savedSel, true);
+        savedSel = null;
     }).on('blur',function(){
+        if (savedSel) {
+            rangy.removeMarkers(savedSel);
+        }
+        savedSel = rangy.saveSelection();
         isAdd = false;
     });
 
@@ -358,9 +364,21 @@ $(function () {
         else if('ontouchstart' in document.documentElement) eventName='ontouchstart';
         else eventName='onmousedown';
 
+        $('.b-new-message-box__message').focus();
+
+        if (savedSel) {
+
+            /*window.setTimeout(function() {
+                if (savedSelActiveElement && typeof savedSelActiveElement.focus != "undefined") {
+                    savedSelActiveElement.focus();
+                }
+            }, 1);*/
+        }
+
 
         var sel = rangy.getSelection();
         var range = sel.rangeCount ? sel.getRangeAt(0) : null;
+
         if (range) {
             range.deleteContents();
 
@@ -370,8 +388,12 @@ $(function () {
 
             range.insertNode(clone);
             range.selectNode(clone);
+
             sel.collapseToEnd();
             range.detach();
+
+            rangy.saveSelection();
+
             clone.onmousedown = function(event){
                 event=event||window.event;
                 event.preventDefault ? event.preventDefault() : event.returnValue=false;
@@ -384,9 +406,9 @@ $(function () {
 
         e.preventDefault();
 
-        if (isAdd){
+//        if (isAdd){
             addSmile(this);
-        }
+//        }
 
     });
 
