@@ -4,6 +4,7 @@ namespace popcorn\app\controllers\site;
 
 use popcorn\app\controllers\ControllerInterface;
 use popcorn\app\controllers\GenericController;
+use popcorn\lib\mmc\MMC;
 use popcorn\model\dataMaps\comments\KidCommentDataMap;
 use popcorn\model\dataMaps\DataMapHelper;
 use popcorn\model\dataMaps\KidDataMap;
@@ -40,7 +41,7 @@ class KidsController extends GenericController implements ControllerInterface {
 			return false;
 		}
 
-		if (preg_match('!(\/kids|\/kids\/page[1-9][0-9]*)|\/kid\/[1-9][0-9]*!',$request->getPath())) {
+		if (preg_match('!(\/kids|\/kids\/page[1-9][0-9]*)|\/kid\/[1-9][0-9]*!', $request->getPath())) {
 			return true;
 		}
 
@@ -76,14 +77,24 @@ class KidsController extends GenericController implements ControllerInterface {
 
 		$kid = KidFactory::get($kidId);
 
-		$dataMap = new KidCommentDataMap();
-		$commentsTree = $dataMap->getAllComments($kidId);
+		$cacheKey = MMC::genKey('kid', $kidId, 'html-comments');
+		$commentsHtml = MMC::getSet($cacheKey, strtotime('+1 month'), function () use ($kidId) {
+
+			$dataMap = new KidCommentDataMap();
+			$commentsTree = $dataMap->getAllComments($kidId);
+
+			return $this
+				->getTwig()
+				->render('/comments/CommentsBlock.twig', [
+					'commentsTree' => $commentsTree
+				]);
+		});
 
 		$this
 			->getTwig()
 			->display('/kids/KidPage.twig', [
-				'kid'          => $kid,
-				'commentsTree' => $commentsTree
+				'kid'      => $kid,
+				'comments' => $commentsHtml
 			]);
 	}
 }

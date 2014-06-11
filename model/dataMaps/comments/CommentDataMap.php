@@ -198,14 +198,15 @@ class CommentDataMap extends DataMap {
 //			});
 		}
 
-		$cacheKey = MMC::genKey($this->class, __METHOD__, $entityId);
+//		$cacheKey = MMC::genKey($this->class, __METHOD__, $entityId);
 
-		$tree = MMC::getSet($cacheKey, strtotime('+1 month'), function () use($comments) {
-			$tree = $this->makeArrayTree($comments);
-			$this->makeTree($tree);
+//		$tree = MMC::getSet($cacheKey, strtotime('+1 month'), function () use($comments) {
+		$tree = $this->makeArrayTree($comments);
+		$this->makeTree($tree);
 
-			return $tree;
-		});
+
+//			return $tree;
+//		});
 
 
 		return $tree;
@@ -224,12 +225,12 @@ class CommentDataMap extends DataMap {
 				$childs = $this->makeTree($element['childs']);
 			}
 
-//			$cacheKey = MMC::genKey($this->class, __METHOD__, $element['id']);
+			$cacheKey = MMC::genKey($this->class, 'comment', $element['id']);
 
 			/** @var \popcorn\model\comments\Comment $element */
-//			$element = MMC::getSet($cacheKey, strtotime('+1 month'), function () use ($element) {
-			$element = $this->findById($element['id']);
-//			});
+			$element = MMC::getSet($cacheKey, strtotime('+1 month'), function () use ($element) {
+				return $this->findById($element['id']);
+			});
 
 			$branch[$element->getId()] = $element;
 

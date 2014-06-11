@@ -136,8 +136,6 @@ class Popcorn extends Application {
 
 	protected function initControllers() {
 
-//		echo $this->getSlim()->request->getPath();
-
 		$this->registerController(new AjaxController());
 
 		$this->registerController(new KidsController());
@@ -180,7 +178,7 @@ class Popcorn extends Application {
 	}
 
 	protected function getUser() {
-		if ($this->getSlim()->getEncryptedCookie(User::COOKIE_USER_NAME)) {
+		if ($this->getSlim()->getCookie(User::COOKIE_USER_NAME)) {
 			$cookie = $this->getSecurityCookie();
 
 			UserFactory::loginByHash($cookie->userId, $cookie->securityHash);

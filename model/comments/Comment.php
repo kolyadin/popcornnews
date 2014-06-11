@@ -272,7 +272,7 @@ class Comment extends Model {
 		if ($this->owner == 0) {
 			$this->owner = UserFactory::getCurrentUser();
 		} else {
-			$this->owner = UserFactory::getUser($this->owner, ['with' => UserDataMap::WITH_NONE]);
+			$this->owner = UserFactory::getUser($this->owner, ['with' => UserDataMap::WITH_NONE ^ UserDataMap::WITH_AVATAR]);
 		}
 	}
 

@@ -2,6 +2,8 @@
 
 namespace popcorn\model\dataMaps\comments;
 
+use popcorn\lib\mmc\MMC;
+
 class KidCommentDataMap extends CommentDataMap {
 
 	/**
@@ -31,6 +33,9 @@ class KidCommentDataMap extends CommentDataMap {
 		parent::onInsert($item);
 
 		$this->updateCommentsCount($item->getKidId());
+		MMC::del(MMC::genKey('kid', $item->getKidId(), 'html-comments'));
+		MMC::del(MMC::genKey($this->class, 'comment', $item->getId()));
+
 	}
 
 	protected function onRemove($kidId) {

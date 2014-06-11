@@ -80,6 +80,7 @@ class Application {
 	}
 
 	public function run() {
+		$this->slim->response->header('Connection','close');
 		$this->slim->run();
 	}
 

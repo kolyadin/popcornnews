@@ -607,7 +607,8 @@ a.pink:hover,
   vertical-align: middle;
   width: 100px;
 }
-.b-register h1 span {
+.b-kids h1 span,
+b.b-register h1 span {
   color: #b2b2b2;
   display: block;
   font-size: 18px;

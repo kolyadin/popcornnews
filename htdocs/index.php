@@ -11,8 +11,13 @@ if (\popcorn\lib\Config::getMode() != 'production') {
 session_name('popcorn-session');
 session_start();
 
+$t = microtime(1);
+
 $app = new \popcorn\app\Popcorn();
 $app->run();
+
+echo microtime(1) - $t;
+
 
 if (\popcorn\lib\Config::getMode() != 'production') {
 	$xhprof_data = xhprof_disable();
