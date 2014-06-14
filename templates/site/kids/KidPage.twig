@@ -103,50 +103,45 @@
 
 		<h1>Звездные дети<span>Кто самый милый звездный ребенок?</span></h1>
 
-		{% spaceless %}
+		{% set textDefault = kid.votesOverall|ruNumber(['нет голосов','%u голос','%u голоса','%u голосов']) %}
+		{% set photo = kid.photo.thumb('393x') %}
 
-			{% set textDefault = kid.votesOverall|ruNumber(['нет голосов','%u голос','%u голоса','%u голосов']) %}
-			{% set photo = kid.photo.thumb('393x') %}
+		<div class="kid" data-kid-id="{{ kid.id }}">
+			<h2><a href="/kid/{{ kid.id }}">{{ kid.name|e }}</a></h2>
 
-			<div class="kid" data-kid-id="{{ kid.id }}">
-				<h2><a href="/kid/{{ kid.id }}">{{ kid.name|e }}</a></h2>
-
-				<div class="pics">
-					<a href="/kid/{{ kid.id }}"><img src="{{ photo.url }}" alt="{{ kid.name|e }}" width="{{ photo.width }}" height="{{ photo.height }}"/></a>
-				</div>
-				<div class="stats">
-					<div class="vote">
-						<div class="col b-firm-grad">{{ kid.votes }}</div>
-						<div class="btn-wrap">
-							<a href="#" data-action="vote-up" class="b-firm-grad btn btn_plus">+</a>
-							<a href="#" data-action="vote-down" class="b-firm-grad btn btn_minus">&ndash;</a>
-						</div>
-						<p class="text" data-default-text="Всего {{ textDefault }}">Всего {{ textDefault }}</p>
+			<div class="pics">
+				<a href="/kid/{{ kid.id }}"><img src="{{ photo.url }}" alt="{{ kid.name|e }}" width="{{ photo.width }}" height="{{ photo.height }}"/></a>
+			</div>
+			<div class="stats">
+				<div class="vote">
+					<div class="col b-firm-grad">{{ kid.votes }}</div>
+					<div class="btn-wrap">
+						<a href="#" data-action="vote-up" class="b-firm-grad btn btn_plus">+</a>
+						<a href="#" data-action="vote-down" class="b-firm-grad btn btn_minus">&ndash;</a>
 					</div>
-					<div class="under">
-						<p><a href="/kid/{{ kid.id }}#comments"><strong>{{ kid.comments|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) }}</strong></a></p>
-
-						<p><a href="/kid/{{ kid.id }}#new-comment">Написать комментарий</a></p>
-					</div>
+					<p class="text" data-default-text="Всего {{ textDefault }}">Всего {{ textDefault }}</p>
 				</div>
-				<div class="desc">
+				<div class="under">
+					<p><a href="/kid/{{ kid.id }}#comments"><strong>{{ kid.comments|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) }}</strong></a></p>
 
-					{% if kid.sex == 0 %}
-						{% set bText = 'Родился' %}
-					{% elseif kid.sex == 1 %}
-						{% set bText = 'Родилась' %}
-					{% endif %}
-
-					<p class="db">{{ bText }} {{ kid.birthDate|ruDate('j f2 Y') }}, сейчас {{ kid.birthDate|ruAge }}</p>
-
-					<div class="description">{{ kid.description }}</div>
+					<p><a href="/kid/{{ kid.id }}#new-comment">Написать комментарий</a></p>
 				</div>
 			</div>
+			<div class="desc">
 
-		{% endspaceless %}
+				{% if kid.sex == 0 %}
+					{% set bText = 'Родился' %}
+				{% elseif kid.sex == 1 %}
+					{% set bText = 'Родилась' %}
+				{% endif %}
 
-		{{ comments }}
+				<p class="db">{{ bText }} {{ kid.birthDate|ruDate('j f2 Y') }}, сейчас {{ kid.birthDate|ruAge }}</p>
 
+				<div class="description">{{ kid.description }}</div>
+			</div>
+		</div>
+
+		{% include '/comments/CommentsBlock.twig' %}
 
 	</div>
 

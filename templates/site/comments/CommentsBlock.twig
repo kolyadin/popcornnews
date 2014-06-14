@@ -2,7 +2,7 @@
 
 <section class="b-comments">
 	<ul>
-		{% include '/comments/Comments.twig' with {'comments':commentsTree} %}
+		{{ comments }}
 	</ul>
 </section>
 
@@ -30,6 +30,7 @@
 
 		<div class="b-new-message-box__message-container">
 			<div class="b-new-message-box__smile-toogle"></div>
+			<div class="b-new-message-box__message-ghost"></div>
 			<div class="b-new-message-box__message" contenteditable="true" spellcheck="false"></div>
 
 			<div class="b-new-message-box__attach"></div>

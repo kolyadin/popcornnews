@@ -80,13 +80,12 @@ class KidsController extends GenericController implements ControllerInterface {
 		$cacheKey = MMC::genKey('kid', $kidId, 'html-comments');
 		$commentsHtml = MMC::getSet($cacheKey, strtotime('+1 month'), function () use ($kidId) {
 
-			$dataMap = new KidCommentDataMap();
-			$commentsTree = $dataMap->getAllComments($kidId);
+			$comments = (new KidCommentDataMap())->getAllComments($kidId);
 
 			return $this
 				->getTwig()
-				->render('/comments/CommentsBlock.twig', [
-					'commentsTree' => $commentsTree
+				->render('/comments/Comments.twig', [
+					'comments' => $comments
 				]);
 		});
 

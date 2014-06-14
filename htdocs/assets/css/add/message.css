@@ -19,7 +19,6 @@ a.pink-dotted:hover,
 .b-new-message-box__message-container {
   position: relative;
   background-color: white;
-  height: 100px;
   width: 535px;
   border-radius: 5px;
   float: left;
@@ -43,11 +42,15 @@ a.pink-dotted:hover,
   height: 15px;
   background: url(/assets/img/smile-container.png) top left no-repeat;
 }
+.b-new-message-box__message-ghost {
+  display: none;
+}
 .b-new-message-box__message {
   margin-top: 7px;
   margin-bottom: 7px;
-  height: 90px;
-  overflow: auto;
+  min-height: 90px;
+  overflow: hidden;
+  cursor: text;
   font-size: 13px;
   padding: 0 24px 0 7px;
   letter-spacing: normal;

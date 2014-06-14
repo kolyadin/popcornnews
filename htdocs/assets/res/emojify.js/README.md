@@ -1,5 +1,9 @@
-emojify.js v0.9.0
+emojify.js v0.9.1 [![Build Status](https://travis-ci.org/hassankhan/emojify.js.png)](https://travis-ci.org/hassankhan/emojify.js) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/hassankhan/emojify.js/trend.png)](https://bitdeli.com/free "Bitdeli Badge") [![Gitter chat](https://badges.gitter.im/hassankhan/emojify.js.png)](https://gitter.im/hassankhan/emojify.js)
 ==========
+
+[![Browser Results](https://ci.testling.com/hassankhan/emojify.js.png)](https://ci.testling.com/hassankhan/emojify.js)
+
+<a href="http://bower.io/search/?q=emojify.js"><img src="http://benschwarz.github.io/bower-badges/badge@2x.png" width="130" height="30"></a>
 
 A Javascript module to convert emoji keywords to images. Used by [Gitter](https://gitter.im/)
 
@@ -23,6 +27,8 @@ To exclude tags from being emojified, add ``no-emojify`` to their ``class`` attr
 
 You can optionally pass an object to ``emojify.run()`` to restrict the **emojification** to that object only: ``emojify.run(document.getElementById('my-element'))``
 
+You can also use ``emojify.replace()`` method to emojify a string directly:
+
 ### Configuration
 To set configuration options, use `emojify.setConfig()` and a JSON object as a parameter with the following attributes:
 * ``emojify_tag_type``: Set to `<div>` by default. Sets the element the emojify.js uses to replace emoji keywords
@@ -37,7 +43,7 @@ To set configuration options, use `emojify.setConfig()` and a JSON object as a p
 ### Code Example
 
     emojify.setConfig({
-    
+
         emojify_tag_type : 'div',           // Only run emojify.js on this element
         only_crawl_id    : null,            // Use to restrict where emojify.js applies
         img_dir          : 'images/emoji',  // Directory for emoji images
@@ -51,11 +57,10 @@ To set configuration options, use `emojify.setConfig()` and a JSON object as a p
     });
     emojify.run();
 
-## Dependencies
-This module depends on LESS, or at least requires you to compile the LESS source to CSS.
-
+## Updating the emoji
+From time to time, the emoji at [emoji-cheat-sheet.com](http://www.emoji-cheat-sheet.com) will be updated. Running the
+`update.sh` script will update the project with the latest emoji. Don't forget to run grunt after running the update script.
 
 ## License
-Copyright 2014 Hassan Khan
 
-Licensed under the MIT License
+http://hassankhan.mit-license.org/
