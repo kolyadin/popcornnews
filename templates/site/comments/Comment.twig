@@ -30,11 +30,7 @@
 					{% for image in comment.images %}
 						{% set thumb = image.thumb('x100') %}
 
-						{% if forceImageLoad %}
-							<a href="{{ image.url }}"><img src="{{ thumb.url }}" alt="" width="{{ thumb.width }}" height="{{ thumb.height }}"/></a>
-						{% else %}
-							<a href="{{ image.url }}"><img data-lazy="true" data-original="{{ thumb.url }}" alt="" width="{{ thumb.width }}" height="{{ thumb.height }}"/></a>
-						{% endif %}
+						<a href="{{ image.url }}"><img src="{{ thumb.url }}" alt="" width="{{ thumb.width }}" height="{{ thumb.height }}"/></a>
 					{% endfor %}
 				</div>
 				<div class="clearfix"></div>

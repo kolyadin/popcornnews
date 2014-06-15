@@ -6,7 +6,7 @@ var IM = {
     prepare : function(){
         rangy.init();
 
-        this.sel = {
+        IM.sel = {
             comments      : $('.b-comments'),
             addComment    : $('.b-comments__new-comment').find('a'),
             wrapper       : $('.b-new-message-box'),
@@ -135,13 +135,17 @@ var IM = {
 
         var commentId = $comment.closest('.b-comment').data('comment-id');
 
-        IM.sel.wrapper.fadeOut('fast', function () {
+        IM.sel.wrapper.fadeOut(30,function () {
             IM.sel.wrapper.attr('data-reply-to', commentId);
             IM.sel.wrapper.fadeIn('fast');
             $comment.closest('.b-comment').append(IM.sel.wrapper);
 
-            $('.b-comments__new-comment').show(function(){
+            setTimeout(function(){
                 IM.sel.editor.focus();
+            },1);
+
+            $('.b-comments__new-comment').show(function(){
+
             });
         });
 
