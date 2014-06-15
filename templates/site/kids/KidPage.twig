@@ -5,88 +5,24 @@
 
 	<title>Звездный ребенок {{ kid.name|e }} - popcornnews</title>
 
-	<script type="text/javascript">
-		var commentSetup = {
-			entity: 'kids',
-			entityId: {{ kid.id }}
-		};
-	</script>
-
 	<script type="text/javascript" src="/assets/js/popcorn.comments.js"></script>
-
+	<script type="text/javascript" src="/assets/js/popcorn.upDownVoting.js"></script>
 	<script type="text/javascript">
-		  $(function(){
-			  $('a[data-action=vote-up],a[data-action=vote-down]').on('click',function(){
+		$(function () {
 
-				  var kidParent = $(this).closest('.kid');
-				  var textDefault = kidParent.find('.text').attr('data-default-text');
+			IM.init({
+				entity: 'kids',
+				entityId: {{ kid.id }}
+			});
 
-				  var action = $(this).attr('data-action');
-				  var kidId  = kidParent.attr('data-kid-id');
+			IM.generateEmoji();
 
-
-				  var params = {
-					  'kidId' : kidId,
-					  'vote'  : action
-				  };
-
-				  var handler = function(response){
-
-					  if (response.status == 'success'){
-
-						  kidParent.find('.stats .col, .stats .text').animate({ opacity: 0 },'fast',function(){
-
-							  kidParent.find('.col').text(response.points);
-
-							  if (action == 'vote-up'){
-								  kidParent.find('.btn_minus').addClass('btn_disable');
-							  }else if (action == 'vote-down'){
-								  kidParent.find('.btn_plus').addClass('btn_disable');
-							  }
-
-							  kidParent
-									.find('.text')
-									.text('Спасибо, ваш голос принят!')
-									.animate({ opacity: 1 },'fast',function(){
-										$this = $(this);
-										setTimeout(function(){
-											$this.text(response.pointsOverall);
-										},2000);
-									})
-							  ;
-
-							  $(this).animate({ opacity: 1 },'fast');
-						  });
-
-					  }else{
-
-						  kidParent.find('.stats .text').animate({ opacity: 0 },'fast',function(){
-
-							  kidParent.find('.text').html(response.exception.message);
-
-							  $(this).animate({ opacity: 1 },'fast',function(){
-
-								  setTimeout(function(){
-									  kidParent.find('.text').animate({ opacity: 0 },'fast',function(){
-										  $(this).html(textDefault);
-
-										  $(this).animate({ opacity: 1 },'fast');
-									  });
-								  },2000);
-
-
-							  });
-						  });
-					  }
-
-				  };
-
-				  $.post('/ajax/kids/vote',params,handler,'json');
-
-				  return false;
-
-			  });
-		  });
+			upDownVoting.init({
+				element: '.kid',
+				id: 'data-kid-id',
+				url: '/ajax/kids/vote'
+			});
+		});
 	</script>
 
 {% endblock %}
@@ -112,7 +48,7 @@
 			<div class="pics">
 				<a href="/kid/{{ kid.id }}"><img src="{{ photo.url }}" alt="{{ kid.name|e }}" width="{{ photo.width }}" height="{{ photo.height }}"/></a>
 			</div>
-			<div class="stats">
+			<div class="b-right-stats">
 				<div class="vote">
 					<div class="col b-firm-grad">{{ kid.votes }}</div>
 					<div class="btn-wrap">

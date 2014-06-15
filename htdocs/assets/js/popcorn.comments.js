@@ -1,6 +1,7 @@
 var IM = {
 
     sel : {},
+    config : {},
 
     prepare : function(){
         rangy.init();
@@ -16,12 +17,14 @@ var IM = {
             sendButton    : $('.b-new-message-box__send-button',this.sel.wrapper),
             smileToggle   : $('.b-new-message-box__smile-toogle',this.sel.wrapper),
             smilesBar     : $('.b-smiles-bar')
-
-
         };
-
-
     },
+
+    generateEmoji : function(){
+        emojify.run(this.sel.comments.get(0));
+        emojify.run(this.sel.smilesBar.get(0));
+    },
+
     placeCaretAtEnd : function(el){
         el.focus();
 
@@ -56,8 +59,7 @@ var IM = {
         range.collapseAfter(clone);
         sel.setSingleRange(range);
 
-        this.sel.editor.focus();
-
+        IM.sel.editor.focus();
 
         clone.onmousedown = function (event) {
             event = event || window.event;
@@ -68,309 +70,115 @@ var IM = {
      * Сброс формы отправки в изначальное состояние
      */
     resetForm : function(){
-        this.sel.wrapper.attr({
+        IM.sel.wrapper.attr({
             'data-reply': 0,
             'data-level-id': 0
         });
 
-        this.sel.editor.text('');
-        this.sel.attachBar.html('');
-        this.sel.editorWrapper.removeClass('b-new-message-box__message-container__attach-tab');
+        IM.sel.editor.text('');
+        IM.sel.attachBar.html('');
+        IM.sel.editorWrapper.removeClass('b-new-message-box__message-container__attach-tab');
     },
     blockForm : function(callback){
 
-        $this = this;
-
         var handler = function(){
-            $this.sel.editor.css('cursor', 'progress').attr('contenteditable', false);
-            $this.sel.attachButton.attr('disabled', true);
-            $this.sel.sendButton.attr('disabled', true);
+            IM.sel.editor.css('cursor', 'progress').attr('contenteditable', false);
+            IM.sel.attachButton.attr('disabled', true);
+            IM.sel.sendButton.attr('disabled', true);
 
             if (typeof callback != 'undefined') {
                 callback();
             }
         };
 
-        this.sel.wrapper.stop().animate({opacity: 0.5}, 'fast', handler);
+        IM.sel.wrapper.stop().animate({opacity: 0.5}, 'fast', handler);
     },
     unblockForm : function(callback){
 
-        $this = this;
-
         var handler = function(){
-            $this.sel.editor.css('cursor', 'default').attr('contenteditable', true);
-            $this.sel.attachButton.attr('disabled', false);
-            $this.sel.sendButton.attr('disabled', false);
+            IM.sel.editor.css('cursor', 'default').attr('contenteditable', true);
+            IM.sel.attachButton.attr('disabled', false);
+            IM.sel.sendButton.attr('disabled', false);
 
             if (typeof callback != 'undefined') {
                 callback();
             }
         };
 
-        this.sel.wrapper.stop().animate({opacity: 1}, 'fast', handler);
+        IM.sel.wrapper.stop().animate({opacity: 1}, 'fast', handler);
     },
 
+    removeComment : function(comment){
 
+        var params = {
+            commentId : comment.attr('data-comment-id'),
+            entity    : IM.config['entity'],
+            entityId  : IM.config['entityId']
+        };
 
-    interceptPaste : function(){
-        this.sel.editor.on('paste',function(e){
+        var handler = function (response) {
 
-            e.preventDefault();
+            comment.fadeOut('fast', function () {
+                var nick = comment.find('a.nick-name').text();
 
-            var text;
-            var clp = (e.originalEvent || e).clipboardData;
-            if (clp === undefined || clp === null) {
-                text = window.clipboardData.getData("text") || "";
-                if (text !== "") {
-                    if (window.getSelection) {
-                        var newNode = document.createElement("span");
-                        newNode.innerHTML = text;
-                        window.getSelection().getRangeAt(0).insertNode(newNode);
-                    } else {
-                        document.selection.createRange().pasteHTML(text);
-                    }
-                }
-            } else {
-                text = clp.getData('text/plain') || "";
-                if (text !== "") {
-                    document.execCommand('insertText', false, text);
-                }
-            }
-        });
+                comment.addClass('b-comment-deleted').html('X&nbsp;<strong>' + nick + '</strong>&mdash;комментарий удален').show();
+            });
+        };
+
+        $.post('/ajax/comment/remove', params, handler, 'json');
     },
 
-    /**
-     * Удаление коммента
-     */
-    removeComment : function(){
-        this.sel.comments.on('click', '.comment .comment-delete a', function () {
-
-            $this = $(this).closest('.b-comment');
-
-            var params = {
-                commentId: $this.attr('data-comment-id'),
-                entity: commentSetup['entity'],
-                entityId: commentSetup['entityId']
-            };
-
-            var handler = function (response) {
-
-                $this.fadeOut('fast', function () {
-                    var nick = $this.find('a.nick-name').text();
-
-                    $this.addClass('b-comment-deleted').html('X&nbsp;<strong>' + nick + '</strong>&mdash;комментарий удален').show();
-                });
-            };
-
-            $.post('/ajax/comment/delete', params, handler, 'json');
-
-            return false;
-        });
-    },
     /**
      * Ответ на коммент
      */
-    replyComment : function(){
-        this.sel.comments.on('click', '.comment .comment-reply a', function () {
-            $this = $(this);
+    replyComment : function($comment){
 
-            var commentId = $(this).closest('.b-comment').data('comment-id');
+        var commentId = $comment.closest('.b-comment').data('comment-id');
 
-            this.sel.wrapper.fadeOut('fast', function () {
-                element.attr('data-reply-to', commentId);
-                element.fadeIn('fast');
-                $this.closest('.b-comment').append(this.sel.wrapper);
+        IM.sel.wrapper.fadeOut('fast', function () {
+            IM.sel.wrapper.attr('data-reply-to', commentId);
+            IM.sel.wrapper.fadeIn('fast');
+            $comment.closest('.b-comment').append(IM.sel.wrapper);
 
-                $('.b-comments__new-comment').show(function(){
-                    this.sel.editor.focus();
-                });
+            $('.b-comments__new-comment').show(function(){
+                IM.sel.editor.focus();
             });
-
-            return false;
         });
+
+
     },
     /**
      * Написание коммента первого уровня
      */
     addComment : function(){
-        this.sel.addComment.on('click', function () {
-            this.sel.wrapper.attr({
-                'data-reply-to': 0,
-                'data-level-id': 0
-            });
 
-            var par = $(this).parent();
-
-            par.hide();
-            par.after(this.sel.wrapper);
-            this.sel.wrapper.show(function(){
-                messageBox.focus();
-            });
-
-            return false;
-        });
     },
     addSmile : function(smile){
-        var range = getSelectedRangeWithin(this.sel.editor.get(0));
+        var range = this.getSelectedRangeWithin(IM.sel.editor.get(0));
 
         if (range) {
-            pasteSmile(range, smile);
+            IM.pasteSmile(range, smile);
         } else {
-            var endRange = placeCaretAtEnd(this.sel.editor.get(0));
-            pasteSmile(endRange, smile);
+            var endRange = IM.placeCaretAtEnd(IM.sel.editor.get(0));
+            IM.pasteSmile(endRange, smile);
         }
     },
-    /**
-     * Отправляем коммент
-     */
-    sendComment : function(){
-        this.sel.sendButton.on('click', function () {
-
-            var $sendButton = $(this);
-            var $commentsBox = $('.b-comments');
-
-            var parent = $sendButton.closest('.b-new-message-box');
-            var contentArea = parent.find('.b-new-message-box__message').clone();
-
-            var images = [];
-
-            parent.find('.b-new-message-box__attach-item').each(function () {
-                images.push($(this).data('image-id'));
-            });
-
-            contentArea.find('img').each(function(){
-                $(this).replaceWith($(this).attr('title'));
-            });
-
-            var params = {
-                content: htmlToText(contentArea.html()),
-                images: images,
-                entity: commentSetup['entity'],
-                replyTo: parent.attr('data-reply-to'),
-                entityId: commentSetup['entityId']
-            };
-
-            $sendButton.addClass('b-new-message-box__send-button__loading').val('');
-
-            this.blockForm();
-
-            blockNewCommentEdit();
-
-            var handler = function (response) {
-                $('.b-smiles-bar').fadeOut('fast');
-
-                if (response.status == 'success') {
-
-                    var from = response.replyTo;
-                    var comments = $('.b-comments ul li');
-                    var it;
-                    var current = {};
-
-                    comments.each(function (index, element) {
-                        if ($(element).data('comment-id') == from) {
-                            it = index;
-
-                            current['from'] = index;
-                            current['level'] = $(element).data('level');
-
-                        } else if ($(element).data('level') != current['level']) {
-                            return false;
-                        }
-                    });
-
-                    parent.fadeOut('fast', function () {
-
-                        //Отвечаем на коммент
-                        if (params.replyTo > 0) {
-
-                            var $parentComment = $('.b-comment[data-comment-id=' + response.replyTo + ']', $commentsBox);
-                            var $lastChild = $parentComment.nextAll('.b-comment[data-reply-to=' + response.replyTo + ']:last');
-
-                            //Мы - первые отвечаем
-                            if (!$lastChild.length) {
-                                $parentComment.after(response.comment);
-                                //Есть еще комменты..
-                            } else {
-                                var $lastChildChild = $('.b-comment[data-reply-to=' + $lastChild.attr('data-comment-id') + ']:last');
-
-                                //Возможно у последнего найденного коммента есть вложенные
-                                if ($lastChildChild.length) {
-                                    $lastChildChild.after(response.comment);
-                                    //Последний коммент одинок ;(
-                                } else {
-                                    $lastChild.after(response.comment);
-                                }
-                            }
-                        } else {
-                            //Коммент первого уровня (не отвечаем)
-                            $('.b-comments ul').append(response.comment);
-                        }
-
-                        var $newComment = $('.b-comment[data-comment-id='+ response.id +']');
-
-                        emojify.run($newComment.get(0));
-
-                        //Коммент вставили, подсветим его (обратим внимание пользователя)
-                        $('body,html')
-                            .animate({scrollTop:$newComment.offset().top-30},'fast')
-                            .promise()
-                            .done(function(){
-                                $newComment.effect('highlight',{color:'#eed8e3'},3500);
-                            });
-
-
-                        $(response.comment).remove();
-                        parent.find('.b-new-message-box').html('');
-
-                        if (params.replyTo > 0) {
-                            $('.b-comments__new-comment').after(parent);
-                        } else {
-                            parent.show();
-                        }
-
-                        $sendButton.removeClass('b-new-message-box__send-button__loading').val('отправить');
-
-                        this.resetForm();
-                        this.unblockForm();
-                    });
-                }
-            };
-
-            $.post('/ajax/comment/send', params, handler, 'json');
-
-        });
-    },
-    /**
-     * Удаление аттача
-     */
-    removeAttach : function(){
-        this.sel.wrapper.on('click', '.b-new-message-box__attach-item', function () {
-            $(this).fadeOut('fast', function () {
-                $(this).remove();
-
-                if (this.sel.attachBar.find('div').length == 0) {
-                    this.sel.editorWrapper.removeClass('b-new-message-box__message-container__attach-tab');
-                }
-            });
-            return false;
-        });
-    },
     commentLike : function(){
-        this.sel.comments.on('click', '.comment .comment-like .like', function () {
+        IM.sel.comments.on('click', '.comment .comment-like .like', function () {
             alert('like');
         });
     },
     commentDislike : function(){
-        this.sel.comments.on('click', '.comment .comment-like .dislike', function () {
+        IM.sel.comments.on('click', '.comment .comment-like .dislike', function () {
             alert('dislike');
         });
     },
-    showSmileBar : function(){
+    showSmilesBar : function(){
 
-        var $width = this.sel.wrapper.width();
-        var $offset = this.sel.wrapper.offset();
+        var $width = IM.sel.wrapper.width();
+        var $offset = IM.sel.wrapper.offset();
 
-        this.sel.smilesBar
+        IM.sel.smilesBar
             .css({
                 'width': $width,
                 'top': $offset.top - 156 + 'px',
@@ -388,21 +196,16 @@ var IM = {
             .end()
             .fadeIn('fast');
     },
-    closeSmileBar : function(){
-        $('.b-smiles-bar__close').on('click', function () {
-            $('.b-smiles-bar').fadeOut('fast');
-        });
+    closeSmilesBar : function(){
+        IM.sel.smilesBar.fadeOut('fast');
     },
     bind : function(){
-        $this = this;
 
         return {
             uploader  : function(){
-                var $this = this;
-
                 var uploader = new plupload.Uploader({
                     runtimes: 'html5,flash,silverlight,html4',
-                    browse_button: $this.sel.attachButton.attr('id'),
+                    browse_button: IM.sel.attachButton.attr('id'),
                     container: 'global-search-results',
                     max_file_size: '10mb',
                     unique_names: true,
@@ -414,7 +217,7 @@ var IM = {
                     silverlight_xap_url: '/assets/res/plupload-2.1.1/js/Moxie.xap',
 
                     filters: [
-                        {title: "Image files", extensions: "jpg,jpeg,gif,png"},
+                        {title: "Image files", extensions: "jpg,jpeg,gif,png"}
                     ],
 
                     init: {
@@ -426,17 +229,17 @@ var IM = {
                         },
                         UploadComplete: function (up, files) {
 
-                            $this.unblockForm(function () {
-                                $this.sel.attachBar.find('div[data-type=loader]').remove();
+                            IM.unblockForm(function () {
+                                IM.sel.attachBar.find('div[data-type=loader]').remove();
                             });
 
                         },
                         BeforeUpload: function (up, file) {
 
-                            $this.sel.editorWrapper.addClass('b-new-message-box__message-container__attach-tab');
+                            IM.sel.editorWrapper.addClass('b-new-message-box__message-container__attach-tab');
 
-                            $this.blockForm(function () {
-                                $this.sel.attachBar.append('<div class="b-new-message-box__attach-item" data-type="loader"><img src="/assets/img/loaders/circle.gif" /></div>');
+                            IM.blockForm(function () {
+                                IM.sel.attachBar.append('<div class="b-new-message-box__attach-item" data-type="loader"><img src="/assets/img/loaders/circle.gif" /></div>');
                             });
 
                         },
@@ -448,7 +251,7 @@ var IM = {
 
                             var data = $.parseJSON(object.response);
 
-                            $this.sel.attachBar
+                            IM.sel.attachBar
                                 .append('<div class="b-new-message-box__attach-item" data-image-id="' + data.id + '"><img src="' + data.result.url + '" height="30" /></div>')
                                 .end()
                                 .find('div[data-type=loader]:last').remove()
@@ -470,7 +273,7 @@ var IM = {
 
                     var maxfiles = 10;
 
-                    var filesAlready = $this.sel.attachBar.find('div').length;
+                    var filesAlready = IM.sel.attachBar.find('div').length;
 
                     if (filesAlready >= maxfiles) {
                         return false;
@@ -490,34 +293,227 @@ var IM = {
                 uploader.init();
             },
             smilesBar : function(){
-                $this.sel.smileToggle.on('click', function (e) {
-                    e.preventDefault();
-                    $this.showSmileBar();
+                IM.sel.smileToggle.on('click', function () {
+                    IM.showSmilesBar();
+                    return false;
+                });
+
+                $('.b-smiles-bar__close').on('click', function () {
+                    IM.closeSmilesBar();
+                    return false;
                 });
             },
             smiles    : function(){
-                $this.sel.smilesBar.on('click', '.b-smiles-bar__smiles img', function (e) {
-                    $this.addSmile($(this));
+                IM.sel.smilesBar.on('click', '.b-smiles-bar__smiles img', function (e) {
+                    IM.addSmile($(this));
+                });
+            },
+            interceptPaste : function(){
+                IM.sel.editor.on('paste',function(e){
+
+                    e.preventDefault();
+
+                    var text;
+                    var clp = (e.originalEvent || e).clipboardData;
+                    if (clp === undefined || clp === null) {
+                        text = window.clipboardData.getData("text") || "";
+                        if (text !== "") {
+                            if (window.getSelection) {
+                                var newNode = document.createElement("span");
+                                newNode.innerHTML = text;
+                                window.getSelection().getRangeAt(0).insertNode(newNode);
+                            } else {
+                                document.selection.createRange().pasteHTML(text);
+                            }
+                        }
+                    } else {
+                        text = clp.getData('text/plain') || "";
+                        if (text !== "") {
+                            document.execCommand('insertText', false, text);
+                        }
+                    }
+                });
+            },
+            addComment : function(){
+                IM.sel.addComment.on('click', function () {
+                    IM.sel.wrapper.attr({
+                        'data-reply-to': 0,
+                        'data-level-id': 0
+                    });
+
+                    var par = $(this).parent();
+
+                    par.hide();
+                    par.after(IM.sel.wrapper);
+                    IM.sel.wrapper.show(function(){
+                        IM.sel.editor.focus();
+                    });
+
+                    return false;
+                });
+            },
+            removeComment : function(){
+
+                IM.sel.comments.on('click', '.comment .comment-delete a', function () {
+
+                    $comment = $(this).closest('.b-comment');
+
+                    IM.removeComment($comment);
+
+                    return false;
+                });
+            },
+            replyComment : function(){
+                IM.sel.comments.on('click', '.comment .comment-reply a', function () {
+                    IM.replyComment($(this));
+
+                    return false;
+                });
+            },
+            sendComment : function(){
+                IM.sel.sendButton.on('click', function () {
+
+                    var $sendButton = $(this);
+                    var $commentsBox = $('.b-comments');
+
+                    var parent = $sendButton.closest('.b-new-message-box');
+                    var contentArea = parent.find('.b-new-message-box__message').clone();
+
+                    var images = [];
+
+                    parent.find('.b-new-message-box__attach-item').each(function () {
+                        images.push($(this).data('image-id'));
+                    });
+
+                    contentArea.find('img').each(function(){
+                        $(this).replaceWith($(this).attr('title'));
+                    });
+
+                    var params = {
+                        content: htmlToText(contentArea.html()),
+                        images: images,
+                        entity: IM.config['entity'],
+                        replyTo: parent.attr('data-reply-to'),
+                        entityId: IM.config['entityId']
+                    };
+
+                    $sendButton.addClass('b-new-message-box__send-button__loading').val('');
+
+                    IM.blockForm();
+
+                    var handler = function (response) {
+                        IM.sel.smilesBar.fadeOut('fast');
+
+                        if (response.status == 'success') {
+
+                            var from = response.replyTo;
+                            var comments = IM.sel.comments.find('ul li');
+                            var it;
+                            var current = {};
+
+                            comments.each(function (index, element) {
+                                if ($(element).data('comment-id') == from) {
+                                    it = index;
+
+                                    current['from'] = index;
+                                    current['level'] = $(element).data('level');
+
+                                } else if ($(element).data('level') != current['level']) {
+                                    return false;
+                                }
+                            });
+
+                            parent.fadeOut('fast', function () {
+
+                                //Отвечаем на коммент
+                                if (params.replyTo > 0) {
+
+                                    var $parentComment = $('.b-comment[data-comment-id=' + response.replyTo + ']', $commentsBox);
+                                    var $lastChild = $parentComment.nextAll('.b-comment[data-reply-to=' + response.replyTo + ']:last');
+
+                                    //Мы - первые отвечаем
+                                    if (!$lastChild.length) {
+                                        $parentComment.after(response.comment);
+                                        //Есть еще комменты..
+                                    } else {
+                                        var $lastChildChild = $('.b-comment[data-reply-to=' + $lastChild.attr('data-comment-id') + ']:last');
+
+                                        //Возможно у последнего найденного коммента есть вложенные
+                                        if ($lastChildChild.length) {
+                                            $lastChildChild.after(response.comment);
+                                            //Последний коммент одинок ;(
+                                        } else {
+                                            $lastChild.after(response.comment);
+                                        }
+                                    }
+                                } else {
+                                    //Коммент первого уровня (не отвечаем)
+                                    IM.sel.comments.find('ul').append(response.comment);
+                                }
+
+                                var $newComment = $('.b-comment[data-comment-id='+ response.id +']');
+
+                                emojify.run($newComment.get(0));
+
+                                //Коммент вставили, подсветим его (обратим внимание пользователя)
+                                $('body,html')
+                                    .animate({scrollTop:$newComment.offset().top-30},'fast')
+                                    .promise()
+                                    .done(function(){
+                                        $newComment.effect('highlight',{color:'#eed8e3'},3500);
+                                    });
+
+
+                                $(response.comment).remove();
+                                parent.find('.b-new-message-box').html('');
+
+                                if (params.replyTo > 0) {
+                                    $('.b-comments__new-comment').after(parent);
+                                } else {
+                                    parent.show();
+                                }
+
+                                $sendButton.removeClass('b-new-message-box__send-button__loading').val('отправить');
+
+                                IM.resetForm();
+                                IM.unblockForm();
+                            });
+                        }
+                    };
+
+                    $.post('/ajax/comment/send', params, handler, 'json');
+
+                });
+            },
+
+
+
+            removeAttach : function(){
+                IM.sel.wrapper.on('click', '.b-new-message-box__attach-item', function () {
+                    $(this).fadeOut('fast', function () {
+                        $(this).remove();
+
+                        if (IM.sel.attachBar.find('div').length == 0) {
+                            IM.sel.editorWrapper.removeClass('b-new-message-box__message-container__attach-tab');
+                        }
+                    });
+                    return false;
                 });
             }
 
         };
     },
-    init : function(){
+    init : function(config){
 
-        this.prepare();
-
-        $this = this;
-
-        emojify.run($('.b-comments').get(0));
-        emojify.run($('.b-smiles-bar').get(0));
+        IM.config = config;
+        IM.prepare();
 
         if (navigator.userAgent.match(/opera/i)) {
             var st;
 
-            $this.sel.editor.on('focus',function () {
+            IM.sel.editor.on('focus',function () {
                 st = setTimeout(function () {
-                    $this.sel.editor.blur().focus();
+                    IM.sel.editor.blur().focus();
                     clearInterval(st);
                 }, 10);
             }).focusout(function () {
@@ -530,16 +526,16 @@ var IM = {
         } catch (ex) {
         }
 
+        IM.bind().uploader();
+        IM.bind().smilesBar();
+        IM.bind().smiles();
+        IM.bind().interceptPaste();
 
-
-
-        this.bind.uploader();
-        this.bind.smilesBar();
-        this.bind.smiles();
+        IM.bind().addComment();
+        IM.bind().removeComment();
+        IM.bind().replyComment();
+        IM.bind().sendComment();
+        IM.bind().removeAttach();
 
     }
 };
-
-$(function () {
-    IM.init();
-});

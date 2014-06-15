@@ -113,7 +113,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 		$this
 			->getSlim()
-			->post('/ajax/comment/delete', [$this, 'commentDelete']);
+			->post('/ajax/comment/remove', [$this, 'commentRemove']);
 
 
 		$this
@@ -520,7 +520,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 	public function kidsVote() {
 
-		$kidId = $this->getSlim()->request()->post('kidId');
+		$kidId = $this->getSlim()->request()->post('entityId');
 		$vote = $this->getSlim()->request()->post('vote');
 
 		$kid = KidFactory::get($kidId);
@@ -827,7 +827,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 	}
 
-	public function commentDelete() {
+	public function commentRemove() {
 
 		try {
 
