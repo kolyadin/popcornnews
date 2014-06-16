@@ -112,8 +112,7 @@ var IM = {
 
         var params = {
             commentId : comment.attr('data-comment-id'),
-            entity    : IM.config['entity'],
-            entityId  : IM.config['entityId']
+            entity    : IM.config['entity']
         };
 
         var handler = function (response) {
@@ -394,11 +393,12 @@ var IM = {
                     });
 
                     var params = {
-                        content: htmlToText(contentArea.html()),
-                        images: images,
-                        entity: IM.config['entity'],
-                        replyTo: parent.attr('data-reply-to'),
-                        entityId: IM.config['entityId']
+                        content   : htmlToText(contentArea.html()),
+                        images    : images,
+                        entity    : IM.config['entity'],
+                        replyTo   : parent.attr('data-reply-to'),
+                        entityId  : IM.config['entityId'],
+                        subscribe : IM.sel.wrapper.find('input[name=subscribe]').prop('checked') ? 1 : 0
                     };
 
                     $sendButton.addClass('b-new-message-box__send-button__loading').val('');
@@ -489,9 +489,6 @@ var IM = {
 
                 });
             },
-
-
-
             removeAttach : function(){
                 IM.sel.wrapper.on('click', '.b-new-message-box__attach-item', function () {
                     $(this).fadeOut('fast', function () {

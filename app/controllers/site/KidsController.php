@@ -2,6 +2,7 @@
 
 namespace popcorn\app\controllers\site;
 
+use popcorn\app\controllers\ControllerAjaxInterface;
 use popcorn\app\controllers\ControllerInterface;
 use popcorn\app\controllers\GenericController;
 use popcorn\lib\mmc\MMC;
@@ -37,11 +38,14 @@ class KidsController extends GenericController implements ControllerInterface {
 	public function registerIf() {
 		$request = $this->getSlim()->request;
 
-		if ($request->getMethod() != 'GET') {
+		if (!in_array($request->getMethod(), ['GET', 'POST'])) {
 			return false;
 		}
 
-		if (preg_match('!(\/kids|\/kids\/page[1-9][0-9]*)|\/kid\/[1-9][0-9]*!', $request->getPath())) {
+		if (
+			preg_match('!(\/kids|\/kids\/page[1-9][0-9]*)|\/kid\/[1-9][0-9]*!', $request->getPath()) ||
+			$request->getPath() == '/ajax/im/kid'
+		) {
 			return true;
 		}
 
@@ -80,13 +84,13 @@ class KidsController extends GenericController implements ControllerInterface {
 //		$cacheKey = MMC::genKey('kid', $kidId, 'html-comments');
 //		$commentsHtml = MMC::getSet($cacheKey, strtotime('+1 month'), function () use ($kidId) {
 
-			$comments = (new KidCommentDataMap())->getAllComments($kidId);
+		$comments = (new KidCommentDataMap())->getAllComments($kidId);
 
 		$commentsHtml = $this
-				->getTwig()
-				->render('/comments/Comments.twig', [
-					'comments' => $comments
-				]);
+			->getTwig()
+			->render('/comments/Comments.twig', [
+				'comments' => $comments
+			]);
 //		});
 
 		$this

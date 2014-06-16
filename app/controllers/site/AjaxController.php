@@ -6,6 +6,8 @@ use popcorn\app\controllers\GenericController;
 use popcorn\lib\RuHelper;
 use popcorn\lib\SphinxHelper;
 
+use popcorn\model\comments\Comment;
+use popcorn\model\comments\CommentFactory;
 use popcorn\model\comments\FanFicComment;
 use popcorn\model\comments\KidComment;
 use popcorn\model\comments\MeetComment;
@@ -97,15 +99,6 @@ class AjaxController extends GenericController implements ControllerInterface {
 		$this
 			->getSlim()
 			->post('/ajax/messages/find-recipient', [$this, 'findRecipient']);
-
-		$this
-			->getSlim()
-			->post('/ajax/comment/kids/send', [$this, 'commentKidSend']);
-
-		$this
-			->getSlim()
-			->post('/ajax/comment/kids/delete', [$this, 'commentKidDelete']);
-
 
 		$this
 			->getSlim()
@@ -654,97 +647,10 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 	}
 
-	public function commentKidSend() {
-
-		try {
-
-			$currentUser = UserFactory::getCurrentUser();
-
-			if ($currentUser instanceof GuestUser) {
-				throw new NotAuthorizedException();
-			}
-
-			$content = $this->getSlim()->request()->post('content');
-			$type = $this->getSlim()->request()->post('type');
-			$replyTo = $this->getSlim()->request()->post('replyTo');
-			$kidId = $this->getSlim()->request()->post('kidId');
-			$images = $this->getSlim()->request()->post('images');
-
-			$dataMap = new KidsCommentDataMap();
-
-			$comment = new CommentKid();
-			$comment->setOwner($currentUser);
-
-			if ($replyTo > 0) {
-				$comment->setParent($dataMap->findById($replyTo));
-			}
-
-			if (count($images)) {
-				foreach ($images as $imageId) {
-					$comment->setImage(ImageFactory::getImage($imageId));
-				}
-			}
-
-			$comment->setKidId($kidId);
-			$comment->setContent($content);
-			$dataMap->save($comment);
-
-			$lastComment = $dataMap->getLastComment($kidId);
-
-			$this->getApp()->exitWithJsonSuccessMessage([
-				'comment' => $this->getTwig()->render('/comments/Comment.twig', [
-					'comment'        => $lastComment,
-					'forceImageLoad' => true
-				]),
-				'replyTo' => $replyTo,
-				'level'   => $lastComment->getLevel(),
-				'id'      => $lastComment->getId()
-			]);
-
-
-		} catch (AjaxException $e) {
-			$e->exitWithJsonException();
-		}
-
-	}
-
-	public function commentKidDelete() {
-
-		try {
-
-			$currentUser = UserFactory::getCurrentUser();
-
-			if ($currentUser instanceof GuestUser) {
-				throw new NotAuthorizedException();
-			}
-
-			$dataMap = new KidsCommentDataMap();
-
-			$commentId = $this->getSlim()->request()->post('commentId');
-
-			/** @var CommentKid $comment */
-			$comment = $dataMap->findById($commentId);
-
-			if ($comment->getOwner()->getId() != $currentUser->getId()) {
-				throw new NotAuthorizedException();
-			}
-
-			$comment->setDeleted(true);
-			$dataMap->save($comment);
-
-			$this->getApp()->exitWithJsonSuccessMessage([
-				'owner' => $comment->getOwner()->getId()
-			]);
-
-
-		} catch (AjaxException $e) {
-			$e->exitWithJsonException();
-		}
-
-	}
-
 	public function commentSend() {
 
+		$request = $this->getSlim()->request;
+
 		try {
 
 			$currentUser = UserFactory::getCurrentUser();
@@ -753,69 +659,44 @@ class AjaxController extends GenericController implements ControllerInterface {
 				throw new NotAuthorizedException();
 			}
 
-			$content = $this->getSlim()->request()->post('content');
-			$entity = $this->getSlim()->request()->post('entity');
-			$replyTo = $this->getSlim()->request()->post('replyTo');
-			$entityId = $this->getSlim()->request()->post('entityId');
-			$images = $this->getSlim()->request()->post('images');
+			$data = [
+				'content'   => $request->post('content'),
+				'entity'    => $request->post('entity'),
+				'entityId'  => $request->post('entityId'),
+				'replyTo'   => $request->post('replyTo'),
+				'images'    => $request->post('images'),
+				'subscribe' => $request->post('subscribe')
+			];
 
-			if ($entity == 'kids') {
-				$dataMap = new KidCommentDataMap();
-				$comment = new KidComment();
-			} elseif ($entity == 'topics') {
-				$dataMap = new TopicCommentDataMap();
-				$comment = new CommentTopic();
-			} elseif ($entity == 'meetings') {
-				$dataMap = new MeetCommentDataMap();
-				$comment = new MeetComment();
-			} elseif ($entity == 'news') {
-				$dataMap = new NewsCommentDataMap();
-				$comment = new NewsPostComment();
-			} elseif ($entity == 'photoarticle') {
-				$dataMap = new PhotoArticleCommentDataMap();
-				$comment = new PhotoArticleComment();
-			} elseif ($entity == 'fanfics') {
-				$dataMap = new FanFicCommentDataMap();
-				$comment = new FanFicComment();
-			}
+			{
+				$comment = new Comment();
+				$comment->setEntityId($data['entityId']);
+				$comment->setOwner($currentUser);
 
-			$comment->setOwner($currentUser);
-
-			if ($replyTo > 0) {
-				$comment->setParent($dataMap->findById($replyTo));
-			}
-
-			if (count($images)) {
-				foreach ($images as $imageId) {
-					$comment->setImage(ImageFactory::getImage($imageId));
+				if ($data['replyTo'] > 0) {
+					$comment->setParent(CommentFactory::getComment($data['entity'], $data['replyTo']));
 				}
+
+				$comment->setContent($data['content']);
+
+				if (count($data['images'])) {
+					foreach ($data['images'] as $imageId) {
+						$comment->setImage(ImageFactory::getImage($imageId));
+					}
+				}
+
+				$comment->setExtra('subscribe',$data['subscribe']);
 			}
 
-			if ($entity == 'kids') {
-				$comment->setKidId($entityId);
-			} elseif ($entity == 'meetings') {
-				$comment->setMeetId($entityId);
-			} elseif ($entity == 'news') {
-				$comment->setPostId($entityId);
-			} elseif ($entity == 'topics') {
-				$comment->setTopicId($entityId);
-			} elseif ($entity == 'photoarticle') {
-				$comment->setPostId($entityId);
-			} elseif ($entity == 'fanfics') {
-				$comment->setFanFicId($entityId);
-			}
+			CommentFactory::saveComment($data['entity'], $comment);
 
-			$comment->setContent($content);
-			$dataMap->save($comment);
-
-			$lastComment = $dataMap->getLastComment($entityId);
+			$lastComment = CommentFactory::getLastComment($data['entity'], $data['entityId']);
 
 			$this->getApp()->exitWithJsonSuccessMessage([
 				'comment' => $this->getTwig()->render('/comments/Comment.twig', [
-					'comment'        => $lastComment,
-					'forceImageLoad' => true
+					'comment' => $lastComment,
 				]),
-				'replyTo' => $replyTo,
+				'replyTo' => $data['replyTo'],
 				'level'   => $lastComment->getLevel(),
 				'id'      => $lastComment->getId()
 			]);
@@ -829,6 +710,8 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 	public function commentRemove() {
 
+		$request = $this->getSlim()->request;
+
 		try {
 
 			$currentUser = UserFactory::getCurrentUser();
@@ -837,33 +720,20 @@ class AjaxController extends GenericController implements ControllerInterface {
 				throw new NotAuthorizedException();
 			}
 
-			$entity = $this->getSlim()->request()->post('entity');
-			$commentId = $this->getSlim()->request()->post('commentId');
+			$data = [
+				'entity'    => $request->post('entity'),
+				'commentId' => $request->post('commentId')
+			];
 
-			switch ($entity) {
-				case 'news':
-					$dataMap = new NewsCommentDataMap();
-					break;
-				case 'kids':
-					$dataMap = new KidCommentDataMap();
-					break;
-				case 'meetings':
-					$dataMap = new MeetCommentDataMap();
-					break;
-				case 'photoarticle':
-					$dataMap = new PhotoArticleCommentDataMap();
-					break;
-			}
-
-			/** @var \popcorn\model\comments\Comment $comment */
-			$comment = $dataMap->findById($commentId);
+			$comment = CommentFactory::getComment($data['entity'], $data['commentId']);
 
 			if ($comment->getOwner()->getId() != $currentUser->getId()) {
 				throw new NotAuthorizedException();
 			}
 
 			$comment->setDeleted(true);
-			$dataMap->save($comment);
+
+			CommentFactory::saveComment($data['entity'], $comment);
 
 			$this->getApp()->exitWithJsonSuccessMessage([
 				'owner' => $comment->getOwner()->getId()

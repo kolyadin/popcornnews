@@ -2,10 +2,14 @@
 
 namespace popcorn\model\dataMaps\comments;
 
+use popcorn\lib\MailHelper;
 use popcorn\lib\mmc\MMC;
 use popcorn\model\content\ImageFactory;
 use popcorn\model\dataMaps\DataMap;
 use popcorn\model\comments\Comment;
+use popcorn\model\dataMaps\UserDataMap;
+use popcorn\model\system\users\User;
+use popcorn\model\system\users\UserFactory;
 
 class CommentDataMap extends DataMap {
 
@@ -33,9 +37,9 @@ class CommentDataMap extends DataMap {
 
 	public function __construct() {
 
-		parent::__construct();
+		$this->class = "popcorn\\model\\comments\\Comment";
 
-		$this->class = "popcorn\\model\\im\\Comment";
+		parent::__construct();
 
 		$this->initStatements();
 
@@ -43,10 +47,13 @@ class CommentDataMap extends DataMap {
 
 	protected function initStatements() {
 		$this->insertStatement =
-			$this->prepare("INSERT INTO pn_comments_{$this->tablePrefix} (entityId, createdAt, owner, parent, content, editDate, ip, abuse, deleted, level, votesUp, votesDown) VALUES (:entityId, :createdAt, :owner, :parent, :content, :editDate, :ip, :abuse, :deleted, :level, :votesUp, :votesDown)");
+			$this->prepare("INSERT INTO pn_comments_{$this->tablePrefix}
+			(entityId, createdAt, owner, parent, content, editDate, ip, abuse, deleted, level, votesUp, votesDown) VALUES
+			(:entityId, :createdAt, :owner, :parent, :content, :editDate, :ip, :abuse, :deleted, :level, :votesUp, :votesDown)");
 
 		$this->updateStatement =
-			$this->prepare("UPDATE pn_comments_{$this->tablePrefix} SET entityId=:entityId, createdAt=:createdAt, owner=:owner, parent=:parent, content=:content, editDate=:editDate, ip=:ip, abuse=:abuse, deleted=:deleted, level=:level, votesUp=:votesUp, votesDown=:votesDown WHERE id=:id");
+			$this->prepare("UPDATE pn_comments_{$this->tablePrefix} SET entityId=:entityId, createdAt=:createdAt, owner=:owner,
+			parent=:parent, content=:content, editDate=:editDate, ip=:ip, abuse=:abuse, deleted=:deleted, level=:level, votesUp=:votesUp, votesDown=:votesDown WHERE id=:id");
 
 		$this->deleteStatement = $this->prepare("DELETE FROM pn_comments_{$this->tablePrefix} WHERE id=:id");
 
@@ -107,6 +114,18 @@ class CommentDataMap extends DataMap {
 	 */
 	protected function onInsert($item) {
 		$this->attachImages($item);
+
+		if ((int)$item->getExtra('subscribe')) {
+			$subscribed = $this->isSubscribed($item->getEntityId(), UserFactory::getCurrentUser());
+
+			if (!$subscribed) {
+				$this->subscribe($item->getEntityId(), UserFactory::getCurrentUser());
+			}
+		} else {
+			$this->unSubscribe($item->getEntityId(), UserFactory::getCurrentUser());
+		}
+
+		$this->sendNotifyMessage($item);
 	}
 
 	/**
@@ -114,6 +133,46 @@ class CommentDataMap extends DataMap {
 	 */
 	protected function onUpdate($item) {
 		$this->attachImages($item);
+	}
+
+
+	/**
+	 * Отправляем уведомление всем подписавшимся на коммент юзверям
+	 *
+	 * @param Comment $item
+	 */
+	private function sendNotifyMessage($item) {
+
+		$mail = MailHelper::getInstance();
+
+
+
+		$users = $this->getSubscribed($item->getEntityId());
+
+		foreach ($users as $user) {
+
+			$mail->setFrom('robot@popcornnews.ru');
+			$mail->addAddress($user->getEmail());
+			$mail->Subject = sprintf('Уведомление о новом комментарии на сайте %s', $_SERVER['HTTP_HOST']);
+			$mail->msgHTML(
+				$this
+					->getApp()
+					->getTwig()
+					->render('/mail/CommentSubscribe.twig', [
+						'user' => $user
+					])
+			);
+			$mail->send();
+		}
+
+		/*sprintf(
+                '%1$s<br>Пользователь %2$s оставил новый комментарий к новости "<a href="%3$s">%4$s</a>, за которой Вы следите (<a href="%3$s">%3$s</a>)<br><br>'.
+                'Если Вы больше не хотите получать уведомления, пожалуйста, перейдите по ссылке: <a href="http://www.popcornnews.ru/unsubs/%5$s">http://www.popcornnews.ru/unsubs/%5$s</a>',
+                date('d/m/Y H:i'), $ui->user['nick'], $link, $title, $roomName
+            )
+		 */
+
+
 	}
 
 
@@ -225,12 +284,12 @@ class CommentDataMap extends DataMap {
 				$childs = $this->makeTree($element['childs']);
 			}
 
-			$cacheKey = MMC::genKey($this->class, 'comment', $element['id']);
+//			$cacheKey = MMC::genKey($this->class, 'comment', $element['id']);
 
 			/** @var \popcorn\model\comments\Comment $element */
-			$element = MMC::getSet($cacheKey, strtotime('+1 month'), function () use ($element) {
-				return $this->findById($element['id']);
-			});
+//			$element = MMC::getSet($cacheKey, strtotime('+1 month'), function () use ($element) {
+			$element = $this->findById($element['id']);
+//			});
 
 			$branch[$element->getId()] = $element;
 
@@ -291,32 +350,47 @@ class CommentDataMap extends DataMap {
 
 	/**
 	 * @param $roomId
-	 * @param $userId
+	 * @param \popcorn\model\system\users\User $user
 	 */
-	public function subscribe($roomId, $userId) {
+	public function subscribe($roomId, User $user) {
 		$this->subscribeStatement->bindParam(':entityId', $roomId);
-		$this->subscribeStatement->bindParam(':userId', $userId);
+		$this->subscribeStatement->bindParam(':userId', $user->getId());
 		$this->subscribeStatement->execute();
 	}
 
-	public function isSubscribed($roomId, $userId) {
+	/**
+	 * @param $roomId
+	 * @param \popcorn\model\system\users\User $user
+	 * @return bool
+	 */
+	public function isSubscribed($roomId, User $user) {
 		$this->isSubscribedStatement->bindValue(':entityId', $roomId);
-		$this->isSubscribedStatement->bindValue(':userId', $userId);
+		$this->isSubscribedStatement->bindValue(':userId', $user->getId());
 		$this->isSubscribedStatement->execute();
 
 		return $this->isSubscribedStatement->rowCount() > 0;
 	}
 
+	/**
+	 * @param $roomId
+	 * @return \popcorn\model\system\users\User[]
+	 */
 	public function getSubscribed($roomId) {
 		$this->subscribedStatement->bindParam(':entityId', $roomId);
 		$this->subscribedStatement->execute();
 
-		return $this->subscribedStatement->fetchAll(\PDO::FETCH_COLUMN, 0);
+		$users = [];
+
+		while ($userId = $this->subscribedStatement->fetchColumn()) {
+			$users[] = UserFactory::getUser($userId, ['with' => UserDataMap::WITH_NONE]);
+		}
+
+		return $users;
 	}
 
-	public function unSubscribe($roomId, $userId) {
+	public function unSubscribe($roomId, User $user) {
 		$this->unSubscribeStatement->bindParam(':entityId', $roomId);
-		$this->unSubscribeStatement->bindParam(':userId', $userId);
+		$this->unSubscribeStatement->bindParam(':userId', $user->getId());
 		$this->unSubscribeStatement->execute();
 
 		return $this->unSubscribeStatement->rowCount() > 0;

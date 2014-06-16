@@ -13,8 +13,6 @@ class KidCommentDataMap extends CommentDataMap {
 
 	public function __construct() {
 		parent::__construct();
-
-		$this->class = "popcorn\\model\\comments\\KidComment";
 	}
 
 	protected function initStatements() {
@@ -27,19 +25,19 @@ class KidCommentDataMap extends CommentDataMap {
 	}
 
 	/**
-	 * @param \popcorn\model\comments\KidComment $item
+	 * @param \popcorn\model\comments\Comment $comment
 	 */
-	protected function onInsert($item) {
-		parent::onInsert($item);
+	protected function onInsert($comment) {
+		parent::onInsert($comment);
 
-		$this->updateCommentsCount($item->getKidId());
-		MMC::del(MMC::genKey('kid', $item->getKidId(), 'html-comments'));
-		MMC::del(MMC::genKey($this->class, 'comment', $item->getId()));
+		$this->updateCommentsCount($comment->getEntityId());
+		MMC::del(MMC::genKey('kid', $comment->getEntityId(), 'html-comments'));
+		MMC::del(MMC::genKey($this->class, 'comment', $comment->getId()));
 
 	}
 
-	protected function onRemove($kidId) {
-		$this->updateCommentsCount($kidId);
+	protected function onRemove($commentId) {
+		$this->updateCommentsCount($commentId);
 	}
 
 	private function updateCommentsCount($kidId) {

@@ -27,6 +27,7 @@ use popcorn\app\controllers\site\YourStyleController;
 use popcorn\app\controllers\site\person\PersonController;
 use popcorn\lib\GenericHelper;
 use popcorn\lib\Middleware;
+use popcorn\model\dataMaps\DataMap;
 use popcorn\model\exceptions\Exception;
 use popcorn\model\exceptions\NotAuthorizedException;
 use popcorn\model\system\users\GuestUser;
@@ -66,6 +67,7 @@ class Popcorn extends Application {
 		}
 
 		{
+			DataMap::setApp($this);
 			GenericHelper::setApp($this);
 			GenericController::setApp($this);
 			Middleware::setApp($this);

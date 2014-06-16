@@ -8,6 +8,7 @@ namespace popcorn\model\dataMaps;
 
 use PDO;
 use PDOStatement;
+use popcorn\app\Application;
 use popcorn\lib\PDOHelper;
 use popcorn\model\exceptions\NullException;
 use popcorn\model\Model;
@@ -35,6 +36,8 @@ abstract class DataMap {
 	protected $findOneStatement = null;
 
 	static private $helper;
+
+	static private $app;
 
 	/**
 	 * @var string
@@ -84,6 +87,17 @@ abstract class DataMap {
 	 */
 	protected final function getPDO() {
 		return $this->pdo;
+	}
+
+	public final static function setApp(Application $app) {
+		self::$app = $app;
+	}
+
+	/**
+	 * @return \popcorn\app\Application
+	 */
+	public static final function getApp() {
+		return self::$app;
 	}
 
 	/**

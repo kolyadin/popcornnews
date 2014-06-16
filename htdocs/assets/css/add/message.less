@@ -87,6 +87,12 @@ a.pink-dotted:hover, .b-comments__new-comment a:hover {
     color: #a0a0a0;
     font-size: 11px;
 }
+.b-new-message-box__subscribe {
+  	margin: 10px 0 0 65px;
+  	label {
+	  cursor: pointer;
+	}
+}
 .b-new-message-box__add-attach:focus {
     outline: 0 none;
 }
@@ -102,6 +108,9 @@ a.pink-dotted:hover, .b-comments__new-comment a:hover {
     border-radius: 3px;
     color: white;
     font-size: 11px;
+  	&:hover {
+	  background-color: #6d6d6d;
+	}
 }
 .b-new-message-box__send-button__loading {
     background: #a3a3a3 url(/assets/img/loaders/input-loader.gif) center center no-repeat;
@@ -264,12 +273,12 @@ a.pink-dotted:hover, .b-comments__new-comment a:hover {
     }
     .b-comment {
         display: block;
-        margin-bottom: 14px;
+        margin-bottom: 10px;
         .emoji {
             width: 18px !important;
             height: 18px !important;
         }
-        .b-new-message-box__add-attach {
+        .b-new-message-box__add-attach,.b-new-message-box__subscribe {
             margin-left: 80px;
         }
         .b-new-message-box__send-button {

@@ -1,0 +1,18 @@
+{% extends '/mail/Generic.twig' %}
+
+{% block content %}
+
+	'%1$s<br>Пользователь %2$s оставил новый комментарий к новости "<a href="%3$s">%4$s</a>, за которой Вы следите (<a href="%3$s">%3$s</a>)<br><br>'.
+	'Если Вы больше не хотите получать уведомления, пожалуйста, перейдите по ссылке: <a href="http://www.popcornnews.ru/unsubs/%5$s">http://www.popcornnews.ru/unsubs/%5$s</a>',
+
+<h2 style="font: 24px 'Trebuchet MS', Tahoma, Verdana, Arial; margin-top: 15px; margin-bottom: 10px;">Новый комментарий</h2>
+<div style="background: #e5e5e5; padding: 12px 15px;">
+    <span style="font: bold 13px Tahoma, Verdana, Arial; display: block;">Пользователь {{ user.nick|e }} оставил(а) новый комментарий к {{ title }}</span>
+    <a style="font: 13px Tahoma, Verdana, Arial; color: #f70080;" href="http://{{ app.request.host }}/register/{{ user.id }}/{{ user.hash }}">http://{{ app.request.host }}/register/{{ user.id }}/{{ user.hash }}</a>
+
+
+
+    <span style="font: 13px Tahoma, Verdana, Arial; display: block; margin-top: 15px;">С уважением, редакция Popcornnews <a style="color: #f70080" href="http://{{ app.request.host }}/">http://{{ app.request.host }}/</a></span>
+</div>
+
+{% endblock %}

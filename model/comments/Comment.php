@@ -86,8 +86,35 @@ class Comment extends Model {
 	 */
 	protected $votesDown = 0;
 
+	/**
+	 * @var string
+	 * @export
+	 */
+	protected $entity;
+
+	/**
+	 * @var int
+	 * @export
+	 */
+	protected $entityId;
+
+	protected $extra = [];
+
 
 	//endregion
+
+	function __construct() {
+
+		$this->ip = $_SERVER['REMOTE_ADDR'];
+
+		if ($this->owner == 0) {
+			$this->owner = UserFactory::getCurrentUser();
+		} else {
+			$this->owner = UserFactory::getUser($this->owner, ['with' => UserDataMap::WITH_NONE ^ UserDataMap::WITH_AVATAR]);
+		}
+
+
+	}
 
 	//region Getters
 
@@ -95,7 +122,7 @@ class Comment extends Model {
 	 *
 	 */
 	public function getEntityId() {
-
+		return $this->entityId;
 	}
 
 	/**
@@ -210,6 +237,10 @@ class Comment extends Model {
 		return count($this->images);
 	}
 
+	public function getExtra($key) {
+		return $this->extra[$key];
+	}
+
 
 	//endregion
 
@@ -263,18 +294,18 @@ class Comment extends Model {
 		$this->changed();
 	}
 
+	public function setEntityId($entityId) {
+		$this->entityId = $entityId;
+		$this->changed();
+	}
+
+	public function setExtra($key,$value) {
+		$this->extra[$key] = $value;
+		$this->changed();
+	}
+
 	//endregion
 
-	function __construct() {
-
-		$this->ip = $_SERVER['REMOTE_ADDR'];
-
-		if ($this->owner == 0) {
-			$this->owner = UserFactory::getCurrentUser();
-		} else {
-			$this->owner = UserFactory::getUser($this->owner, ['with' => UserDataMap::WITH_NONE ^ UserDataMap::WITH_AVATAR]);
-		}
-	}
 
 	/**
 	 * @param Comment $msg
