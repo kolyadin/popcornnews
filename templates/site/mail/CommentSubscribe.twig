@@ -7,7 +7,7 @@
 
 <h2 style="font: 24px 'Trebuchet MS', Tahoma, Verdana, Arial; margin-top: 15px; margin-bottom: 10px;">Новый комментарий</h2>
 <div style="background: #e5e5e5; padding: 12px 15px;">
-    <span style="font: bold 13px Tahoma, Verdana, Arial; display: block;">Пользователь {{ user.nick|e }} оставил(а) новый комментарий к {{ title }}</span>
+    <span style="font: bold 13px Tahoma, Verdana, Arial; display: block;">Пользователь {{ user.nick|e }} оставил(а) новый комментарий к записи {{ title }}</span>
     <a style="font: 13px Tahoma, Verdana, Arial; color: #f70080;" href="http://{{ app.request.host }}/register/{{ user.id }}/{{ user.hash }}">http://{{ app.request.host }}/register/{{ user.id }}/{{ user.hash }}</a>
 
 

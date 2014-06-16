@@ -143,23 +143,23 @@ class CommentDataMap extends DataMap {
 	 */
 	private function sendNotifyMessage($item) {
 
-		$mail = MailHelper::getInstance();
-
-
-
 		$users = $this->getSubscribed($item->getEntityId());
 
 		foreach ($users as $user) {
 
+			$mail = MailHelper::getInstance();
+
 			$mail->setFrom('robot@popcornnews.ru');
-			$mail->addAddress($user->getEmail());
+//			$mail->addAddress($user->getEmail());
+			$mail->addAddress('ak@localhost');
 			$mail->Subject = sprintf('Уведомление о новом комментарии на сайте %s', $_SERVER['HTTP_HOST']);
 			$mail->msgHTML(
 				$this
 					->getApp()
 					->getTwig()
 					->render('/mail/CommentSubscribe.twig', [
-						'user' => $user
+						'user'  => $user,
+						'title' => sprintf(' звездному')
 					])
 			);
 			$mail->send();
