@@ -356,7 +356,7 @@ a.pink-dotted:hover,
   text-decoration: none;
   color: #f082bb;
 }
-.b-comments .b-comment .comment .caption .comment-like em {
+.b-comments .b-comment .comment .caption .comment-like a em {
   font-size: 12px;
   font-style: normal;
   color: #acacac;
@@ -371,7 +371,7 @@ a.pink-dotted:hover,
   height: 9px;
   display: inline-block;
 }
-.b-comments .b-comment .comment .caption .comment-like .dislike {
+.b-comments .b-comment .comment .caption .comment-like .dislike span {
   background-image: url(/assets/img/comment/hand.gif);
   background-position: top right;
   background-repeat: no-repeat;
@@ -383,12 +383,20 @@ a.pink-dotted:hover,
 .b-comments .b-comment .comment .caption .comment-like .like:hover {
   color: #de0073;
 }
+.b-comments .b-comment .comment .caption .comment-like .like-active em,
+.b-comments .b-comment .comment .caption .comment-like .like:hover em {
+  color: #000;
+}
 .b-comments .b-comment .comment .caption .comment-like .like-active span,
 .b-comments .b-comment .comment .caption .comment-like .like:hover span {
   background: url(/assets/img/comment/hand.gif) bottom left no-repeat;
 }
-.b-comments .b-comment .comment .caption .comment-like .dislike-active,
-.b-comments .b-comment .comment .caption .comment-like .dislike:hover {
+.b-comments .b-comment .comment .caption .comment-like .dislike-active em,
+.b-comments .b-comment .comment .caption .comment-like .dislike:hover em {
+  color: #000;
+}
+.b-comments .b-comment .comment .caption .comment-like .dislike-active span,
+.b-comments .b-comment .comment .caption .comment-like .dislike:hover span {
   background: url(/assets/img/comment/hand.gif) bottom right no-repeat;
 }
 .b-comments .b-comment .comment .caption .comment-report,
