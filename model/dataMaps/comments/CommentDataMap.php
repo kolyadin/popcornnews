@@ -4,6 +4,7 @@ namespace popcorn\model\dataMaps\comments;
 
 use popcorn\lib\MailHelper;
 use popcorn\lib\mmc\MMC;
+use popcorn\model\comments\CommentFactory;
 use popcorn\model\content\ImageFactory;
 use popcorn\model\dataMaps\DataMap;
 use popcorn\model\comments\Comment;
@@ -22,7 +23,7 @@ class CommentDataMap extends DataMap {
 	 * @var \PDOStatement
 	 */
 	protected $unSubscribeStatement, $subscribedStatement, $isSubscribedStatement,
-		$subscribeStatement, $findChildsStatement, $countStatement, $abuseStatement, $rateStatement;
+		$subscribeStatement, $findChildsStatement, $countStatement, $abuseStatement, $rateStatement, $rateFindStatement;
 
 	/**
 	 * @var \PDOStatement
@@ -43,7 +44,6 @@ class CommentDataMap extends DataMap {
 		parent::__construct();
 
 		$this->initStatements();
-
 	}
 
 	protected function initStatements() {
@@ -80,7 +80,10 @@ class CommentDataMap extends DataMap {
 			$this->prepare("INSERT INTO pn_comments_{$this->tablePrefix}_abuse (commentId, userId) VALUES (:commentId, :userId)");
 
 		$this->rateStatement =
-			$this->prepare("INSERT INTO pn_comments_{$this->tablePrefix}_vote (commentId, userId) VALUES (:commentId, :userId)");
+			$this->prepare("REPLACE INTO pn_comments_{$this->tablePrefix}_vote (commentId, userId, action) VALUES (:commentId, :userId, :action)");
+
+		$this->rateFindStatement =
+			$this->prepare("SELECT group_concat(DISTINCT action),count(*) FROM pn_comments_{$this->tablePrefix}_vote WHERE commentId = :commentId GROUP BY action");
 
 		$this->stmtGetAllComments =
 			$this->prepare("SELECT id,parent FROM pn_comments_{$this->tablePrefix} WHERE entityId = :entityId ORDER BY createdAt ASC");
@@ -96,6 +99,43 @@ class CommentDataMap extends DataMap {
 
 		$this->stmtFindAttachedImages =
 			$this->prepare("SELECT imageId FROM pn_comments_{$this->tablePrefix}_images WHERE commentId = :commentId");
+	}
+
+	/**
+	 * @param \popcorn\model\comments\Comment $item
+	 */
+	protected function insertBindings($item) {
+		$this->insertStatement->bindValue(":entityId", $item->getEntityId());
+		$this->insertStatement->bindValue(":createdAt", $item->getCreatedAt());
+		$this->insertStatement->bindValue(":owner", $item->getOwner()->getId());
+		$this->insertStatement->bindValue(":parent", $item->getParent());
+		$this->insertStatement->bindValue(":content", $item->getContent());
+		$this->insertStatement->bindValue(":editDate", $item->getEditDate());
+		$this->insertStatement->bindValue(":ip", $item->getIp());
+		$this->insertStatement->bindValue(":abuse", $item->getAbuse());
+		$this->insertStatement->bindValue(":deleted", $item->getDeleted());
+		$this->insertStatement->bindValue(":level", $item->getLevel());
+		$this->insertStatement->bindValue(":votesUp", $item->getVotesUp());
+		$this->insertStatement->bindValue(":votesDown", $item->getVotesDown());
+	}
+
+	/**
+	 * @param \popcorn\model\comments\Comment $item
+	 */
+	protected function updateBindings($item) {
+		$this->updateStatement->bindValue(":entityId", $item->getEntityId());
+		$this->updateStatement->bindValue(":createdAt", $item->getCreatedAt());
+		$this->updateStatement->bindValue(":owner", $item->getOwner()->getId());
+		$this->updateStatement->bindValue(":parent", $item->getParent());
+		$this->updateStatement->bindValue(":content", $item->getContent());
+		$this->updateStatement->bindValue(":editDate", $item->getEditDate());
+		$this->updateStatement->bindValue(":ip", $item->getIp());
+		$this->updateStatement->bindValue(":abuse", $item->getAbuse());
+		$this->updateStatement->bindValue(":deleted", $item->getDeleted());
+		$this->updateStatement->bindValue(":level", $item->getLevel());
+		$this->updateStatement->bindValue(":votesUp", $item->getVotesUp());
+		$this->updateStatement->bindValue(":votesDown", $item->getVotesDown());
+		$this->updateStatement->bindValue(":id", $item->getId());
 	}
 
 	/**
@@ -410,54 +450,43 @@ class CommentDataMap extends DataMap {
 		return $result;
 	}
 
-	public function rate($msgId, $userId) {
+	public function rate(Comment &$comment, User $user, $action) {
+
 		$result = true;
-		$this->rateStatement->bindParam(':commentId', $msgId);
-		$this->rateStatement->bindParam(':userId', $userId);
+		$this->rateStatement->bindParam(':commentId', $comment->getId());
+		$this->rateStatement->bindParam(':userId', $user->getId());
+		$this->rateStatement->bindParam(':action', $action);
+
 		try {
+
 			$this->rateStatement->execute();
+
+			$this->rateFindStatement->execute([
+				':commentId' => $comment->getId()
+			]);
+
+			$rates = $this->rateFindStatement->fetchAll(\PDO::FETCH_KEY_PAIR);
+
+			if (!isset($rates['up'])) {
+				$rates['up'] = 0;
+			}
+
+			if (!isset($rates['down'])) {
+				$rates['down'] = 0;
+			}
+
+			$comment->setVotesUp($rates['up']);
+			$comment->setVotesDown($rates['down']);
+
+			if (isset($rates['up']) || isset($rates['down'])) {
+				CommentFactory::saveComment($this->tablePrefix, $comment);
+			}
+
 		} catch (\PDOException $e) {
 			$result = false;
 		}
 
 		return $result;
-	}
-
-	/**
-	 * @param \popcorn\model\comments\Comment $item
-	 */
-	protected function insertBindings($item) {
-		$this->insertStatement->bindValue(":entityId", $item->getEntityId());
-		$this->insertStatement->bindValue(":createdAt", $item->getCreatedAt());
-		$this->insertStatement->bindValue(":owner", $item->getOwner()->getId());
-		$this->insertStatement->bindValue(":parent", $item->getParent());
-		$this->insertStatement->bindValue(":content", $item->getContent());
-		$this->insertStatement->bindValue(":editDate", $item->getEditDate());
-		$this->insertStatement->bindValue(":ip", $item->getIp());
-		$this->insertStatement->bindValue(":abuse", $item->getAbuse());
-		$this->insertStatement->bindValue(":deleted", $item->getDeleted());
-		$this->insertStatement->bindValue(":level", $item->getLevel());
-		$this->insertStatement->bindValue(":votesUp", $item->getVotesUp());
-		$this->insertStatement->bindValue(":votesDown", $item->getVotesDown());
-	}
-
-	/**
-	 * @param \popcorn\model\comments\Comment $item
-	 */
-	protected function updateBindings($item) {
-		$this->updateStatement->bindValue(":entityId", $item->getEntityId());
-		$this->updateStatement->bindValue(":createdAt", $item->getCreatedAt());
-		$this->updateStatement->bindValue(":owner", $item->getOwner()->getId());
-		$this->updateStatement->bindValue(":parent", $item->getParent());
-		$this->updateStatement->bindValue(":content", $item->getContent());
-		$this->updateStatement->bindValue(":editDate", $item->getEditDate());
-		$this->updateStatement->bindValue(":ip", $item->getIp());
-		$this->updateStatement->bindValue(":abuse", $item->getAbuse());
-		$this->updateStatement->bindValue(":deleted", $item->getDeleted());
-		$this->updateStatement->bindValue(":level", $item->getLevel());
-		$this->updateStatement->bindValue(":votesUp", $item->getVotesUp());
-		$this->updateStatement->bindValue(":votesDown", $item->getVotesDown());
-		$this->updateStatement->bindValue(":id", $item->getId());
 	}
 
 

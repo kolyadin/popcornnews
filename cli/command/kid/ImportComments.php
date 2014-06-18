@@ -7,6 +7,8 @@
 namespace popcorn\cli\command\kid;
 
 
+use popcorn\cli\helpers\BBHelper;
+use popcorn\cli\helpers\SmileHelper;
 use popcorn\lib\PDOHelper;
 use popcorn\model\content\ImageFactory;
 use popcorn\model\exceptions\FileNotFoundException;
@@ -163,7 +165,9 @@ class ImportComments extends Command {
 //				continue;
 //			}
 
-			$item['content'] = $content;
+			$content = BBHelper::convertOldBB($content);
+
+			$item['content'] = trim($content);
 
 			$this->stmtInsertComment->bindValue(':id', $item['id']);
 			$this->stmtInsertComment->bindValue(':entityId', $item['news_id']);
@@ -213,7 +217,7 @@ class ImportComments extends Command {
 		}
 
 		{
-			$output->writeln('<info>Строим структуру комментариев...');
+			$output->write('<info>Строим структуру комментариев...');
 
 			$this->generateCommentsLevels();
 

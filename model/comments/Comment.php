@@ -299,7 +299,7 @@ class Comment extends Model {
 		$this->changed();
 	}
 
-	public function setExtra($key,$value) {
+	public function setExtra($key, $value) {
 		$this->extra[$key] = $value;
 		$this->changed();
 	}
@@ -348,15 +348,16 @@ class Comment extends Model {
 		$this->childs = $children;
 	}
 
-	public function votesUp() {
-		$this->votesUp++;
+	public function setVotesUp($votes) {
+		$this->votesUp = $votes;
 		$this->changed();
 	}
 
-	public function votesDown() {
-		$this->votesDown++;
+	public function setVotesDown($votes) {
+		$this->votesDown = $votes;
 		$this->changed();
 	}
+
 
 	/**
 	 * @param Image $image

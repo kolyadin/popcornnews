@@ -166,15 +166,22 @@ var IM = {
             IM.pasteSmile(endRange, smile);
         }
     },
-    commentLike : function(){
-        IM.sel.comments.on('click', '.b-comment-caption__like-like', function () {
-            alert('like');
-        });
-    },
-    commentDislike : function(){
-        IM.sel.comments.on('click', '.b-comment-caption__like-dislike', function () {
-            alert('dislike');
-        });
+    rateComment : function($comment,action){
+        var params = {
+            entity    : IM.config['entity'],
+            commentId : $comment.attr('data-comment-id'),
+            action    : action
+        };
+
+        var handler = function(response){
+
+            $comment.find('.b-comment-caption__like-like em').text(response['votesUp'] > 0 ? response['votesUp'] : '');
+            $comment.find('.b-comment-caption__like-dislike em').text(response['votesDown'] > 0 ? response['votesDown'] : '');
+        };
+
+        $.post('/ajax/comment/rate',params,handler,'json');
+
+        return false;
     },
     showSmilesBar : function(){
 
@@ -373,6 +380,21 @@ var IM = {
                     return false;
                 });
             },
+            rateComment : function(){
+                IM.sel.comments.on('click', '.b-comment-caption__like-like', function () {
+                    var $comment = $(this).closest('.b-comment');
+
+                    IM.rateComment($comment,'up');
+                    return false;
+                });
+
+                IM.sel.comments.on('click', '.b-comment-caption__like-dislike', function () {
+                    var $comment = $(this).closest('.b-comment');
+
+                    IM.rateComment($comment,'down');
+                    return false;
+                });
+            },
             sendComment : function(){
                 IM.sel.sendButton.on('click', function () {
 
@@ -535,6 +557,7 @@ var IM = {
         IM.bind().addComment();
         IM.bind().removeComment();
         IM.bind().replyComment();
+        IM.bind().rateComment();
         IM.bind().sendComment();
         IM.bind().removeAttach();
 

@@ -100,13 +100,20 @@ class AjaxController extends GenericController implements ControllerInterface {
 			->getSlim()
 			->post('/ajax/messages/find-recipient', [$this, 'findRecipient']);
 
-		$this
-			->getSlim()
-			->post('/ajax/comment/send', [$this, 'commentSend']);
+		{
+			$this
+				->getSlim()
+				->post('/ajax/comment/send', [$this, 'commentSend']);
 
-		$this
-			->getSlim()
-			->post('/ajax/comment/remove', [$this, 'commentRemove']);
+			$this
+				->getSlim()
+				->post('/ajax/comment/remove', [$this, 'commentRemove']);
+
+			$this
+				->getSlim()
+				->post('/ajax/comment/rate', [$this, 'commentRate']);
+
+		}
 
 
 		$this
@@ -685,7 +692,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 					}
 				}
 
-				$comment->setExtra('subscribe',$data['subscribe']);
+				$comment->setExtra('subscribe', $data['subscribe']);
 			}
 
 			CommentFactory::saveComment($data['entity'], $comment);
@@ -744,6 +751,39 @@ class AjaxController extends GenericController implements ControllerInterface {
 			$e->exitWithJsonException();
 		}
 
+	}
+
+	public function commentRate() {
+		$request = $this->getSlim()->request;
+
+		try {
+
+			$currentUser = UserFactory::getCurrentUser();
+
+			if ($currentUser instanceof GuestUser) {
+				throw new NotAuthorizedException();
+			}
+
+			$data = [
+				'entity'    => $request->post('entity'),
+				'commentId' => $request->post('commentId'),
+				'action'    => $request->post('action')
+			];
+
+			$comment = CommentFactory::getComment($data['entity'], $data['commentId']);
+
+			CommentFactory::rateComment($data['entity'], $comment, $currentUser, $data['action']);
+
+			$this->getApp()->exitWithJsonSuccessMessage([
+				'commentId' => $comment->getId(),
+				'votesUp'   => $comment->getVotesUp(),
+				'votesDown' => $comment->getVotesDown()
+			]);
+
+
+		} catch (AjaxException $e) {
+			$e->exitWithJsonException();
+		}
 	}
 
 	public function fanSubscribe() {

@@ -3,6 +3,8 @@
 namespace popcorn\model\comments;
 
 use popcorn\model\dataMaps\comments\KidCommentDataMap;
+use popcorn\model\system\users\User;
+use popcorn\model\system\users\UserFactory;
 
 class CommentFactory {
 
@@ -36,6 +38,12 @@ class CommentFactory {
 	public static function getComment($entity, $commentId, array $options = []) {
 		self::setDataMap($entity);
 		return self::$dataMap->findById($commentId, $options);
+	}
+
+	public static function rateComment($entity, Comment $comment, User $user, $action) {
+		self::setDataMap($entity);
+
+		self::$dataMap->rate($comment, $user, $action);
 	}
 
 	/**
