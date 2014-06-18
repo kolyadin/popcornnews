@@ -8,6 +8,7 @@ use popcorn\model\content\ImageFactory;
 use popcorn\model\dataMaps\DataMap;
 use popcorn\model\comments\Comment;
 use popcorn\model\dataMaps\UserDataMap;
+use popcorn\model\persons\KidFactory;
 use popcorn\model\system\users\User;
 use popcorn\model\system\users\UserFactory;
 
@@ -151,7 +152,7 @@ class CommentDataMap extends DataMap {
 
 			$mail->setFrom('robot@popcornnews.ru');
 //			$mail->addAddress($user->getEmail());
-			$mail->addAddress('ak@localhost');
+			$mail->addAddress('ak@t-agency.ru');
 			$mail->Subject = sprintf('Уведомление о новом комментарии на сайте %s', $_SERVER['HTTP_HOST']);
 			$mail->msgHTML(
 				$this
@@ -159,7 +160,7 @@ class CommentDataMap extends DataMap {
 					->getTwig()
 					->render('/mail/CommentSubscribe.twig', [
 						'user'  => $user,
-						'title' => sprintf(' звездному')
+						'title' => sprintf(' &laquo;Звездные дети - %s&raquo;', KidFactory::get($item->getEntityId())->getName())
 					])
 			);
 			$mail->send();
@@ -382,7 +383,7 @@ class CommentDataMap extends DataMap {
 		$users = [];
 
 		while ($userId = $this->subscribedStatement->fetchColumn()) {
-			$users[] = UserFactory::getUser($userId, ['with' => UserDataMap::WITH_NONE]);
+			$users[] = UserFactory::getUser($userId, ['with' => UserDataMap::WITH_INFO]);
 		}
 
 		return $users;

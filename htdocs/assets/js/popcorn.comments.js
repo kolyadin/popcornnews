@@ -167,12 +167,12 @@ var IM = {
         }
     },
     commentLike : function(){
-        IM.sel.comments.on('click', '.comment .comment-like .like', function () {
+        IM.sel.comments.on('click', '.b-comment-caption__like-like', function () {
             alert('like');
         });
     },
     commentDislike : function(){
-        IM.sel.comments.on('click', '.comment .comment-like .dislike', function () {
+        IM.sel.comments.on('click', '.b-comment-caption__like-dislike', function () {
             alert('dislike');
         });
     },
@@ -357,7 +357,7 @@ var IM = {
             },
             removeComment : function(){
 
-                IM.sel.comments.on('click', '.comment .comment-delete a', function () {
+                IM.sel.comments.on('click', '.b-comment-caption__remove a', function () {
 
                     $comment = $(this).closest('.b-comment');
 
@@ -367,7 +367,7 @@ var IM = {
                 });
             },
             replyComment : function(){
-                IM.sel.comments.on('click', '.comment .comment-reply a', function () {
+                IM.sel.comments.on('click', '.b-comment-caption__reply a', function () {
                     IM.replyComment($(this));
 
                     return false;

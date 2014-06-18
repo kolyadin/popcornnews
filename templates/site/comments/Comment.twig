@@ -38,17 +38,17 @@
 
 			<p>{{ comment.contentFriendly }}</p>
 
-			<div class="caption">
-				{#<div class="comment-timestamp">{{ comment.date|dateRU }}</div>#}
+			<div class="b-comment-caption">
+				<div class="b-comment-caption__timestamp">{{ comment.createdAt|dateRU }}</div>
 				{% if currentUser.id %}
-					<div class="comment-reply"><a href="#">Ответить</a></div>
-					<div class="comment-like">
-						<a class="like" href="#">Нравится<span></span><em>2</em></a>
-						<a class="dislike" href="#"><span></span><em>1</em></a>
+					<div class="b-comment-caption__reply"><a href="#">ответить</a></div>
+					<div class="b-comment-caption__like">
+						<a class="b-comment-caption__like-like" href="#">нравится<span></span><em>2</em></a>
+						<a class="b-comment-caption__like-dislike" href="#"><span></span><em>1</em></a>
 					</div>
-					<div class="comment-report"><a href="#">пожаловаться</a></div>
+					<div class="b-comment-caption__report"><a href="#">пожаловаться</a></div>
 					{% if comment.owner.id == currentUser.id %}
-						<div class="comment-delete"><a href="#">удалить</a></div>
+						<div class="b-comment-caption__remove"><a href="#">удалить</a></div>
 					{% endif %}
 				{% endif %}
 			</div>

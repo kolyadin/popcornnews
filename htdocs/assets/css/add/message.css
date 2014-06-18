@@ -40,7 +40,10 @@ a.pink-dotted:hover,
   right: 5px;
   width: 15px;
   height: 15px;
-  background: url(/assets/img/smile-container.png) top left no-repeat;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAIAAAC0tAIdAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAMlJREFUeNqUkjEPgyAQhfHixgom3Qybk///ZzgYNuPWQVY2In1wDW2UtvYN5PH8NOfdNTFGkQUzTdO+7zGrySKicRxhmGmYvmcNwyBOstbesp40uBCCUkp8kHOubVu8QEx/QSE8BQOSUOt7AcuyVD0YkITfEtcEkkpPWMaYquemvWjvffWTJU906eW6rlW65Kn9hf4pHhbxpeu6bdsOBBLk7IkHi2nhorXGOc8zF4oTvuRg0gqcZ4lCgUop+74/zPL/Pbm+gw8BBgBzv6YhG+c6BQAAAABJRU5ErkJggg==);
+}
+.b-new-message-box__smile-toogle:hover {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAIAAAC0tAIdAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAANlJREFUeNqUkrEOREAURc1T6P0CjegVerVv1Un0CmrR8An0CuzZfRsRO7uxr5jcuY7xvDtm33fnVdu2FUWxrisC0xgjIq7r5nmOUMYo3XVd3/dZljkfVVVVFEVxHL9p0GVZgiBwvtQ4jp7n8YLwXU79gVI8hYEUej03UNe1VcNACr/l3CvIZydnK01Tq9ahyTHBaZqsRx4+pDBX3bRta6UPXxOQm32LpqWbMAyHYbgQOPiqIYVgSUtp1rIstVFW9OHDQFqybJpmnmff95MkuWT5/z25fwcfAgwArX6k3dcciZUAAAAASUVORK5CYII=);
 }
 .b-new-message-box__message-ghost {
   display: none;
@@ -88,6 +91,11 @@ a.pink-dotted:hover,
   border-radius: 3px;
   color: #a0a0a0;
   font-size: 11px;
+}
+.b-new-message-box__add-attach:hover {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAICAIAAACgWpLfAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAL9JREFUeNpMj8kKg0AQRJ0oDuJ28zqXOXnzH/xbP8ajCCKIiCKCK6K4kEo6JKlTdVfXG4bVdZ1lmed5cRxXVaW8hTEMQ/IsiqJlWa7rGoZB+ZPrurqua1BRFLSyLEtK2fe94zhlWaI2jiP2D+iFYiwIgjzPUUiSRAhxnucvhkzTnOd5miZ4ZPd9g0TR52LbNtu2vwVVVdd1Ja/hnHppmvq+D5JhGPggvYJU45wfx4Ghbduu60Bqmmbfd+IB9hRgAPsbZceUAnhXAAAAAElFTkSuQmCC);
+  color: #6d6d6d;
+  border: 1px solid #6d6d6d;
 }
 .b-new-message-box__subscribe {
   margin: 10px 0 0 65px;
@@ -327,89 +335,87 @@ a.pink-dotted:hover,
   font-size: 13px;
   line-height: 18px;
 }
-.b-comments .b-comment .comment .caption {
+.b-comment-caption {
   margin-top: 2px;
 }
-.b-comments .b-comment .comment .caption .comment-timestamp {
+.b-comment-caption__timestamp {
   float: left;
   margin-right: 15px;
   color: #b0b0b0;
 }
-.b-comments .b-comment .comment .caption .comment-reply {
+.b-comment-caption__reply {
   float: left;
   margin-right: 15px;
 }
-.b-comments .b-comment .comment .caption .comment-reply a {
+.b-comment-caption__reply a {
   text-decoration: none;
   color: #f082bb;
 }
-.b-comments .b-comment .comment .caption .comment-reply a:hover {
+.b-comment-caption__reply a:hover {
   color: #de0073;
 }
-.b-comments .b-comment .comment .caption .comment-like {
+.b-comment-caption__like {
   float: left;
   margin-right: 15px;
 }
-.b-comments .b-comment .comment .caption .comment-like a {
+.b-comment-caption__like a {
   font-size: 11px;
   font-weight: normal;
   text-decoration: none;
   color: #f082bb;
 }
-.b-comments .b-comment .comment .caption .comment-like a em {
+.b-comment-caption__like a em {
   font-size: 12px;
   font-style: normal;
   color: #acacac;
   margin-left: 2px;
 }
-.b-comments .b-comment .comment .caption .comment-like .like span {
+.b-comment-caption__like a:hover em {
+  color: #000;
+}
+.b-comment-caption__like a span {
+  background: url(data:image/gif;base64,R0lGODlhFwAUAMQZAN4Ac/Wy1ffF3+ZAluAQfPnP5fa31+Ighf3x9/Wv0/rY6va82u5/ufzn8vvf7epgqOQwjfvd7P76/P3v9vGPwv71+vnU5/fA3OxwsP///wAAAAAAAAAAAAAAAAAAAAAAACH5BAEAABkALAAAAAAXABQAAAWVYCaKgjKeZKBeUnU2gYCOiGoHBm0E5pwVN5vIYhMIGrNdMLBYLCOoyLK5xM0aRptFVC34MgocYqS8jX2CAHJUkVyKX7AsTq/b7wNGfADoQyYOJwkAA18FfYgABCMFBAB6Pg+JiCIYiAMDCTOOkwAHB50UKBSdn52KMwmYiBgipw9fDIpeIpyJtDN8miMOExCXcQyFJyEAOw==) no-repeat;
+}
+.b-comment-caption__like-like span {
   margin-left: 5px;
-  background-image: url(/assets/img/comment/hand.gif);
-  background-position: top left;
-  background-repeat: no-repeat;
+  background-position: top left !important;
   width: 9px;
   height: 9px;
   display: inline-block;
 }
-.b-comments .b-comment .comment .caption .comment-like .dislike span {
-  background-image: url(/assets/img/comment/hand.gif);
-  background-position: top right;
-  background-repeat: no-repeat;
-  width: 9px;
-  height: 9px;
-  display: inline-block;
-}
-.b-comments .b-comment .comment .caption .comment-like .like-active,
-.b-comments .b-comment .comment .caption .comment-like .like:hover {
+.b-comment-caption__like-like:hover {
   color: #de0073;
 }
-.b-comments .b-comment .comment .caption .comment-like .like-active em,
-.b-comments .b-comment .comment .caption .comment-like .like:hover em {
+.b-comment-caption__like-like:hover span {
+  background-position: bottom left !important;
+}
+.b-comment-caption__like-dislike span {
+  background-position: top right !important;
+  width: 9px;
+  height: 9px;
+  display: inline-block;
+}
+.b-comment-caption__like-dislike:hover {
   color: #000;
 }
-.b-comments .b-comment .comment .caption .comment-like .like-active span,
-.b-comments .b-comment .comment .caption .comment-like .like:hover span {
-  background: url(/assets/img/comment/hand.gif) bottom left no-repeat;
+.b-comment-caption__like-dislike:hover span {
+  background-position: bottom right !important;
 }
-.b-comments .b-comment .comment .caption .comment-like .dislike-active em,
-.b-comments .b-comment .comment .caption .comment-like .dislike:hover em {
-  color: #000;
-}
-.b-comments .b-comment .comment .caption .comment-like .dislike-active span,
-.b-comments .b-comment .comment .caption .comment-like .dislike:hover span {
-  background: url(/assets/img/comment/hand.gif) bottom right no-repeat;
-}
-.b-comments .b-comment .comment .caption .comment-report,
-.b-comments .b-comment .comment .caption .comment-delete {
+.b-comment-caption__report,
+.b-comment-caption__remove {
   float: left;
   margin-right: 15px;
 }
-.b-comments .b-comment .comment .caption .comment-report a,
-.b-comments .b-comment .comment .caption .comment-delete a {
+.b-comment-caption__report a,
+.b-comment-caption__remove a {
   color: #aaa9aa;
   font-size: 11px;
   font-weight: normal;
   text-decoration: none;
+}
+.b-comment-caption__report a:hover,
+.b-comment-caption__remove a:hover {
+  color: #6d6d6d;
 }
 .b-comments__auth-form {
   background-color: #f0f0f0;
