@@ -138,11 +138,12 @@ class ImportComments extends Command {
 						$this->stmtInsertImage->bindValue(':imageId', $image->getId());
 						$this->stmtInsertImage->execute();
 
-						$image->getThumb('x100');
-
 						$imagesCount++;
 
-						$output->writeln(" <info>готово</info>");
+						$output->write(" <info>готово</info>");
+
+						$image->getThumb('x100');
+						$output->writeln(" <info>преобразовано</info>");
 
 					} catch (FileNotFoundException $e) {
 						$output->writeln(" <error>неудачно</error>");

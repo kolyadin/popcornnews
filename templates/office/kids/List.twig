@@ -66,9 +66,10 @@
 				<thead>
 				<tr>
 					<th></th>
-					<th>Дата рождения</th>
-					<th>Имя</th>
-					<th>Рейтинг</th>
+					<th style="white-space:nowrap;">дата рождения</th>
+					<th></th>
+					<th style="width:100%;">имя</th>
+					<th>рейтинг</th>
 				</tr>
 				</thead>
 				<tbody>
@@ -81,16 +82,21 @@
 							   data-placement="top" href="/office/kid{{ kid.id }}/remove"><i class="fa fa-trash-o"></i></a>
 						</td>
 						<td>{{ kid.birthDate|date('d.m.Y') }}</td>
+						<td><a class="btn btn-info tooltips" data-original-title="{{ kid.comments|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) }}" href="#">{{ kid.comments }}</a></td>
 						<td><a class="btn btn-default" href="/office/kid{{ kid.id }}">{{ kid.name|e }}</a></td>
-						<td>{{ kid.votes }}</td>
+						<td style="white-space:nowrap;">
+							<span class="label label-info">{{ kid.votes }}</span>
+						</td>
 					</tr>
 				{% endfor %}
 				</tbody>
 			</table>
 		</div>
 
-		<div style="text-align: right;">
+		<div class="nav-pagination">
+			<a class="btn btn-success" href="/office/kid_create"><i class="fa fa-plus"></i>добавить ребенка</a>
 			{{ html.paginator(paginator.pages,paginator.active,'/office/kids/page%u') }}
+			<div class="clearfix"></div>
 		</div>
 
 	{% else %}

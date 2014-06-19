@@ -349,7 +349,7 @@
 
 {% block PageTop %}
 
-	{% if kid %}
+	{% if kid.id %}
 		<h3 class="page-title">
 			Ребенок
 			<small>&quot;{{ kid.name|e }}&quot;</small>
@@ -370,9 +370,15 @@
 			<a href="/office/kids">Дети</a>
 			<i class="fa fa-angle-right"></i>
 		</li>
-		<li>
-			<a href="/office/kid_create">Добавление ребенка</a>
-		</li>
+		{% if kid.id %}
+			<li>
+				<a href="/office/kid{{ kid.id }}">{{ kid.name|e }}</a>
+			</li>
+		{% else %}
+			<li>
+				<a href="/office/kid_create">Добавление ребенка</a>
+			</li>
+		{% endif %}
 	</ul>
 
 	{{ parent() }}
