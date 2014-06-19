@@ -124,6 +124,9 @@ a.pink:hover,
   margin-top: 10px;
   font-size: 13px;
 }
+.b-kids .b-right-stats {
+  width: 150px;
+}
 .b-kids .kid .stats .up,
 .b-kids .kid .stats .down {
   float: left;

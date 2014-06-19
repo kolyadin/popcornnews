@@ -67,11 +67,11 @@ class RuHelper{
 		$diff = $date1->diff($date2);
 
 		if ($diff->format('%Y') > 0){
-			return self::ruNumber((int)$diff->format('%Y'),['','год','года','лет']);
+			return self::ruNumber((int)$diff->format('%Y'),['','%u год','%u года','%u лет']);
 		}elseif ($diff->format('%m') > 0){
-			return self::ruNumber((int)$diff->format('%m'),['','месяц','месяца','месяцев']);
+			return self::ruNumber((int)$diff->format('%m'),['','%u месяц','%u месяца','%u месяцев']);
 		}elseif ($diff->format('%d') > 0){
-			return self::ruNumber((int)$diff->format('%d'),['','день','дня','дней']);
+			return self::ruNumber((int)$diff->format('%d'),['','%u день','%u дня','%u дней']);
 		}else{
 			return '1 день';
 		}

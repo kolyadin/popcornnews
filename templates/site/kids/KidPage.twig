@@ -80,6 +80,8 @@
 					{% set bText = 'Родился' %}
 				{% elseif kid.sex == 1 %}
 					{% set bText = 'Родилась' %}
+				{% else %}
+					{% set bText = 'Родился(ась)' %}
 				{% endif %}
 
 				<p class="db">{{ bText }} {{ kid.birthDate|ruDate('j f2 Y') }}, сейчас {{ kid.birthDate|ruAge }}</p>
