@@ -32,23 +32,7 @@ class Import extends Command {
 	 */
 	private $insert;
 
-	protected function configure() {
-		$this
-			->setName('import:persons')
-			->addOption(
-				'person-id',
-				null,
-				InputOption::VALUE_REQUIRED,
-				'Импорт одной конкретной персоны'
-			)
-			->addOption(
-				'set-images-limit',
-				null,
-				InputOption::VALUE_REQUIRED,
-				'Ограничим кол-во импортируемых фото'
-			)
-			->setDescription("Импорт персон");
-
+	private function init() {
 		$this->pdo = PDOHelper::getPDO();
 
 
@@ -71,10 +55,32 @@ VALUES (
   :nameForBio, :published, :urlName,
   :look, :style, :talent
 )");
+	}
+
+	protected function configure() {
+		$this
+			->setName('import:persons')
+			->addOption(
+				'person-id',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Импорт одной конкретной персоны'
+			)
+			->addOption(
+				'set-images-limit',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Ограничим кол-во импортируемых фото'
+			)
+			->setDescription("Импорт персон");
+
+
 
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
+
+		$this->init();
 
 		$output->writeln('<info>Импорт персон...</info>');
 

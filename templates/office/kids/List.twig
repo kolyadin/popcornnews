@@ -26,40 +26,6 @@
 
 {% block BodyEnd %}
 
-	<script type="text/javascript">
-		$(function () {
-
-			var removeKidCandidateId = null;
-
-			$('button[data-action=confirm-remove]').on('click', function () {
-
-				var params = {
-					entityId: removeKidCandidateId
-				};
-
-				var handler = function (response) {
-					if (response.status == 'success') {
-
-						var $tr = $('tr[data-kid-id=' + removeKidCandidateId + ']');
-
-						$('#modal-remove').modal('hide').on('hidden.bs.modal',function(){
-							$tr.animate({'background-color':'red'},800,function(){
-								$tr.fadeOut('fast');
-							});
-
-						});
-					}
-				};
-
-				$.post('/office/ajax/kid/remove', params, handler, 'json');
-
-			});
-
-			$('a[data-action=remove-kid]').on('click', function () {
-				removeKidCandidateId = $(this).closest('tr').attr('data-kid-id');
-			});
-		});
-	</script>
 
 {% endblock %}
 
@@ -86,31 +52,13 @@
 
 {% block PageContent %}
 
-	<div id="modal-remove" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-					<h4 class="modal-title">Вы ТОЧНО хотите удалить этого ребенка?</h4>
-				</div>
-				<div class="modal-body">
-					<p><strong>Удаление ребенка приведет к</strong>:</p>
-					<ul>
-						<li>удалению комментарий</li>
-					</ul>
-				</div>
-				<div class="modal-footer">
-					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Отмена</button>
-					<button class="btn btn-danger" data-dismiss="modal" data-action="confirm-remove">Подтверждаю удаление</button>
-				</div>
-			</div>
-		</div>
-	</div>
 
 	{% if kids|length %}
 
-		<div style="text-align: right;">
+		<div class="nav-pagination">
+			<a class="btn btn-success" href="/office/kid_create"><i class="fa fa-plus"></i>добавить ребенка</a>
 			{{ html.paginator(paginator.pages,paginator.active,'/office/kids/page%u') }}
+			<div class="clearfix"></div>
 		</div>
 
 		<div class="table-responsive">
@@ -130,11 +78,10 @@
 							<a class="btn btn-default btn-xs tooltips" data-original-title="Редактировать ребенка"
 							   data-placement="top" href="/office/kid{{ kid.id }}"><i class="fa fa-edit"></i></a>
 							<a class="btn btn-danger btn-xs tooltips" data-original-title="Удалить ребенка"
-							   data-placement="top" role="button" data-toggle="modal" data-action="remove-kid"
-							   href="#modal-remove"><i class="fa fa-trash-o"></i></a>
+							   data-placement="top" href="/office/kid{{ kid.id }}/remove"><i class="fa fa-trash-o"></i></a>
 						</td>
 						<td>{{ kid.birthDate|date('d.m.Y') }}</td>
-						<td style=""><a href="/office/kid{{ kid.id }}">{{ kid.name|e }}</a></td>
+						<td><a class="btn btn-default" href="/office/kid{{ kid.id }}">{{ kid.name|e }}</a></td>
 						<td>{{ kid.votes }}</td>
 					</tr>
 				{% endfor %}

@@ -40,10 +40,7 @@ class ImportComments extends Command {
 	 */
 	private $insertImage;
 
-	protected function configure() {
-		$this->setName('import:post:comments')
-			->setDescription("Импорт комментов для постов (новостей)");
-
+	private function init() {
 		$this->pdo = PDOHelper::getPDO();
 
 		$this->selector = $this->pdo->prepare("SELECT * FROM popcornnews.pn_comments_news ORDER BY id DESC");
@@ -64,10 +61,17 @@ VALUES (
 INSERT INTO pn_comments_kids_images (commentId, imageId)
 VALUES (:commentId, :imageId)
 ");
+	}
 
+	protected function configure() {
+		$this
+			->setName('import:post:comments')
+			->setDescription("Импорт комментов для постов (новостей)");
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
+
+		$this->init();
 
 		$output->writeln('<info>Импорт комментарий детей...</info>');
 
@@ -76,45 +80,45 @@ VALUES (:commentId, :imageId)
 		$count = 0;
 		$total = $this->selector->rowCount();
 
-		for($i = 0; $i < $total; $i++) {
+		for ($i = 0; $i < $total; $i++) {
 
 			$item = $this->selector->fetch(\PDO::FETCH_ASSOC);
 
-			$output->write("<info>Коммент #".$item['id']."...");
+			$output->write("<info>Коммент #" . $item['id'] . "...");
 
 			$content = $item['content'];
 
-			preg_match_all('@\[img\](.+)\[\/img\]@iU',$content,$matches);
+			preg_match_all('@\[img\](.+)\[\/img\]@iU', $content, $matches);
 
 			$imagesCount = 0;
 
-			if (isset($matches[1]) && count($matches[1])){
-				foreach ($matches[1] as $imageUrl){
-					try{
+			if (isset($matches[1]) && count($matches[1])) {
+				foreach ($matches[1] as $imageUrl) {
+					try {
 						$output->write("\n\t<comment>Пытаемся скачать $imageUrl...</comment>");
 
 						$image = ImageFactory::createFromUrl($imageUrl);
 
-						$this->insertImage->bindValue(':commentId',$item['id']);
-						$this->insertImage->bindValue(':imageId',$image->getId());
+						$this->insertImage->bindValue(':commentId', $item['id']);
+						$this->insertImage->bindValue(':imageId', $image->getId());
 						$this->insertImage->execute();
 
 						$imagesCount++;
 
 						$output->write("<comment>ok</comment>\n");
 
-					} catch (FileNotFoundException $e){
+					} catch (FileNotFoundException $e) {
 						$output->write("<comment>неудачно</comment>\n");
 						continue;
 					}
 				}
 			}
 
-			$content = preg_replace('@\[img\].+\[\/img\]@iU','',$content);
+			$content = preg_replace('@\[img\].+\[\/img\]@iU', '', $content);
 			$content = trim($content);
 
 			//Не будем добавлять коммент, если нет фоток и текст пустой
-			if ($imagesCount == 0 && empty($content)){
+			if ($imagesCount == 0 && empty($content)) {
 				continue;
 			}
 
@@ -135,12 +139,11 @@ VALUES (:commentId, :imageId)
 			$this->insert->bindValue(':level', 0);
 			$this->insert->bindValue(':imagesCount', $imagesCount);
 
-			if(!$this->insert->execute()) {
+			if (!$this->insert->execute()) {
 				$output->writeln("</info>");
-				$output->writeln("<error>".print_r($this->insert->errorInfo(), true)."</error>");
+				$output->writeln("<error>" . print_r($this->insert->errorInfo(), true) . "</error>");
 				exit;
-			}
-			else {
+			} else {
 				$output->writeln("готово</info>");
 			}
 			$count++;

@@ -6,7 +6,7 @@
 
 		<ul class="mix-filter">
 			<li class="filter btn {% if tab1 %}active{% endif %}" data-filter="person">
-				<a href="/office/kid{{ kid.id }}">Ребенок</a>
+				<a href="/office/kid{{ kid.id }}">{{ kid.name|e }}</a>
 			</li>
 
 			<li class="filter btn {% if tab2 %}active{% endif %}" data-filter="comments">

@@ -31,12 +31,7 @@ class ImportMovies extends Command {
 	 */
 	private $stmtMovies, $stmtPersons, $stmtDeleteFilmography, $stmtAddFilmography;
 
-	protected function configure() {
-		$this->setName('import:movies')
-			->setDescription("Импорт фильмов в систему тегов попкорна + простановка фильмографии у персон");
-
-		$this->timer = microtime(1);
-
+	private function init() {
 		$this->pdo = PDOHelper::getPDO();
 
 		$this->stmtPersons = $this->pdo->query('select * from pn_persons order by name asc');
@@ -45,10 +40,21 @@ class ImportMovies extends Command {
 			$this->pdo->prepare('delete from pn_persons_movies where personId = :personId');
 		$this->stmtAddFilmography =
 			$this->pdo->prepare('insert into pn_persons_movies set personId = :personId, movieId = :movieId');
+	}
+
+	protected function configure() {
+		$this->setName('import:movies')
+			->setDescription("Импорт фильмов в систему тегов попкорна + простановка фильмографии у персон");
+
+		$this->timer = microtime(1);
+
+
 
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
+
+		$this->init();
 
 		$output->write('<info>Импорт всех тегов для всех новостей...</info>');
 

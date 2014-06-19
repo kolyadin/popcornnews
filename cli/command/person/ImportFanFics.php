@@ -31,11 +31,7 @@ class ImportFanFics extends Command {
 	 */
 	private $stmtCleanFanFics, $stmtCleanComments;
 
-	protected function configure() {
-
-		$this->setName('import:persons:fanfics')
-			->setDescription("Импорт фанфиков о персонах");
-
+	private function init(){
 		$this->pdo = PDOHelper::getPDO();
 
 		$this->stmtCleanFanFics =
@@ -58,10 +54,20 @@ class ImportFanFics extends Command {
 
 		$this->stmtGetCommentsCountByFanFic =
 			$this->pdo->prepare('SELECT count(*) FROM pn_comments_fanfics WHERE entityId = :fanficId');
+	}
+
+	protected function configure() {
+
+		$this->setName('import:persons:fanfics')
+			->setDescription("Импорт фанфиков о персонах");
+
+
 
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
+
+		$this->init();
 
 		{
 			$output->write('<info>Подготовим данные для импорта...');

@@ -28,10 +28,7 @@ class Import extends Command {
 	 */
 	private $insert;
 
-	protected function configure() {
-		$this->setName('import:kids')
-			->setDescription("Импорт детей");
-
+	private function init(){
 		$this->pdo = PDOHelper::getPDO();
 		$this->selector = $this->pdo->prepare("SELECT * FROM popcornnews.popconnews_goods_ WHERE goods_id = 68");
 
@@ -46,10 +43,17 @@ VALUES (
   :name, :description, :birthDate,
   :photo, :votesUp, :votesDown, 0
 )");
+	}
 
+	protected function configure() {
+		$this
+			->setName('import:kids')
+			->setDescription("Импорт детей");
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
+
+		$this->init();
 
 		$output->writeln('<info>Импорт детей...</info>');
 

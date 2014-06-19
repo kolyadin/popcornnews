@@ -22,11 +22,7 @@ class ImportFacts extends Command {
 	private $stmtFindFacts, $stmtFindFactsVotes, $stmtFindFactRating,
 		$stmtInsertFacts, $stmtInsertFactsVotes, $stmtCleanFacts, $stmtCleanVotes;
 
-	protected function configure() {
-
-		$this->setName('import:persons:facts')
-			->setDescription("Импорт фактов о персонах");
-
+	private function init() {
 		$this->pdo = PDOHelper::getPDO();
 
 		$this->stmtFindFacts =
@@ -50,10 +46,20 @@ class ImportFacts extends Command {
 
 		$this->stmtInsertFactsVotes =
 			$this->pdo->query('INSERT INTO popcorn.pn_persons_facts_votes (factId,userId,category,vote) SELECT fid, uid, rubric, vote/10 FROM popcornnews.popcornnews_fact_votes');
+	}
+
+	protected function configure() {
+
+		$this->setName('import:persons:facts')
+			->setDescription("Импорт фактов о персонах");
+
+
 
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
+
+		$this->init();
 
 		{
 			$output->write('<info>Подготовим данные для импорта...');

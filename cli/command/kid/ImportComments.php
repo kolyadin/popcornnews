@@ -33,11 +33,7 @@ class ImportComments extends Command {
 	 */
 	private $stmtInsertImage;
 
-	protected function configure() {
-		$this
-			->setName('import:kids:comments')
-			->setDescription("Импорт комментариев для детей");
-
+	private function init() {
 		$this->pdo = PDOHelper::getPDO();
 
 		$this->stmtSelectComments =
@@ -66,7 +62,12 @@ class ImportComments extends Command {
 				INSERT INTO pn_comments_kids_images (commentId, imageId)
 				VALUES (:commentId, :imageId)
 			");
+	}
 
+	protected function configure() {
+		$this
+			->setName('import:kids:comments')
+			->setDescription("Импорт комментариев для детей");
 	}
 
 	private function generateCommentsLevels() {
@@ -126,31 +127,31 @@ class ImportComments extends Command {
 
 			$imagesCount = 0;
 
-			/*
 			if (isset($matches[1]) && count($matches[1])) {
 				foreach ($matches[1] as $imageUrl) {
 					try {
-						$output->write("\n\t<comment>Пытаемся скачать $imageUrl...</comment>");
+						$output->write("\t<comment>Пытаемся скачать $imageUrl</comment>");
 
 						$image = ImageFactory::createFromUrl($imageUrl);
 
-						$this->insertImage->bindValue(':commentId', $item['id']);
-						$this->insertImage->bindValue(':imageId', $image->getId());
-						$this->insertImage->execute();
+						$this->stmtInsertImage->bindValue(':commentId', $item['id']);
+						$this->stmtInsertImage->bindValue(':imageId', $image->getId());
+						$this->stmtInsertImage->execute();
+
+						$image->getThumb('x100');
 
 						$imagesCount++;
 
-						$output->write("<comment>ok</comment>\n");
+						$output->writeln(" <info>готово</info>");
 
 					} catch (FileNotFoundException $e) {
-						$output->write("<comment>неудачно</comment>\n");
+						$output->writeln(" <error>неудачно</error>");
 
 						continue;
 					}
 				}
 			}
 
-			*/
 			$content = preg_replace('@\[img\].+\[\/img\]@iU', '', $content);
 			$content = trim($content);
 
@@ -188,6 +189,8 @@ class ImportComments extends Command {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
+
+		$this->init();
 
 		{
 			$output->write('<info>Очистка таблиц...');

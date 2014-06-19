@@ -101,6 +101,7 @@ class ImageFactory {
         $curl = curl_init($url);
 		curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 6.1; rv:26.0) Gecko/20100101 Firefox/26.0');
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($curl, CURLOPT_FILE, $f);
 		curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
         curl_exec($curl);

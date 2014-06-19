@@ -34,10 +34,7 @@ class ImportPhotoArticles extends Command {
 	 */
 	private $stmtInsertPost, $stmtInsertPhoto, $stmtInsertTag, $stmtInsertPerson;
 
-	protected function configure() {
-		$this->setName('import:photoarticles')
-			->setDescription("Импорт фото-статей");
-
+	private function init() {
 		$this->pdo = PDOHelper::getPDO();
 
 		$this->stmtFindPosts =
@@ -61,6 +58,13 @@ class ImportPhotoArticles extends Command {
 
 		$this->stmtInsertPerson =
 			$this->pdo->prepare('insert into pn_photoarticles_images_persons set postId = :postId, imageId = :imageId, personId = :personId');
+	}
+
+	protected function configure() {
+		$this
+			->setName('import:photoarticles')
+			->setDescription("Импорт фото-статей");
+
 	}
 
 	private function insertPosts(InputInterface $input, OutputInterface $output) {
@@ -163,13 +167,15 @@ class ImportPhotoArticles extends Command {
 				':createDate'  => $table['date'],
 				':editDate'    => $table['date'],
 				':views'       => $table['views'],
-				':imagesCount' => $seq-1
+				':imagesCount' => $seq - 1
 			]);
 
 		}
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
+
+		$this->init();
 
 		{
 			$output->write('<info>Чистим таблицы</info>');

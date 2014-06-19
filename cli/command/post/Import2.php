@@ -38,29 +38,7 @@ class Import2 extends Command {
 
 	private $personCache = [];
 
-
-	protected function configure() {
-		$this->setName('import:posts')
-			->addOption(
-				'posts-limit',
-				null,
-				InputOption::VALUE_REQUIRED,
-				'Ограничим кол-во импортируемых новостей'
-			)
-			->addOption(
-				'post-id',
-				null,
-				InputOption::VALUE_REQUIRED,
-				'Импортируем конкретную новость'
-			)
-			->addOption(
-				'skip-clean',
-				null,
-				InputOption::VALUE_REQUIRED,
-				'Не очищаем таблицы'
-			)
-			->setDescription("Импорт новостей");
-
+	private function init() {
 		$this->pdo = PDOHelper::getPDO();
 
 
@@ -93,6 +71,29 @@ class Import2 extends Command {
 
 		$this->stmtInsertFashionBattleVoting =
 			$this->pdo->prepare('insert into pn_news_fashion_battle_voting set checksum = :checksum, votedAt = :votedAt, newsId = :newsId, `option` = :option');
+	}
+
+	protected function configure() {
+		$this->setName('import:posts')
+			->addOption(
+				'posts-limit',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Ограничим кол-во импортируемых новостей'
+			)
+			->addOption(
+				'post-id',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Импортируем конкретную новость'
+			)
+			->addOption(
+				'skip-clean',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Не очищаем таблицы'
+			)
+			->setDescription("Импорт новостей");
 
 	}
 
@@ -207,7 +208,7 @@ class Import2 extends Command {
 
 			PostFactory::removePost($postId);
 
-			$this->stmtFindPosts = $this->pdo->prepare('SELECT * FROM popcornnews.popconnews_goods_ WHERE goods_id = 2 AND id = '.$postId);
+			$this->stmtFindPosts = $this->pdo->prepare('SELECT * FROM popcornnews.popconnews_goods_ WHERE goods_id = 2 AND id = ' . $postId);
 		} else {
 			$this->stmtFindPosts = $this->pdo->prepare('SELECT * FROM popcornnews.popconnews_goods_ WHERE goods_id = 2 ORDER BY id DESC');
 		}
@@ -259,7 +260,7 @@ class Import2 extends Command {
 			while ($remotePhoto = $stmt->fetch(\PDO::FETCH_ASSOC)) {
 
 				try {
-					$url = sprintf('http://www.popcornnews.ru%s', str_replace('/upload/','/upload1/',$remotePhoto['filepath']));
+					$url = sprintf('http://www.popcornnews.ru%s', str_replace('/upload/', '/upload1/', $remotePhoto['filepath']));
 
 					$output->write("\t\t<comment>Пытаемся скачать $url");
 
@@ -270,9 +271,9 @@ class Import2 extends Command {
 
 					$stmt2 = $this->pdo->prepare('INSERT INTO pn_news_images SET newsId = :newsId, imageId = :imageId, seq = :seq');
 					$stmt2->execute([
-						':newsId' => $table['id'],
+						':newsId'  => $table['id'],
 						':imageId' => $image->getId(),
-						':seq' => $remotePhoto['seq']
+						':seq'     => $remotePhoto['seq']
 					]);
 
 					$output->writeln(" готово</comment>");
@@ -285,7 +286,7 @@ class Import2 extends Command {
 
 					{
 						$output->write("\t\t<info>Генерим фотку 620x для новостей");
-						$image->getThumb('620x');//Фотка в подробной новости
+						$image->getThumb('620x'); //Фотка в подробной новости
 						$output->writeln(" готово</info>");
 					}
 
@@ -296,7 +297,6 @@ class Import2 extends Command {
 
 			}
 			//endregion
-
 
 
 			//Fashion Battle
@@ -335,6 +335,8 @@ class Import2 extends Command {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
+
+		$this->init();
 
 		{
 			$output->write('<info>Чистим таблицы</info>');

@@ -48,6 +48,8 @@ ImageGenerator::setup([
 
 $cliApp = new PopcornCliApp();
 
+
+
 $cliApp->addCommands(SystemEntity::getCommands());
 $cliApp->addCommands(TagEntity::getCommands());
 $cliApp->addCommands(PersonEntity::getCommands());

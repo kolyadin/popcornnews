@@ -32,13 +32,10 @@ class Import extends Command{
      */
     private $pdo;
 
-    protected function configure() {
-        $this->setName('import:users')
-             ->setDescription("Импорт пользователей");
-
-        $this->pdo = PDOHelper::getPDO();
-        $this->selector = $this->pdo->prepare("SELECT * FROM popcorn.popkorn_users");
-        $this->insert = $this->pdo->prepare("
+	private function init() {
+		$this->pdo = PDOHelper::getPDO();
+		$this->selector = $this->pdo->prepare("SELECT * FROM popcorn.popkorn_users");
+		$this->insert = $this->pdo->prepare("
 INSERT INTO pn_users
 (
   id, email, password, type,
@@ -56,7 +53,7 @@ VALUES (
 ON DUPLICATE KEY UPDATE email = email
 ");
 
-        $this->ui = $this->pdo->prepare("
+		$this->ui = $this->pdo->prepare("
         INSERT INTO pn_users_info
 (
   name, sex, credo,
@@ -72,7 +69,7 @@ VALUES (
   :activistCount, :banDate
 )");
 
-        $this->us = $this->pdo->prepare("
+		$this->us = $this->pdo->prepare("
         INSERT INTO pn_users_settings
 (
     showBirthDate, dailySubscribe,
@@ -84,10 +81,19 @@ VALUES (
     :alertMessage, :alertGuestBook,
     :canInvite
 )");
+	}
+
+    protected function configure() {
+        $this->setName('import:users')
+             ->setDescription("Импорт пользователей");
+
+
 
     }
 
     protected function execute(InputInterface $input, OutputInterface $output){
+
+		$this->init();
 
 
         $output->writeln('<info>Импорт пользователей...</info>');
