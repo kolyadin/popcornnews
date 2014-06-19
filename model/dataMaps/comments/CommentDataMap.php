@@ -80,10 +80,10 @@ class CommentDataMap extends DataMap {
 			$this->prepare("INSERT INTO pn_comments_{$this->tablePrefix}_abuse (commentId, userId) VALUES (:commentId, :userId)");
 
 		$this->rateStatement =
-			$this->prepare("REPLACE INTO pn_comments_{$this->tablePrefix}_vote (commentId, userId, action) VALUES (:commentId, :userId, :action)");
+			$this->prepare("REPLACE INTO pn_comments_{$this->tablePrefix}_vote (commentId, userId) VALUES (:commentId, :userId)");
 
 		$this->rateFindStatement =
-			$this->prepare("SELECT group_concat(DISTINCT action),count(*) FROM pn_comments_{$this->tablePrefix}_vote WHERE commentId = :commentId GROUP BY action");
+			$this->prepare("SELECT count(*) FROM pn_comments_{$this->tablePrefix}_vote WHERE commentId = :commentId AND userId = :userId");
 
 		$this->stmtGetAllComments =
 			$this->prepare("SELECT id,parent FROM pn_comments_{$this->tablePrefix} WHERE entityId = :entityId ORDER BY createdAt ASC");
@@ -452,42 +452,37 @@ class CommentDataMap extends DataMap {
 
 	public function rate(Comment &$comment, User $user, $action) {
 
-		$result = true;
-		$this->rateStatement->bindParam(':commentId', $comment->getId());
-		$this->rateStatement->bindParam(':userId', $user->getId());
-		$this->rateStatement->bindParam(':action', $action);
 
-		try {
+		$doRate = function (Comment $comment, User $user, $action) {
+			$this->rateStatement->bindParam(':commentId', $comment->getId());
+			$this->rateStatement->bindParam(':userId', $user->getId());
 
-			$this->rateStatement->execute();
+			try {
 
-			$this->rateFindStatement->execute([
-				':commentId' => $comment->getId()
-			]);
+				$this->rateStatement->execute();
 
-			$rates = $this->rateFindStatement->fetchAll(\PDO::FETCH_KEY_PAIR);
+				if ($action == 'up') {
+					$comment->addVotesUp();
+				} elseif ($action == 'down') {
+					$comment->addVotesDown();
+				}
 
-			if (!isset($rates['up'])) {
-				$rates['up'] = 0;
-			}
-
-			if (!isset($rates['down'])) {
-				$rates['down'] = 0;
-			}
-
-			$comment->setVotesUp($rates['up']);
-			$comment->setVotesDown($rates['down']);
-
-			if (isset($rates['up']) || isset($rates['down'])) {
 				CommentFactory::saveComment($this->tablePrefix, $comment);
+
+			} catch (\PDOException $e) {
 			}
+		};
 
-		} catch (\PDOException $e) {
-			$result = false;
+		$this->rateFindStatement->execute([
+			':commentId' => $comment->getId(),
+			':userId'    => $user->getId()
+		]);
+
+		$already = $this->rateFindStatement->fetchColumn();
+
+		if (!$already){
+			$doRate($comment,$user,$action);
 		}
-
-		return $result;
 	}
-
 
 }

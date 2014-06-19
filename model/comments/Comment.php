@@ -348,6 +348,16 @@ class Comment extends Model {
 		$this->childs = $children;
 	}
 
+	public function addVotesUp(){
+		$this->votesUp++;
+		$this->changed();
+	}
+
+	public function addVotesDown(){
+		$this->votesDown++;
+		$this->changed();
+	}
+
 	public function setVotesUp($votes) {
 		$this->votesUp = $votes;
 		$this->changed();

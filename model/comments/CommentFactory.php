@@ -40,6 +40,12 @@ class CommentFactory {
 		return self::$dataMap->findById($commentId, $options);
 	}
 
+	/**
+	 * @param $entity
+	 * @param Comment $comment
+	 * @param User $user
+	 * @param $action
+	 */
 	public static function rateComment($entity, Comment $comment, User $user, $action) {
 		self::setDataMap($entity);
 

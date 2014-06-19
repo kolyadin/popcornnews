@@ -1,14 +1,9 @@
 <?php
-/**
- * User: anubis
- * Date: 22.11.13 16:11
- */
 
 namespace popcorn\cli\command\kid;
 
 
 use popcorn\cli\helpers\BBHelper;
-use popcorn\cli\helpers\SmileHelper;
 use popcorn\lib\PDOHelper;
 use popcorn\model\content\ImageFactory;
 use popcorn\model\exceptions\FileNotFoundException;
@@ -46,7 +41,7 @@ class ImportComments extends Command {
 		$this->pdo = PDOHelper::getPDO();
 
 		$this->stmtSelectComments =
-			$this->pdo->prepare('SELECT * FROM popcornnews.pn_comments_kids');
+			$this->pdo->prepare('SELECT t_ck.* FROM popcornnews.pn_comments_kids t_ck JOIN popcorn.pn_users t_u ON (t_u.id = t_ck.owner)');
 
 		$this->stmtUpdateCommentsCount =
 			$this->pdo->prepare('UPDATE pn_kids t_k SET t_k.comments = (SELECT count(*) FROM pn_comments_kids t_ck WHERE t_ck.entityId = t_k.id)');
@@ -160,10 +155,10 @@ class ImportComments extends Command {
 			$content = trim($content);
 
 			//Не будем добавлять коммент, если нет фоток и текст пустой
-//			if ($imagesCount == 0 && empty($content)) {
-//				$currentCommentIterator++;
-//				continue;
-//			}
+			if ($imagesCount == 0 && empty($content)) {
+				$currentCommentIterator++;
+				continue;
+			}
 
 			$content = BBHelper::convertOldBB($content);
 
@@ -204,6 +199,13 @@ class ImportComments extends Command {
 				'pn_comments_kids_subscribe',
 				'pn_comments_kids_vote'
 			]);
+
+			$output->writeln(' готово</info>');
+		}
+
+		{
+			$output->write('<info>Подготовим данные для импорта...');
+
 
 			$output->writeln(' готово</info>');
 		}
