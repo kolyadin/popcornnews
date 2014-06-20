@@ -53,6 +53,7 @@ use popcorn\model\persons\Person;
 use popcorn\model\groups\Group;
 use popcorn\model\posts\NewsPost;
 use popcorn\model\system\users\User;
+use popcorn\model\dataMaps\GoogleStatDataMap;
 
 class AjaxController extends GenericController implements ControllerInterface {
 
@@ -179,6 +180,10 @@ class AjaxController extends GenericController implements ControllerInterface {
 		$this
 			->getSlim()
 			->post('/ajax/poll', [$this, 'poll']);
+
+		$this
+			->getSlim()
+			->get('/ajax/stat', [$this, 'getStatistics']);
 
 	}
 
@@ -1227,6 +1232,96 @@ class AjaxController extends GenericController implements ControllerInterface {
 			],
 			'id'      => $img->getId()
 		]));
+
+	}
+
+	public function getStatistics() {
+
+		$r_month = $this->getSlim()->request->get('month');
+		$daysInterval = $this->getSlim()->request->get('daysInterval');
+
+		if (!preg_match('@[0-9]{2}\.[0-9]{4}@', $r_month)) {
+			die;
+		}
+
+		list($month,$year) = explode('.', $r_month);
+
+		if (!empty($daysInterval)){
+
+			list($weekStart,$weekEnd) = explode('-', $daysInterval);
+
+			$weekStart = explode('.',$weekStart);
+			$weekEnd   = explode('.',$weekEnd);
+
+			$date1 = sprintf('%04u-%02u-%02u', trim($weekStart[2]), trim($weekStart[1]), trim($weekStart[0]));
+			$date2 = sprintf('%04u-%02u-%02u', trim($weekEnd[2]), trim($weekEnd[1]), trim($weekEnd[0]));
+		} else {
+			$date1 = sprintf('%04u-%02u-%%', $year, $month);
+			$date2 = '';
+		}
+
+		$dataMap = new GoogleStatDataMap;
+		$result = $dataMap->getDataByDate($date1, $date2);
+		$city = array();
+		$sex = array();
+		$age = array();
+		foreach($result as $row) {
+			$json = json_decode($row->getCityJson(), true);
+			foreach ($json as $rowJson){
+				$city[key($rowJson)][] = current($rowJson);
+			}
+			$json = json_decode($row->getSexJson(), true);
+			foreach ($json as $rowJson){
+				$sex[key($rowJson)][] = current($rowJson);
+			}
+			$json = json_decode($row->getAgeJson(), true);
+			foreach ($json as $rowJson){
+				$age[key($rowJson)][] = current($rowJson);
+			}
+		}
+
+		$result = $dataMap->getVisitsByDate($date1, $date2);
+		$pageviews = array();
+		foreach($result as $row) {
+			$item = array();
+			$item['date'] = date('d.m.y', strtotime($row->getDate()));
+			$item['pageviews'] = $row->getPageViews();
+			$item['visits'] = $row->getVisits();
+			$pageviews[] = $item;
+		}
+
+		die(json_encode(array(
+			'city'  => $city,
+			'views' => $pageviews,
+			'sex'	=> $sex,
+			'age'	=> $age,
+			'weeks' => $this->get_month_week_day_ranges($year, $month)
+		)));
+
+	}
+
+	protected function get_month_week_day_ranges($year, $month) {
+
+		$last_month_day_num = cal_days_in_month(CAL_GREGORIAN, $month, $year);
+
+		if (date('Ym') == sprintf('%04u%02u', $year, $month)) {
+			$last_month_day_num = date('d');
+		}
+
+		$first_month_day_timestamp = strtotime($year . '-' . $month . '-01');
+		$last_month_daty_timestamp = strtotime($year . '-' . $month . '-' . $last_month_day_num);
+
+		$first_month_week = date('W', $first_month_day_timestamp);
+		$last_month_week = strftime('%W', $last_month_daty_timestamp);
+
+		$aMonthWeeks = array();
+		for($week = $first_month_week; $week <= $last_month_week; $week++) {
+			array_push($aMonthWeeks, array(
+				date("d.m.Y", strtotime(sprintf('%dW%02d-1', $year, $week))),
+				date("d.m.Y", strtotime(sprintf('%dW%02d-7', $year, $week))),
+			));
+		}
+		return $aMonthWeeks;
 
 	}
 
