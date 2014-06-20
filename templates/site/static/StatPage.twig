@@ -12,12 +12,19 @@
 
 	<div class="b-grid__g8">
 		<article class="b-text b-contacts">
+		<style>
+			.stat-filter-block {position:relative;left:260px;}
+			.title {font:normal 18px 'Trebuchet MS', Tahoma, Verdana, Arial;}
+			#stat-month-selector {display:none;font:normal 16px 'Trebuchet MS', Tahoma, Verdana, Arial;}
+			#stat-week-selector {display:none;font:normal 16px 'Trebuchet MS', Tahoma, Verdana, Arial;margin-left:10px;}
+		</style>
+
 			<h1>Статистика сайта по данным Google Analytics</h1>
 
 			<script type='text/javascript' src='https://www.google.com/jsapi'></script>
 			<script type='text/javascript'>
 
-			(new Image()).src = 'http://v1.popcorn-news.ru/i/loader2.gif';
+			(new Image()).src = '/assets/img/loader2.gif';
 
 			function array_sum( array ) {
 
@@ -78,7 +85,7 @@
 					var pos = $('#stat-month-selector').offset();
 
 					$('#ajax-loader')
-						.html('<img src="http://v1.popcorn-news.ru/i/loader2.gif" />')
+						.html('<img src="/assets/img/loader2.gif" />')
 						.css({
 							'position' : 'absolute',
 							'top'	  : pos.top + 9 + 'px',
@@ -87,8 +94,8 @@
 						.show()
 					;
 
-					$('#stat-month-selector').attr('disabled',true);
-					$('#stat-week-selector').attr('disabled',true);
+/*					$('#stat-month-selector').attr('disabled',true);
+					$('#stat-week-selector').attr('disabled',true);*/
 					$('#content').css('opacity',0.2);
 
 					var ajaxData = {'month' : dateOptions['month']};
@@ -210,18 +217,18 @@
 
 			<h2>Посещения</h2>
 
-			<div id="chart_div_pageviews" style="width: 880px; height: 400px;"></div>
+			<div id="chart_div_pageviews" style="width: 620px; height: 300px;"></div>
 
 
 			<h2>Города</h2>
 
-			<div id="chart_div_city" style="width: 880px; height:549px; "></div>
+			<div id="chart_div_city" style="width: 620px; height: 400px; "></div>
 
 			<h2 style="margin-top:20px;">Демография</h2>
 
 			<table><tr>
-				<td><div id="chart_div_sex" style="width: 440px;  "></div></td>
-				<td><div id="chart_div_age" style="width: 440px;   "></div></td>
+				<td><div id="chart_div_sex" style="width: 310px;  "></div></td>
+				<td><div id="chart_div_age" style="width: 310px;   "></div></td>
 			</tr></table>
 
 		</article>
