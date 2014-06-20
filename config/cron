@@ -5,3 +5,6 @@
 
 
 @reboot sudo /usr/bin/searchd --config ~/popcorn/config/sphinxsearch.conf
+
+
+cron_ga из старой версии переделать под dataMaps
