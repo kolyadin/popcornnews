@@ -15,9 +15,9 @@ class FashionBattleDataMap extends DataMap {
 		$this->insertStatement =
 			$this->prepare("
                 INSERT INTO pn_news_fashion_battle (newsId, firstOption, secondOption, firstOptionVotes, secondOptionVotes)
-                VALUES (:newsId, :firstOption, :secondOption)");
+                VALUES (:newsId, :firstOption, :secondOption, :firstOptionVotes, :secondOptionVotes)");
 		$this->updateStatement =
-			$this->prepare("UPDATE pn_news_fashion_battle SET newsId=:newsId, firstOption=:firstOption, secondOption=:secondOption, firstOptionVotes=:firstOptionVotes, secondOptionVotes=:secondOptionVotes  WHERE id=:id");
+			$this->prepare("UPDATE pn_news_fashion_battle SET newsId=:newsId, firstOption=:firstOption, secondOption=:secondOption, firstOptionVotes=:firstOptionVotes, secondOptionVotes=:secondOptionVotes WHERE id=:id");
 		$this->deleteStatement = $this->prepare("DELETE FROM pn_news_fashion_battle WHERE id=:id");
 		$this->findOneStatement = $this->prepare("SELECT * FROM pn_news_fashion_battle WHERE id=:id");
 
@@ -67,6 +67,7 @@ class FashionBattleDataMap extends DataMap {
 	 */
 	public function saveWithPost($item){
 		$item->getFashionBattle()->setNewsId($item->getId());
+
 		parent::save($item->getFashionBattle());
 	}
 

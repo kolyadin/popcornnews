@@ -35,12 +35,12 @@ class FashionBattle extends Model {
 	/**
 	 * @var int
 	 */
-	private $firstOptionVotes;
+	private $firstOptionVotes = 0;
 
 	/**
 	 * @var int
 	 */
-	private $secondOptionVotes;
+	private $secondOptionVotes = 0;
 
 	//endregion
 

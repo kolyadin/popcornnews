@@ -117,6 +117,7 @@
 
 				checkParent: function(){
 
+
 					if (this.fbBlock == null){
 						this.fbBlock = $('div[data-element=fashion-battle]');
 					}
@@ -136,23 +137,23 @@
 				},
 				handler: function(){
 					this.checkParent();
-
 					var $this = this;
 
 					$this.fbAddButton.removeClass('hide');
 
 					$this.fbAddButton.on('click',function(){
-						$this.activate();
+						$this.activate('new');
 					});
 
 					$this.fbRemoveButton.on('click',function(){
 						$this.deactivate();
 					});
 				},
-				activate: function(){
+				activate: function(value){
 					this.checkParent();
 
-					this.fbBlock.find('input[name=fashionBattle]').val(1);
+					this.fbBlock.find('input[name=fashionBattle]').val(value);
+
 					this.fbBlock.removeClass('hide');
 					this.fbAddButton.addClass('hide');
 					this.fbRemoveButton.removeClass('hide');
@@ -173,11 +174,11 @@
 
 			fashionBattle.handler();
 
-			{% if post %}
-				{% if not post.fashionBattle %}
+			{% if post.id %}
+				{% if not post.fashionBattle.id %}
 					fashionBattle.hideButtons();
 				{% elseif post.fashionBattle %}
-					fashionBattle.activate();
+					fashionBattle.activate({{ post.fashionBattle.id }});
 					fashionBattle.hideButtons();
 				{% endif %}
 			{% endif %}
@@ -700,7 +701,7 @@
 
 {% block PageTop %}
 
-	{% if post %}
+	{% if post.id %}
 		<h3 class="page-title">
 			&quot;{{ post.name|e }}&quot;
 			<small>Новость</small>
@@ -721,7 +722,7 @@
 			<a href="/office/posts">Новости</a>
 			<i class="fa fa-angle-right"></i>
 		</li>
-		{% if post %}
+		{% if post.id %}
 			<li>
 				<a href="/office/post{{ post.id }}">{{ post.name|e }}</a>
 			</li>
@@ -763,7 +764,7 @@
 
 
 	<form class="form-horizontal form-row-seperated" method="post" enctype="multipart/form-data" name="form-edit">
-		{% if post %}
+		{% if post.id %}
 			<input type="hidden" name="postId" value="{{ post.id }}"/>
 		{% endif %}
 
@@ -1025,7 +1026,7 @@
 				</div>
 				<div class="portlet-body">
 
-					{% if post and not post.fashionBattle %}
+					{% if post.id and not post.fashionBattle %}
 						<div class="alert alert-info alert-dismissable">
 							<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
 							В существующую новость нельзя добавить Fashion Battle

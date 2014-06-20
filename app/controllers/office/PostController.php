@@ -83,7 +83,7 @@ class PostController extends GenericController implements ControllerInterface {
 		$onPage = 50;
 		$totalFound = 0;
 
-		$posts = PostFactory::getPosts(['orderBy' => ['createDate' => 'desc']],($page - 1) * $onPage,$onPage,$totalFound);
+		$posts = PostFactory::getPosts(['orderBy' => ['createDate' => 'desc']], ($page - 1) * $onPage, $onPage, $totalFound);
 
 		$this
 			->getTwig()
@@ -186,6 +186,8 @@ class PostController extends GenericController implements ControllerInterface {
 		}
 		//endregion
 
+		$post->clearTags();
+
 		if ($request->post('articles')) {
 			$articles = explode(',', $request->post('articles'));
 
@@ -252,7 +254,7 @@ class PostController extends GenericController implements ControllerInterface {
 
 		//region Fashion Battle
 		if (
-			$request->post('fashionBattle') == 1 &&
+			$request->post('fashionBattle') == 'new' &&
 			$request->post('fbFirstOption') &&
 			$request->post('fbSecondOption')
 		) {
@@ -265,10 +267,12 @@ class PostController extends GenericController implements ControllerInterface {
 			$fashionBattle->setSecondOption($secondOption);
 
 			$post->addFashionBattle($fashionBattle);
+		} elseif ((int)$request->post('fashionBattle') > 0) {
+			$post->addFashionBattle(FashionBattleFactory::get($request->post('fashionBattle')));
 		}
 		//endregion
 
-		$this->newsDataMap->save($post);
+		PostFactory::savePost($post);
 
 		if ($postId) {
 			$this->getSlim()->redirect(sprintf('/office/post%u?status=updated', $post->getId()));

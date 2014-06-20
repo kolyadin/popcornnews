@@ -479,12 +479,12 @@ class NewsPost extends Model {
 	}
 
 	public function clearTags() {
-		$this->tags = array();
+		$this->tags = [];
 		$this->changed();
 	}
 
 	public function clearImages() {
-		$this->images = array();
+		$this->images = [];
 		$this->changed();
 	}
 
