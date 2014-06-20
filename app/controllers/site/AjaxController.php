@@ -696,14 +696,11 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 				FashionBattleFactory::save($fb);
 
-				/*
-				$pointsOverall = sprintf('Всего %s', RuHelper::ruNumber($kid->getVotesOverall(), ['нет голосов', '%u голос', '%u голоса', '%u голосов']));
+				$pointsOverall = sprintf('Всего %s', RuHelper::ruNumber($fb->getTotalVotes(), ['нет голосов', '%u голос', '%u голоса', '%u голосов']));
 
 				$this->getApp()->exitWithJsonSuccessMessage([
-					'points'        => $kid->getVotes(),
 					'pointsOverall' => $pointsOverall
 				]);
-				*/
 
 			}
 		} catch (AjaxException $e) {
@@ -1296,14 +1293,14 @@ class AjaxController extends GenericController implements ControllerInterface {
 			die;
 		}
 
-		list($month,$year) = explode('.', $r_month);
+		list($month, $year) = explode('.', $r_month);
 
-		if (!empty($daysInterval)){
+		if (!empty($daysInterval)) {
 
-			list($weekStart,$weekEnd) = explode('-', $daysInterval);
+			list($weekStart, $weekEnd) = explode('-', $daysInterval);
 
-			$weekStart = explode('.',$weekStart);
-			$weekEnd   = explode('.',$weekEnd);
+			$weekStart = explode('.', $weekStart);
+			$weekEnd = explode('.', $weekEnd);
 
 			$date1 = sprintf('%04u-%02u-%02u', trim($weekStart[2]), trim($weekStart[1]), trim($weekStart[0]));
 			$date2 = sprintf('%04u-%02u-%02u', trim($weekEnd[2]), trim($weekEnd[1]), trim($weekEnd[0]));
@@ -1317,24 +1314,24 @@ class AjaxController extends GenericController implements ControllerInterface {
 		$city = array();
 		$sex = array();
 		$age = array();
-		foreach($result as $row) {
+		foreach ($result as $row) {
 			$json = json_decode($row->getCityJson(), true);
-			foreach ($json as $rowJson){
+			foreach ($json as $rowJson) {
 				$city[key($rowJson)][] = current($rowJson);
 			}
 			$json = json_decode($row->getSexJson(), true);
-			foreach ($json as $rowJson){
+			foreach ($json as $rowJson) {
 				$sex[key($rowJson)][] = current($rowJson);
 			}
 			$json = json_decode($row->getAgeJson(), true);
-			foreach ($json as $rowJson){
+			foreach ($json as $rowJson) {
 				$age[key($rowJson)][] = current($rowJson);
 			}
 		}
 
 		$result = $dataMap->getVisitsByDate($date1, $date2);
 		$pageviews = array();
-		foreach($result as $row) {
+		foreach ($result as $row) {
 			$item = array();
 			$item['date'] = date('d.m.y', strtotime($row->getDate()));
 			$item['pageviews'] = $row->getPageViews();
@@ -1345,8 +1342,8 @@ class AjaxController extends GenericController implements ControllerInterface {
 		die(json_encode(array(
 			'city'  => $city,
 			'views' => $pageviews,
-			'sex'	=> $sex,
-			'age'	=> $age,
+			'sex'   => $sex,
+			'age'   => $age,
 			'weeks' => $this->get_month_week_day_ranges($year, $month)
 		)));
 
@@ -1367,7 +1364,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 		$last_month_week = strftime('%W', $last_month_daty_timestamp);
 
 		$aMonthWeeks = array();
-		for($week = $first_month_week; $week <= $last_month_week; $week++) {
+		for ($week = $first_month_week; $week <= $last_month_week; $week++) {
 			array_push($aMonthWeeks, array(
 				date("d.m.Y", strtotime(sprintf('%dW%02d-1', $year, $week))),
 				date("d.m.Y", strtotime(sprintf('%dW%02d-7', $year, $week))),

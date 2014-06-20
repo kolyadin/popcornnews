@@ -5,7 +5,7 @@
   "keywords": [
     "tooltip"
   ],
-  "version": "2.2.3",
+  "version": "3.2.4",
   "author": {
     "name": "Caleb Jacob",
     "url": "http://calebjacob.com/"
@@ -15,6 +15,11 @@
       "name": "Caleb Jacob",
       "email": "hello@calebjacob.com",
       "url": "http://calebjacob.com/"
+    },
+    {
+      "name": "Louis Ameline",
+      "email": "evangun2001@yahoo.fr",
+      "url": "https://github.com/louisameline"
     }
   ],
   "licenses": [
@@ -23,9 +28,9 @@
       "url": "http://opensource.org/licenses/MIT"
     }
   ],
-  "homepage": "http://calebjacob.com/tooltipster/",
-  "docs": "http://calebjacob.com/tooltipster/#getting-started",
+  "homepage": "https://github.com/iamceege/tooltipster",
+  "docs": "http://iamceege.github.io/tooltipster",
   "dependencies": {
-    "jquery": ">=1.4"
+    "jquery": ">=1.7"
   }
 }

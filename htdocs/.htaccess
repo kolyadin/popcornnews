@@ -3,7 +3,7 @@ php_value post_max_filesize   10M
 php_value xhprof.output_dir   /data/sites/popcorn/var/tmp/xhprof
 php_value date.timezone       "Europe/Moscow"
 
-SetEnv POPCORN_MODE development
+SetEnv POPCORN_MODE production
 
 AddDefaultCharset utf-8
 Options -Indexes

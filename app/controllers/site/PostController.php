@@ -268,8 +268,6 @@ class PostController extends GenericController implements ControllerInterface {
 
 		$post = PostFactory::getPost($postId, ['status' => NewsPost::STATUS_PUBLISHED]);
 
-		print '<pre>'.print_r($post,true).'</pre>';
-
 		if (!$post) {
 			$this->getSlim()->notFound();
 		}
