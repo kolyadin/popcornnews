@@ -3,6 +3,7 @@
 namespace popcorn\model\comments;
 
 use popcorn\model\dataMaps\comments\KidCommentDataMap;
+use popcorn\model\dataMaps\comments\NewsCommentDataMap;
 use popcorn\model\system\users\User;
 use popcorn\model\system\users\UserFactory;
 
@@ -16,6 +17,8 @@ class CommentFactory {
 	private static function setDataMap($entity) {
 		if ($entity == 'kids') {
 			self::$dataMap = new KidCommentDataMap();
+		} elseif ($entity == 'news') {
+			self::$dataMap = new NewsCommentDataMap();
 		}
 	}
 

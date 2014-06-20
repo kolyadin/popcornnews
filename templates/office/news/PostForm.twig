@@ -827,11 +827,28 @@
 
 						<label class="control-label col-md-3">Статус новости:</label>
 
+						{% set selected = 1 %}
+
+						{% if post.id %}
+
+							{% if post.status == constant('popcorn\\model\\posts\\NewsPost::STATUS_NOT_PUBLISHED') %}
+								{% set selected = 0 %}
+							{% endif %}
+
+							{% if post.status == constant('popcorn\\model\\posts\\NewsPost::STATUS_PUBLISHED') %}
+								{% set selected = 1 %}
+							{% endif %}
+
+							{% if post.status == constant('popcorn\\model\\posts\\NewsPost::STATUS_PLANNED') %}
+								{% set selected = 1 %}
+							{% endif %}
+						{% endif %}
+
 						<div class="col-md-9">
 							<select class="form-control" name="status">
-								<option value="0"{% if post.status == constant('popcorn\\model\\posts\\NewsPost::STATUS_NOT_PUBLISHED') %}selected{% endif %}>Не публиковать</option>
-								<option value="1"{% if post.status == constant('popcorn\\model\\posts\\NewsPost::STATUS_PUBLISHED') %}selected{% endif %}>Публиковать</option>
-								<option value="2"{% if post.status == constant('popcorn\\model\\posts\\NewsPost::STATUS_PLANNED') %}selected{% endif %}>Запланировано</option>
+								<option value="0" {% if selected == 0 %}selected{% endif %}>Не публиковать</option>
+								<option value="1" {% if selected == 1 %}selected{% endif %}>Публиковать</option>
+								<option value="2" {% if selected == 2 %}selected{% endif %}>Запланировано</option>
 							</select>
 							<span class="help-block"></span>
 						</div>

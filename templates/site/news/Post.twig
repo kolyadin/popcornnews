@@ -4,13 +4,24 @@
 
 	<title>{{ post.name|e }} - popcornnews</title>
 
-	<script type="text/javascript">
-		var commentSetup = {
-			entity: 'news',
-			entityId: {{ post.id }}
-		};
-	</script>
 	<script type="text/javascript" src="/assets/js/popcorn.comments.js"></script>
+	<script type="text/javascript" src="/assets/js/popcorn.fashionBattle.js"></script>
+	<script type="text/javascript">
+
+		$(function () {
+			IM.init({
+				entity: 'news',
+				entityId: {{ post.id }}
+			});
+
+			IM.generateEmoji();
+
+			PostFB.init({
+				fbId: {{ post.fashionBattle.id }}
+			});
+		});
+
+	</script>
 
 
 {% endblock %}
@@ -93,6 +104,28 @@
 
 			<div class="clearfix"></div>
 
+			{% if post.fashionBattle %}
+				<section class="b-single-article__battle">
+					<div class="b-single-article__battle-persons">
+						<a href="#" class="b-single-article__battle-person_left" data-action="vote-first">
+							<span class="b-single-article__battle-person-name">{{ post.fashionBattle.firstOption|e }}</span>
+						</a>
+						<a href="#" class="b-single-article__battle-person_right" data-action="vote-second">
+							<span class="b-single-article__battle-person-name">{{ post.fashionBattle.secondOption|e }}</span>
+						</a>
+						<div class="b-single-article__battle-persons__vote-count">Всего 180 голосов</div>
+					</div>
+					<div class="b-single-article__battle-rating">
+						<div style="width: 71.5%;" class="b-single-article__battle-person_left b-single-article__battle-person_best">
+							<span>245</span>
+						</div>
+						<div style="width: 28.3%;" class="b-single-article__battle-person_right">
+							<span>245</span>
+						</div>
+					</div>
+				</section>
+			{% endif %}
+
 			<section class="b-large-news__info">
 				<a href="/news/{{ post.id }}#comments" class="b-large-news__comments b-comments-status">
 					<span class="b-comments-status__title">Комментариев:</span>
@@ -105,7 +138,7 @@
 			</section>
 		</article>
 
-		{% include '/comments/CommentsBlock.twig' with { 'commentsTree': commentsTree } %}
+		{% include '/comments/CommentsBlock.twig' %}
 
 		<!--
 		<section class="b-photo-articles b-inside__photo-articles clearfix">

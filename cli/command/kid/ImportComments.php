@@ -156,15 +156,16 @@ class ImportComments extends Command {
 			$content = preg_replace('@\[img\].+\[\/img\]@iU', '', $content);
 			$content = trim($content);
 
+			$content = BBHelper::convertOldBB($content);
+			$content = trim($content);
+
 			//Не будем добавлять коммент, если нет фоток и текст пустой
 			if ($imagesCount == 0 && empty($content)) {
 				$currentCommentIterator++;
 				continue;
 			}
 
-			$content = BBHelper::convertOldBB($content);
-
-			$item['content'] = trim($content);
+			$item['content'] = $content;
 
 			$this->stmtInsertComment->bindValue(':id', $item['id']);
 			$this->stmtInsertComment->bindValue(':entityId', $item['news_id']);
@@ -203,13 +204,6 @@ class ImportComments extends Command {
 				'pn_comments_kids_subscribe',
 				'pn_comments_kids_vote'
 			]);
-
-			$output->writeln(' готово</info>');
-		}
-
-		{
-			$output->write('<info>Подготовим данные для импорта...');
-
 
 			$output->writeln(' готово</info>');
 		}

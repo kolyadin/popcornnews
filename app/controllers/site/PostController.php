@@ -268,6 +268,8 @@ class PostController extends GenericController implements ControllerInterface {
 
 		$post = PostFactory::getPost($postId, ['status' => NewsPost::STATUS_PUBLISHED]);
 
+		print '<pre>'.print_r($post,true).'</pre>';
+
 		if (!$post) {
 			$this->getSlim()->notFound();
 		}
@@ -282,15 +284,21 @@ class PostController extends GenericController implements ControllerInterface {
 		];
 
 		$dataMap = new NewsCommentDataMap();
-		$commentsTree = $dataMap->getAllComments($post->getId());
+		$comments = $dataMap->getAllComments($post->getId());
+
+		$commentsHtml = $this
+			->getTwig()
+			->render('/comments/Comments.twig', [
+				'comments' => $comments
+			]);
 
 		$this
 			->getTwig()
 			->display('/news/Post.twig', [
-				'post'         => $post,
-				'commentsTree' => $commentsTree,
-				'earlyPosts'   => $earlyPosts,
-				'earlyTime'    => $month
+				'post'       => $post,
+				'comments'   => $commentsHtml,
+				'earlyPosts' => $earlyPosts,
+				'earlyTime'  => $month
 			]);
 	}
 

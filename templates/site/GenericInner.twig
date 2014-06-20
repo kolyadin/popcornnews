@@ -344,8 +344,14 @@
                         </a>
                     </div>
                 </div>
-                <a href="#" class="b-user-panel__user-avatar">
-                    <img src="./img/content/phs5.jpg" alt="" />
+                <a href="/profile/{{ currentUser.id }}" class="b-user-panel__user-avatar">
+	                {% if currentUser.avatar.id %}
+		                {% set photo = currentUser.avatar.thumb('40x') %}
+		                <img src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}" alt="{{ currentUser.nick|e }}" />
+                    {% else %}
+	                    <img src="/assets/img/no-photo/small.png" alt="" />
+	                {% endif %}
+
                 </a>
                 <div class="clearfix"></div>
 

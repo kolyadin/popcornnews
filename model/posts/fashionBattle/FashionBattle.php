@@ -32,6 +32,16 @@ class FashionBattle extends Model {
 	private $secondOption;
 
 
+	/**
+	 * @var int
+	 */
+	private $firstOptionVotes;
+
+	/**
+	 * @var int
+	 */
+	private $secondOptionVotes;
+
 	//endregion
 
 	function __construct() {
@@ -71,10 +81,52 @@ class FashionBattle extends Model {
 
 	public function setFirstOption($option){
 		$this->firstOption = $option;
+		$this->changed();
 	}
 
+	/**
+	 * @return int
+	 */
+	public function getFirstOptionVotes() {
+		return $this->firstOptionVotes;
+	}
+
+	/**
+	 * @param int $firstOptionVotes
+	 */
+	public function setFirstOptionVotes($firstOptionVotes) {
+		$this->firstOptionVotes = $firstOptionVotes;
+		$this->changed();
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getSecondOptionVotes() {
+		return $this->secondOptionVotes;
+	}
+
+	/**
+	 * @param int $secondOptionVotes
+	 */
+	public function setSecondOptionVotes($secondOptionVotes) {
+		$this->secondOptionVotes = $secondOptionVotes;
+		$this->changed();
+	}
+
+	/**
+	 * @param $option
+	 */
 	public function setSecondOption($option){
 		$this->secondOption = $option;
+		$this->changed();
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getTotalVotes(){
+		return $this->firstOptionVotes + $this->secondOptionVotes;
 	}
 
 	//endregion

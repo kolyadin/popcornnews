@@ -42,6 +42,8 @@ use popcorn\model\persons\MeetingFactory;
 use popcorn\model\persons\PersonFactory;
 use popcorn\model\poll\Poll;
 use popcorn\model\poll\PollDataMap;
+use popcorn\model\posts\fashionBattle\FashionBattle;
+use popcorn\model\posts\fashionBattle\FashionBattleFactory;
 use popcorn\model\posts\PostFactory;
 use popcorn\model\system\users\GuestUser;
 use popcorn\model\system\users\UserFactory;
@@ -99,6 +101,11 @@ class AjaxController extends GenericController implements ControllerInterface {
 		$this
 			->getSlim()
 			->post('/ajax/messages/find-recipient', [$this, 'findRecipient']);
+
+
+		$this
+			->getSlim()
+			->post('/ajax/post/fb/send', [$this, 'fbSend']);
 
 		{
 			$this
@@ -652,6 +659,51 @@ class AjaxController extends GenericController implements ControllerInterface {
 		}
 
 
+	}
+
+	public function fbSend() {
+		$request = $this->getSlim()->request;
+
+		$fbId = $request->post('fbId');
+		$option = $request->post('option');
+
+		$fb = FashionBattleFactory::get($fbId);
+
+		$upDownDataMap = new UpDownDataMap();
+
+		try {
+			if ($upDownDataMap->isAllow($fb)) {
+
+				$voting = new UpDownVoting();
+				$voting->setVotedAt(new \DateTime());
+				$voting->setEntity(get_class(new FashionBattle()));
+				$voting->setEntityId($fbId);
+
+				if ($option == 1) {
+					$voting->setVote(UpDownVoting::Up);
+					$fb->setFirstOptionVotes($fb->getFirstOptionVotes() + 1);
+				} elseif ($option == 2) {
+					$voting->setVote(UpDownVoting::Down);
+					$fb->setSecondOptionVotes($fb->getSecondOptionVotes() + 1);
+				}
+
+				$upDownDataMap->save($voting);
+
+				FashionBattleFactory::save($fb);
+
+				/*
+				$pointsOverall = sprintf('Всего %s', RuHelper::ruNumber($kid->getVotesOverall(), ['нет голосов', '%u голос', '%u голоса', '%u голосов']));
+
+				$this->getApp()->exitWithJsonSuccessMessage([
+					'points'        => $kid->getVotes(),
+					'pointsOverall' => $pointsOverall
+				]);
+				*/
+
+			}
+		} catch (AjaxException $e) {
+			$e->exitWithJsonException();
+		}
 	}
 
 	public function commentSend() {

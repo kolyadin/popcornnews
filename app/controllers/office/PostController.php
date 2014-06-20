@@ -150,8 +150,7 @@ class PostController extends GenericController implements ControllerInterface {
 		$postId = $request->post('postId');
 
 		if ($postId > 0) {
-			/** @var NewsPost $post */
-			$post = $this->newsDataMap->findById($postId);
+			$post = PostFactory::getPost($postId);
 			$post->setEditDate(new \DateTime('now'));
 		} else {
 			$post = new NewsPost();
@@ -271,7 +270,7 @@ class PostController extends GenericController implements ControllerInterface {
 
 		$this->newsDataMap->save($post);
 
-		if ($post->getId()) {
+		if ($postId) {
 			$this->getSlim()->redirect(sprintf('/office/post%u?status=updated', $post->getId()));
 		} else {
 			$this->getSlim()->redirect(sprintf('/office/post%u?status=created', $post->getId()));

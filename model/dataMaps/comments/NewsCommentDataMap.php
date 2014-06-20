@@ -11,8 +11,6 @@ class NewsCommentDataMap extends CommentDataMap {
 
 	public function __construct() {
 		parent::__construct();
-
-		$this->class = "popcorn\\model\\comments\\NewsPostComment";
 	}
 
 	protected function initStatements() {
@@ -27,7 +25,7 @@ class NewsCommentDataMap extends CommentDataMap {
 	protected function onInsert($item) {
 		parent::onInsert($item);
 
-		$this->updateCommentsCount($item->getPostId());
+		$this->updateCommentsCount($item->getEntityId());
 	}
 
 	protected function onRemove($postId) {

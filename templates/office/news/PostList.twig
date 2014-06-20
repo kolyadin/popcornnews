@@ -126,15 +126,11 @@
 
 	{% if posts|length %}
 
-		<div style="float:left;margin-top:17px;">
-			<a class="btn btn-success" href="/office/post_create"><i class="fa fa-plus" style="position:relative;top:1px;padding-right: 10px;"></i>добавить новость</a>
-		</div>
-
-		<div style="float: right;">
+		<div class="nav-pagination">
+			<a class="btn btn-success" href="/office/post_create"><i class="fa fa-plus"></i>добавить новость</a>
 			{{ html.paginator(paginator.pages,paginator.active,'/office/posts/page%u') }}
+			<div class="clearfix"></div>
 		</div>
-
-		<div class="clearfix"></div>
 
 		<div class="portlet">
 			<div class="portlet-title">
@@ -199,10 +195,10 @@
 				<thead>
 					<tr>
 						<th></th>
-						<th>Дата публикации</th>
+						<th style="white-space:nowrap;"><span class="label label-default">дата публикации</span></th>
 						<th></th>
 						<th></th>
-						<th>Заголовок новости</th>
+						<th style="white-space:nowrap;"><span class="label label-default">заголовок новости</span></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -240,15 +236,11 @@
 			</table>
 		</div>
 
-		<div style="float:left;margin-top:17px;">
-			<a class="btn btn-success" href="/office/post_create"><i class="fa fa-plus" style="position:relative;top:1px;padding-right: 10px;"></i>добавить новость</a>
-		</div>
-
-		<div style="float: right;">
+		<div class="nav-pagination">
+			<a class="btn btn-success" href="/office/post_create"><i class="fa fa-plus"></i>добавить новость</a>
 			{{ html.paginator(paginator.pages,paginator.active,'/office/posts/page%u') }}
+			<div class="clearfix"></div>
 		</div>
-
-		<div class="clearfix"></div>
 
 	{% else %}
 

@@ -14,10 +14,10 @@ class FashionBattleDataMap extends DataMap {
 		$this->class = "popcorn\\model\\posts\\fashionBattle\\FashionBattle";
 		$this->insertStatement =
 			$this->prepare("
-                INSERT INTO pn_news_fashion_battle (newsId, firstOption, secondOption)
+                INSERT INTO pn_news_fashion_battle (newsId, firstOption, secondOption, firstOptionVotes, secondOptionVotes)
                 VALUES (:newsId, :firstOption, :secondOption)");
 		$this->updateStatement =
-			$this->prepare("UPDATE pn_news_fashion_battle SET newsId=:newsId, firstOption=:firstOption, secondOption=:secondOption WHERE id=:id");
+			$this->prepare("UPDATE pn_news_fashion_battle SET newsId=:newsId, firstOption=:firstOption, secondOption=:secondOption, firstOptionVotes=:firstOptionVotes, secondOptionVotes=:secondOptionVotes  WHERE id=:id");
 		$this->deleteStatement = $this->prepare("DELETE FROM pn_news_fashion_battle WHERE id=:id");
 		$this->findOneStatement = $this->prepare("SELECT * FROM pn_news_fashion_battle WHERE id=:id");
 
@@ -31,6 +31,8 @@ class FashionBattleDataMap extends DataMap {
 		$this->insertStatement->bindValue(":newsId", $item->getNewsId());
 		$this->insertStatement->bindValue(":firstOption", $item->getFirstOption());
 		$this->insertStatement->bindValue(":secondOption", $item->getSecondOption());
+		$this->insertStatement->bindValue(":firstOptionVotes", $item->getFirstOptionVotes());
+		$this->insertStatement->bindValue(":secondOptionVotes", $item->getSecondOptionVotes());
 	}
 
 	/**
@@ -40,6 +42,9 @@ class FashionBattleDataMap extends DataMap {
 		$this->updateStatement->bindValue(":newsId", $item->getNewsId());
 		$this->updateStatement->bindValue(":firstOption", $item->getFirstOption());
 		$this->updateStatement->bindValue(":secondOption", $item->getSecondOption());
+		$this->updateStatement->bindValue(":firstOptionVotes", $item->getFirstOptionVotes());
+		$this->updateStatement->bindValue(":secondOptionVotes", $item->getSecondOptionVotes());
+
 		$this->updateStatement->bindValue(":id", $item->getId());
 	}
 
