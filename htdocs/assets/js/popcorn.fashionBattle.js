@@ -34,6 +34,7 @@ var PostFB = {
                 var $ratingFirst = $rating.find('.b-single-article__battle-person_left');
                 var $ratingSecond = $rating.find('.b-single-article__battle-person_right');
 
+
                 $ratingFirst.find('span').text(response.firstVotes).end().animate({width: response.firstPercent + '%'}, 'fast');
                 $ratingSecond.find('span').text(response.secondVotes).end().animate({width: response.secondPercent + '%'}, 'fast');
 
