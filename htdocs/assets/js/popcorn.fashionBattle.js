@@ -1,3 +1,8 @@
+/**
+ * FashionBattle 1.0
+ *
+ * @type {{sel: {}, config: {}, eventActive: boolean, prepare: Function, showAuthForm: Function, doVote: Function, bind: Function, init: Function}}
+ */
 var PostFB = {
 
     sel: {},
@@ -13,7 +18,7 @@ var PostFB = {
 
         $([PostFB.sel.voteFirst, PostFB.sel.voteSecond]).each(function () {
             $(this).tooltipster({
-                theme: '.tooltipster-pink',
+                theme: '.tooltipster-silver',
                 animation: 'swing',
                 interactive: false,
                 content: '',
@@ -36,9 +41,9 @@ var PostFB = {
             trigger: 'custom'
         }).tooltipster('show');
 
-        setTimeout(function(){
+        setTimeout(function () {
             $vote.tooltipster('hide');
-        },2000);
+        }, 2000);
     },
     doVote: function (option, obj) {
 
@@ -64,7 +69,6 @@ var PostFB = {
                 var $ratingFirst = $rating.find('.b-single-article__battle-person_left');
                 var $ratingSecond = $rating.find('.b-single-article__battle-person_right');
 
-
                 $ratingFirst.find('span').text(response.firstVotes).end().animate({width: response.firstPercent + '%'}, 'fast');
                 $ratingSecond.find('span').text(response.secondVotes).end().animate({width: response.secondPercent + '%'}, 'fast');
 
@@ -88,7 +92,7 @@ var PostFB = {
                 });
             };
 
-            var handlerAlreadyVoted = function(){
+            var handlerAlreadyVoted = function () {
                 $obj.tooltipster('content', 'Вы уже голосовали').tooltipster('show', function () {
                     setTimeout(function () {
                         $obj.tooltipster('hide', function () {
