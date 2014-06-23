@@ -5,7 +5,7 @@ setlocale(LC_TIME, "ru_RU.utf8");
 require '../vendor/autoload.php';
 
 if (\popcorn\lib\Config::getMode() != 'production') {
-	xhprof_enable();
+	xhprof_enable(XHPROF_FLAGS_NO_BUILTINS);
 }
 
 session_name('popcorn-session');
