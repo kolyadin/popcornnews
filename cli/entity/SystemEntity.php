@@ -10,7 +10,7 @@ class SystemEntity {
 
         return [
 			new command\system\Deploy(),
-			new command\system\gaCron()
+			new command\system\GoogleAnalyticsCron()
         ];
 
     }
