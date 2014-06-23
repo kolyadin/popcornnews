@@ -692,14 +692,18 @@ class AjaxController extends GenericController implements ControllerInterface {
 					$fb->setSecondOptionVotes($fb->getSecondOptionVotes() + 1);
 				}
 
-				$upDownDataMap->save($voting);
+//				$upDownDataMap->save($voting);
 
 				FashionBattleFactory::save($fb);
 
 				$pointsOverall = sprintf('Всего %s', RuHelper::ruNumber($fb->getTotalVotes(), ['нет голосов', '%u голос', '%u голоса', '%u голосов']));
 
 				$this->getApp()->exitWithJsonSuccessMessage([
-					'pointsOverall' => $pointsOverall
+					'pointsOverall' => $pointsOverall,
+					'firstVotes'    => $fb->getFirstOptionVotes(),
+					'secondVotes'   => $fb->getSecondOptionVotes(),
+					'firstPercent'  => $fb->getFirstOptionPercent(),
+					'secondPercent' => $fb->getSecondOptionPercent()
 				]);
 
 			}

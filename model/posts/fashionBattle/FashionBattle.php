@@ -53,21 +53,21 @@ class FashionBattle extends Model {
 	/**
 	 * @return int
 	 */
-	public function getNewsId(){
+	public function getNewsId() {
 		return $this->newsId;
 	}
 
 	/**
 	 * @return Person
 	 */
-	public function getFirstOption(){
+	public function getFirstOption() {
 		return $this->firstOption;
 	}
 
 	/**
 	 * @return Person
 	 */
-	public function getSecondOption(){
+	public function getSecondOption() {
 		return $this->secondOption;
 	}
 
@@ -75,11 +75,11 @@ class FashionBattle extends Model {
 
 	//region Setters
 
-	public function setNewsId($id){
+	public function setNewsId($id) {
 		$this->newsId = $id;
 	}
 
-	public function setFirstOption($option){
+	public function setFirstOption($option) {
 		$this->firstOption = $option;
 		$this->changed();
 	}
@@ -99,11 +99,49 @@ class FashionBattle extends Model {
 		$this->changed();
 	}
 
+	public function getFirstOptionPercent() {
+
+		if (!$this->firstOptionVotes) {
+			return 5;
+		}
+
+		$a = ($this->firstOptionVotes * 100) / ($this->firstOptionVotes + $this->secondOptionVotes);
+
+		if (!$this->secondOptionVotes) {
+			$a -= 5;
+		}
+
+		if ($a > 95) {
+			$a = 95;
+		}
+
+		return sprintf('%.1f', $a);
+	}
+
 	/**
 	 * @return int
 	 */
 	public function getSecondOptionVotes() {
 		return $this->secondOptionVotes;
+	}
+
+	public function getSecondOptionPercent() {
+
+		if (!$this->secondOptionVotes) {
+			return 5;
+		}
+
+		$a = ($this->secondOptionVotes * 100) / ($this->firstOptionVotes + $this->secondOptionVotes);
+
+		if (!$this->firstOptionVotes) {
+			$a -= 5;
+		}
+
+		if ($a > 95) {
+			$a = 95;
+		}
+
+		return sprintf('%.1f', $a);
 	}
 
 	/**
@@ -117,7 +155,7 @@ class FashionBattle extends Model {
 	/**
 	 * @param $option
 	 */
-	public function setSecondOption($option){
+	public function setSecondOption($option) {
 		$this->secondOption = $option;
 		$this->changed();
 	}
@@ -125,7 +163,7 @@ class FashionBattle extends Model {
 	/**
 	 * @return int
 	 */
-	public function getTotalVotes(){
+	public function getTotalVotes() {
 		return $this->firstOptionVotes + $this->secondOptionVotes;
 	}
 

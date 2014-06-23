@@ -30,6 +30,13 @@ var PostFB = {
 
                 $('.b-single-article__battle-persons__vote-count').html(response['pointsOverall']);
 
+                var $rating = $('.b-single-article__battle-rating');
+
+
+                $rating.find('.b-single-article__battle-person_left').find('span').text(response.firstVotes).end().animate({width: response.firstPercent + '%'}, 'fast');
+
+                $rating.find('.b-single-article__battle-person_right').find('span').text(response.secondVotes).end().animate({width: response.secondPercent + '%'}, 'fast');
+
                 $obj.tooltipster({
                     theme: '.tooltipster-pink',
                     animation: 'swing',
