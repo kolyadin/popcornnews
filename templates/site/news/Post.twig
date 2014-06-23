@@ -106,32 +106,7 @@
 			<div class="clearfix"></div>
 
 			{% if post.fashionBattle %}
-				<section class="b-single-article__battle">
-					<div class="b-single-article__battle-persons">
-						<a href="#" class="b-single-article__battle-person_left" data-action="vote-first">
-							<span class="b-single-article__battle-person-name">{{ post.fashionBattle.firstOption|e }}</span>
-						</a>
-						<a href="#" class="b-single-article__battle-person_right" data-action="vote-second">
-							<span class="b-single-article__battle-person-name">{{ post.fashionBattle.secondOption|e }}</span>
-						</a>
-						<div class="b-single-article__battle-persons__vote-count">
-							{{ post.fashionBattle.totalVotes|ruNumber(['Нет голосов', 'Всего %u голос', 'Всего %u голоса', 'Всего %u голосов']) }}
-						</div>
-					</div>
-					{% if post.fashionBattle.firstOptionVotes > post.fashionBattle.secondOptionVotes %}
-						{% set firstClass = 'b-single-article__battle-person_best' %}
-					{% elseif post.fashionBattle.secondOptionVotes > post.fashionBattle.firstOptionVotes %}
-						{% set secondClass = 'b-single-article__battle-person_best' %}
-					{% endif %}
-					<div class="b-single-article__battle-rating">
-						<div style="width: {{ post.fashionBattle.firstOptionPercent }}%;" class="b-single-article__battle-person_left {{ firstClass }}">
-							<span>{{ post.fashionBattle.firstOptionVotes }}</span>
-						</div>
-						<div style="width: {{ post.fashionBattle.secondOptionPercent }}%;" class="b-single-article__battle-person_right {{ secondClass }}">
-							<span>{{ post.fashionBattle.secondOptionVotes }}</span>
-						</div>
-					</div>
-				</section>
+				{% include '/news/FashionBattle.twig' %}
 			{% endif %}
 
 			<section class="b-large-news__info">
