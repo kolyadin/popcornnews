@@ -9,7 +9,8 @@ class SystemEntity {
     static function getCommands() {
 
         return [
-			new command\system\Deploy()
+			new command\system\Deploy(),
+			new command\system\gaCron()
         ];
 
     }
