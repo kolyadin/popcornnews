@@ -228,7 +228,7 @@ class NewsPostDataMap extends DataMap {
 	}
 
 	private function getFashionBattle($id) {
-		$item = $this->fashionBattleDataMap->getByNewsId($id);
+		$item = $this->fashionBattleDataMap->getByPostId($id);
 
 		return $item;
 	}

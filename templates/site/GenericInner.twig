@@ -97,6 +97,12 @@
 		    });
 	    };
 
+	    $(function () {
+		    $('body').on('click','a[data-action=go-auth]', function(){
+			    focusAtAuthForm();
+		    })
+	    });
+
         $(function(){
 
 	        $('#poll').on('submit',function(){

@@ -136,6 +136,17 @@ class Popcorn extends Application {
 		die(json_encode($output));
 	}
 
+	public function exitWithJson($status, array $data = []) {
+		$output = ['status' => $status];
+
+		if (count($data)) {
+			$output = array_merge($output, $data);
+		}
+
+		die(json_encode($output));
+
+	}
+
 	protected function initControllers() {
 
 		$this->registerController(new AjaxController());

@@ -4,8 +4,11 @@ namespace popcorn\model\posts\fashionBattle;
 
 
 use popcorn\model\dataMaps\DataMap;
+use popcorn\model\exceptions\ajax\VotingNotAllowException;
 use popcorn\model\persons\PersonFactory;
 use popcorn\model\posts\fashionBattle\FashionBattle;
+use popcorn\model\posts\NewsPost;
+use popcorn\model\system\users\User;
 
 class FashionBattleDataMap extends DataMap {
 
@@ -22,6 +25,9 @@ class FashionBattleDataMap extends DataMap {
 		$this->findOneStatement = $this->prepare("SELECT * FROM pn_news_fashion_battle WHERE id=:id");
 
 		$this->findByNewsIdStatement = $this->prepare("SELECT * FROM pn_news_fashion_battle WHERE newsId=:id");
+
+		$this->stmtCheckVoting = $this->prepare('SELECT count(*) FROM pn_news_fashion_battle_voting WHERE userId = :userId AND fbId = :fbId');
+		$this->stmtInsertVoting = $this->prepare('INSERT INTO pn_news_fashion_battle_voting SET votedAt=:votedAt, userId=:userId, fbId=:fbId, `option`=:option');
 	}
 
 	/**
@@ -48,13 +54,37 @@ class FashionBattleDataMap extends DataMap {
 		$this->updateStatement->bindValue(":id", $item->getId());
 	}
 
-	public function getByNewsId($newsId) {
-
-		$items = $this->fetchAll("SELECT * FROM pn_news_fashion_battle WHERE newsId=:newsId limit 1",[
-			':newsId' => $newsId
+	public function canVote(User $user, FashionBattle $fb) {
+		$this->stmtCheckVoting->execute([
+			':userId' => $user->getId(),
+			':fbId'   => $fb->getId()
 		]);
 
-		if (count($items) == 1){
+		$totalCount = $this->stmtCheckVoting->fetchColumn();
+
+		if ($totalCount > 0) {
+			throw new VotingNotAllowException();
+		}
+
+		return true;
+	}
+
+	public function doVoting(User $user, FashionBattle $fb, $option) {
+		return $this->stmtInsertVoting->execute([
+			':votedAt' => time(),
+			':userId'  => $user->getId(),
+			':fbId'    => $fb->getId(),
+			':option'  => $option
+		]);
+	}
+
+	public function getByPostId($postId) {
+
+		$items = $this->fetchAll("SELECT * FROM pn_news_fashion_battle WHERE newsId=:newsId limit 1", [
+			':newsId' => $postId
+		]);
+
+		if (count($items) == 1) {
 			return $items[0];
 		}
 
@@ -65,7 +95,7 @@ class FashionBattleDataMap extends DataMap {
 	/**
 	 * @param \popcorn\model\posts\NewsPost $item
 	 */
-	public function saveWithPost($item){
+	public function saveWithPost($item) {
 		$item->getFashionBattle()->setNewsId($item->getId());
 
 		parent::save($item->getFashionBattle());
@@ -75,11 +105,11 @@ class FashionBattleDataMap extends DataMap {
 	 * @param \popcorn\model\posts\NewsPost $item
 	 * @return bool
 	 */
-	public function deleteWithPost($item){
+	public function deleteWithPost($item) {
 		/** @var FashionBattle $fashionBattle */
 		$fashionBattle = $this->getByNewsId($item->getId());
 
-		if ($fashionBattle instanceof FashionBattle){
+		if ($fashionBattle instanceof FashionBattle) {
 			return parent::delete($fashionBattle->getId());
 		}
 

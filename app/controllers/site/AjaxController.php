@@ -31,6 +31,7 @@ use popcorn\model\dataMaps\TopicCommentDataMap;
 use popcorn\model\dataMaps\TopicDataMap;
 use popcorn\model\dataMaps\UpDownDataMap;
 use popcorn\model\dataMaps\UserDataMap;
+use popcorn\model\exceptions\ajax\VotingNotAllowException;
 use popcorn\model\exceptions\Exception;
 use popcorn\model\exceptions\NotAuthorizedException;
 use popcorn\model\groups\Topic;
@@ -672,44 +673,50 @@ class AjaxController extends GenericController implements ControllerInterface {
 		$fbId = $request->post('fbId');
 		$option = $request->post('option');
 
-		$fb = FashionBattleFactory::get($fbId);
-
-		$upDownDataMap = new UpDownDataMap();
-
 		try {
-			if ($upDownDataMap->isAllow($fb)) {
+			$currentUser = UserFactory::getCurrentUser();
 
-				$voting = new UpDownVoting();
-				$voting->setVotedAt(new \DateTime());
-				$voting->setEntity(get_class(new FashionBattle()));
-				$voting->setEntityId($fbId);
+			if ($currentUser instanceof GuestUser) {
+				throw new NotAuthorizedException();
+			}
+
+			$fb = FashionBattleFactory::get($fbId);
+
+			if (FashionBattleFactory::canVote($currentUser, $fb)) {
 
 				if ($option == 1) {
-					$voting->setVote(UpDownVoting::Up);
 					$fb->setFirstOptionVotes($fb->getFirstOptionVotes() + 1);
 				} elseif ($option == 2) {
-					$voting->setVote(UpDownVoting::Down);
 					$fb->setSecondOptionVotes($fb->getSecondOptionVotes() + 1);
 				}
 
-//				$upDownDataMap->save($voting);
+				FashionBattleFactory::doVoting($currentUser, $fb, $option);
 
 				FashionBattleFactory::save($fb);
 
 				$pointsOverall = sprintf('Всего %s', RuHelper::ruNumber($fb->getTotalVotes(), ['нет голосов', '%u голос', '%u голоса', '%u голосов']));
 
-				$this->getApp()->exitWithJsonSuccessMessage([
-					'pointsOverall' => $pointsOverall,
-					'firstVotes'    => $fb->getFirstOptionVotes(),
-					'secondVotes'   => $fb->getSecondOptionVotes(),
-					'firstPercent'  => $fb->getFirstOptionPercent(),
-					'secondPercent' => $fb->getSecondOptionPercent()
-				]);
+				$this
+					->getApp()
+					->exitWithJson('success',[
+						'pointsOverall' => $pointsOverall,
+						'firstVotes'    => $fb->getFirstOptionVotes(),
+						'secondVotes'   => $fb->getSecondOptionVotes(),
+						'firstPercent'  => $fb->getFirstOptionPercent(),
+						'secondPercent' => $fb->getSecondOptionPercent()
+					]);
 
 			}
-		} catch (AjaxException $e) {
-			$e->exitWithJsonException();
+		} catch (NotAuthorizedException $e) {
+			$this
+				->getApp()
+				->exitWithJson('auth_error');
+		} catch (VotingNotAllowException $e) {
+			$this
+				->getApp()
+				->exitWithJson('already_voted');
 		}
+
 	}
 
 	public function commentSend() {
