@@ -15,18 +15,7 @@
             <span class="b-single-article__date">Все звезды</span>
         </h1>
 
-        <section class="b-person__menu b-inside__menu">
-
-	        {% include '/person/PersonsMenu.twig' %}
-
-            <div class="b-search-block">
-	            <form method="get" action="/persons">
-                    <label for="b-search-block__input-text" class="b-search-block__label">поиск по имени</label>
-                    <input type="search" name="searchString" id="b-search-block__input-text" class="b-search-block__input-text" value="{{ app.request.get.searchString|e }}">
-                    <input type="submit" value="найти" class="b-search-block__input-submit b-firm-grad">
-                </form>
-            </div>
-        </section>
+        {% include '/person/PersonsMenu.twig' %}
 
         <section class="b-person-all__wrapper">
             <div class="b-news__title-cont">

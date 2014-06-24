@@ -1,8 +1,18 @@
-<ul class="b-inside__menu-firstlist">
-	<li{% if slim.path[2] is not defined %} class="active"{% endif %}>
-		<a href="/persons" title="Персоны">персоны</a>
-	</li>
-	<li{% if slim.path[2] == 'all' %} class="active"{% endif %}>
-		<a href="/persons/all" title="Все персоны">все</a>
-	</li>
-</ul>
+<section class="b-person__menu b-inside__menu">
+	<ul class="b-inside__menu-firstlist">
+		<li{% if slim.path[2] is not defined %} class="active"{% endif %}>
+			<a href="/persons" title="Персоны">персоны</a>
+		</li>
+		<li{% if slim.path[2] == 'all' %} class="active"{% endif %}>
+			<a href="/persons/all" title="Все персоны">все</a>
+		</li>
+	</ul>
+
+	<div class="b-search-block">
+		<form method="get" action="/persons">
+			<label for="b-search-block__input-text" class="b-search-block__label">поиск по имени</label>
+			<input type="search" name="searchString" id="b-search-block__input-text" class="b-search-block__input-text" value="{{ app.request.get.searchString|e }}">
+			<input type="submit" value="найти" class="b-search-block__input-submit b-firm-grad">
+		</form>
+	</div>
+</section>
