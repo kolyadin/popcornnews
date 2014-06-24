@@ -31,7 +31,7 @@ class GoogleAnalyticsCron extends Command {
 
 		$client = new \Google_Client();
 
-		$key = file_get_contents('/data/sites/popcorn/lib/ga/ga-private-key');
+		$key = file_get_contents(__DIR__ . '/../../../lib/ga/ga-private-key');
 
 		$client->setApplicationName('Popcorn google analytics');
 		$client->setClientId('413200308444-he2o48s2tlm9jirkdscmtsn4v22cbvjn.apps.googleusercontent.com');
