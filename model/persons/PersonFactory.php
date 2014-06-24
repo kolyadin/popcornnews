@@ -8,6 +8,7 @@ namespace popcorn\model\persons;
 
 
 use popcorn\lib\PDOHelper;
+use popcorn\lib\SphinxHelper;
 use popcorn\model\content\ImageFactory;
 use popcorn\model\dataMaps\DataMap;
 use popcorn\model\dataMaps\DataMapHelper;
@@ -87,7 +88,7 @@ class PersonFactory {
 
 		$dataMap = new PersonDataMap($options['with']);
 
-		return $dataMap->getPersons($options,$from,$count,$totalFound);
+		return $dataMap->getPersons($options, $from, $count, $totalFound);
 	}
 
 	/**
@@ -107,14 +108,47 @@ class PersonFactory {
 	}
 
 	/**
-	 * @param string $query
+	 * @param $searchString
+	 * @param $callback
+	 * @param $totalFound
 	 *
 	 * @return Person[]
 	 */
-	public static function searchPersons($query) {
-		self::checkDataMap();
+	public static function searchPersons($searchString, $callback = null, &$totalFound = -1) {
+		$sphinx = new SphinxHelper();
 
-		return self::$dataMap->findByName($query, array('name' => DataMap::ASC));
+		$query = [
+			'(@name ^%1$s | %1$s)',
+			'(@englishName ^%1$s | %1$s)',
+			'(@genitiveName ^%1$s | %1$s)',
+			'(@prepositionalName ^%1$s | %1$s)',
+			'(@vkPage ^%1$s | %1$s)',
+			'(@twitterLogin ^%1$s | %1$s)',
+			'(@urlName ^%1$s | %1$s)',
+			'(@searchAlternatives %1$s)'
+		];
+
+		$persons = [];
+
+		$obj = $sphinx
+			->query(implode(' | ', $query), $searchString)
+			->in('persons')
+			->weights([
+				'name'               => 70,
+				'searchAlternatives' => 50,
+				'genitiveName'       => 30,
+				'prepositionalName'  => 30
+			]);
+
+		if (is_callable($callback)) {
+			$persons = $obj->run($callback, $totalFound);
+		} else {
+			$persons = $obj->run(function ($personId) {
+				return self::getPerson($personId);
+			}, $totalFound);
+		}
+
+		return $persons;
 	}
 
 	private static function checkDataMap() {

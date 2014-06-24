@@ -254,31 +254,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 		$usersFound = sprintf('<a href="/users/search/%s">%s</a>', urlencode($searchString), RuHelper::ruNumber($usersTotalFound, ['нет пользователей', '%u пользователь', '%u пользователя', '%u пользователей']));
 		//endregion
 
-		//region ищем персон
-		$query = [
-			'(@name ^%1$s | %1$s)',
-			'(@englishName ^%1$s | %1$s)',
-			'(@genitiveName ^%1$s | %1$s)',
-			'(@prepositionalName ^%1$s | %1$s)',
-			'(@vkPage ^%1$s | %1$s)',
-			'(@twitterLogin ^%1$s | %1$s)',
-			'(@urlName ^%1$s | %1$s)',
-			'(@searchAlternatives %1$s)'
-		];
-
-		/** @var Person[] $persons */
-		$persons = $sphinx
-			->query(implode(' | ', $query), $searchString)
-			->in('persons')
-			->weights([
-				'name'               => 70,
-				'searchAlternatives' => 50,
-				'genitiveName'       => 30,
-				'prepositionalName'  => 30
-			])
-			->run(function ($personId) {
-				return PersonFactory::getPerson($personId);
-			}, $personsTotalFound);
+		$persons = PersonFactory::searchPersons($searchString, null, $personsTotalFound);
 
 		if (count($persons)) {
 			foreach ($persons as &$person) {
@@ -698,7 +674,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 				$this
 					->getApp()
-					->exitWithJson('success',[
+					->exitWithJson('success', [
 						'pointsOverall' => $pointsOverall,
 						'firstVotes'    => $fb->getFirstOptionVotes(),
 						'secondVotes'   => $fb->getSecondOptionVotes(),

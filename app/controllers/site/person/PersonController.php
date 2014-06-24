@@ -187,12 +187,24 @@ class PersonController extends GenericController implements ControllerInterface 
 	}
 
 	/**
-	 *
+	 *WITH
 	 */
 	public function persons() {
 
-		$dataMap = new PersonDataMap(PersonDataMap::WITH_NONE | PersonDataMap::WITH_PHOTO);
-		$persons = $dataMap->find([], 0, 9);
+		if ($searchString = $this->getSlim()->request->get('searchString')) {
+
+			$handler = function ($personId) {
+				return PersonFactory::getPerson($personId, [
+					'with' => PersonDataMap::WITH_NONE ^ PersonDataMap::WITH_PHOTO
+				]);
+			};
+
+			$persons = PersonFactory::searchPersons($searchString, $handler, $totalFound);
+
+		} else {
+			$dataMap = new PersonDataMap(PersonDataMap::WITH_NONE | PersonDataMap::WITH_PHOTO);
+			$persons = $dataMap->find([], 0, 9);
+		}
 
 		$this
 			->getTwig()

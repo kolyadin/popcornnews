@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js ie6"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js ie7"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js ie8"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js">     <!--<![endif]-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width">
+
+<link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+
+
+<link rel="stylesheet" href="/assets/res/tooltipster/css/tooltipster.css" media="screen, projection, print"/>
+<link rel="stylesheet" href="/assets/res/jquery-ui-1.10.3/css/no-theme/jquery-ui-1.10.3.min.css"/>
+<link  href="http://fotorama.s3.amazonaws.com/4.4.9/fotorama.css" rel="stylesheet">
+
+<script type="text/javascript" src="/assets/js/modernizr-2.6.2.min.js"></script>
+<script type="text/javascript" src="/assets/js/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="/assets/res/tooltipster/js/jquery.tooltipster.min.js"></script>
+<script type="text/javascript" src="/assets/js/jquery.waypoints.min.js"></script>
+<script type="text/javascript" src="/assets/js/jquery.stickyMojo.js"></script>
+<script type="text/javascript" src="/assets/res/jquery-ui-1.10.3/js/jquery-ui-1.10.3.min.js"></script>
+<script type="text/javascript" src="/assets/res/plupload-2.1.1/js/plupload.full.min.js"></script>
+<script type="text/javascript" src="/assets/js/jquery.lazyload.min.js"></script>
+<script type="text/javascript" src="/assets/js/jquery.caret.js"></script>
+<script type="text/javascript" src="/assets/js/jquery-gp-gallery.js"></script>
+<script type="text/javascript" src="/assets/js/jquery.pulsate.min.js"></script>
+<script type="text/javascript" src="/assets/js/jsHtmlToText.js"></script>
+<script type="text/javascript" src="/assets/res/emojify.js/emojify.js"></script>
+<script type="text/javascript" src="http://masonry.desandro.com/masonry.pkgd.min.js"></script>
+<script type="text/javascript" src="/assets/js/news_gallery.js"></script>
+<script type="text/javascript" src="/assets/js/main.js"></script>
+
+<script src="http://fotorama.s3.amazonaws.com/4.4.9/fotorama.js"></script>
+
+
+<script src="/assets/res/rangy-1.2.3/rangy-core.js" type="text/javascript"></script>
+<script src="/assets/res/rangy-1.2.3/rangy-selectionsaverestore.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+    if((/Opera Mini/.test(navigator.userAgent))) {
+        $('html').addClass('operamini');
+        window.operamini = true;
+    }
+</script>
+
+<!--<LINK rel="icon" href="/favicon.ico" type="image/x-icon">
+<LINK rel="shortcut icon" href="/favicon.ico" type="image/x-icon">-->
+
+
+<title>kolyadin - popcornnews</title>
+
+<meta name="description" content="Новостной блог" />
+<meta name="keywords"    content="попкорнньюз, popcornnews, блог звезды, новости звезд, звездные новости" />
+
+
+<script type="text/javascript">
+    $(function(){
+
+        var ajaxCallback = function(response){
+            if (response.status == 'success'){
+
+            }else if (response.status == 'error'){
+                alert(response.exception.message);
+            }
+        };
+
+        $('a[data-action=removeFromBlackList]').on('click',function(){
+            $.post('/ajax/blacklist/remove',{ 'profileId' : 127167 },ajaxCallback,'json');
+            return false;
+        });
+
+        $('a[data-action=addToBlackList]').on('click',function(){
+            $.post('/ajax/blacklist/add',{ 'profileId' : 127167 },ajaxCallback,'json');
+            return false;
+        });
+
+        $('a[data-action=addToFriend]').on('click',function(){
+            $.post('/ajax/friend/add',{ 'friendId' : 127167 },ajaxCallback,'json');
+            return false;
+        });
+
+        $('.b-profile .left-col').stickyMojo({footerID: '.b-footer', contentID: '.b-profile .profile'});
+
+
+    });
+</script>
+
+<script type="text/javascript">
+    $(function(){
+
+        $('.tooltip').each(function(){
+            var theme = '.tooltipster-pink';
+
+            if ($(this).attr('data-tooltip-theme')){
+                theme = 'tooltipster-' + $(this).attr('data-tooltip-theme');
+            }
+
+            $(this).tooltipster({
+                animation: 'grow',
+                theme: theme,
+                interactive: true,
+                touchDevices: true,
+                position: $(this).attr('data-tooltip-position'),
+                content: $(this).attr('data-title')
+            });
+        });
+
+    });
+</script>
+
+
+
+<script type="text/javascript">
+    $(function(){
+        $('#profile-status a').on('click',function(){
+
+            var offset = $(this).offset();
+
+            $('#status-window')
+                    .css({
+                        top: offset.top + 'px',
+                        left: offset.left + 'px'
+                    })
+                    .show()
+            ;
+
+            return false;
+        });
+
+        $('#status-window input').on('keydown',function(event){
+            var statusText = $(this).val();
+
+            if (event.which == 13){
+                $.post('/ajax/status/update',{ 'statusMessage' : statusText },function(response){
+
+                    if (response.status == 'success'){
+                        $('#status-window').hide();
+                        $('#profile-status a strong').html(statusText);
+
+                    }
+
+                },'json');
+            }
+        });
+    });
+</script>
+
+
+<script type="text/javascript">
+
+emojify.setConfig({
+    emojify_tag_type: '.b-comments',
+    only_crawl_id: null,
+    img_dir: '/assets/res/emojify.js/images/emoji',
+    ignored_tags: {
+        'SCRIPT': 1,
+        'TEXTAREA': 1,
+        'A': 1,
+        'PRE': 1,
+        'CODE': 1
+    }
+});
+
+
+var focusAtAuthForm = function(){
+    var email = $('#form-authorization input[name=email]');
+
+    $('body,html').animate({scrollTop:email.offset().top-20},'fast').promise().done(function(){
+        email.focus();
+
+        email.pulsate({
+            color:'#ee2c90',
+            reach: 40,
+            speed: 400,
+            pause: 0,
+            glow: true,
+            repeat: 3
+        });
+
+    });
+};
+
+$(function () {
+    $('body').on('click','a[data-action=go-auth]', function(){
+        focusAtAuthForm();
+    })
+});
+
+$(function(){
+
+    $('#poll').on('submit',function(){
+
+        var params = {
+            opinionId: $(this).find('input[type=radio]:checked').val(),
+            pollId: $(this).find('input[name=pollId]').val()
+        };
+
+        var handler = function(response){
+
+            if (response.status == 'success'){
+
+                for (opinionId in response.opinions){
+                    var $box = $('#poll').find('li[data-opinion-id='+ opinionId +']');
+
+                    $box
+                            .find('.b-main-poll__answers-radio-cont')
+                            .remove();
+
+                    $box
+                            .find('.b-main-poll__answers-text-cont')
+                            .animate({'margin-left':0},200)
+                            .append('<div class="b-main-poll__answers-result" style="width: '+ response.opinions[opinionId] +'%"></div>');
+                }
+            }
+        };
+
+        $.post('/ajax/poll', params, handler, 'json');
+
+        return false;
+    });
+
+    //Значение поля по умолчанию
+    $(this).find('input[data-default-value]').each(function(){
+
+        if ($(this).val().length > 0) return;
+
+        var defVal = $(this).data('default-value');
+
+        $(this)
+                .css('color','#999')
+                .val(defVal)
+                .focusin(function(){
+                    if (!$(this).val() || $(this).val() == defVal){
+                        $(this).val('').css('color','#000');
+                    }
+                })
+                .focusout(function(){
+                    if (!$(this).val()){
+                        $(this).val(defVal).css('color','#999');
+                    }
+                });
+    });
+
+    $('.need-auth a:first').on('click',function(){
+        focusAtAuthForm();
+    });
+
+    $('#global-search')
+            .focus(function(){
+                $(this).autocomplete("search");
+            })
+            .keyup(function(){
+                if ($(this).val().length < 3){
+                    $('#global-search-results').fadeOut('fast');
+                }
+            })
+            .focusout(function(event){
+                $('#global-search-results').delay(200).fadeOut('fast');
+            })
+            .autocomplete({
+                minLength: 3,
+                delay: 150,
+                source: function (request, response) {
+                    $.post('/ajax/global-search', { 'searchString': request.term }, function (res) {
+                        if (res.status == 'success'){
+
+                            var showResultsCallback = function(){
+                                var selP = $('.b-global-search__persons');
+                                var selN = $('.b-global-search__news');
+                                var selU = $('.b-global-search__users');
+
+                                if (res.counters.persons > 0){
+
+                                    if (selP.css('display') == 'none'){
+                                        selP.show();
+                                    }
+
+                                    selP.find('ul').html('');
+                                    selP.find('h3').html(res.headers.persons);
+
+                                    for (x in res.data.persons){
+                                        var person = res.data.persons[x];
+
+                                        selP.find('ul').append('<li>'+ person +'</li>');
+                                    }
+                                }else{
+                                    selP.hide();
+                                }
+
+                                if (res.counters.users > 0){
+
+                                    if (selU.css('display') == 'none'){
+                                        selU.show();
+                                    }
+
+                                    selU.find('ul').html('');
+                                    selU.find('h3 a').attr('href','/users/search/'+encodeURIComponent(request.term)).html(res.headers.users+'&nbsp;&gt;');
+
+                                    for (x in res.data.users){
+                                        var user = res.data.users[x];
+
+                                        selU.find('ul').append('<li>'+ user +'</li>');
+                                    }
+                                }else{
+                                    selU.hide();
+                                }
+
+
+                                if (res.counters.news > 0){
+
+                                    if (selN.css('display') == 'none'){
+                                        selN.show();
+                                    }
+
+                                    selN.find('ul').html('');
+                                    selN.find('h3 a').html(res.headers.news+'&nbsp;&gt;');
+
+                                    for (x in res.data.news){
+                                        var post = res.data.news[x];
+
+                                        selN.find('ul').append('<li>'+ post +'</li>');
+                                    }
+                                }else{
+                                    selN.hide();
+                                }
+                            };
+
+                            if (res.counters.persons == 0 && res.counters.news == 0 && res.counters.users == 0){
+                                if ($('#global-search-results').css('display') != 'none'){
+                                    $('#global-search-results').fadeOut('fast');
+                                }
+                            }else{
+                                $('#global-search-results').fadeIn('fast');
+                                showResultsCallback();
+                                globalSearchPositioning();
+                            }
+
+//						        response(res.data);
+                            $('ul.ui-autocomplete').hide();
+                        }
+                    }, 'json');
+                },
+                search: function (event, ui){
+                    //$('#global-search-results').fadeIn('fast');
+                }
+            });
+
+
+    var globalSearchPositioning = function(){
+        var globalSearchInput = $('#global-search');
+        var globalSearch = $('#global-search-results');
+        var globalSearchArrow = globalSearch.children('.b-global-search__arrow');
+
+        globalSearch.css({
+            top: globalSearchInput.offset().top + 25 + 'px',
+            left: (globalSearchInput.offset().left - (globalSearch.width()/2) + 20 + globalSearchInput.width()/2) + 'px'
+        });
+
+        globalSearchArrow.css('margin-left',globalSearch.width()/2 - 41 + 'px');
+    };
+
+    window.onresize = function(){
+        globalSearchPositioning();
+    };
+
+    globalSearchPositioning();
+
+});
+
+</script>
+
+<link rel="stylesheet" href="/assets/css/popcorn.css?20140624125459" media="screen, projection, print"/>
+
+</head>
+<body>
+
+
+<div id="status-window">
+    <input type="text" name="statusMessage" />
+
+</div>
+
+
+<div id="global-search-results">
+    <div class="b-global-search__arrow"></div>
+    <div class="b-global-search__box">
+        <div class="b-global-search__persons">
+            <h3><a href=""></a></h3>
+            <ul></ul>
+        </div>
+        <div class="b-global-search__users">
+            <h3><a href="#"></a></h3>
+            <ul></ul>
+        </div>
+        <div class="b-global-search__news">
+            <h3><a href="#"></a></h3>
+            <ul></ul>
+        </div>
+    </div>
+</div>
+
+<div class="i-wrapper">
+<div class="i-maincontent">
+<div class="i-container b-grid">
+<div role="main">
+<header class="b-header clearfix" role = "banner">
+    <div class="b-header__top b-grid__g12 clearfix">
+        <div class="b-grid__g3 b-grid__p6 b-grid__a">
+            <div class="b-search-stroke">
+                <form method="get" action="/search">
+                    <input type="search" name="term" id="global-search" class="b-search-stroke__input" placeholder="поиск по сайту" tabindex="89" value="" />
+                    <input type="submit" value="" class="b-search-stroke__submit" />
+                </form>
+            </div>
+        </div>
+        <div class="b-grid__g3 b-grid__z">
+            <div class="b-share-small"></div>
+        </div>
+    </div>
+    <div class="b-header__main b-grid__g12 clearfix">
+        <a href="/" class="b-header__logo b-logo">
+            <span class="b-logo__black">поп</span><span class="b-logo__black">корн</span><span class="b-logo__gray">news</span>
+        </a>
+
+        <div class="b-header__user-panel b-user-panel b-user-panel_islogin clearfix">
+            <div class="b-user-panel__user-info">
+                <a href="/profile/127167" title="Перейти на страницу профиля" class="b-user-panel__user-name">kolyadin</a>
+                <div class="b-user-panel__user-status">
+                    <a href="#" class="b-user-panel__user-messages">
+                        <span class="b-user-panel__user-messages-title">сообщения</span>
+                        <span class="b-user-panel__user-messages-count">4</span>
+                    </a>
+                    <a href="#" class="b-user-panel__user-guestroom">
+                        <span class="b-user-panel__user-guestroom-title">гостевая</span>
+                        <span class="b-user-panel__user-guestroom-count">1</span>
+                    </a>
+                </div>
+            </div>
+            <a href="/profile/127167" class="b-user-panel__user-avatar">
+                <img src="/k/ad/3b/ad3b73c668de02c6c99c743efadb1bf3.jpg" width="40" height="30" alt="kolyadin" />
+
+            </a>
+            <div class="clearfix"></div>
+
+            <div class="b-text">
+                <form action="/profile/exit" method="post" id="form-logout">
+                    <input type="hidden" name="returnTo" value="L3Byb2ZpbGUvMTI3MTY3"/>
+                </form>
+                <a class="b-user-panel__user-logout" href="#logout" onclick="$('#form-logout').submit();return false;">выход</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<nav role="navigation" class="b-grid__g12 b-navigation clearfix">
+    <ul class="b-main-menu clearfix">
+        <li class="b-main-menu__item"><a class="b-main-menu__link" href="/news">новости</a></li>
+        <li class="b-main-menu__item"><a class="b-main-menu__link" href="/persons">персоны</a></li>
+        <li class="b-main-menu__item"><a class="b-main-menu__link" href="/meet">пары</a></li>
+        <li class="b-main-menu__item"><a class="b-main-menu__link" href="/kids">дети</a></li>
+        <li class="b-main-menu__item"><a class="b-main-menu__link" href="/calendar">календарь</a></li>
+        <li class="b-main-menu__item"><a class="b-main-menu__link" href="/community/groups">сообщество</a></li>
+        <!--<li class="b-main-menu__item"><a class="b-main-menu__link" href="/yourstyle">your.style</a></li>-->
+        <li class="b-main-menu__item">
+            <a class="b-main-menu__link" href="/users">пользователи</a>
+            <span class="b-main-menu__counter b-counter">2</span>
+        </li>
+        <li class="b-main-menu__item"><a class="b-main-menu__link" href="/rules">правила</a></li>
+        <li class="b-main-menu__item"><a class="b-main-menu__link" href="/faq">FAQ</a></li>
+    </ul>
+
+    <ul class="b-sub-menu clearfix">
+        <li class="b-sub-menu__item "><a class="b-sub-menu__link" href="/">главная</a></li>
+        <li class="b-sub-menu__item "><a class="b-sub-menu__link" href="/category/stars" title="Перейти в категорию новостей &quot;звезды&quot;">звезды</a></li>
+        <li class="b-sub-menu__item "><a class="b-sub-menu__link" href="/category/fashion" title="Перейти в категорию новостей &quot;мода&quot;">мода</a></li>
+        <li class="b-sub-menu__item "><a class="b-sub-menu__link" href="/category/beauty" title="Перейти в категорию новостей &quot;красота&quot;">красота</a></li>
+        <li class="b-sub-menu__item "><a class="b-sub-menu__link" href="/category/movie" title="Перейти в категорию новостей &quot;кино&quot;">кино</a></li>
+        <li class="b-sub-menu__item "><a class="b-sub-menu__link" href="/category/tvshow" title="Перейти в категорию новостей &quot;тв и сериалы&quot;">тв и сериалы</a></li>
+        <li class="b-sub-menu__item "><a class="b-sub-menu__link" href="/category/music" title="Перейти в категорию новостей &quot;музыка&quot;">музыка</a></li>
+        <li class="b-sub-menu__item "><a class="b-sub-menu__link" href="/category/gadget" title="Перейти в категорию новостей &quot;гаджеты&quot;">гаджеты</a></li>
+        <li class="b-sub-menu__item "><a class="b-sub-menu__link" href="/photo-articles">фотогалереи</a></li>
+        <li class="b-sub-menu__item"><a class="b-sub-menu__link" href="http://www.kinoafisha.info/" rel="nofollow">киноафиша</a></li>
+    </ul>
+</nav>
+<div class="b-inside clearfix">
+
+
+
+
+<div class="b-grid__g8">
+    <section class="b-profile">
+        <div class="left-col">
+
+            <div class="ava">
+                <a href="/profile/127167"><img src="/assets/img/no-photo/large.png"/></a>
+
+            </div>
+            <div class="last-visit">
+                <div>Последний визит:</div>
+                <span>сегодня, 12:54</span>
+            </div>
+
+            <ul>
+                <li><a href="#">Сообщение</a></li>
+                <li><a href="#">В гостевую</a></li>
+
+                <li><a href="#" data-action="addToBlackList">Заблокировать</a></li>
+
+
+            </ul>
+
+        </div>
+        <div class="profile">
+
+            <h1>kolyadin</h1>
+
+            <div class="status" id="profile-status">
+                <a href="#">
+                    <img src="/assets/img/icons/profile-status.png" width="12" height="12" />
+                </a>
+            </div>
+
+
+
+
+
+
+
+
+            <ul class="b-inside__menu-firstlist"><li class="active"><a title="Профиль пользователя kolyadin" href="/profile/127167">профиль</a></li><li><a title="Друзья пользователя kolyadin" href="/profile/127167/friends">друзья</a></li><li><a title="персоны" href="/profile/127167/persons">персоны</a></li><li><a title="" href="/im">сообщения</a></li><li><a title="" href="/profile/127167/guestbook">гостевая</a></li><li><a title="" href="/profile/127167/wrote">пишет</a></li><li><a title="" href="/profile/127167/community/groups">группы</a></li><li><a title="" href="/profile/127167/sets">your.style</a></li></ul><ul class="b-sub-menu clearfix"><li class="b-sub-menu__item b-sub-menu__item_active"><a class="b-sub-menu__link" href="/profile/127167">главная</a></li><li class="b-sub-menu__item "><a class="b-sub-menu__link" href="/profile/127167/form">редактировать</a></li><li class="b-sub-menu__item"><a class="b-sub-menu__link" href="/profile/127167/photos">фотографии</a></li><li class="b-sub-menu__item "><a class="b-sub-menu__link" href="/profile/127167/photos/del">удаление фото</a></li><li class="b-sub-menu__item "><a class="b-sub-menu__link" href="/profile/127167/blacklist">черный список</a></li></ul>
+            <div class="info">
+                <ul class="reg-data">
+                    <li></li>
+                    <li></li>
+
+
+
+
+                </ul>
+
+                <div class="rating-awards">
+
+
+                    <div class="awards">
+                        <ul>
+                            <li class="activist activist-active tooltip" data-title="Награда &quot;Активист месяца&quot;">
+                                <div class="x">x</div>
+                                <div class="multiple">60</div>
+                            </li>
+                            <li class="comments comments-active tooltip" data-title="Награда &quot;1000 комментов&quot;">
+                                <div class="x">x</div>
+                                <div class="multiple">60</div>
+                            </li>
+                            <li class="photo photo-active tooltip" data-title="Награда &quot;Добавил 100 фото&quot;">
+                                <div class="x">x</div>
+                                <div class="multiple">60</div>
+                            </li>
+                            <li class="facts facts-active tooltip" data-title="Награда &quot;Написал 20 фактов&quot;">
+                                <div class="x">x</div>
+                                <div class="multiple">60</div>
+                            </li>
+                            <li class="friends friends-active tooltip" data-title="Награда &quot;Имеет 50 друзей&quot;">
+                                <div class="x">x</div>
+                                <div class="multiple">60</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="clearfix"></div>
+
+
+
+        </div>
+    </section>
+</div>
+
+
+<aside class="b-grid__g4 b-side">
+<section class="b-side-large-banner b-side__vertical-margin"></section>
+
+<section class="b-freeze-frame__persons clearfix b-side__vertical-margin">
+    <div class="b-freeze-frame__rubrics-title-cont">
+        <div class="b-freeze-frame__persons-rubrics-title b-rubrics-title b-rubrics-title_s18">персоны</div>
+        <span class="b-freeze-frame__rubrics-counter b-counter">341</span>
+    </div>
+    <div class="b-grid__g2 b-grid__a">
+        <ul class="b-freeze-frame__list">
+            <li class="b-freeze-frame__item"><a href="/persons/Lady-GaGa" class="b-freeze-frame__link b-freeze-frame__link_color1">Lady GaGa</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Angelina-Jolie" class="b-freeze-frame__link b-freeze-frame__link_color1">Анджелина Джоли</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Beyonce--Knowles" class="b-freeze-frame__link b-freeze-frame__link_color2">Бейонсе Ноулз</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Britney-Spears" class="b-freeze-frame__link b-freeze-frame__link_color2">Бритни Спирс</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Brad-Pitt" class="b-freeze-frame__link b-freeze-frame__link_color2">Брэд Питт</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Bradley-Cooper" class="b-freeze-frame__link b-freeze-frame__link_color4">Брэдли Купер</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Vanessa-Hudgens" class="b-freeze-frame__link b-freeze-frame__link_color3">Ванесса Хадженс</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Victoria-Beckham" class="b-freeze-frame__link b-freeze-frame__link_color3">Виктория Бекхэм</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Justin-Bieber" class="b-freeze-frame__link b-freeze-frame__link_color2">Джастин Бибер</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Justin-Timberlake" class="b-freeze-frame__link b-freeze-frame__link_color4">Джастин Тимберлейк</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Jennifer-Lopez" class="b-freeze-frame__link b-freeze-frame__link_color2">Дженнифер Лопес</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Jennifer-Aniston" class="b-freeze-frame__link b-freeze-frame__link_color1">Дженнифер Энистон</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Jessica-Alba" class="b-freeze-frame__link b-freeze-frame__link_color3">Джессика Альба</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Jessica-Simpson" class="b-freeze-frame__link b-freeze-frame__link_color4">Джессика Симпсон</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Johnny-Depp" class="b-freeze-frame__link b-freeze-frame__link_color3">Джонни Депп</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/David-Beckham" class="b-freeze-frame__link b-freeze-frame__link_color3">Дэвид Бекхэм</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Eva-Longoria" class="b-freeze-frame__link b-freeze-frame__link_color3">Ева Лонгория</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Ian-Somerhalder" class="b-freeze-frame__link b-freeze-frame__link_color4">Йен Сомерхолдер</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Cameron-Diaz" class="b-freeze-frame__link b-freeze-frame__link_color4">Камерон Диаз</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Kate-Moss" class="b-freeze-frame__link b-freeze-frame__link_color4">Кейт Мосс</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Kelly-Osbourne" class="b-freeze-frame__link b-freeze-frame__link_color4">Келли Осборн</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Kim-Kardashian" class="b-freeze-frame__link b-freeze-frame__link_color1">Ким Кардашян</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Kristen-Stewart" class="b-freeze-frame__link b-freeze-frame__link_color1">Кристен Стюарт</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Christina--Aguilera" class="b-freeze-frame__link b-freeze-frame__link_color4">Кристина Агилера</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Katy-Perry" class="b-freeze-frame__link b-freeze-frame__link_color2">Кэти Перри</a></li>
+        </ul>
+    </div>
+    <div class="b-grid__g2 b-grid__z">
+        <ul class="b-freeze-frame__list">
+            <li class="b-freeze-frame__item"><a href="/persons/Katie-Holmes" class="b-freeze-frame__link b-freeze-frame__link_color3">Кэти Холмс</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Leonardo-DiCaprio" class="b-freeze-frame__link b-freeze-frame__link_color4">Леонардо Ди Каприо</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Lindsay-Lohan" class="b-freeze-frame__link b-freeze-frame__link_color1">Линдси Лохан</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Madonna" class="b-freeze-frame__link b-freeze-frame__link_color3">Мадонна</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Miley-Cyrus" class="b-freeze-frame__link b-freeze-frame__link_color1">Майли Сайрус</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Megan-Fox" class="b-freeze-frame__link b-freeze-frame__link_color4">Меган Фокс</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Miranda-Kerr" class="b-freeze-frame__link b-freeze-frame__link_color3">Миранда Керр</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Nicole-Kidman" class="b-freeze-frame__link b-freeze-frame__link_color4">Николь Кидман</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Paris-Hilton" class="b-freeze-frame__link b-freeze-frame__link_color2">Пэрис Хилтон</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Rihanna" class="b-freeze-frame__link b-freeze-frame__link_color1">Рианна</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Reese-Witherspoon" class="b-freeze-frame__link b-freeze-frame__link_color4">Риз Уизерспун</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Robert-Pattinson" class="b-freeze-frame__link b-freeze-frame__link_color1">Роберт Паттинсон</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Sarah-Jessica-Parker" class="b-freeze-frame__link b-freeze-frame__link_color4">Сара Джессика Паркер</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Selena-Gomez" class="b-freeze-frame__link b-freeze-frame__link_color3">Селена Гомес</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Scarlett-Johansson" class="b-freeze-frame__link b-freeze-frame__link_color3">Скарлетт Йоханссон</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Taylor-Lautner" class="b-freeze-frame__link b-freeze-frame__link_color3">Тейлор Лотнер</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Taylor-Swift" class="b-freeze-frame__link b-freeze-frame__link_color3">Тейлор Свифт</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Tom-Cruise" class="b-freeze-frame__link b-freeze-frame__link_color3">Том Круз</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Heidi-Klum" class="b-freeze-frame__link b-freeze-frame__link_color3">Хайди Клум</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Hilary-Duff" class="b-freeze-frame__link b-freeze-frame__link_color4">Хилари Дафф</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Hugh-Jackman" class="b-freeze-frame__link b-freeze-frame__link_color4">Хью Джекман</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Emma-Watson" class="b-freeze-frame__link b-freeze-frame__link_color4">Эмма Уотсон</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Anne-Hathaway" class="b-freeze-frame__link b-freeze-frame__link_color4">Энн Хэтэуэй</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Ashley-Greene" class="b-freeze-frame__link b-freeze-frame__link_color4">Эшли Грин</a></li>
+            <li class="b-freeze-frame__item"><a href="/persons/Ashton-Kutcher" class="b-freeze-frame__link b-freeze-frame__link_color4">Эштон Кутчер</a></li>
+        </ul>
+    </div>
+</section>
+<section class="b-freeze-frame__tags clearfix b-side__vertical-margin">
+    <div class="b-freeze-frame__rubrics-title-cont">
+        <div class="b-freeze-frame__tags-rubrics-title b-rubrics-title b-rubrics-title_s18">теги</div>
+    </div>
+    <div class="b-grid__g2 b-grid__a">
+        <ul class="b-freeze-frame__list">
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Fashion battle&quot;" href="/tag/72409" class="b-freeze-frame__link b-freeze-frame__link_color5">Fashion battle</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Vogue&quot;" href="/tag/149288" class="b-freeze-frame__link b-freeze-frame__link_color6">Vogue</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Беременность и роды&quot;" href="/tag/45043" class="b-freeze-frame__link b-freeze-frame__link_color5">Беременность и роды</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Благотворительность&quot;" href="/tag/99807" class="b-freeze-frame__link b-freeze-frame__link_color5">Благотворительность</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Видео&quot;" href="/tag/72965" class="b-freeze-frame__link b-freeze-frame__link_color1">Видео</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Глянец&quot;" href="/tag/126108" class="b-freeze-frame__link b-freeze-frame__link_color3">Глянец</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Дети&quot;" href="/tag/45245" class="b-freeze-frame__link b-freeze-frame__link_color2">Дети</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Другие светские мероприятия&quot;" href="/tag/68418" class="b-freeze-frame__link b-freeze-frame__link_color5">Другие светские мероприятия</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Животные&quot;" href="/tag/82482" class="b-freeze-frame__link b-freeze-frame__link_color5">Животные</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Звездные пары&quot;" href="/tag/76699" class="b-freeze-frame__link b-freeze-frame__link_color4">Звездные пары</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Звезды в соц. сетях&quot;" href="/tag/111994" class="b-freeze-frame__link b-freeze-frame__link_color4">Звезды в соц. сетях</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Звезды на пляже&quot;" href="/tag/122487" class="b-freeze-frame__link b-freeze-frame__link_color6">Звезды на пляже</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Интервью&quot;" href="/tag/73543" class="b-freeze-frame__link b-freeze-frame__link_color5">Интервью</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Кинопробы&quot;" href="/tag/125146" class="b-freeze-frame__link b-freeze-frame__link_color3">Кинопробы</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Клипы / песни&quot;" href="/tag/125780" class="b-freeze-frame__link b-freeze-frame__link_color6">Клипы / песни</a></li>
+        </ul>
+    </div>
+    <div class="b-grid__g2 b-grid__z">
+        <ul class="b-freeze-frame__list">
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Модели&quot;" href="/tag/118847" class="b-freeze-frame__link b-freeze-frame__link_color4">Модели</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Новые коллекции&quot;" href="/tag/126115" class="b-freeze-frame__link b-freeze-frame__link_color5">Новые коллекции</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Одежда&quot;" href="/tag/125660" class="b-freeze-frame__link b-freeze-frame__link_color5">Одежда</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Премьеры фильмов&quot;" href="/tag/44643" class="b-freeze-frame__link b-freeze-frame__link_color4">Премьеры фильмов</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Развод, разрыв, измены&quot;" href="/tag/45168" class="b-freeze-frame__link b-freeze-frame__link_color5">Развод, разрыв, измены</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Рекламная кампания&quot;" href="/tag/72517" class="b-freeze-frame__link b-freeze-frame__link_color3">Рекламная кампания</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Самые-самые&quot;" href="/tag/45252" class="b-freeze-frame__link b-freeze-frame__link_color6">Самые-самые</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Свадьба, помолвка&quot;" href="/tag/45051" class="b-freeze-frame__link b-freeze-frame__link_color5">Свадьба, помолвка</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Сериалы&quot;" href="/tag/48932" class="b-freeze-frame__link b-freeze-frame__link_color4">Сериалы</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Скандалы и события&quot;" href="/tag/45674" class="b-freeze-frame__link b-freeze-frame__link_color4">Скандалы и события</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Съемки фильма&quot;" href="/tag/125147" class="b-freeze-frame__link b-freeze-frame__link_color5">Съемки фильма</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;ТВ шоу&quot;" href="/tag/116995" class="b-freeze-frame__link b-freeze-frame__link_color5">ТВ шоу</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Трейлеры&quot;" href="/tag/89690" class="b-freeze-frame__link b-freeze-frame__link_color3">Трейлеры</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Фестивали и премии&quot;" href="/tag/45244" class="b-freeze-frame__link b-freeze-frame__link_color5">Фестивали и премии</a></li>
+            <li class="b-freeze-frame__item"><a title="Посмотреть новости с меткой &quot;Фотосессии&quot;" href="/tag/45164" class="b-freeze-frame__link b-freeze-frame__link_color3">Фотосессии</a></li>
+        </ul>
+    </div>
+</section>
+<section class="b-freeze-frame__groups clearfix b-side__vertical-margin b-side__vertical-margin_60 ">
+    <div class="b-freeze-frame__rubrics-title-cont">
+        <div class="b-freeze-frame__groups-rubrics-title b-rubrics-title b-rubrics-title_s18">группы</div>
+        <span class="b-freeze-frame__rubrics-counter b-counter">889</span>
+        <a href="#" class="b-freeze-frame__rubrics-create-button b-create-button"><b>+</b>создать</a>
+    </div>
+    <div class="b-grid__g2 b-grid__a">
+        <ul class="b-freeze-frame__list">
+            <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color2">Harry Potter</a></li>
+            <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color1">Jared Leto</a></li>
+            <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color4">Kristen Stewart</a></li>
+            <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color1">Nina Dobrev</a></li>
+            <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color5">Taylor Lautner</a></li>
+            <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color1">The Best Vampire and Jared Leto</a></li>
+        </ul>
+    </div>
+    <div class="b-grid__g2 b-grid__z">
+        <ul class="b-freeze-frame__list">
+            <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color1">The Vampire Diaries</a></li>
+            <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color7">Twilight</a></li>
+            <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color1">СЕРИАЛЫ 2000-х ГОДОВ</a></li>
+            <li class="b-freeze-frame__item"><a href="#" class="b-freeze-frame__link b-freeze-frame__link_color8">Самые красивые актеры и певцы</a></li>
+        </ul>
+    </div>
+</section>
+
+<section class="b-photo-articles clearfix b-side__vertical-margin b-side__vertical-margin_35">
+    <div class="b-photo-articles__title-cont b-grid__g4 b-grid__a b-grid__z">
+        <h1 class="b-photo-articles__title b-rubrics-title b-rubrics-title_s18">фото-статьи</h1>
+        <span class="b-photo-articles__counter b-counter">19</span>
+    </div>
+
+
+    <div class="b-grid__g4 b-grid__a b-grid__z">
+        <a href="/photo-article/30" class="b-photo-articles__photo-cont-big" title="Любимые женщины Джорджа Клуни"><img src="/k/65/93/6593c9559eadd391fba72ada29eddb5a.jpg" alt="Любимые женщины Джорджа Клуни"></a>
+        <div class="b-photo-articles__photo-count">14 фотографий</div>
+        <h2 class="b-photo-articles__news-title"><a href="/photo-article/30">Любимые женщины Джорджа Клуни</a></h2>
+    </div>
+</section>
+<div class="b-grid__g4 b-grid__a b-grid__z clearfix b-side__vertical-margin b-side__vertical-margin_30">
+    <section class="b-create-your-style">
+        <div class="b-create-your-style__rubrics-title b-rubrics-title b-rubrics-title_s18">cоздай свой стиль</div>
+        <div class="b-create-your-style__body clearfix">
+            <div class="b-create-your-style__text">Смешивай и комбинируй различные вещи, чтобы создать свой собственный и неповторимый стиль</div>
+            <a href="#" class="b-create-your-style__link b-firm-grad">&gt;</a>
+        </div>
+    </section>
+</div>
+<div class="b-grid__g4 b-grid__a b-grid__z clearfix b-side__vertical-margin b-side__vertical-margin_30">
+    <section class="b-star-childrens">
+        <a href="#" class="b-star-childrens__link">
+            <img src="#" alt="" class="b-star-childrens__img">
+            <div class="b-star-childrens__news-title">звёздные дети: Лилли Роуз Мэлоди Депп</div>
+        </a>
+    </section>
+</div>
+
+<div class="b-grid__g4 b-grid__a b-grid__z clearfix b-side__gray-line b-side__vertical-margin_30"></div>
+
+<section class="b-grid__g4 b-grid__a b-grid__z clearfix b-side__vertical-margin b-side__vertical-margin_35">
+    <section class="b-main-poll">
+        <div class="b-main-poll__title b-rubrics-title b-rubrics-title_s18">Кому из звезд больше всего идет короткая стрижка?</div>
+        <div class="b-main-poll__body">
+            <form id="poll">
+                <input type="hidden" name="pollId" value="59"/>
+                <ul class="b-main-poll__answers-list">
+
+
+                    <li class="b-main-poll__answers-item" data-opinion-id="237">
+                        <div class="b-main-poll__answers-radio-cont"><input type="radio" name="main-poll" id="main-poll237" value="237"></div>
+                        <div class="b-main-poll__answers-text-cont">
+                            <label style="cursor: pointer;" for="main-poll237" class="b-main-poll__answers-text">Шарлиз Терон</label>
+                        </div>
+                    </li>
+
+
+                    <li class="b-main-poll__answers-item" data-opinion-id="238">
+                        <div class="b-main-poll__answers-radio-cont"><input type="radio" name="main-poll" id="main-poll238" value="238"></div>
+                        <div class="b-main-poll__answers-text-cont">
+                            <label style="cursor: pointer;" for="main-poll238" class="b-main-poll__answers-text">Майли Сайрус</label>
+                        </div>
+                    </li>
+
+
+                    <li class="b-main-poll__answers-item" data-opinion-id="239">
+                        <div class="b-main-poll__answers-radio-cont"><input type="radio" name="main-poll" id="main-poll239" value="239"></div>
+                        <div class="b-main-poll__answers-text-cont">
+                            <label style="cursor: pointer;" for="main-poll239" class="b-main-poll__answers-text">Энн Хэтэуэй</label>
+                        </div>
+                    </li>
+
+
+                    <li class="b-main-poll__answers-item" data-opinion-id="240">
+                        <div class="b-main-poll__answers-radio-cont"><input type="radio" name="main-poll" id="main-poll240" value="240"></div>
+                        <div class="b-main-poll__answers-text-cont">
+                            <label style="cursor: pointer;" for="main-poll240" class="b-main-poll__answers-text">Мэгги Джилленхол</label>
+                        </div>
+                    </li>
+
+
+                    <li class="b-main-poll__answers-item" data-opinion-id="241">
+                        <div class="b-main-poll__answers-radio-cont"><input type="radio" name="main-poll" id="main-poll241" value="241"></div>
+                        <div class="b-main-poll__answers-text-cont">
+                            <label style="cursor: pointer;" for="main-poll241" class="b-main-poll__answers-text">Мишель Уильямс</label>
+                        </div>
+                    </li>
+
+
+                </ul>
+
+                <div class="b-main-poll__bottom">
+                    <input type="submit" value="ответить" class="b-main-poll__submit b-firm-grad" style="cursor: pointer;">
+                </div>
+
+            </form>
+        </div>
+    </section>    </section>
+
+<section class="b-grid__g4 b-grid__a b-grid__z clearfix b-side__vertical-margin">
+    <div class="b-conversation__about-rubrics-title b-rubrics-title b-rubrics-title_s18">обсуждения звёзд</div>
+    <ul class="b-conversation__about-list">
+        <li class="b-conversation__about-item">
+            <div class="b-conversation__about-hero">Брэд Питт:</div>
+            <a href="#" class="b-conversation__about-hero-room">Посиделки у Брэда <span class="b-conversation__about-hero-counter b-counter">204957</span></a>
+        </li>
+        <li class="b-conversation__about-item">
+            <div class="b-conversation__about-hero">Роберт Паттинсон:</div>
+            <a href="#" class="b-conversation__about-hero-room">"Мой личный сорт героина" <span class="b-conversation__about-hero-counter b-counter">5941</span></a>
+        </li>
+        <li class="b-conversation__about-item">
+            <div class="b-conversation__about-hero">Роберт Паттинсон:</div>
+            <a href="#" class="b-conversation__about-hero-room">Интерактивная фото-развлекуха <span class="b-conversation__about-hero-counter b-counter">292</span></a>
+        </li>
+        <li class="b-conversation__about-item">
+            <div class="b-conversation__about-hero">Джеймс МакЭвой:</div>
+            <a href="#" class="b-conversation__about-hero-room">Фильм "Пенелопа" <span class="b-conversation__about-hero-counter b-counter">224792</span></a>
+        </li>
+        <li class="b-conversation__about-item">
+            <div class="b-conversation__about-hero">Йен Сомерхалдер:</div>
+            <a href="#" class="b-conversation__about-hero-room">Самые свежие новости "ДВ" <span class="b-conversation__about-hero-counter b-counter">4114</span></a>
+        </li>
+    </ul>
+</section>
+</aside>
+</div>
+</div>
+</div>
+</div>
+<div class = "i-footer-empty"></div>
+</div>
+
+<!-- FOOTER HERE -->
+<footer class="b-footer" role="contentinfo">
+    <div class="i-container clearfix">
+        <div class="b-grid__g12 b-footer__body">
+            <div class="b-footer__top">
+                <a href="/" class="b-footer__logo b-logo b-logo_small">
+                    <span class="b-logo__black">поп</span><span class="b-logo__black">корн</span><span class="b-logo__gray">news</span>
+                </a>
+                <a href="/contacts" class="b-footer__contacts">
+                    Контакты &gt;
+                </a>
+                <a href="/stat" class="b-footer__contacts">
+                    Статистика сайта &gt;
+                </a>
+            </div>
+            <div class="b-footer__copyright">
+                &copy; 2007-2014 Все права и материалы принадлежат «POPCORNNEWS»<br />
+                При копировании информации ставить активную ссылку на сайт www.popcornnews.ru
+            </div>
+        </div>
+    </div>
+</footer>
+<!-- THANKS FOR YOU ATTENTION -->
+
+</body>
+</html>0.18674898147583<div style="margin:0 auto;padding:20px 0 30px 0;"><iframe width="100%" height="1000" src="/xhprof_html/index.php?run=53a93ce349dd2&source=popcorn"/></div>

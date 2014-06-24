@@ -4,9 +4,6 @@
 
 <title>Звезды - popcornnews</title>
 
-<meta name="description" content="Новостной блог" />
-<meta name="keywords"    content="попкорнньюз, popcornnews, блог звезды, новости звезд, звездные новости" />
-
 {% endblock %}
 
 {% block content %}
@@ -23,9 +20,9 @@
 	        {% include '/person/PersonsMenu.twig' %}
 
             <div class="b-search-block">
-	            <form method="get" action="/search">
+	            <form method="get" action="/persons">
                     <label for="b-search-block__input-text" class="b-search-block__label">поиск по имени</label>
-                    <input type="search" name="term" id="b-search-block__input-text" class="b-search-block__input-text">
+                    <input type="search" name="searchString" id="b-search-block__input-text" class="b-search-block__input-text" value="{{ app.request.get.searchString|e }}">
                     <input type="submit" value="найти" class="b-search-block__input-submit b-firm-grad">
                 </form>
             </div>
@@ -34,7 +31,11 @@
         <section class="b-person-all__wrapper">
             <div class="b-news__title-cont">
                 <h1 class="b-news__title b-rubrics-title b-rubrics-title_s24">
-                    <a rel="nofollow" href="#">топ персон</a>
+	                {% if app.request.get.searchString %}
+		                <a rel="nofollow" href="#">найдено:</a>
+	                {% else %}
+		                <a rel="nofollow" href="#">топ персон</a>
+	                {% endif %}
                 </h1>
             </div>
             <ul class="b-person-all__list">
