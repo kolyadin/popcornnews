@@ -1,0 +1,64 @@
+{% extends '/yourstyle/YourStyleGeneric.twig' %}
+
+{% block subMenu %}
+
+	{% include '/yourstyle/YourStyleSubMenuSets.twig' %}
+
+{% endblock %}
+
+{% block subYourStyle %}
+
+	<h1 class="b-single-article__title">
+		{{ set.title }}
+	</h1>
+	<div class="stuff-item has-bottom-border">
+		<div class="stuff-item__inner">
+			<div class="stuff-item__pic">
+				<img src="{{ set.image }}" width="300" height="200" alt=""/>
+			</div>
+			<div class="stuff-item__description stuff-item__description_user">
+				<div class="active-users__item">
+					<a href="/profile/{{ user.id }}" class="active-users__avatar">
+
+						{% if user.avatar.id %}
+							{% set photo = user.avatar.thumb('140x') %}
+							<img class="active-users__avatar-pic" src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}"/>
+						{% else %}
+							<img class="active-users__avatar-pic" src="/assets/img/no-photo/large.png"/>
+						{% endif %}
+
+					</a>
+					<div class="active-users__data">
+						<a class="popular-sets__comments-username" href="/profile/{{ user.id }}"><span>Автор:</span> {{ user.nick }}</a>
+						<div class="rating-count">{{ user.rating.points|number_format(0,'',' ') }}</div>
+					</div>
+				</div>
+				<div class="stuff-item__options-created">
+					Создано {{ set.createTime|ruDateFriendly }}
+				</div>
+			</div>
+		</div>
+		<div class="stuff-others">
+			<ul class="stuff-others__list">
+
+				{% for tile in tiles %}
+
+					<li class="stuff-others__item">
+						<div class="sfuff-others__pic"
+							data-basket-href="/yourstyle/tile/{{ tile.id }}/toMy"
+							data-group="{{ tile.group }}"
+							data-brand="{{ tile.brand }}"
+							data-desc="{{ tile.description|slice(0, 45) }}"
+							data-href="/yourstyle/tile/{{ tile.id }}">
+
+							<img src="{{ tile.logo }}" width="130" height="130" alt=""/>
+						</div>
+					</li>
+
+				{% endfor %}
+
+			</ul>
+		</div>
+	</div>
+
+{% endblock %}

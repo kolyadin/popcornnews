@@ -97,7 +97,7 @@ SQL;
 
 	}
 
-	public function findById($sId) {
+	public function findById($sId) {//А зачем она вообще неужна тут? Она должна возвращать несколько строк... Но это уже делает getSetTiles
 
 		$this->checkStatement($this->findOneStatement);
 		$this->findOneStatement->bindValue(':sId', $sId);
@@ -112,6 +112,33 @@ SQL;
 			$this->itemCallback($item);
 			return $item;
 		}
+
+	}
+
+	public function getTilesInSet($sId) {
+
+		$sql = <<<SQL
+			SELECT `b`.*, `c`.`title` AS `brand`, `g`.`title` AS `group`
+			FROM `pn_yourstyle_sets_tiles` a
+				JOIN `pn_yourstyle_groups_tiles` AS `b` ON (`b`.`id` = `a`.`tId`)
+				LEFT JOIN `pn_yourstyle_tiles_brands` AS `c` ON (`c`.`id` = `b`.`bId`)
+				LEFT JOIN `pn_yourstyle_groups` AS `g` ON (`g`.`id` = `b`.`gId`)
+			WHERE `a`.`sId` = ?
+			GROUP BY `b`.`id`
+			ORDER BY `createTime`
+SQL;
+
+		$stmt = $this->prepare($sql);
+		$stmt->bindValue(1, $sId, \PDO::PARAM_INT);
+		$stmt->execute();
+
+		$tiles = [];
+		while ($item = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+			$item['logo'] = YourStyleFactory::getWwwUploadTilesPath($item['gId'], $item['image']);
+			$tiles[] = $item;
+		}
+
+		return $tiles;
 
 	}
 

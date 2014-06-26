@@ -22,7 +22,7 @@
 					<li {% if slim.path[2] is null %}class="active"{% endif %}>
 						<a href="/yourstyle">your.style</a>
 					</li>
-					<li {% if slim.path[2] == 'sets' %}class="active"{% endif %}>
+					<li {% if slim.path[2] == 'sets' or slim.path[2] == 'set' %}class="active"{% endif %}>
 						<a href="/yourstyle/sets">сеты</a>
 					</li>
 					<li {% if slim.path[2] == 'groups' or slim.path[2] == 'rootGroup' or slim.path[2] == 'group' or slim.path[2] == 'tiles' %}class="active"{% endif %}>

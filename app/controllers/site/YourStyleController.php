@@ -234,6 +234,14 @@ class YourStyleController extends GenericController implements ControllerInterfa
 					->getSlim()
 					->get('/tile/:tId/toMy', $profileMiddleware, [$this, 'addTileToMy']);
 
+				$this
+					->getSlim()
+					->get('/tile/:tId', $profileMiddleware, [$this, 'yourStyleTile']);
+
+				$this
+					->getSlim()
+					->get('/set/:setId', [$this, 'yourStyleSet']);
+
 		});
 
 	}
@@ -1108,6 +1116,38 @@ class YourStyleController extends GenericController implements ControllerInterfa
             }
         }
         return $filteredColors;
+
+	}
+
+	public function yourStyleSet($setId) {
+
+		$setDataMap = new YourStyleSetsDataMap;
+		$set = $setDataMap->findById($setId);
+		$userDataMap = new UserDataMap();
+		$user = $userDataMap->findById($set->getUId());
+		$tilesDataMap = new YourStyleSetsTilesDataMap();
+		$tiles = $tilesDataMap->getTilesInSet($setId);
+
+		$tpl = [
+			'set' => $set,
+			'user' => $user,
+			'tiles' => $tiles,
+		];
+		self::getTwig()
+			->display('/yourstyle/YourStyleSet.twig', $tpl);
+
+	}
+
+	public function yourStyleTile($tId) {
+
+		$dataMap = new YourStyleTilesUsersDataMap();
+		$set = $dataMap->findById($tId);
+
+		$tpl = [
+			'set' => $set,
+		];
+		self::getTwig()
+			->display('/yourstyle/YourStyleTile.twig', $tpl);
 
 	}
 
