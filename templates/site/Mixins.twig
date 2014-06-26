@@ -1,6 +1,6 @@
 {% macro ratingLarge(rating) %}
 
-	<div class="rating-large rating-{{ rating.rank }} tooltip" data-tooltip-position="top-left" data-tooltip-theme="{{ rating.rank }}" data-title="Это твой рейтинг">
+	<div class="rating-large rating-{{ rating.rank }} tooltip" data-tooltip-position="top-left" data-tooltip-theme="{{ rating.rank }}" data-title="Рейтинг попкорнnews">
 		<div class="rating-points">{{ rating.points|number_format(0,'',' ') }}</div>
 		<div class="rating-stars">
 			<div class="rating-title">{{ rating.rank }}</div>
@@ -130,27 +130,3 @@
 		</div>
 	{% endif %}
 {% endmacro %}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

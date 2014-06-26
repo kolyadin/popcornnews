@@ -9,6 +9,7 @@ use popcorn\model\content\ImageFactory;
 use popcorn\model\dataMaps\DataMap;
 use popcorn\model\comments\Comment;
 use popcorn\model\dataMaps\UserDataMap;
+use popcorn\model\exceptions\ajax\AlreadyRatedException;
 use popcorn\model\persons\KidFactory;
 use popcorn\model\system\users\User;
 use popcorn\model\system\users\UserFactory;
@@ -450,6 +451,12 @@ class CommentDataMap extends DataMap {
 		return $result;
 	}
 
+	/**
+	 * @param Comment $comment
+	 * @param User $user
+	 * @param $action
+	 * @throws \popcorn\model\exceptions\ajax\AlreadyRatedException
+	 */
 	public function rate(Comment &$comment, User $user, $action) {
 
 
@@ -480,8 +487,10 @@ class CommentDataMap extends DataMap {
 
 		$already = $this->rateFindStatement->fetchColumn();
 
-		if (!$already){
-			$doRate($comment,$user,$action);
+		if (!$already) {
+			$doRate($comment, $user, $action);
+		} else {
+			throw new AlreadyRatedException;
 		}
 	}
 

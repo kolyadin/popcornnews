@@ -17,7 +17,7 @@ use popcorn\app\controllers\site\person\PersonFansController;
 use popcorn\app\controllers\site\person\PersonTalksController;
 use popcorn\app\controllers\site\PhotoArticleController;
 use popcorn\app\controllers\site\PostController;
-use popcorn\app\controllers\site\ProfileController;
+use popcorn\app\controllers\site\profile\ProfileController;
 use popcorn\app\controllers\site\ProfileManagerController;
 use popcorn\app\controllers\site\SearchController;
 use popcorn\app\controllers\site\SidebarController;

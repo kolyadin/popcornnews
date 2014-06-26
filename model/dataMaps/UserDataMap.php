@@ -361,10 +361,11 @@ class UserDataMap extends DataMap {
 			throw new AlreadyFriendsException();
 		}
 
-		$stmt = $this->prepare('insert into pn_users_friends set userId = ?, friendId = ?, confirmed = "n"');
-		$stmt->bindValue(1, $user->getId(), \PDO::PARAM_INT);
-		$stmt->bindValue(2, $friend->getId(), \PDO::PARAM_INT);
-		$stmt->execute();
+		$stmt = $this->prepare('INSERT INTO pn_users_friends SET userId = :userId, friendId = :friendId, confirmed = "n"');
+		$stmt->execute([
+			':userId'   => $user->getId(),
+			':friendId' => $friend->getId()
+		]);
 
 		return true;
 	}
@@ -426,6 +427,26 @@ class UserDataMap extends DataMap {
 	}
 
 	/**
+	 * @param User $user
+	 * @param User $friend
+	 * @return bool
+	 */
+	public function checkFriendRequest(User $user, User $friend) {
+
+		$stmt = $this->prepare('SELECT count(*) FROM pn_users_friends WHERE userId=:userId AND friendId=:friendId AND confirmed="n"');
+		$stmt->execute([
+			':userId'   => $user->getId(),
+			':friendId' => $friend->getId()
+		]);
+
+		if ($stmt->fetchColumn()) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * @param User $user1
 	 * @param User $user2
 	 * @return bool
@@ -468,6 +489,16 @@ SQL;
 
 		return $stmt->fetchColumn();
 
+	}
+
+	public function isFriends(User $user, User $profile) {
+		$stmt = $this->prepare('SELECT count(*) FROM pn_users_friends WHERE ((userId=:userId AND friendId=:friendId) OR (friendId=:userId AND userId=:friendId)) AND confirmed="y"');
+		$stmt->execute([
+			':userId'   => $user->getId(),
+			':friendId' => $profile->getId()
+		]);
+
+		return $stmt->fetchColumn() ? true : false;
 	}
 
 	/**

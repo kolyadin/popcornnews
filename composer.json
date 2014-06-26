@@ -26,7 +26,7 @@
         "phpmailer/phpmailer": "v5.2.7",
         "mobiledetect/mobiledetectlib": "dev-master",
         "mjohnson/decoda": "dev-master",
-	"google/api-client": "dev-master"
+	    "google/api-client": "dev-master"
     },
     "autoload": {
         "psr-4": {

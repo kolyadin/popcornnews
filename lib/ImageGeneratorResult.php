@@ -23,11 +23,11 @@ class ImageGeneratorResult {
 		return (string)$this->image->relPath;
 	}
 
-	public function getRelPath(){
+	public function getRelPath() {
 		return (string)$this->image->relPath;
 	}
 
-	public function getId(){
+	public function getId() {
 		return $this->image->imageId;
 	}
 
@@ -49,7 +49,7 @@ class ImageGeneratorResult {
 
 	public function getUrl() {
 
-		return implode('',[
+		return implode('', [
 			Config::getRandomServer(),
 			$this->image->relPath]);
 

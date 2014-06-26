@@ -79,7 +79,7 @@ class ProfileManagerController extends GenericController implements ControllerIn
 			$this->getSlim()->setEncryptedCookie(
 				User::COOKIE_USER_NAME,
 				base64_encode(str_rot13($user->getId() . '~' . $user->getUserHash()->getSecurityHash())),
-				'1 day'
+				'1 day', '/', null, false, true
 			);
 
 			if ($this->getSlim()->request()->get('back')) {
@@ -107,7 +107,9 @@ class ProfileManagerController extends GenericController implements ControllerIn
 	 */
 	public function profileConfirmation($userId, $hash) {
 
-		$user = UserFactory::getUser($userId);
+		$user = UserFactory::getUser($userId,[
+			'with' => UserDataMap::WITH_HASH ^ UserDataMap::WITH_INFO ^ UserDataMap::WITH_SETTINGS
+		]);
 
 		if ($user->getEnabled()) {
 			$this->getSlim()->redirect(sprintf('/profile/%u', $user->getId()));
@@ -121,7 +123,7 @@ class ProfileManagerController extends GenericController implements ControllerIn
 			$this->getSlim()->setEncryptedCookie(
 				User::COOKIE_USER_NAME,
 				base64_encode(str_rot13($user->getId() . '~' . $user->getUserHash()->getSecurityHash())),
-				'1 day', '/'
+				'1 day', '/', null, false, true
 			);
 
 			$this->getSlim()->redirect(

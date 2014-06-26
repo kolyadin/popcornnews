@@ -44,7 +44,7 @@ abstract class GenericController {
      * @return \Slim\Http\Request
      */
     protected final function getRequest() {
-        return self::getApp()->getSlim()->request();
+        return self::getApp()->getSlim()->request;
     }
 
 }

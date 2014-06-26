@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="/assets/res/tooltipster/css/tooltipster.css" media="screen, projection, print"/>
 <link rel="stylesheet" href="/assets/res/jquery-ui-1.10.3/css/no-theme/jquery-ui-1.10.3.min.css"/>
 <link  href="http://fotorama.s3.amazonaws.com/4.4.9/fotorama.css" rel="stylesheet">
+<link  href="/assets/css/profile.css" rel="stylesheet">
 
 <script type="text/javascript" src="/assets/js/modernizr-2.6.2.min.js"></script>
 <script type="text/javascript" src="/assets/js/jquery-1.10.2.min.js"></script>
@@ -492,25 +493,45 @@ $(function(){
 <div class="b-grid__g8">
     <section class="b-profile">
         <div class="left-col">
-
-            <div class="ava">
-                <a href="/profile/127167"><img src="/assets/img/no-photo/large.png"/></a>
-
-            </div>
-            <div class="last-visit">
-                <div>Последний визит:</div>
-                <span>сегодня, 12:54</span>
-            </div>
-
-            <ul>
-                <li><a href="#">Сообщение</a></li>
-                <li><a href="#">В гостевую</a></li>
-
-                <li><a href="#" data-action="addToBlackList">Заблокировать</a></li>
-
-
-            </ul>
-
+			<div class="profile-data">
+				<div class="profile-data__avatar">
+					<a href="/profile/127167"><img src="/assets/img/no-photo/large.png"/></a>
+				</div>
+				<div class="profile-data__info">
+					<div class="profile-data__last-visit">
+						Последний визит: <br/>
+						22 октября 2013, 09:22
+					</div>
+					<div class="profile-data__online">
+						<span class="profile-data__online-indicator"></span> Сейчас на сайте
+					</div>
+				</div>
+				<ul class="profile-data__options">
+					<li class="profile-data__options-item profile-data__options-item_add">
+						<a class="profile-data__link" href="#">
+							В друзья
+						</a>
+						<div class="profile-data__description">
+							Запрос на дружбу отправлен<br/>
+							Отправить <a class="profile-data__description-link" href="#">ещё раз</a>
+						</div>
+					</li>
+					<li class="profile-data__options-item profile-data__options-item_message">
+						<a class="profile-data__link" href="#">Сообщение</a>
+					</li>
+					<li class="profile-data__options-item profile-data__options-item_view">
+						<a class="profile-data__link" href="#">В гостевую</a>
+					</li>
+				</ul>
+				<ul class="profile-data__options profile-data__options_extras">
+					<li class="profile-data__options-item">
+						<a class="profile-data__link profile-data__link_big" href="#">Подарок</a>
+					</li>
+					<li class="profile-data__options-item">
+						<a class="profile-data__link" href="#">Заблокировать</a>
+					</li>
+				</ul>
+			</div>
         </div>
         <div class="profile">
 

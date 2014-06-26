@@ -26,10 +26,12 @@ class Application {
 			case 'production':
 				ini_set('display_errors', false);
 				error_reporting(0);
+				$this->slim->config('debug', false);
 				break;
 			default:
 				ini_set('display_errors', true);
 				error_reporting(E_ALL ^ E_STRICT);
+				$this->slim->config('debug', true);
 				break;
 		}
 
@@ -80,7 +82,7 @@ class Application {
 	}
 
 	public function run() {
-		$this->slim->response->header('Connection','close');
+		$this->slim->response->header('Connection', 'close');
 		$this->slim->run();
 	}
 

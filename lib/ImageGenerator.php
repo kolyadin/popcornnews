@@ -187,7 +187,7 @@ class ImageGenerator {
 
 		$autoFilename = $this->genAutoName(func_get_args()) . $outExt;
 
-		$stmt = $this->pdo->prepare('select * from pn_images_gen where genName = :genName limit 1');
+		$stmt = $this->pdo->prepare('SELECT * FROM pn_images_gen WHERE genName = :genName LIMIT 1');
 		$stmt->execute([
 			':genName' => $autoFilename
 		]);
@@ -197,8 +197,11 @@ class ImageGenerator {
 			return new ImageGeneratorResult($this, $foundImage);
 		}
 
+//		echo $source,"<br/>\n",$outFile;
+
 		if (!file_exists($source)) {
-			throw new ImageGeneratorException(sprintf('Не могу прочитать исходный файл "%s"', $source), self::ERROR_SOURCE);
+			return false;
+//			throw new ImageGeneratorException(sprintf('Не могу прочитать исходный файл "%s"', $source), self::ERROR_SOURCE);
 		}
 
 		if (!$outFile) {

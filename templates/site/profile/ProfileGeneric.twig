@@ -31,6 +31,8 @@
             $('.b-profile .left-col').stickyMojo({footerID: '.b-footer', contentID: '.b-profile .profile'});
 
 
+
+
 		});
 	</script>
 
@@ -45,13 +47,19 @@
 				}
 
 				$(this).tooltipster({
-					animation: 'grow',
+					animation: 'swing',
 					theme: theme,
 					interactive: true,
 					touchDevices: true,
+					onlyOne: true,
 					position: $(this).attr('data-tooltip-position'),
 					content: $(this).attr('data-title')
 				});
+			});
+
+
+			Profile.init({
+				profileId: {{ profile.id }}
 			});
 
 		});
@@ -74,37 +82,68 @@
 		<section class="b-profile">
 			<div class="left-col">
 
-                <div class="ava">
-                    {% if profile.avatar.id %}
-                        {% set photo = profile.avatar.thumb('140x') %}
-	                    <a href="/profile/{{ profile.id }}"><img src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}"/></a>
-                    {% else %}
-	                    <a href="/profile/{{ profile.id }}"><img src="/assets/img/no-photo/large.png"/></a>
-                    {% endif %}
-
-                </div>
-				<div class="last-visit">
-					<div>Последний визит:</div>
-					<span>{{ profile.lastVisit|dateRU }}</span>
+				<div class="profile-data">
+					<div class="profile-data__avatar">
+						{% if profile.avatar.id %}
+							{% set photo = profile.avatar.thumb('140x') %}
+							<a href="/profile/{{ profile.id }}"><img src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}"/></a>
+						{% else %}
+							<a href="/profile/{{ profile.id }}"><img src="/assets/img/no-photo/large.png"/></a>
+						{% endif %}
+					</div>
+					<div class="profile-data__info">
+						{% if profile.isOnline %}
+							<div class="profile-data__online">
+								<span class="profile-data__online-indicator"></span> Сейчас на сайте
+							</div>
+						{% else %}
+							<div class="profile-data__last-visit">
+								Последний визит: <br/>
+								{{ profile.lastVisit|dateRU }}
+							</div>
+						{% endif %}
+					</div>
+					{% if not profileHelper.isMyProfile %}
+						<ul class="profile-data__options">
+							{% if profileHelper.isFriends %}
+								<li class="profile-data__options-item">
+									<a class="profile-data__link" data-action="do-friendship-remove" href="#">
+										Убрать из друзей
+									</a>
+								</li>
+							{% else %}
+								<li class="profile-data__options-item profile-data__options-item_add">
+									<a class="profile-data__link" data-action="do-friendship-add" href="#">
+										В друзья
+									</a>
+									<div class="profile-data__description"{% if not profileHelper.friendRequest %} style="display: none;"{% endif %}>
+										Запрос на дружбу отправлен
+									</div>
+								</li>
+							{% endif %}
+							<li class="profile-data__options-item profile-data__options-item_message">
+								<a class="profile-data__link" href="#">Сообщение</a>
+							</li>
+							<li class="profile-data__options-item profile-data__options-item_view">
+								<a class="profile-data__link" href="#">В гостевую</a>
+							</li>
+						</ul>
+						<ul class="profile-data__options profile-data__options_extras">
+							<li class="profile-data__options-item">
+								<a class="profile-data__link profile-data__link_big" href="#">Подарок</a>
+							</li>
+							{% if profileHelper.inBlackList %}
+								<li class="profile-data__options-item">
+									<a class="profile-data__link" href="#">Разблокировать</a>
+								</li>
+							{% else %}
+								<li class="profile-data__options-item">
+									<a class="profile-data__link" href="#">Заблокировать</a>
+								</li>
+							{% endif %}
+						</ul>
+					{% endif %}
 				</div>
-
-				<ul>
-					{% if currentUser.id != slim.path[2] %}
-						<li><a href="#" data-action="addToFriend">В друзья</a></li>
-					{% endif %}
-					<li><a href="#">Сообщение</a></li>
-					<li><a href="#">В гостевую</a></li>
-
-					{% if profileHelper.inBlackList %}
-						<li>
-							<a href="#" data-action="removeFromBlackList">Разблокировать</a>
-						</li>
-					{% else %}
-						<li><a href="#" data-action="addToBlackList">Заблокировать</a></li>
-					{% endif %}
-
-
-				</ul>
 
 			</div>
 			<div class="profile">

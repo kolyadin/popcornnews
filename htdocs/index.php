@@ -1,4 +1,5 @@
 <?php
+$t = microtime(1);
 
 setlocale(LC_TIME, "ru_RU.utf8");
 
@@ -10,8 +11,6 @@ if (\popcorn\lib\Config::getMode() != 'production') {
 
 session_name('popcorn-session');
 session_start();
-
-$t = microtime(1);
 
 $app = new \popcorn\app\Popcorn();
 $app->run();

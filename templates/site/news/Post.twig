@@ -16,9 +16,11 @@
 
 			IM.generateEmoji();
 
-			PostFB.init({
-				fbId: {{ post.fashionBattle.id }}
-			});
+			{% if post.fashionBattle.id %}
+				PostFB.init({
+					fbId: {{ post.fashionBattle.id }}
+				});
+		    {% endif %}
 
 		});
 

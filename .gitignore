@@ -10,6 +10,5 @@
 /config/config.ini
 /upload/
 
-/htdocs/assets/css/*.css
 /htdocs/assets/css/add/*.css
 /htdocs/assets/css/blocks/*.css

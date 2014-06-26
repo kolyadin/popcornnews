@@ -18,6 +18,21 @@ use popcorn\lib\RuHelper;
  */
 class PostController extends GenericController implements ControllerInterface {
 
+	public function registerIf() {
+		$request = $this->getSlim()->request;
+
+		if (
+			preg_match('!^\/category!', $request->getPath()) ||
+			preg_match('!^\/archive!', $request->getPath()) ||
+			preg_match('!^\/tag!', $request->getPath()) ||
+			preg_match('!^\/news!', $request->getPath())
+		) {
+			return true;
+		}
+
+		return false;
+	}
+
 	/**
 	 * Старые url перекинем на новый движок
 	 */

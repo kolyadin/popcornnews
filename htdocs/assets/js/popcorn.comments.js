@@ -1,31 +1,31 @@
 var IM = {
 
-    sel : {},
-    config : {},
+    sel: {},
+    config: {},
 
-    prepare : function(){
+    prepare: function () {
         rangy.init();
 
         IM.sel = {
-            comments      : $('.b-comments'),
-            addComment    : $('.b-comments__new-comment').find('a'),
-            wrapper       : $('.b-new-message-box'),
-            editor        : $('.b-new-message-box__message',this.sel.wrapper),
-            attachBar     : $('.b-new-message-box__attach',this.sel.wrapper),
-            attachButton  : $('.b-new-message-box__add-attach',this.sel.wrapper),
-            editorWrapper : $('.b-new-message-box__message-container',this.sel.wrapper),
-            sendButton    : $('.b-new-message-box__send-button',this.sel.wrapper),
-            smileToggle   : $('.b-new-message-box__smile-toogle',this.sel.wrapper),
-            smilesBar     : $('.b-smiles-bar')
+            comments: $('.b-comments'),
+            addComment: $('.b-comments__new-comment').find('a'),
+            wrapper: $('.b-new-message-box'),
+            editor: $('.b-new-message-box__message', this.sel.wrapper),
+            attachBar: $('.b-new-message-box__attach', this.sel.wrapper),
+            attachButton: $('.b-new-message-box__add-attach', this.sel.wrapper),
+            editorWrapper: $('.b-new-message-box__message-container', this.sel.wrapper),
+            sendButton: $('.b-new-message-box__send-button', this.sel.wrapper),
+            smileToggle: $('.b-new-message-box__smile-toogle', this.sel.wrapper),
+            smilesBar: $('.b-smiles-bar')
         };
     },
 
-    generateEmoji : function(){
+    generateEmoji: function () {
         emojify.run(this.sel.comments.get(0));
         emojify.run(this.sel.smilesBar.get(0));
     },
 
-    placeCaretAtEnd : function(el){
+    placeCaretAtEnd: function (el) {
         el.focus();
 
         var range = rangy.createRange();
@@ -37,7 +37,7 @@ var IM = {
 
         return range;
     },
-    getSelectedRangeWithin : function(el){
+    getSelectedRangeWithin: function (el) {
         var selectedRange = null;
         var sel = rangy.getSelection();
         var elRange = rangy.createRange();
@@ -48,7 +48,7 @@ var IM = {
         }
         elRange.detach();
     },
-    pasteSmile : function(range, smile){
+    pasteSmile: function (range, smile) {
         range.deleteContents();
 
         var clone = smile.clone().get(0);
@@ -69,7 +69,7 @@ var IM = {
     /**
      * Сброс формы отправки в изначальное состояние
      */
-    resetForm : function(){
+    resetForm: function () {
         IM.sel.wrapper.attr({
             'data-reply': 0,
             'data-level-id': 0
@@ -79,9 +79,9 @@ var IM = {
         IM.sel.attachBar.html('');
         IM.sel.editorWrapper.removeClass('b-new-message-box__message-container__attach-tab');
     },
-    blockForm : function(callback){
+    blockForm: function (callback) {
 
-        var handler = function(){
+        var handler = function () {
             IM.sel.editor.css('cursor', 'progress').attr('contenteditable', false);
             IM.sel.attachButton.attr('disabled', true);
             IM.sel.sendButton.attr('disabled', true);
@@ -93,9 +93,9 @@ var IM = {
 
         IM.sel.wrapper.stop().animate({opacity: 0.5}, 'fast', handler);
     },
-    unblockForm : function(callback){
+    unblockForm: function (callback) {
 
-        var handler = function(){
+        var handler = function () {
             IM.sel.editor.css('cursor', 'default').attr('contenteditable', true);
             IM.sel.attachButton.attr('disabled', false);
             IM.sel.sendButton.attr('disabled', false);
@@ -108,11 +108,11 @@ var IM = {
         IM.sel.wrapper.stop().animate({opacity: 1}, 'fast', handler);
     },
 
-    removeComment : function(comment){
+    removeComment: function (comment) {
 
         var params = {
-            commentId : comment.attr('data-comment-id'),
-            entity    : IM.config['entity']
+            commentId: comment.attr('data-comment-id'),
+            entity: IM.config['entity']
         };
 
         var handler = function (response) {
@@ -130,20 +130,20 @@ var IM = {
     /**
      * Ответ на коммент
      */
-    replyComment : function($comment){
+    replyComment: function ($comment) {
 
         var commentId = $comment.closest('.b-comment').data('comment-id');
 
-        IM.sel.wrapper.fadeOut(30,function () {
+        IM.sel.wrapper.fadeOut(30, function () {
             IM.sel.wrapper.attr('data-reply-to', commentId);
             IM.sel.wrapper.fadeIn('fast');
             $comment.closest('.b-comment').append(IM.sel.wrapper);
 
-            setTimeout(function(){
+            setTimeout(function () {
                 IM.sel.editor.focus();
-            },1);
+            }, 1);
 
-            $('.b-comments__new-comment').show(function(){
+            $('.b-comments__new-comment').show(function () {
 
             });
         });
@@ -153,10 +153,10 @@ var IM = {
     /**
      * Написание коммента первого уровня
      */
-    addComment : function(){
+    addComment: function () {
 
     },
-    addSmile : function(smile){
+    addSmile: function (smile) {
         var range = this.getSelectedRangeWithin(IM.sel.editor.get(0));
 
         if (range) {
@@ -166,24 +166,57 @@ var IM = {
             IM.pasteSmile(endRange, smile);
         }
     },
-    rateComment : function($comment,action){
+    rateComment: function ($comment, action) {
         var params = {
-            entity    : IM.config['entity'],
-            commentId : $comment.attr('data-comment-id'),
-            action    : action
+            entity: IM.config['entity'],
+            commentId: $comment.attr('data-comment-id'),
+            action: action
         };
 
-        var handler = function(response){
+        var handler = function (response) {
 
-            $comment.find('.b-comment-caption__like-like em').text(response['votesUp'] > 0 ? response['votesUp'] : '');
-            $comment.find('.b-comment-caption__like-dislike em').text(response['votesDown'] > 0 ? response['votesDown'] : '');
+            var handlerSuccess = function () {
+                $comment.find('.b-comment-caption__like-like em').text(response['votesUp'] > 0 ? response['votesUp'] : '');
+                $comment.find('.b-comment-caption__like-dislike em').text(response['votesDown'] > 0 ? response['votesDown'] : '');
+            };
+
+            var handlerAlreadyRated = function () {
+
+                var $element;
+
+                if (action == 'up') {
+                    $element = $comment.find('.b-comment-caption__like-like');
+                } else if (action == 'down') {
+                    $element = $comment.find('.b-comment-caption__like-dislike');
+                }
+
+                $element.tooltipster({
+                    theme: '.tooltipster-silver',
+                    animation: 'swing',
+                    interactive: false,
+                    content: 'Вы уже голосовали',
+                    trigger: 'custom'
+                }).tooltipster('show');
+
+                setTimeout(function () {
+                    $element.tooltipster('hide');
+                }, 2000);
+
+            };
+
+            if (response.status == 'success') {
+                handlerSuccess();
+            } else if (response.status == 'already_rated') {
+                handlerAlreadyRated();
+            }
+
         };
 
-        $.post('/ajax/comment/rate',params,handler,'json');
+        $.post('/ajax/comment/rate', params, handler, 'json');
 
         return false;
     },
-    showSmilesBar : function(){
+    showSmilesBar: function () {
 
         var $width = IM.sel.wrapper.width();
         var $offset = IM.sel.wrapper.offset();
@@ -206,13 +239,13 @@ var IM = {
             .end()
             .fadeIn('fast');
     },
-    closeSmilesBar : function(){
+    closeSmilesBar: function () {
         IM.sel.smilesBar.fadeOut('fast');
     },
-    bind : function(){
+    bind: function () {
 
         return {
-            uploader  : function(){
+            uploader: function () {
                 var uploader = new plupload.Uploader({
                     runtimes: 'html5,flash,silverlight,html4',
                     browse_button: IM.sel.attachButton.attr('id'),
@@ -302,7 +335,7 @@ var IM = {
 
                 uploader.init();
             },
-            smilesBar : function(){
+            smilesBar: function () {
                 IM.sel.smileToggle.on('click', function () {
                     IM.showSmilesBar();
                     return false;
@@ -313,13 +346,13 @@ var IM = {
                     return false;
                 });
             },
-            smiles    : function(){
+            smiles: function () {
                 IM.sel.smilesBar.on('click', '.b-smiles-bar__smiles img', function (e) {
                     IM.addSmile($(this));
                 });
             },
-            interceptPaste : function(){
-                IM.sel.editor.on('paste',function(e){
+            interceptPaste: function () {
+                IM.sel.editor.on('paste', function (e) {
 
                     e.preventDefault();
 
@@ -344,7 +377,7 @@ var IM = {
                     }
                 });
             },
-            addComment : function(){
+            addComment: function () {
                 IM.sel.addComment.on('click', function () {
                     IM.sel.wrapper.attr({
                         'data-reply-to': 0,
@@ -355,14 +388,14 @@ var IM = {
 
                     par.hide();
                     par.after(IM.sel.wrapper);
-                    IM.sel.wrapper.show(function(){
+                    IM.sel.wrapper.show(function () {
                         IM.sel.editor.focus();
                     });
 
                     return false;
                 });
             },
-            removeComment : function(){
+            removeComment: function () {
 
                 IM.sel.comments.on('click', '.b-comment-caption__remove a', function () {
 
@@ -373,29 +406,29 @@ var IM = {
                     return false;
                 });
             },
-            replyComment : function(){
+            replyComment: function () {
                 IM.sel.comments.on('click', '.b-comment-caption__reply a', function () {
                     IM.replyComment($(this));
 
                     return false;
                 });
             },
-            rateComment : function(){
+            rateComment: function () {
                 IM.sel.comments.on('click', '.b-comment-caption__like-like', function () {
                     var $comment = $(this).closest('.b-comment');
 
-                    IM.rateComment($comment,'up');
+                    IM.rateComment($comment, 'up');
                     return false;
                 });
 
                 IM.sel.comments.on('click', '.b-comment-caption__like-dislike', function () {
                     var $comment = $(this).closest('.b-comment');
 
-                    IM.rateComment($comment,'down');
+                    IM.rateComment($comment, 'down');
                     return false;
                 });
             },
-            sendComment : function(){
+            sendComment: function () {
                 IM.sel.sendButton.on('click', function () {
 
                     var $sendButton = $(this);
@@ -410,17 +443,17 @@ var IM = {
                         images.push($(this).data('image-id'));
                     });
 
-                    contentArea.find('img').each(function(){
+                    contentArea.find('img').each(function () {
                         $(this).replaceWith($(this).attr('title'));
                     });
 
                     var params = {
-                        content   : htmlToText(contentArea.html()),
-                        images    : images,
-                        entity    : IM.config['entity'],
-                        replyTo   : parent.attr('data-reply-to'),
-                        entityId  : IM.config['entityId'],
-                        subscribe : IM.sel.wrapper.find('input[name=subscribe]').prop('checked') ? 1 : 0
+                        content: htmlToText(contentArea.html()),
+                        images: images,
+                        entity: IM.config['entity'],
+                        replyTo: parent.attr('data-reply-to'),
+                        entityId: IM.config['entityId'],
+                        subscribe: IM.sel.wrapper.find('input[name=subscribe]').prop('checked') ? 1 : 0
                     };
 
                     $sendButton.addClass('b-new-message-box__send-button__loading').val('');
@@ -477,16 +510,16 @@ var IM = {
                                     IM.sel.comments.find('ul').append(response.comment);
                                 }
 
-                                var $newComment = $('.b-comment[data-comment-id='+ response.id +']');
+                                var $newComment = $('.b-comment[data-comment-id=' + response.id + ']');
 
                                 emojify.run($newComment.get(0));
 
                                 //Коммент вставили, подсветим его (обратим внимание пользователя)
                                 $('body,html')
-                                    .animate({scrollTop:$newComment.offset().top-30},'fast')
+                                    .animate({scrollTop: $newComment.offset().top - 30}, 'fast')
                                     .promise()
-                                    .done(function(){
-                                        $newComment.effect('highlight',{color:'#eed8e3'},3500);
+                                    .done(function () {
+                                        $newComment.effect('highlight', {color: '#eed8e3'}, 3500);
                                     });
 
 
@@ -511,7 +544,7 @@ var IM = {
 
                 });
             },
-            removeAttach : function(){
+            removeAttach: function () {
                 IM.sel.wrapper.on('click', '.b-new-message-box__attach-item', function () {
                     $(this).fadeOut('fast', function () {
                         $(this).remove();
@@ -526,7 +559,7 @@ var IM = {
 
         };
     },
-    init : function(config){
+    init: function (config) {
 
         IM.config = config;
         IM.prepare();
@@ -534,7 +567,7 @@ var IM = {
         if (navigator.userAgent.match(/opera/i)) {
             var st;
 
-            IM.sel.editor.on('focus',function () {
+            IM.sel.editor.on('focus', function () {
                 st = setTimeout(function () {
                     IM.sel.editor.blur().focus();
                     clearInterval(st);

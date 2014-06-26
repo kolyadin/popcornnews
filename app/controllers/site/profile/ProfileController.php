@@ -1,5 +1,6 @@
 <?php
-namespace popcorn\app\controllers\site;
+
+namespace popcorn\app\controllers\site\profile;
 
 use popcorn\app\controllers\ControllerInterface;
 use popcorn\app\controllers\GenericController;
@@ -32,6 +33,8 @@ class ProfileController extends GenericController implements ControllerInterface
 	static private $profile;
 	static private $twigData = [];
 
+	static protected $profileId;
+
 	public function registerIf() {
 		$request = $this->getSlim()->request;
 
@@ -45,42 +48,28 @@ class ProfileController extends GenericController implements ControllerInterface
 		return false;
 	}
 
+	final public function profileExistsMiddleware(Route $route) {
+
+		$user = UserFactory::getUser($route->getParam('profileId'));
+
+		if ($user instanceof User) {
+			self::$profileId = $user->getId();
+			$this->profileSetup(self::$profileId);
+		} else {
+			$this->getSlim()->notFound();
+		}
+	}
+
 	public function getRoutes() {
 
-		//callback для страницы пользователей и профиля
-		//проверяет существование пользователя и права доступа
-		$profileMiddleware = function (Route $route) {
-			$profileId = $route->getParam('profileId');
-
-			//Существование пользователя в базе, если нет - 404
-			if (!(UserFactory::getUser($profileId) instanceof User)) {
-				$this->getSlim()->notFound();
-			}
-
-			//Нужно быть авторизованным, чтобы смотреть чужой или свой профиль
-			//Если нет - показываем ошибку авторизации
-			if (UserFactory::getCurrentUser() instanceof GuestUser) {
-				$this->getSlim()->error(new NotAuthorizedException());
-			}
-
-			self::profileSetup($profileId);
-		};
-
-		$justForMeMiddleware = function (Route $route) {
-			if (UserFactory::getCurrentUser()->getId() > 0) {
-				return true;
-			}
-
-			$this->getSlim()->notFound();
-		};
-
+		//@todo сделать дополнительную проверку
 		$this
 			->getSlim()
 			->post('/profile/exit', function () {
 				UserFactory::logout();
 
 				$this->getSlim()->setEncryptedCookie(USER::COOKIE_USER_NAME, 0, time() - 3600, '/');
-				$this->getSlim()->redirect(base64_decode($this->getSlim()->request()->post('returnTo')));
+				$this->getSlim()->redirect(base64_decode($this->getSlim()->request->post('returnTo')));
 			});
 
 
@@ -88,57 +77,57 @@ class ProfileController extends GenericController implements ControllerInterface
 		{
 			$this
 				->getSlim()
-				->get('/im(/companion:companionId)', $justForMeMiddleware, [$this, 'imPage'])
+				->get('/im(/companion:companionId)', 'popcorn\\lib\\Middleware::authorizationNeeded', [$this, 'imPage'])
 				->conditions(['companionId' => '\d+']);
 
 			$this
 				->getSlim()
-				->map('/im/create', $justForMeMiddleware, [$this, 'imCreate'])
+				->map('/im/create', 'popcorn\\lib\\Middleware::authorizationNeeded', [$this, 'imCreate'])
 				->via('GET', 'POST');
 		}
 
 
 		$this
 			->getSlim()
-			->group('/profile/:profileId', $profileMiddleware, function () use ($justForMeMiddleware) {
+			->group('/profile/:profileId', 'popcorn\\lib\\Middleware::authorizationNeeded', [$this, 'profileExistsMiddleware'], function () {
 
 				//@example /profile/1
 				$this
 					->getSlim()
-					->get('', [new ProfileController(), 'profileDispatcher']);
+					->get('', [$this, 'profileDispatcher']);
 
 				{ #Только для профиля
 					//@example /profile/1/form
 					$this
 						->getSlim()
-						->get('/form', $justForMeMiddleware, [$this, 'profileEditForm']);
+						->get('/form', [$this, 'profileEditForm']);
 
 					$this
 						->getSlim()
-						->post('/form', $justForMeMiddleware, [$this, 'profileSaveForm']);
+						->post('/form', [$this, 'profileSaveForm']);
 
 					//@example /profile/1/photos/del
 					$this
 						->getSlim()
-						->get('/photos/del', $justForMeMiddleware, [$this, 'profileEditForm']);
+						->get('/photos/del', [$this, 'profileEditForm']);
 
 					//@example /profile/1/blacklist
 					$this
 						->getSlim()
-						->get('/blacklist', $justForMeMiddleware, [$this, 'profileBlackList']);
+						->get('/blacklist', [$this, 'profileBlackList']);
 
 					$this
 						->getSlim()
-						->get('/persons/news', $justForMeMiddleware, [$this, 'personsNewsPage']);
+						->get('/persons/news', [$this, 'personsNewsPage']);
 
 					$this
 						->getSlim()
-						->map('/persons/manage', $justForMeMiddleware, [$this, 'fansAddDispatcher'])
+						->map('/persons/manage', [$this, 'fansAddDispatcher'])
 						->via('GET', 'POST');
 
 					$this
 						->getSlim()
-						->map('/messages/new', $justForMeMiddleware, [$this, 'newMessageDispatcher'])
+						->map('/messages/new', [$this, 'newMessageDispatcher'])
 						->via('GET', 'POST');
 				}
 
@@ -161,24 +150,32 @@ class ProfileController extends GenericController implements ControllerInterface
 
 	/**
 	 * Все, что может понадобится для всех страниц пользователя
+	 * @param $profileId
+	 * @throws \popcorn\model\exceptions\NotAuthorizedException
 	 */
-	public static function profileSetup($profileId) {
+	private function profileSetup($profileId) {
 		$currentUser = UserFactory::getCurrentUser();
 
-		self::$profile = UserFactory::getUser($profileId);
+		$profile = UserFactory::getUser($profileId);
 
 		$dataMap = new UserDataMap();
-		self::$twigData['inBlackList'] = $dataMap->checkInBlackList(UserFactory::getCurrentUser(), self::$profile);
-		self::$twigData['isMyProfile'] = false;
 
+		$data = [];
+
+		$data['isMyProfile'] = false;
+		$data['inBlackList'] = $dataMap->checkInBlackList($currentUser, $profile);
+		$data['friendRequest'] = $dataMap->checkFriendRequest($currentUser, $profile);
+		$data['isFriends'] = $dataMap->isFriends($currentUser, $profile);
 
 		//Авторизованный пользователь смотрит свой профиль
 		if ($currentUser->getId() == $profileId) {
-			self::$twigData['isMyProfile'] = true;
-			self::$twigData['notifyCounter'] = ['friends' => $dataMap->getNewFriendsCount($currentUser)];
+			$data['isMyProfile'] = true;
+			$data['notifyCounter'] = ['friends' => $dataMap->getNewFriendsCount($currentUser)];
 		}
 
-		self::getTwig()->addGlobal('profileHelper', self::$twigData);
+		$this
+			->getTwig()
+			->addGlobal('profileHelper', $data);
 
 	}
 
@@ -188,18 +185,22 @@ class ProfileController extends GenericController implements ControllerInterface
 	 * Если пользователь авторизован и мы находимся на своей странице, то покажем свой профиль
 	 * В ином случае покажем страницу пользователя
 	 */
-	public static function profileDispatcher() {
+	public function profileDispatcher() {
+
+		$profile = UserFactory::getUser(self::$profileId, [
+			'with' => UserDataMap::WITH_ALL
+		]);
 
 		$dataMap = new UserDataMap();
 
-		$activeStatus = $dataMap->getActiveStatus(self::$profile);
-		$statuses = $dataMap->getStatuses(self::$profile);
+		$activeStatus = $dataMap->getActiveStatus($profile);
+		$statuses = $dataMap->getStatuses($profile);
 
-		self::$profile->setExtra('status', $activeStatus);
+		$profile->setExtra('status', $activeStatus);
 
 		self::getTwig()
 			->display('/profile/ProfilePage.twig', array(
-				'profile' => self::$profile,
+				'profile'    => $profile,
 				'statusList' => $statuses
 			));
 	}
@@ -211,12 +212,12 @@ class ProfileController extends GenericController implements ControllerInterface
 
 		self::getTwig()
 			->display('/profile/ProfileForm.twig', array(
-				'profile' => $profile,
-				'countries' => UserFactory::getCountries(),
-				'persons' =>  $personDataMap->getPersonsLits(),
-				'userError' => (isset($_SESSION['userError']) ? $_SESSION['userError'] : array()),
-			)
-		);
+					'profile'   => $profile,
+					'countries' => UserFactory::getCountries(),
+					'persons'   => $personDataMap->getPersonsLits(),
+					'userError' => (isset($_SESSION['userError']) ? $_SESSION['userError'] : array()),
+				)
+			);
 
 	}
 
@@ -225,22 +226,22 @@ class ProfileController extends GenericController implements ControllerInterface
 		$request = self::getSlim()->request();
 
 		$params = array(
-			'name' => strip_tags(trim($request->post('name'))),
-			'pass1' => trim($request->post('pass1')),
-			'pass2' => trim($request->post('pass2')),
-			'credo' => trim($request->post('credo')),
-			'city' => trim($request->post('city')),
-			'country' => trim($request->post('country')),
-			'sex' => (int)$request->post('sex'),
-			'show_bd' => (int)$request->post('show_bd'),
-			'family' => (int)$request->post('family'),
-			'meet_actor' => (int)$request->post('meet_actor'),
-			'day' => (int)$request->post('day'),
-			'month' => (int)$request->post('month'),
-			'year' => (int)$request->post('year'),
-			'daily_sub' => (int)$request->post('daily_sub'),
-			'alert_on_new_mail' => (int)$request->post('alert_on_new_mail'),
-			'alert_on_new_guest_items' => (int)$request->post('alert_on_new_guest_items'),
+			'name'                           => strip_tags(trim($request->post('name'))),
+			'pass1'                          => trim($request->post('pass1')),
+			'pass2'                          => trim($request->post('pass2')),
+			'credo'                          => trim($request->post('credo')),
+			'city'                           => trim($request->post('city')),
+			'country'                        => trim($request->post('country')),
+			'sex'                            => (int)$request->post('sex'),
+			'show_bd'                        => (int)$request->post('show_bd'),
+			'family'                         => (int)$request->post('family'),
+			'meet_actor'                     => (int)$request->post('meet_actor'),
+			'day'                            => (int)$request->post('day'),
+			'month'                          => (int)$request->post('month'),
+			'year'                           => (int)$request->post('year'),
+			'daily_sub'                      => (int)$request->post('daily_sub'),
+			'alert_on_new_mail'              => (int)$request->post('alert_on_new_mail'),
+			'alert_on_new_guest_items'       => (int)$request->post('alert_on_new_guest_items'),
 			'can_invite_to_community_groups' => (int)$request->post('can_invite_to_community_groups'),
 		);
 
@@ -324,11 +325,11 @@ class ProfileController extends GenericController implements ControllerInterface
 
 		self::getTwig()
 			->display('/profile/ProfileFriends.twig', [
-				'profile' => $profile,
-				'friends' => $friends,
+				'profile'   => $profile,
+				'friends'   => $friends,
 				'paginator' => [
 					'overall' => $pages,
-					'active' => $listPage
+					'active'  => $listPage
 				]
 			]);
 	}
@@ -365,7 +366,7 @@ class ProfileController extends GenericController implements ControllerInterface
 			->display('/profile/ProfilePersonsAdd.twig', [
 				'profile' => $profile,
 				'persons' => $allPersons,
-				'fans' => $fansArray
+				'fans'    => $fansArray
 			]);
 	}
 
@@ -428,7 +429,7 @@ class ProfileController extends GenericController implements ControllerInterface
 
 			self::getTwig()
 				->display('/profile/ProfileMessages.twig', [
-					'profile' => $profile,
+					'profile'  => $profile,
 					'messages' => $messages
 				]);
 

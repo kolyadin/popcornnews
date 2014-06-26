@@ -31,6 +31,7 @@ use popcorn\model\dataMaps\TopicCommentDataMap;
 use popcorn\model\dataMaps\TopicDataMap;
 use popcorn\model\dataMaps\UpDownDataMap;
 use popcorn\model\dataMaps\UserDataMap;
+use popcorn\model\exceptions\ajax\AlreadyRatedException;
 use popcorn\model\exceptions\ajax\VotingNotAllowException;
 use popcorn\model\exceptions\Exception;
 use popcorn\model\exceptions\NotAuthorizedException;
@@ -298,21 +299,28 @@ class AjaxController extends GenericController implements ControllerInterface {
 				$mail->addAddress($friend->getEmail());
 				$mail->Subject = sprintf('POPCORNNEWS: пользователь %s добавил(а) вас в свои друзья и ждет подтверждения', htmlspecialchars($user->getNick()));
 				$mail->msgHTML(
-					$this->getTwig()->render('/mail/FriendAdd.twig', array(
-						'user'   => $user,
-						'friend' => $friend
-					))
+					$this
+						->getTwig()
+						->render('/mail/FriendAdd.twig', [
+							'user'   => $user,
+							'friend' => $friend
+						])
 				);
 
 				if ($mail->send()) {
-					die(json_encode(array(
-						'status' => 'success'
-					)));
+					$this
+						->getApp()
+						->exitWithJson('success');
 				}
 			}
-
+		} catch (NotAuthorizedException $e) {
+			$this
+				->getApp()
+				->exitWithJson('auth_error');
 		} catch (AjaxException $e) {
-			$e->exitWithJsonException();
+			$this
+				->getApp()
+				->exitWithJson('error');
 		}
 	}
 
@@ -324,10 +332,20 @@ class AjaxController extends GenericController implements ControllerInterface {
 			$friend = UserFactory::getUser($this->getSlim()->request()->post('friendId'));
 
 			if ($dataMap->removeFromFriends($currentUser, $friend)) {
-				$this->getApp()->exitWithJsonSuccessMessage(['friendId' => $friend->getId()]);
+				$this
+					->getApp()
+					->exitWithJson('success', [
+						'friendId' => $friend->getId()
+					]);
 			}
+		} catch (NotAuthorizedException $e) {
+			$this
+				->getApp()
+				->exitWithJson('auth_error');
 		} catch (AjaxException $e) {
-			$e->exitWithJsonException();
+			$this
+				->getApp()
+				->exitWithJson('error');
 		}
 	}
 
@@ -667,7 +685,6 @@ class AjaxController extends GenericController implements ControllerInterface {
 				}
 
 				FashionBattleFactory::doVoting($currentUser, $fb, $option);
-
 				FashionBattleFactory::save($fb);
 
 				$pointsOverall = sprintf('Всего %s', RuHelper::ruNumber($fb->getTotalVotes(), ['нет голосов', '%u голос', '%u голоса', '%u голосов']));
@@ -821,9 +838,14 @@ class AjaxController extends GenericController implements ControllerInterface {
 				'votesDown' => $comment->getVotesDown()
 			]);
 
-
-		} catch (AjaxException $e) {
-			$e->exitWithJsonException();
+		} catch (NotAuthorizedException $e) {
+			$this
+				->getApp()
+				->exitWithJson('auth_error');
+		} catch (AlreadyRatedException $e) {
+			$this
+				->getApp()
+				->exitWithJson('already_rated');
 		}
 	}
 
