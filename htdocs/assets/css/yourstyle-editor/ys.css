@@ -12,7 +12,7 @@ div.irhMySets h3 {
 	}
 div.irhMySets h3 span.replacer,
 div.irhMySets h3 a.replacer {
-	background: url(/i/ys/replacer-my-sets-h3.png) no-repeat left top;
+	background: url(/assets/img/ys/replacer-my-sets-h3.png) no-repeat left top;
 	}
 div.irhMySets a.mySet img {
 	display: block;
@@ -29,7 +29,7 @@ div.irhNewSets h3 {
 	}
 div.irhNewSets h3 span.replacer,
 div.irhNewSets h3 a.replacer {
-	background: url(/i/ys/replacer-new-sets-h3.png) no-repeat left top;
+	background: url(/assets/img/ys/replacer-new-sets-h3.png) no-repeat left top;
 	}
 	
 div.irhPopularRelevantSets h3 {
@@ -40,7 +40,7 @@ div.irhPopularRelevantSets h3 {
 	}
 div.irhPopularRelevantSets h3 span.replacer,
 div.irhPopularRelevantSets h3 a.replacer {
-	background: url(/i/ys/replacer-popular-relevant-sets-h3.png) no-repeat left top;
+	background: url(/assets/img/ys/replacer-popular-relevant-sets-h3.png) no-repeat left top;
 	}
 /* </sidebar */
 /* person */
@@ -56,7 +56,7 @@ div.irhSets h3 {
 	}
 div.irhSets h3 span.replacer,
 div.irhSets h3 a.replacer {
-	background: url(/i/ys/replacer-sets-h3.png) no-repeat left top;
+	background: url(/assets/img/ys/replacer-sets-h3.png) no-repeat left top;
 	}
 	
 ul.setRoll {
@@ -178,7 +178,7 @@ div.irhPopularSets h3 {
 	}
 div.irhPopularSets h3 span.replacer,
 div.irhPopularSets h3 a.replacer {
-	background: url(/i/ys/replacer-popular-sets-h3.png) no-repeat 2px top;
+	background: url(/assets/img/ys/replacer-popular-sets-h3.png) no-repeat 2px top;
 	}
 /* </popular sets */
 /* mail */
@@ -189,7 +189,7 @@ div.irhMail h3 {
 	}
 div.irhMail h3 span.replacer,
 div.irhMail h3 a.replacer {
-	background: url(/i/ys/replacer-mail-h3.png) no-repeat left top;
+	background: url(/assets/img/ys/replacer-mail-h3.png) no-repeat left top;
 	}
 	
 /*div.b-create-set-promo {
@@ -198,7 +198,7 @@ div.irhMail h3 a.replacer {
 	color: #fff;
 	margin-bottom: 25px;
 	}*/
-div.b-create-set-promo {position:relative;left:0;top:0; width:274; height:343px; overflow:hidden; margin-bottom: 25px; background:url(/i/ys/f2.jpg) 0 0 no-repeat;}
+div.b-create-set-promo {position:relative;left:0;top:0; width:274; height:343px; overflow:hidden; margin-bottom: 25px; background:url(/assets/img/ys/f2.jpg) 0 0 no-repeat;}
 div.b-create-set-promo h3 {
 	font: 22px Tahoma, Verdana, Arial, sans-serif;
 	margin-bottom: 3px;
@@ -229,7 +229,7 @@ div.irhStarSet h3 {
 	}
 div.irhStarSet h3 span.replacer,
 div.irhStarSet h3 a.replacer {
-	background: url(/i/ys/replacer-starset-h3.png) no-repeat left top;
+	background: url(/assets/img/ys/replacer-starset-h3.png) no-repeat left top;
 	}
 	
 .b-starsets {
@@ -246,7 +246,7 @@ div.irhPopularItems h3 {
 	}
 div.irhPopularItems h3 span.replacer,
 div.irhPopularItems h3 a.replacer {
-	background: url(/i/ys/replacer-popular-items-h3.png) no-repeat left top;
+	background: url(/assets/img/ys/replacer-popular-items-h3.png) no-repeat left top;
 	}
 /* </popular items */
 .b-sets-intro {
@@ -493,7 +493,7 @@ div.ys-canvas {
 	}
 /*** empty column ***/
 div.ys-canvas__empty {
-	background: url(/i/ys/empty-bg.png) repeat-x 0 0;
+	background: url(/assets/img/ys/empty-bg.png) repeat-x 0 0;
 	text-align: center;
 	padding-top: 225px !important;
 	height: 285px !important;
@@ -533,7 +533,7 @@ a.ys-canvas-tabs__scroll_left {
     z-index: 100;
 	left: 0;
 	top: 0;
-	background: url(/i/ys/icon.scrolltabs.left.png) no-repeat 0 0;
+	background: url(/assets/img/ys/icon.scrolltabs.left.png) no-repeat 0 0;
     cursor: pointer;
     _cursor: hand;
     border-right: 5px solid #fff;
@@ -546,7 +546,7 @@ a.ys-canvas-tabs__scroll_right {
     z-index: 100;
     right: 0;
     top: 0;
-    background: url(/i/ys/icon.scrolltabs.right.png) no-repeat 0 0;
+    background: url(/assets/img/ys/icon.scrolltabs.right.png) no-repeat 0 0;
     cursor: pointer;
     _cursor: hand;
     border-left: 5px solid #fff;
@@ -592,7 +592,7 @@ ul.ys-canvas-tabs li a.close {
 	display: inline-block;
 	#display: inline;
 	zoom: 1;
-	background: url(/i/ys/icon.close.tab.png) no-repeat 0 0;
+	background: url(/assets/img/ys/icon.close.tab.png) no-repeat 0 0;
 	position: relative;
 	top: -1px;
 	cursor: pointer;
@@ -712,9 +712,9 @@ div.search a.next {
 	cursor: pointer;
 	_cursor: hand;
 	}
-div.search a.home {margin-right: 20px;background: url(/i/ys/icon.tab.home.png) no-repeat 0 0;} 
-div.search a.prev {background: url(/i/ys/icon.prevnext.png) no-repeat 0 0;}	
-div.search a.next {background: url(/i/ys/icon.prevnext.png) no-repeat 0 100%;}
+div.search a.home {margin-right: 20px;background: url(/assets/img/ys/icon.tab.home.png) no-repeat 0 0;} 
+div.search a.prev {background: url(/assets/img/ys/icon.prevnext.png) no-repeat 0 0;}	
+div.search a.next {background: url(/assets/img/ys/icon.prevnext.png) no-repeat 0 100%;}
 	
 	
 div.full-search a.home,
@@ -766,7 +766,7 @@ div.ys-canvas__loader {
 	left: 50%; top: 50%;
 	margin-left: -24px; margin-top: -24px;
 	width: 48px; height: 48px;
-	background: url(/i/ys/ajax-loader.gif) no-repeat 0 0;
+	background: url(/assets/img/ys/ajax-loader.gif) no-repeat 0 0;
 	}
 /*** canvases set ***/
 ul.ys-canvas__sets {
@@ -860,13 +860,13 @@ ul.ys-canvas__stuff img {
 	margin: auto;
 	}
 ul.ys-canvas__stuff img.ys-canvas__tile_loading {
-	background: url(/i/ys/ajax-loader.gif) no-repeat 50% 50%;
+	background: url(/assets/img/ys/ajax-loader.gif) no-repeat 50% 50%;
 	}
 ul.ys-canvas__stuff i {
     position: absolute;
     left: 0; top: 0;
     width: 68px; height: 68px;
-    background: url(/i/ys/0.gif) repeat 0 0;
+    background: url(/assets/img/ys/0.gif) repeat 0 0;
     }
 
 div.ys-canvas-container ul.ys-canvas__stuff li i.cut {
@@ -892,7 +892,7 @@ ul.ys-canvas__stuff li.is-mine b {
 	z-index: 100;
 	bottom: 0; right: 0;
 	width: 11px; height: 10px;
-	background: url(/i/ys/icon.mine.png) no-repeat 0 0;
+	background: url(/assets/img/ys/icon.mine.png) no-repeat 0 0;
 	}
     
 .ys-canvas__item_dragged {
@@ -911,7 +911,7 @@ ul.ys-canvas__stuff li.is-mine b {
 .ys-canvas__item_dragged i {
     position: absolute;
     left: 0; top: 0;
-    background: url(/i/ys/0.gif) repeat 0 0;
+    background: url(/assets/img/ys/0.gif) repeat 0 0;
     }
 /*** </stuff list ***/
 
@@ -990,7 +990,7 @@ div.ys-canvas__stuff_item a.close {
 	position: absolute;
 	z-index: 100;
 	width: 15px; height: 15px;
-	background: url(/i/ys/icon.close.tab.png) no-repeat 50% 50%;
+	background: url(/assets/img/ys/icon.close.tab.png) no-repeat 50% 50%;
 	right: 8px;
 	top: 5px;
 	cursor: pointer;
@@ -1040,21 +1040,21 @@ div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a {
 	width: 20px;
 	cursor: pointer; _cursor: hand;
 	}
-div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.new 		{	background: url(/i/ys/icon.toolbar.new.png) no-repeat 0 0;			}
-div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.undo 	{	background: url(/i/ys/icon.toolbar.undo.png) no-repeat 0 0; margin-left: 5px;			}
-div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.redo 	{	background: url(/i/ys/icon.toolbar.redo.png) no-repeat 0 0;			}
-div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.zoomin 	{	background: url(/i/ys/icon.toolbar.zoomin.png) no-repeat 0 0; margin-left: 5px;		}
-div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.zoomout 	{	background: url(/i/ys/icon.toolbar.zoomout.png) no-repeat 0 0;		}
-div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.center 	{	background: url(/i/ys/icon.toolbar.center.png) no-repeat 0 0;		}
-div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.save 	{	background: url(/i/ys/icon.toolbar.save.png) no-repeat 0 0; margin-left: 5px;			}
-div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.publish 	{	background: url(/i/ys/icon.toolbar.publish.active.png) no-repeat 0 0;		}
-div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.remove 	{	background: url(/i/ys/icon.toolbar.remove.png) no-repeat 0 0;		}
-div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.hflip 	{	background: url(/i/ys/icon.toolbar.hflip.png) no-repeat 0 0; margin-left: 5px;		}
-div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.vflip 	{	background: url(/i/ys/icon.toolbar.vflip.png) no-repeat 0 0;		}
-div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.underlay {	background: url(/i/ys/icon.toolbar.underlay.png) no-repeat 0 0; margin-left: 5px;		}
-div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.clone 	{	background: url(/i/ys/icon.toolbar.clone.png) no-repeat 0 0; margin-left: 5px;		}
-div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.zmore 	{	background: url(/i/ys/icon.toolbar.zmore.png) no-repeat 0 0; margin-left: 5px;		}
-div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.zless 	{	background: url(/i/ys/icon.toolbar.zless.png) no-repeat 0 0;		}
+div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.new 		{	background: url(/assets/img/ys/icon.toolbar.new.png) no-repeat 0 0;			}
+div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.undo 	{	background: url(/assets/img/ys/icon.toolbar.undo.png) no-repeat 0 0; margin-left: 5px;			}
+div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.redo 	{	background: url(/assets/img/ys/icon.toolbar.redo.png) no-repeat 0 0;			}
+div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.zoomin 	{	background: url(/assets/img/ys/icon.toolbar.zoomin.png) no-repeat 0 0; margin-left: 5px;		}
+div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.zoomout 	{	background: url(/assets/img/ys/icon.toolbar.zoomout.png) no-repeat 0 0;		}
+div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.center 	{	background: url(/assets/img/ys/icon.toolbar.center.png) no-repeat 0 0;		}
+div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.save 	{	background: url(/assets/img/ys/icon.toolbar.save.png) no-repeat 0 0; margin-left: 5px;			}
+div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.publish 	{	background: url(/assets/img/ys/icon.toolbar.publish.active.png) no-repeat 0 0;		}
+div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.remove 	{	background: url(/assets/img/ys/icon.toolbar.remove.png) no-repeat 0 0;		}
+div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.hflip 	{	background: url(/assets/img/ys/icon.toolbar.hflip.png) no-repeat 0 0; margin-left: 5px;		}
+div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.vflip 	{	background: url(/assets/img/ys/icon.toolbar.vflip.png) no-repeat 0 0;		}
+div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.underlay {	background: url(/assets/img/ys/icon.toolbar.underlay.png) no-repeat 0 0; margin-left: 5px;		}
+div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.clone 	{	background: url(/assets/img/ys/icon.toolbar.clone.png) no-repeat 0 0; margin-left: 5px;		}
+div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.zmore 	{	background: url(/assets/img/ys/icon.toolbar.zmore.png) no-repeat 0 0; margin-left: 5px;		}
+div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.zless 	{	background: url(/assets/img/ys/icon.toolbar.zless.png) no-repeat 0 0;		}
 
 div.ys-canvas__toolbars dl.ys-canvas__toolbar dd a.inactive {   opacity: 0.5; filter: alpha(opacity=50);     }
 /*** </canvas toolbars ***/
@@ -1256,7 +1256,7 @@ div.ys-canvas__publish button.cancel {
 	margin: -95px -10px -10px;
 	padding: 95px 18px 10px;
 	height: 405px;
-	background: url(/i/ys/empty-bg.png) repeat-x 0 0;
+	background: url(/assets/img/ys/empty-bg.png) repeat-x 0 0;
 }
 .ys-canvas__upload_form fieldset {
 	border: 0;
@@ -1510,7 +1510,7 @@ div.ys_select._2 li span {color:#7f7f7f;}
     margin: 0 !important;
     }
 .ys-canvas-container .b-color-chooser__chooser i {
-    background: url(/i/ys/rainbow.png) no-repeat left top;
+    background: url(/assets/img/ys/rainbow.png) no-repeat left top;
     }
 .ys-canvas-container .b-color-chooser__chooser i a {
     display: inline-block;

@@ -112,6 +112,72 @@ $(document).ready(function() {
 		});
 	}
 
+	/* --------- stuff's popup --------- */
+
+	$('.sfuff-others__pic').on('mouseenter', function(){
+
+		var
+			$this = $(this),
+			list = $this.closest('.stuff-others__list');
+
+		var params = {
+			'basketHref' 	: $this.data('basket-href'),
+			'image'			: $this.find('img').attr('src'),
+			'group'			: $this.data('group'),
+			'brand'			: $this.data('brand'),
+			'desc'			: $this.data('desc'),
+			'href'			: $this.data('href')
+		};
+
+		var markup = '<div class="stuff-others__popup"> \
+							<div class="stuff-others__popup-inner"> \
+								<a href="' + params.href + '" class="stuff-others__popup-pic"> \
+									<img src="' + params.image + '" alt=""/> \
+								</a> \
+							<div class="stuff-others__popup-description"> \
+								<ul class="stuff-others__popup-prop"> \
+									<li class="stuff-others__prop-item"> \
+										<div class="stuff-others__prop-name">Добавить:</div> \
+										<div class="stuff-others__prop-value"> \
+											<a href="' + params.basketHref + '">в мои вещи</a> \
+										</div> \
+									</li> \
+									<li class="stuff-others__prop-item"> \
+										<div class="stuff-others__prop-name">Группа:</div> \
+										<div class="stuff-others__prop-value">' + params.group + '</div> \
+									</li> \
+									<li class="stuff-others__prop-item"> \
+										<div class="stuff-others__prop-name">Бренд:</div> \
+										<div class="stuff-others__prop-value"> \
+											<span>' + params.brand + '</span> \
+										</div> \
+									</li> \
+									<li class="stuff-others__prop-item"> \
+										<div class="stuff-others__prop-name">Описание:</div> \
+										<div class="stuff-others__prop-value">' + params.desc + '</div> \
+									</li> \
+								</ul> \
+							</div> \
+							<a class="stuff-others__close" href="#"></a> \
+						</div> \
+					</div>';
+
+		list.find('.stuff-others__popup').remove();
+		$this.append(markup);
+	});
+
+	$('body').on('click', '.stuff-others__close', function(e){
+		e.preventDefault();
+		$(this).closest('.stuff-others__popup').remove();
+	});
+
+	$(document).on('click', function(e){
+		if (!$(e.target).closest('.stuff-others__popup').length) {
+			$('.stuff-others__popup').remove();
+		}
+	});
+
+
 });
 
 
@@ -390,6 +456,7 @@ $(function(){
 			trioCount = Math.ceil(elemsLength/4); //сколько рядов
 
 		if (elems.size() < 1){
+
 			return false;
 		} else {
 

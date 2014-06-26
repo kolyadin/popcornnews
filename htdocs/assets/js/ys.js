@@ -1445,7 +1445,7 @@ _oop_.extend(InterfaceYSEditorTabContent, YSEditorItemsTabContent, {
     
     listLayout: "<ul class=ys-canvas__stuff/>",
     
-    blankImageSrc: "/i/ys/0.gif",
+    blankImageSrc: "/assets/img/ys/0.gif",
     blankImageClass: "ys-canvas__tile_loading",
     
     itemCloneClass: "ys-canvas__item_dragged",
