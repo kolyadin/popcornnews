@@ -306,7 +306,7 @@ class ProfileController extends GenericController implements ControllerInterface
 	}
 
 	public static function friendsPage($profileId, $listPage = 1) {
-		$profile = UserFactory::getUser($profileId);
+		$profile = UserFactory::getUser($profileId, ['with' => UserDataMap::WITH_ALL]);
 
 		$dataMap = new UserDataMap();
 
@@ -331,12 +331,6 @@ class ProfileController extends GenericController implements ControllerInterface
 				]
 			]);
 	}
-
-
-
-
-
-
 
 
 	public static function imPage($companionId = null) {

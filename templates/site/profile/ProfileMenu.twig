@@ -27,9 +27,11 @@ if  slim.path[3] == 'persons' or
 			<span class="counter tooltip" data-title="Новых запросов в друзья: {{ profileHelper.notifyCounter.friends }}">{{ profileHelper.notifyCounter.friends }}</span>
 		{% endif %}
 	</li>
-	<li{% if tab3Active == 1 %} class="active"{% endif %}>
-		<a title="персоны" href="/profile/{{ profile.id }}/persons">персоны</a>
-	</li>
+	{% if tab3ShowLinks or profileHelper.isMyProfile %}
+		<li{% if tab3Active == 1 %} class="active"{% endif %}>
+			<a title="персоны" href="/profile/{{ profile.id }}/persons">персоны</a>
+		</li>
+	{% endif %}
     {% if currentUser %}
         <li{% if tab4Active == 1 %} class="active"{% endif %}>
             <a title="" href="/im">сообщения</a>
@@ -39,7 +41,7 @@ if  slim.path[3] == 'persons' or
 		<a title="" href="/profile/{{ profile.id }}/guestbook">гостевая</a>
 	</li>
 	<li>
-		<a title="" href="/profile/{{ profile.id }}/wrote">пишет</a>
+		<a title="" href="/profile/{{ profile.id }}/wrote">{% if profileHelper.isMyProfile %}я пишу{% else %}пишет{% endif %}</a>
 	</li>
 	<li>
 		<a title="" href="/profile/{{ profile.id }}/community/groups">группы</a>
@@ -80,9 +82,11 @@ if  slim.path[3] == 'persons' or
 	                <a class="b-sub-menu__link" href="/profile/{{ profile.id }}/persons/news">новости</a>
 	            </li>
 	        {% endif %}
-            <li class="b-sub-menu__item {% if slim.path[4] == 'manage' %}b-sub-menu__item_active{% endif %}">
-                <a class="b-sub-menu__link" href="/profile/{{ profile.id }}/persons/manage">управление подписками</a>
-            </li>
+	        {% if profileHelper.isMyProfile %}
+	            <li class="b-sub-menu__item {% if slim.path[4] == 'manage' %}b-sub-menu__item_active{% endif %}">
+	                <a class="b-sub-menu__link" href="/profile/{{ profile.id }}/persons/manage">управление подписками</a>
+	            </li>
+	        {% endif %}
         </ul>
     {% endif %}
 
