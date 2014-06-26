@@ -142,4 +142,30 @@ SQL;
 
 	}
 
+	public function getSetsByTile($tId, $offset, $limit) {
+
+		$sql = <<<SQL
+			SELECT DISTINCT(`sId`) as `sId`
+			FROM `pn_yourstyle_sets_tiles`
+			WHERE `tId` = ?
+			ORDER BY `sId`
+			LIMIT ?, ?
+SQL;
+
+		$stmt = $this->prepare($sql);
+		$stmt->bindValue(1, $tId, \PDO::PARAM_INT);
+		$stmt->bindValue(2, $offset, \PDO::PARAM_INT);
+		$stmt->bindValue(3, $limit, \PDO::PARAM_INT);
+		$stmt->execute();
+
+		$sets = [];
+		$dataMap = new YourStyleSetsDataMap();
+		while ($item = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+			$sets[] = $dataMap->findById($item['sId']);
+		}
+
+		return $sets;
+
+	}
+
 }

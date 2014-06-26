@@ -5,6 +5,7 @@ namespace popcorn\model\dataMaps;
 use popcorn\model\system\users\User;
 use popcorn\model\yourStyle\YourStyleTilesUsers;
 use popcorn\lib\yourstyle\YourStyleFactory;
+use popcorn\model\dataMaps\UserDataMap;
 
 class YourStyleTilesUsersDataMap extends DataMap {
 
@@ -72,5 +73,29 @@ SQL;
 		return $items;
 
 	}
+
+	public function getUsersByTile($tId) {
+
+		$sql = <<<SQL
+			SELECT DISTINCT(`uId`) as `uId`
+			FROM `pn_yourstyle_tiles_users`
+			WHERE `tId` = ?
+			ORDER BY `createTime`
+SQL;
+
+		$stmt = $this->prepare($sql);
+		$stmt->bindValue(1, $tId, \PDO::PARAM_INT);
+		$stmt->execute();
+
+		$users = [];
+		$dataMap = new UserDataMap();
+		while ($item = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+			$users[] = $dataMap->findById($item['uId']);
+		}
+
+		return $users;
+
+	}
+
 
 }

@@ -384,4 +384,29 @@ SQL;
 
 	}
 
+	public function getTile($tId) {
+
+		$sql = <<<SQL
+			SELECT `a`.*, `b`.`title` AS `brand`, `g`.`title` AS `groupTitle`
+			FROM `pn_yourstyle_groups_tiles` AS `a`
+				LEFT JOIN `pn_yourstyle_tiles_brands` AS `b` ON (`b`.`id` = `a`.`bid`)
+				INNER JOIN `pn_yourstyle_groups` AS `g` ON (`g`.`id` = `a`.`gid`)
+			WHERE `a`.`id` = ?
+SQL;
+
+		$stmt = $this->prepare($sql);
+		$stmt->bindValue(1, $tId, \PDO::PARAM_INT);
+		$stmt->execute();
+
+		$item = $stmt->fetchAll(\PDO::FETCH_CLASS, $this->class);
+
+		if ($item === false) return null;
+
+		$item = $item[0];
+		$item->setImage(YourStyleFactory::getWwwUploadTilesPath($item->getGId(), $item->getImage()));
+
+		return $item;
+
+	}
+
 }

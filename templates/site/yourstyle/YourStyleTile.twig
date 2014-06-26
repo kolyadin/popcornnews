@@ -1,0 +1,143 @@
+{% extends '/yourstyle/YourStyleGeneric.twig' %}
+
+{% block subMenu %}
+
+	{% include '/yourstyle/YourStyleSubMenuSets.twig' %}
+
+{% endblock %}
+
+{% block subYourStyle %}
+
+	<div class="b-grid__g8">
+		<article class="b-group">
+			<h1 class="b-single-article__title">
+				{{ tile.groupTitle }} - {{ tile.brand }}
+			</h1>
+{#{ dump(tile) }#}
+			<div class="stuff-item has-bottom-border">
+				<div class="stuff-item__pic">
+					<img src="{{ tile.image }}" alt=""/>
+				</div>
+				<div class="stuff-item__description">
+					<div class="stuff-item__options">
+						<div class="stuff-item__options-inner">
+							<div class="stuff-item__title">
+								{{ tile.brand }}
+							</div>
+							<div class="stuff-item__colors">
+								<div class="stuff-item__colors-title">
+									Цвет:
+								</div>
+								<ul class="stuff-item__colors-list">
+									<li class="stuff-item__colors-item">
+										<a class="stuff-item__colors-link" href="#" style="background-color: #79CFCE"></a>
+									</li>
+									<li class="stuff-item__colors-item">
+										<a class="stuff-item__colors-link" href="#" style="background-color: #79CFCE"></a>
+									</li>
+									<li class="stuff-item__colors-item">
+										<a class="stuff-item__colors-link" href="#" style="background-color: #79CFCE"></a>
+									</li>
+									<li class="stuff-item__colors-item">
+										<a class="stuff-item__colors-link" href="#" style="background-color: #79CFCE"></a>
+									</li>
+									<li class="stuff-item__colors-item">
+										<a class="stuff-item__colors-link" href="#" style="background-color: #79CFCE"></a>
+									</li>
+								</ul>
+							</div>
+							<div class="stuff-item__users">
+								<div class="stuff-item__users-adds">
+									18 пользователей
+								</div>
+								<div class="stuff-item__users-desc">
+									добавили в свои вещи
+								</div>
+								<div class="stuff-item__users-button">
+									<a class="b-main-poll__submit b-firm-grad" href="#">добавить</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="stuff-item__options-created">
+						Создано {{ tile.createTime|ruDateFriendly }}
+					</div>
+				</div>
+			</div>
+			<div class="new-sets new-sets_appear">
+				<div class="b-person__photos__title-cont b-grid__g8 b-grid__a">
+					<h1 class="b-person__photos__title b-rubrics-title b-rubrics-title_s24">
+						<a href="#" rel="nofollow">сеты с этой вещью</a>
+					</h1>
+					<span class="b-person__photos__counter b-counter b-counter-section"><a href="#" rel="nofollow">{{ sets|length }}</a></span>
+				</div>
+				<ul class="celebrities__stuff-list">
+
+					{% for set in sets %}
+
+						<li class="celebrities__stuff-item">
+							<a class="celebrities__stuff-link" href="/yourstyle/set/{{ set.id }}">
+								<img class="celebrities__stuff-image" src="{{ set.image }}" alt=""/>
+							</a>
+						</li>
+
+					{% endfor  %}
+
+				</ul>
+			</div>
+			<div class="active-users has-bottom-border">
+				<div class="b-person__photos__title-cont b-grid__g8 b-grid__a">
+					<h1 class="b-person__photos__title b-rubrics-title b-rubrics-title_s24">
+						<a href="#" rel="nofollow">добавили в гардероб</a>
+					</h1>
+					<span class="b-person__photos__counter b-counter b-counter-section"><a href="#" rel="nofollow">{{ users| length }}</a></span>
+				</div>
+				<ul class="active-users__list">
+
+					{% for user in users %}
+
+						<li class="active-users__item">
+							<a href="/profile/{{ user.id }}" class="active-users__avatar">
+
+								{% if user.avatar.id %}
+									{% set photo = user.avatar.thumb('140x') %}
+									<img class="active-users__avatar-pic" src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}"/>
+								{% else %}
+									<img class="active-users__avatar-pic" src="/assets/img/no-photo/large.png"/>
+								{% endif %}
+							</a>
+							<div class="active-users__data">
+								<a class="popular-sets__comments-username" href="/profile/{{ user.id }}">{{ user.nick }}</a>,
+								<div class="rating-count">{{ user.rating.points|number_format(0,'',' ') }}</div>
+							</div>
+						</li>
+
+					{% endfor %}
+
+				</ul>
+			</div>
+			<div class="new-sets new-sets_stuff">
+				<div class="b-person__photos__title-cont b-grid__g8 b-grid__a">
+					<h1 class="b-person__photos__title b-rubrics-title b-rubrics-title_s24">
+						<a href="#" rel="nofollow">товары этого бренда</a>
+					</h1>
+					<span class="b-person__photos__counter b-counter b-counter-section"><a href="#" rel="nofollow">{{ tilesByBrand|length }}</a></span>
+				</div>
+				<ul class="celebrities__stuff-list">
+
+					{% for tileByBrand in tilesByBrand %}
+
+						<li class="celebrities__stuff-item">
+							<a class="celebrities__stuff-link" href="/yourstyle/tile/{{ tileByBrand.id }}">
+								<img class="celebrities__stuff-image" src="{{ tileByBrand.image }}" alt=""/>
+							</a>
+						</li>
+
+					{% endfor %}
+
+				</ul>
+			</div>
+		</article>
+	</div>
+
+{% endblock %}

@@ -1140,11 +1140,23 @@ class YourStyleController extends GenericController implements ControllerInterfa
 
 	public function yourStyleTile($tId) {
 
-		$dataMap = new YourStyleTilesUsersDataMap();
-		$set = $dataMap->findById($tId);
+		$dataMap = new YourStyleGroupsTilesDataMap();
+		$tile = $dataMap->getTile($tId);
+
+		$setsDataMap = new YourStyleSetsTilesDataMap;
+		$sets = $setsDataMap->getSetsByTile($tId, 0, 12);
+
+		$usersDataMap = new YourStyleTilesUsersDataMap();
+		$users = $usersDataMap->getUsersByTile($tId, 0, 12);
+
+		$byBrandDataMap = new YourStyleGroupsTilesDataMap();
+		$tilesByBrand = $byBrandDataMap->getTilesByParams('', $tile->getBId(), '', 0, 14);
 
 		$tpl = [
-			'set' => $set,
+			'tile' => $tile,
+			'sets' => $sets,
+			'users' => $users,
+			'tilesByBrand' => $tilesByBrand,
 		];
 		self::getTwig()
 			->display('/yourstyle/YourStyleTile.twig', $tpl);
