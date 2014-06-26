@@ -161,6 +161,26 @@ class PostFactory {
 
 	}
 
+	/**
+	 * @param Person[] $persons
+	 * @param array $options
+	 * @param int $from
+	 * @param $count
+	 * @param $totalFound
+	 * @return NewsPost[]
+	 */
+	public static function findByPersons(array $persons = [], array $options = [], $from = 0, $count = -1, &$totalFound = -1) {
+
+		$options = array_merge([
+			'with' => NewsPostDataMap::WITH_NONE ^ NewsPostDataMap::WITH_MAIN_IMAGE ^ NewsPostDataMap::WITH_TAGS
+		], $options);
+
+		$dataMap = new NewsPostDataMap($options['with']);
+
+		return $dataMap->findByPersons($persons, $options, $from, $count, $totalFound);
+
+	}
+
 
 	public static function findEarlier(NewsPost $post, array $options = []) {
 

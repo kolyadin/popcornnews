@@ -1,0 +1,42 @@
+{% extends '/GenericInner.twig' %}
+
+{% block head %}
+
+    <title>Новости - popcornnews</title>
+
+    <script type="text/javascript">
+
+        $(function(){
+
+
+
+        });
+    </script>
+
+    {{ parent() }}
+
+    <style type="text/css">
+
+    </style>
+
+{% endblock %}
+
+{% block content %}
+
+	<div class="b-grid__g8">
+		<section class="b-profile">
+			<div class="profile profile-big">
+
+			    <h1>Подписки на персоны</h1>
+
+			    {% include '/profile/ProfileMenu.twig' %}
+
+				<br/><br/>
+
+				{% include '/news/PostList.twig' %}
+			</div>
+		</section>
+	</div>
+
+
+{% endblock %}

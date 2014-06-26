@@ -867,11 +867,9 @@ class AjaxController extends GenericController implements ControllerInterface {
 				throw new NotAuthorizedException();
 			}
 
-			$stmt = $pdo->prepare('REPLACE INTO pn_persons_fans SET personId = :personId, userId = :userId');
-			$stmt->bindValue(':personId', $personId, \PDO::PARAM_INT);
-			$stmt->bindValue(':userId', $currentUser->getId(), \PDO::PARAM_INT);
+			$action = PersonFactory::subscribeFan(PersonFactory::getPerson($personId), $currentUser);
 
-			if ($stmt->execute()) {
+			if ($action) {
 				$this->getApp()->exitWithJsonSuccessMessage([
 					'userId' => $currentUser->getId()
 				]);
@@ -902,11 +900,9 @@ class AjaxController extends GenericController implements ControllerInterface {
 				throw new NotAuthorizedException();
 			}
 
-			$stmt = $pdo->prepare('DELETE FROM pn_persons_fans WHERE personId = :personId AND userId = :userId');
-			$stmt->bindValue(':personId', $personId, \PDO::PARAM_INT);
-			$stmt->bindValue(':userId', $currentUser->getId(), \PDO::PARAM_INT);
+			$action = PersonFactory::unsubscribeFan(PersonFactory::getPerson($personId),$currentUser);
 
-			if ($stmt->execute()) {
+			if ($action) {
 				$this->getApp()->exitWithJsonSuccessMessage();
 			}
 

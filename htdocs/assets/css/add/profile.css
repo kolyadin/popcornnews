@@ -351,6 +351,9 @@ a.pink:hover,
 .b-profile .profile .b-private-messages .message .manage a {
   margin-left: 5px;
 }
+.b-profile .profile-big {
+  width: auto;
+}
 .b-profile .left-col .last-visit div,
 .b-profile .left-col .last-visit span {
   color: darkgray;
@@ -604,4 +607,41 @@ a.pink:hover,
 }
 .profile-data__info {
   margin-bottom: 20px;
+}
+/* --------- + pages --------- */
+.persons__list {
+  margin-left: -33px;
+  padding-top: 15px;
+}
+.persons__item {
+  display: inline-block;
+  vertical-align: top;
+  zoom: 1 !ie;
+  display: inline !ie;
+  width: 86px;
+  margin-left: 33px;
+  margin-bottom: 10px;
+}
+.persons__item-link {
+  text-decoration: none;
+  display: block;
+}
+.persons__item-pic {
+  display: block;
+  margin-bottom: 3px;
+  text-align: center;
+}
+.persons__item-pic img {
+  max-width: 88px;
+  max-height: 110px;
+  display: inline-block;
+  vertical-align: top;
+  zoom: 1 !ie;
+  display: inline !ie;
+}
+.persons__item-name {
+  color: #ee2c90;
+  font-size: 12px;
+  line-height: 14px;
+  font-weight: bold;
 }

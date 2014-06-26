@@ -1,0 +1,64 @@
+{% extends '/profile/ProfileGeneric.twig' %}
+{% import '/users/UserRows.twig' as html %}
+
+{% if profileHelper.isMyProfile %}
+    {% set title = 'Мои подписки на персоны' %}
+{% else %}
+    {% set title = 'Подписки пользователя' ~ profile.nick|e ~ ' на персоны '  %}
+{% endif %}
+
+{% block head %}
+
+    <title>{{ title }} - popcornnews</title>
+
+    <script type="text/javascript">
+
+        $(function(){
+
+
+
+        });
+    </script>
+
+    {{ parent() }}
+
+    <style type="text/css">
+
+    </style>
+
+{% endblock %}
+
+{% block profile %}
+
+    <h1>Подписки на персоны</h1>
+
+    {% include '/profile/ProfileMenu.twig' %}
+
+	{% if persons|length %}
+
+		<ul class="persons__list">
+
+		    {% for person in persons %}
+
+			    <li class="persons__item">
+				    <a class="persons__item-link" href="/persons/{{ person.urlName }}">
+						<span class="persons__item-pic">
+							{% set photo = person.photo.thumb('88x') %}
+							<img src="{{ photo.url }}" alt="{{ person.name|e }}"/>
+						</span>
+						<span class="persons__item-name">
+							{{ person.name|e }}
+						</span>
+				    </a>
+			    </li>
+
+		    {% endfor %}
+
+		</ul>
+	{% else %}
+		<div class="b-text" style="margin-top:20px;">
+			<h3>Нет персон</h3>
+		</div>
+	{% endif %}
+
+{% endblock %}

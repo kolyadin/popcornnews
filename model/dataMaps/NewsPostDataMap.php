@@ -487,6 +487,49 @@ EOL;
 		return $this->fetchAll(sprintf($sql, 't_n.*'), $binds);
 	}
 
+	/**
+	 * @param \popcorn\model\persons\Person[] $persons
+	 * @param int $from
+	 * @param $count
+	 * @param array $options
+	 * @param $totalFound
+	 * @return NewsPost[]
+	 */
+	public function findByPersons(array $persons = [], array $options = [], $from = 0, $count = -1, &$totalFound = -1) {
+
+		$options = array_merge([
+			'status' => NewsPost::STATUS_PUBLISHED
+		], $options);
+
+		$sql = 'SELECT %s FROM pn_news t_n
+			JOIN pn_news_tags t_nt ON (t_nt.newsId = t_n.id)
+			WHERE t_nt.type = :type AND t_nt.entityId in(:persons) AND t_n.status = :status';
+
+		$in = [];
+
+		foreach ($persons as $person) {
+			$in[] = $person->getId();
+		}
+
+		$binds = [
+			':type'    => Tag::PERSON,
+			':persons' => implode(',', $in),
+			':status'  => $options['status']
+		];
+
+		if ($totalFound != -1) {
+			$stmt = $this->prepare(sprintf($sql, 'count(*)'));
+			$stmt->execute($binds);
+
+			$totalFound = $stmt->fetchColumn();
+		}
+
+		$sql .= $this->getOrderString(['t_n.createDate' => 'desc']);
+		$sql .= $this->getLimitString($from, $count);
+
+		return $this->fetchAll(sprintf($sql, 't_n.*'), $binds);
+	}
+
 	public function getTopPosts($from = 0, $count = -1) {
 
 		$sql = 'select t_n.* from pn_news t_n

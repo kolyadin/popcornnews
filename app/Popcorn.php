@@ -18,6 +18,7 @@ use popcorn\app\controllers\site\person\PersonTalksController;
 use popcorn\app\controllers\site\PhotoArticleController;
 use popcorn\app\controllers\site\PostController;
 use popcorn\app\controllers\site\profile\ProfileController;
+use popcorn\app\controllers\site\profile\ProfilePersonsController;
 use popcorn\app\controllers\site\ProfileManagerController;
 use popcorn\app\controllers\site\SearchController;
 use popcorn\app\controllers\site\SidebarController;
@@ -161,6 +162,7 @@ class Popcorn extends Application {
 
 		$this->registerController(new UsersController());
 		$this->registerController(new ProfileController());
+		$this->registerController(new ProfilePersonsController());
 
 		$this->registerController(new PersonController());
 		$this->registerController(new PersonFactsController());

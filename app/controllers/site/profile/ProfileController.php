@@ -30,8 +30,7 @@ use Slim\Route;
 class ProfileController extends GenericController implements ControllerInterface {
 
 	/**    @var User $profile */
-	static private $profile;
-	static private $twigData = [];
+	static protected $profile;
 
 	static protected $profileId;
 
@@ -58,6 +57,16 @@ class ProfileController extends GenericController implements ControllerInterface
 		} else {
 			$this->getSlim()->notFound();
 		}
+	}
+
+	final public function onlyForMeMiddleware(Route $route) {
+
+		$user = UserFactory::getUser($route->getParam('profileId'));
+
+		if (UserFactory::getCurrentUser()->getId() !== $user->getId()) {
+			$this->getSlim()->notFound();
+		}
+
 	}
 
 	public function getRoutes() {
@@ -118,15 +127,6 @@ class ProfileController extends GenericController implements ControllerInterface
 
 					$this
 						->getSlim()
-						->get('/persons/news', [$this, 'personsNewsPage']);
-
-					$this
-						->getSlim()
-						->map('/persons/manage', [$this, 'fansAddDispatcher'])
-						->via('GET', 'POST');
-
-					$this
-						->getSlim()
 						->map('/messages/new', [$this, 'newMessageDispatcher'])
 						->via('GET', 'POST');
 				}
@@ -137,10 +137,6 @@ class ProfileController extends GenericController implements ControllerInterface
 					->getSlim()
 					->get('/friends(/page:pageId)', [$this, 'friendsPage'])
 					->conditions(['pageId' => '\d+']);
-
-				$this
-					->getSlim()
-					->get('/persons', [$this, 'fansPage']);
 
 
 			});
@@ -153,19 +149,21 @@ class ProfileController extends GenericController implements ControllerInterface
 	 * @param $profileId
 	 * @throws \popcorn\model\exceptions\NotAuthorizedException
 	 */
-	private function profileSetup($profileId) {
+	protected function profileSetup($profileId) {
 		$currentUser = UserFactory::getCurrentUser();
 
 		$profile = UserFactory::getUser($profileId);
+
+		self::$profile = $profile;
 
 		$dataMap = new UserDataMap();
 
 		$data = [];
 
 		$data['isMyProfile'] = false;
-		$data['inBlackList'] = $dataMap->checkInBlackList($currentUser, $profile);
-		$data['friendRequest'] = $dataMap->checkFriendRequest($currentUser, $profile);
-		$data['isFriends'] = $dataMap->isFriends($currentUser, $profile);
+		$data['inBlackList'] = $dataMap->checkInBlackList($currentUser, self::$profile);
+		$data['friendRequest'] = $dataMap->checkFriendRequest($currentUser, self::$profile);
+		$data['isFriends'] = $dataMap->isFriends($currentUser, self::$profile);
 
 		//Авторизованный пользователь смотрит свой профиль
 		if ($currentUser->getId() == $profileId) {
@@ -334,84 +332,12 @@ class ProfileController extends GenericController implements ControllerInterface
 			]);
 	}
 
-	public static function fansPage($profileId) {
-		$profile = UserFactory::getUser($profileId);
-
-		$dataMap = new UserDataMap();
-		$persons = $dataMap->getFans($profile);
-
-		self::getTwig()
-			->display('/profile/ProfilePersons.twig', [
-				'profile' => $profile,
-				'persons' => $persons
-			]);
-
-	}
-
-	public static function fansForm($profileId) {
-		$profile = UserFactory::getUser($profileId);
-
-		$dataMap = new UserDataMap();
-		$fans = $dataMap->getFans($profile);
-
-		$fansArray = [];
-
-		foreach ($fans as $fan) {
-			$fansArray[] = $fan->getId();
-		}
-
-		$allPersons = PersonFactory::getPersons([], 0, -1, ['name' => 'asc']);
-
-		self::getTwig()
-			->display('/profile/ProfilePersonsAdd.twig', [
-				'profile' => $profile,
-				'persons' => $allPersons,
-				'fans'    => $fansArray
-			]);
-	}
-
-	public static function fansSave($profileId) {
-
-		if (UserFactory::getUser($profileId)->getId() != UserFactory::getCurrentUser()->getId()) return false;
-
-		$dataMap = new UserDataMap();
-		$dataMap->addToFans(UserFactory::getCurrentUser(), self::getSlim()->request()->post('persons'));
-
-		self::getSlim()->redirect(sprintf('/profile/%u/persons', $profileId));
-	}
-
-	public static function fansAddDispatcher($profileId) {
-
-		switch (self::getSlim()->request()->getMethod()) {
-			case 'GET':
-				self::fansForm($profileId);
-				break;
-			case 'POST':
-				self::fansSave($profileId);
-				break;
-		}
-	}
 
 
-	public static function personsRemovePage($profileId) {
-		$profile = UserFactory::getUser($profileId);
 
-		self::getTwig()
-			->display('/profile/ProfilePersonsAdd.twig', [
-				'profile' => $profile,
-			]);
 
-	}
 
-	public static function personsNewsPage($profileId) {
-		$profile = UserFactory::getUser($profileId);
 
-		self::getTwig()
-			->display('/profile/ProfilePersonsAdd.twig', [
-				'profile' => $profile,
-			]);
-
-	}
 
 	public static function imPage($companionId = null) {
 

@@ -85,17 +85,6 @@ class PersonFanDataMap extends CrossLinkedDataMap {
 	}
 
 
-	public function isFan(User $user, Person $person) {
-
-		$stmt = $this->prepare('select count(*) from pn_persons_fans where userId = :userId and personId = :personId');
-		$stmt->bindValue(':userId', $user->getId(), \PDO::PARAM_INT);
-		$stmt->bindValue(':personId', $person->getId(), \PDO::PARAM_INT);
-		$stmt->execute();
-
-		return ($stmt->fetchColumn() ? true : false);
-	}
-
-
 	/**
 	 * @param $personId
 	 * @param array $where
@@ -148,6 +137,49 @@ SQL;
 		}
 
 		return $items;
+	}
+
+	public function isFan(User $user, Person $person) {
+
+		$stmt = $this->prepare('select count(*) from pn_persons_fans where userId = :userId and personId = :personId');
+		$stmt->bindValue(':userId', $user->getId(), \PDO::PARAM_INT);
+		$stmt->bindValue(':personId', $person->getId(), \PDO::PARAM_INT);
+		$stmt->execute();
+
+		return ($stmt->fetchColumn() ? true : false);
+	}
+
+	/**
+	 * @param Person $person
+	 * @param User $user
+	 * @return bool
+	 */
+	public function subscribe(Person $person, User $user) {
+		$stmt = $this->prepare('REPLACE INTO pn_persons_fans SET personId = :personId, userId = :userId');
+		return $stmt->execute([
+			':personId' => $person->getId(),
+			':userId'   => $user->getId()
+		]);
+	}
+
+	/**
+	 * @param Person $person
+	 * @param User $user
+	 * @return bool
+	 */
+	public function unsubscribe(Person $person, User $user) {
+		$stmt = $this->prepare('DELETE FROM pn_persons_fans WHERE personId = :personId, userId = :userId');
+		return $stmt->execute([
+			':personId' => $person->getId(),
+			':userId'   => $user->getId()
+		]);
+	}
+
+	public function unsubscribeAllPersons(User $user) {
+		$stmt = $this->prepare('DELETE FROM pn_persons_fans WHERE userId = :userId');
+		return $stmt->execute([
+			':userId' => $user->getId()
+		]);
 	}
 
 

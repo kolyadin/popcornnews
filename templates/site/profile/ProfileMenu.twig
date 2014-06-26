@@ -72,12 +72,14 @@ if  slim.path[3] == 'persons' or
 
     {% if tab3Active == 1 %}
         <ul class="b-sub-menu clearfix">
-            <li class="b-sub-menu__item {% if slim.path[4] is null %}b-sub-menu__item_active{% endif %}">
-                <a class="b-sub-menu__link" href="/profile/{{ profile.id }}/persons">персоны</a>
-            </li>
-            <li class="b-sub-menu__item {% if slim.path[3] == 'news' %}b-sub-menu__item_active{% endif %}">
-                <a class="b-sub-menu__link" href="/profile/{{ profile.id }}/persons/news">новости</a>
-            </li>
+	        {% if tab3ShowLinks %}
+	            <li class="b-sub-menu__item {% if slim.path[4] is null %}b-sub-menu__item_active{% endif %}">
+	                <a class="b-sub-menu__link" href="/profile/{{ profile.id }}/persons">персоны</a>
+	            </li>
+	            <li class="b-sub-menu__item {% if slim.path[4] == 'news' %}b-sub-menu__item_active{% endif %}">
+	                <a class="b-sub-menu__link" href="/profile/{{ profile.id }}/persons/news">новости</a>
+	            </li>
+	        {% endif %}
             <li class="b-sub-menu__item {% if slim.path[4] == 'manage' %}b-sub-menu__item_active{% endif %}">
                 <a class="b-sub-menu__link" href="/profile/{{ profile.id }}/persons/manage">управление подписками</a>
             </li>

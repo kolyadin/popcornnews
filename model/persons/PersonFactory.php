@@ -13,8 +13,10 @@ use popcorn\model\content\ImageFactory;
 use popcorn\model\dataMaps\DataMap;
 use popcorn\model\dataMaps\DataMapHelper;
 use popcorn\model\dataMaps\PersonDataMap;
+use popcorn\model\dataMaps\PersonFanDataMap;
 use popcorn\model\dataMaps\PersonImageDataMap;
 use popcorn\model\dataMaps\PersonsLinkDataMap;
+use popcorn\model\system\users\User;
 
 class PersonFactory {
 
@@ -208,6 +210,16 @@ class PersonFactory {
 	public static function checkByUrl($url) {
 		self::checkDataMap();
 		return self::$dataMap->checkByUrl($url);
+	}
+
+
+
+	public static function subscribeFan(Person $person, User $user) {
+		return (new PersonFanDataMap())->subscribe($person, $user);
+	}
+
+	public static function unsubscribeFan(Person $person, User $user) {
+		return (new PersonFanDataMap())->unsubscribe($person, $user);
 	}
 
 

@@ -630,11 +630,11 @@ SQL;
 	 */
 	public function addToFans(User $user, array $personsId = []) {
 
-		$stmt = $this->prepare('delete from pn_users_fans where userId = ?');
+		$stmt = $this->prepare('delete from pn_persons_fans where userId = ?');
 		$stmt->bindValue(1, $user->getId(), \PDO::PARAM_INT);
 		$stmt->execute();
 
-		$stmt = $this->prepare('insert into pn_users_fans set userId = ?, personId = ?');
+		$stmt = $this->prepare('insert into pn_persons_fans set userId = ?, personId = ?');
 
 		foreach ($personsId as $personId) {
 			$stmt->bindValue(1, $user->getId(), \PDO::PARAM_INT);
@@ -645,16 +645,21 @@ SQL;
 		return true;
 	}
 
-	public function getFans(User $user) {
+	/**
+	 * @param User $user
+	 * @return \popcorn\model\system\users\User[]
+	 */
+	public function getSubscribedPersons(User $user) {
 
-		$stmt = $this->prepare('select personId from pn_users_fans where userId = ?');
-		$stmt->bindValue(1, $user->getId(), \PDO::PARAM_INT);
-		$stmt->execute();
+		$stmt = $this->prepare('SELECT personId FROM pn_persons_fans WHERE userId=:userId');
+		$stmt->execute([
+			':userId' => $user->getId()
+		]);
 
-		$persons = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+		$persons = [];
 
-		foreach ($persons as &$person) {
-			$person = PersonFactory::getPerson($person);
+		while ($personId = $stmt->fetch(\PDO::FETCH_COLUMN)) {
+			$persons[] = PersonFactory::getPerson($personId, ['with' => PersonDataMap::WITH_NONE ^ PersonDataMap::WITH_PHOTO]);
 		}
 
 		return $persons;
