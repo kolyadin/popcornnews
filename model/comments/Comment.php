@@ -74,6 +74,8 @@ class Comment extends Model {
 	 */
 	protected $level = 0;
 
+	private $maxLevel = 7;
+
 	/**
 	 * @var int
 	 * @export
@@ -103,7 +105,9 @@ class Comment extends Model {
 
 	//endregion
 
-	function __construct() {
+	function __construct($maxLevel = 7) {
+
+		$this->maxLevel = $maxLevel;
 
 		$this->ip = $_SERVER['REMOTE_ADDR'];
 
@@ -314,8 +318,8 @@ class Comment extends Model {
 		$this->parent = $msg->getId();
 		$this->level = $msg->getLevel() + 1;
 
-		if ($this->level > 7) {
-			$this->level = 7;
+		if ($this->level > $this->maxLevel) {
+			$this->level = $this->maxLevel;
 		}
 	}
 

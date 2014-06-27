@@ -335,6 +335,27 @@ a.pink-dotted:hover,
   font-size: 13px;
   line-height: 18px;
 }
+.b-profile .b-new-message-box__message-container {
+  width: 375px;
+}
+.b-profile .b-comment-level-0 .b-new-message-box__message-container {
+  width: 355px;
+}
+.b-profile .b-comment-level-1 .b-new-message-box__message-container {
+  width: 325px;
+}
+.b-profile .b-comment-level-2 .b-new-message-box__message-container {
+  width: 295px;
+}
+.b-profile .b-comment-level-3 .b-new-message-box__message-container {
+  width: 265px;
+}
+.b-profile .b-comment-level-4 .b-new-message-box__message-container {
+  width: 235px;
+}
+.b-profile .b-comment-level-5 .b-new-message-box__message-container {
+  width: 205px;
+}
 .b-comment-caption {
   margin-top: 2px;
 }

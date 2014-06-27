@@ -18,6 +18,8 @@ use popcorn\app\controllers\site\person\PersonTalksController;
 use popcorn\app\controllers\site\PhotoArticleController;
 use popcorn\app\controllers\site\PostController;
 use popcorn\app\controllers\site\profile\ProfileController;
+use popcorn\app\controllers\site\profile\ProfileGuestBookController;
+use popcorn\app\controllers\site\profile\ProfileGuestController;
 use popcorn\app\controllers\site\profile\ProfilePersonsController;
 use popcorn\app\controllers\site\ProfileManagerController;
 use popcorn\app\controllers\site\SearchController;
@@ -163,6 +165,7 @@ class Popcorn extends Application {
 		$this->registerController(new UsersController());
 		$this->registerController(new ProfileController());
 		$this->registerController(new ProfilePersonsController());
+		$this->registerController(new ProfileGuestBookController());
 
 		$this->registerController(new PersonController());
 		$this->registerController(new PersonFactsController());
@@ -178,16 +181,20 @@ class Popcorn extends Application {
 		$this->registerController(new YourStyleController());
 
 		//Обработчик для 404 ошибки
-		$this->getSlim()->notFound(function () {
-			$this->getTwig()->display('/errors/Error404.twig');
-		});
+		$this
+			->getSlim()
+			->notFound(function () {
+				$this->getTwig()->display('/errors/Error404.twig');
+			});
 
-		$this->getSlim()->get('/version/desktop', function () {
+		$this
+			->getSlim()
+			->get('/version/desktop', function () {
 
-			$this->getSlim()->setCookie('popcorn-mobile-version', 'off', strtotime('+1 year'), '/');
-			$this->getSlim()->redirect('/');
+				$this->getSlim()->setCookie('popcorn-mobile-version', 'off', strtotime('+1 year'), '/');
+				$this->getSlim()->redirect('/');
 
-		});
+			});
 
 
 	}

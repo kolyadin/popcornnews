@@ -1,0 +1,43 @@
+{% extends '/profile/ProfileGeneric.twig' %}
+
+{% block head %}
+
+    <title>{{ profile.nick|e }} - гостевая - popcornnews</title>
+
+	<script type="text/javascript" src="/assets/js/popcorn.comments.js"></script>
+	<script type="text/javascript">
+		$(function () {
+
+			IM.init({
+				entity: 'guestbook',
+				entityId: {{ profile.id }}
+			});
+
+			IM.generateEmoji();
+		});
+	</script>
+
+    {{ parent() }}
+
+    <style type="text/css">
+
+    </style>
+
+{% endblock %}
+
+{% block bodyStart %}
+
+	{% include '/comments/SmilesBar.twig' %}
+
+{% endblock %}
+
+{% block profile %}
+
+    <h1>Подписки на персоны</h1>
+
+    {% include '/profile/ProfileMenu.twig' %}
+
+	{% include '/comments/CommentsBlock.twig' %}
+
+
+{% endblock %}

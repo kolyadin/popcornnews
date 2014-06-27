@@ -734,7 +734,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 			];
 
 			{
-				$comment = new Comment();
+				$comment = new Comment($data['entity'] == 'guestbook' ? 3 : 7);
 				$comment->setEntityId($data['entityId']);
 				$comment->setOwner($currentUser);
 

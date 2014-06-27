@@ -14,6 +14,9 @@ if  slim.path[3] == 'persons' or
    (slim.path[3] == 'persons' and slim.path[4] == 'manage')
 %} {% set tab3Active = 1 %} {% endif %}
 
+{% if app.request.path starts with '/profile/' ~ profile.id ~ '/guestbook' %}
+	{% set tab5Active = 1 %}
+{% endif %}
 
 
 {% spaceless %}
@@ -37,7 +40,7 @@ if  slim.path[3] == 'persons' or
             <a title="" href="/im">сообщения</a>
         </li>
     {% endif %}
-	<li>
+	<li{% if tab5Active == 1 %} class="active"{% endif %}>
 		<a title="" href="/profile/{{ profile.id }}/guestbook">гостевая</a>
 	</li>
 	<li>
