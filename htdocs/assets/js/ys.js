@@ -3284,3 +3284,29 @@ $(function() {
     
     $(".b-color-chooser .b-color-chooser__chooser").each(__processColorSwitcher);
 });
+
+function addTileToMy(tId) {
+	$.get('/yourstyle/tile/' + tId + '/toMy',
+		function(data) {
+			var arr = JSON.parse(data);
+			if (arr) {
+				$('#andYou').text('и вы');
+				$('#delButton').css('display', 'inline');
+				$('#addButton').css('display', 'none');
+			}
+		}
+	);
+}
+
+function delTileFromMy(tId) {
+	$.get('/yourstyle/tile/' + tId + '/fromMy',
+		function(data) {
+			var arr = JSON.parse(data);
+			if (arr) {
+				$('#andYou').text('');
+				$('#delButton').css('display', 'none');
+				$('#addButton').css('display', 'inline');
+			}
+		}
+	);
+}

@@ -18,6 +18,7 @@ class YourStyleTilesUsersDataMap extends DataMap {
 			SET `tId`=:tId, `createTime`=:createTime WHERE `uId`=:uId");
 		$this->deleteStatement = $this->prepare("DELETE FROM `pn_yourstyle_tiles_users` WHERE `tId`=:tId AND `uId`=:uId");
 		$this->findOneStatement = $this->prepare("SELECT * FROM `pn_yourstyle_tiles_users` WHERE `tId`=:tId AND `uId`=:uId");
+		$this->countUsersByTile = $this->prepare("SELECT COUNT(DISTINCT(`uId`)) FROM `pn_yourstyle_tiles_users` WHERE `tId` = :tId");
 	}
 
 	protected function insertBindings($item) {
@@ -97,5 +98,16 @@ SQL;
 
 	}
 
+	public function getCountUsersByTile($tId) {
+
+		$stmt = $this->countUsersByTile;
+		$stmt->bindValue(':tId', $tId);
+		$stmt->execute();
+		$count = $stmt->fetchColumn(0);
+		$stmt->closeCursor();
+
+		return $count;
+
+	}
 
 }

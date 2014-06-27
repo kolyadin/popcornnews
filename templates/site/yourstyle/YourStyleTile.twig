@@ -47,14 +47,30 @@
 								</ul>
 							</div>
 							<div class="stuff-item__users">
+
+								{% if isMy %}
+									{% set countUsersX = countUsers - 1 %}
+									{% set andYou = 'и вы' %}
+									{% set addButton = 'none' %}
+									{% set delButton = 'in-line' %}
+								{% else %}
+									{% set countUsersX = countUsers %}
+									{% set andYou = '' %}
+									{% set addButton = 'in-line' %}
+									{% set delButton = 'none' %}
+								{% endif %}
+
 								<div class="stuff-item__users-adds">
-									18 пользователей
+									{{ countUsersX|ruNumber(['0 пользователей','%u пользователь','%u пользователя','%u пользователей']) }} <span id="andYou">{{ andYou }}</span>
 								</div>
 								<div class="stuff-item__users-desc">
 									добавили в свои вещи
 								</div>
-								<div class="stuff-item__users-button">
-									<a class="b-main-poll__submit b-firm-grad" href="#">добавить</a>
+								<div id="delButton" style="display: {{ delButton }};" class="stuff-item__users-button">
+									<a class="b-main-poll__submit b-firm-grad" href="#" onclick="delTileFromMy({{ tile.id }}); return false;">убрать</a>
+								</div>
+								<div id="addButton" style="display: {{ addButton }};" class="stuff-item__users-button">
+									<a class="b-main-poll__submit b-firm-grad" href="#" onclick="addTileToMy({{ tile.id }}); return false;">добавить</a>
 								</div>
 							</div>
 						</div>
@@ -69,7 +85,7 @@
 					<h1 class="b-person__photos__title b-rubrics-title b-rubrics-title_s24">
 						<a href="#" rel="nofollow">сеты с этой вещью</a>
 					</h1>
-					<span class="b-person__photos__counter b-counter b-counter-section"><a href="#" rel="nofollow">{{ sets|length }}</a></span>
+					<span class="b-person__photos__counter b-counter b-counter-section"><a href="#" rel="nofollow">{{ countSets }}</a></span>
 				</div>
 				<ul class="celebrities__stuff-list">
 
@@ -90,7 +106,7 @@
 					<h1 class="b-person__photos__title b-rubrics-title b-rubrics-title_s24">
 						<a href="#" rel="nofollow">добавили в гардероб</a>
 					</h1>
-					<span class="b-person__photos__counter b-counter b-counter-section"><a href="#" rel="nofollow">{{ users| length }}</a></span>
+					<span class="b-person__photos__counter b-counter b-counter-section"><a href="#" rel="nofollow">{{ countUsers }}</a></span>
 				</div>
 				<ul class="active-users__list">
 
@@ -121,7 +137,7 @@
 					<h1 class="b-person__photos__title b-rubrics-title b-rubrics-title_s24">
 						<a href="#" rel="nofollow">товары этого бренда</a>
 					</h1>
-					<span class="b-person__photos__counter b-counter b-counter-section"><a href="#" rel="nofollow">{{ tilesByBrand|length }}</a></span>
+					<span class="b-person__photos__counter b-counter b-counter-section"><a href="/yourstyle/tiles/?rootGroup=0&brand={{ tile.bId }}&color=0" rel="nofollow">{{ countByBrand }}</a></span>
 				</div>
 				<ul class="celebrities__stuff-list">
 
