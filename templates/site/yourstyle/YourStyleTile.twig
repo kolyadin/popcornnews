@@ -13,7 +13,6 @@
 			<h1 class="b-single-article__title">
 				{{ tile.groupTitle }} - {{ tile.brand }}
 			</h1>
-{#{ dump(tile) }#}
 			<div class="stuff-item has-bottom-border">
 				<div class="stuff-item__pic">
 					<img src="{{ tile.image }}" alt=""/>
@@ -29,21 +28,15 @@
 									Цвет:
 								</div>
 								<ul class="stuff-item__colors-list">
+
+								{% for item in colors %}
+
 									<li class="stuff-item__colors-item">
-										<a class="stuff-item__colors-link" href="#" style="background-color: #79CFCE"></a>
+										<a class="stuff-item__colors-link" href="/yourstyle/tiles/?rootGroup=0&brand={{ tile.bId }}&color={{ item.human }}" style="background-color: {{ item.color }}"></a>
 									</li>
-									<li class="stuff-item__colors-item">
-										<a class="stuff-item__colors-link" href="#" style="background-color: #79CFCE"></a>
-									</li>
-									<li class="stuff-item__colors-item">
-										<a class="stuff-item__colors-link" href="#" style="background-color: #79CFCE"></a>
-									</li>
-									<li class="stuff-item__colors-item">
-										<a class="stuff-item__colors-link" href="#" style="background-color: #79CFCE"></a>
-									</li>
-									<li class="stuff-item__colors-item">
-										<a class="stuff-item__colors-link" href="#" style="background-color: #79CFCE"></a>
-									</li>
+
+								{% endfor %}
+
 								</ul>
 							</div>
 							<div class="stuff-item__users">

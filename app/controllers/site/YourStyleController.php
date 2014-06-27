@@ -1146,9 +1146,11 @@ class YourStyleController extends GenericController implements ControllerInterfa
 		$setsDataMap = new YourStyleSetsTilesDataMap;
 		$usersDataMap = new YourStyleTilesUsersDataMap();
 		$byBrandDataMap = new YourStyleGroupsTilesDataMap();
+		$colorsDataMap = new YourStyleTilesColorsNewDataMap();
 
 		$tpl = [
 			'tile' => $tile,
+			'colors' => $colorsDataMap->findById($tId),
 			'sets' => $setsDataMap->getSetsByTile($tId, 0, 12),
 			'countSets' =>$setsDataMap->getCountSetsByTile($tId),
 			'users' => $usersDataMap->getUsersByTile($tId, 0, 12),
