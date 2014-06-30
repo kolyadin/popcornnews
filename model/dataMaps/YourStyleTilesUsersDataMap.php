@@ -5,6 +5,7 @@ namespace popcorn\model\dataMaps;
 use popcorn\model\system\users\User;
 use popcorn\model\yourStyle\YourStyleTilesUsers;
 use popcorn\lib\yourstyle\YourStyleFactory;
+use popcorn\model\dataMaps\UserDataMap;
 
 class YourStyleTilesUsersDataMap extends DataMap {
 
@@ -17,6 +18,7 @@ class YourStyleTilesUsersDataMap extends DataMap {
 			SET `tId`=:tId, `createTime`=:createTime WHERE `uId`=:uId");
 		$this->deleteStatement = $this->prepare("DELETE FROM `pn_yourstyle_tiles_users` WHERE `tId`=:tId AND `uId`=:uId");
 		$this->findOneStatement = $this->prepare("SELECT * FROM `pn_yourstyle_tiles_users` WHERE `tId`=:tId AND `uId`=:uId");
+		$this->countUsersByTile = $this->prepare("SELECT COUNT(DISTINCT(`uId`)) FROM `pn_yourstyle_tiles_users` WHERE `tId` = :tId");
 	}
 
 	protected function insertBindings($item) {
@@ -70,6 +72,41 @@ SQL;
 		if ($items === false) return null;
 
 		return $items;
+
+	}
+
+	public function getUsersByTile($tId) {
+
+		$sql = <<<SQL
+			SELECT DISTINCT(`uId`) as `uId`
+			FROM `pn_yourstyle_tiles_users`
+			WHERE `tId` = ?
+			ORDER BY `createTime`
+SQL;
+
+		$stmt = $this->prepare($sql);
+		$stmt->bindValue(1, $tId, \PDO::PARAM_INT);
+		$stmt->execute();
+
+		$users = [];
+		$dataMap = new UserDataMap();
+		while ($item = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+			$users[] = $dataMap->findById($item['uId']);
+		}
+
+		return $users;
+
+	}
+
+	public function getCountUsersByTile($tId) {
+
+		$stmt = $this->countUsersByTile;
+		$stmt->bindValue(':tId', $tId);
+		$stmt->execute();
+		$count = $stmt->fetchColumn(0);
+		$stmt->closeCursor();
+
+		return $count;
 
 	}
 

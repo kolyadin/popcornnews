@@ -1,0 +1,111 @@
+{% extends '/yourstyle/YourStyleGeneric.twig' %}
+
+{% block subMenu %}
+
+	{% include '/yourstyle/YourStyleSubMenuSets.twig' %}
+
+{% endblock %}
+
+{% block subYourStyle %}
+
+	<h1 class="b-single-article__title">
+		{{ set.title }}
+	</h1>
+	<div class="stuff-item has-bottom-border">
+		<div class="stuff-item__inner">
+			<div class="stuff-item__pic">
+				<img src="{{ set.image }}" alt=""/>
+			</div>
+			<div class="stuff-item__description stuff-item__description_user">
+				<div class="active-users__item">
+					<a href="/profile/{{ user.id }}" class="active-users__avatar">
+
+						{% if user.avatar.id %}
+							{% set photo = user.avatar.thumb('140x') %}
+							<img class="active-users__avatar-pic" src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}"/>
+						{% else %}
+							<img class="active-users__avatar-pic" src="/assets/img/no-photo/large.png"/>
+						{% endif %}
+
+					</a>
+					<div class="active-users__data">
+						<a class="popular-sets__comments-username" href="/profile/{{ user.id }}"><span>Автор:</span> {{ user.nick }}</a>
+						<div class="rating-count">{{ user.rating.points|number_format(0,'',' ') }}</div>
+					</div>
+				</div>
+				<div class="stuff-item__options-created">
+					Создано {{ set.createTime|ruDateFriendly }}
+				</div>
+			</div>
+		</div>
+		<div class="stuff-others">
+			<ul class="stuff-others__list">
+
+				{% for tile in tiles %}
+
+					{% if tile.isMy %}
+						{% set text1 = '' %}
+						{% set text2 = 'Удалить из моих вещей' %}
+					{% else %}
+						{% set text1 = 'Добавить:' %}
+						{% set text2 = 'в мои вещи' %}
+					{% endif %}
+
+					<li class="stuff-others__item">
+						<div class="sfuff-others__pic"
+							id="nativetile{{ tile.tId }}"
+							data-tid="{{ tile.tId }}"
+							data-basket-href="{% if tile.isMy %}delTileFromMy{% else %}addTileToMy{% endif %}({{ tile.tId }})"
+							data-group="{{ tile.group }}"
+							data-brand="{{ tile.brand }}"
+							data-desc="{{ tile.description|slice(0, 45) }}"
+							data-href="/yourstyle/tile/{{ tile.tId }}"
+							data-text1="{{ text1 }}"
+							data-text2="{{ text2 }}"
+							data-user="{{ currentUserId }}"
+						>
+							<img src="{{ tile.image }}" alt=""/>
+						</div>
+					</li>
+
+				{% endfor %}
+
+			</ul>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		function addTileToMy(tId) {
+			$.get('/yourstyle/tile/' + tId + '/toMy',
+				function(data) {
+					var arr = JSON.parse(data);
+					if (arr) {
+						$('#tile' + tId + '_a').attr('onclick', 'delTileFromMy(' + tId + ')');
+						$('#tile' + tId).html('');
+						$('#tile' + tId + '_a').html('Удалить из моих вещей');
+						$('#nativetile' + tId).attr('data-basket-href', 'delTileFromMy(' + tId + ')');
+						$('#nativetile' + tId).attr('data-text1', '');
+						$('#nativetile' + tId).attr('data-text2', 'Удалить из моих вещей');
+					}
+				}
+			);
+		}
+
+		function delTileFromMy(tId) {
+			$.get('/yourstyle/tile/' + tId + '/fromMy',
+				function(data) {
+					var arr = JSON.parse(data);
+					if (arr) {
+						$('#tile' + tId + '_a').attr('onclick', 'addTileToMy(' + tId + ')');
+						$('#tile' + tId).html('Добавить:');
+						$('#tile' + tId + '_a').html('в мои вещи');
+						$('#nativetile' + tId).attr('data-basket-href', 'addTileToMy(' + tId + ')');
+						$('#nativetile' + tId).attr('data-text1', 'Добавить:');
+						$('#nativetile' + tId).attr('data-text2', 'в мои вещи');
+					}
+				}
+			);
+		}
+	</script>
+
+{% endblock %}

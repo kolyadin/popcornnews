@@ -18,6 +18,7 @@ class YourStyleSetsTilesDataMap extends DataMap {
 			SET `tId`=:tId, `width`=:width, `height`=:height, `leftOffset`=:leftOffset, `topOffset`=:topOffset, `vFlip`=:vFlip, `hFlip`=:hFlip,	`createTime`=:createTime, `sequence`=:sequence, `image`=:image, `uId`=:uId, `underlay`=:underlay WHERE `sId`=:sId");
 		$this->deleteStatement = $this->prepare("DELETE FROM `pn_yourstyle_sets_tiles` WHERE `sId`=:sId");
 		$this->findOneStatement = $this->prepare("SELECT * FROM `pn_yourstyle_sets_tiles` WHERE `sId`=:sId");
+		$this->countSetsByTile = $this->prepare("SELECT COUNT(DISTINCT(`sId`)) FROM `pn_yourstyle_sets_tiles` WHERE `tId` = :tId");
 	}
 
 	protected function insertBindings($item) {
@@ -97,7 +98,7 @@ SQL;
 
 	}
 
-	public function findById($sId) {
+	public function findById($sId) {//А зачем она вообще неужна тут? Она должна возвращать несколько строк... Но это уже делает getSetTiles
 
 		$this->checkStatement($this->findOneStatement);
 		$this->findOneStatement->bindValue(':sId', $sId);
@@ -112,6 +113,78 @@ SQL;
 			$this->itemCallback($item);
 			return $item;
 		}
+
+	}
+
+	public function getTilesInSet($sId, $user) {
+
+		$sql = <<<SQL
+			SELECT `a`.*, `c`.`title` AS `brand`, `g`.`title` AS `group`
+			FROM `pn_yourstyle_sets_tiles` a
+				JOIN `pn_yourstyle_groups_tiles` AS `b` ON (`b`.`id` = `a`.`tId`)
+				LEFT JOIN `pn_yourstyle_tiles_brands` AS `c` ON (`c`.`id` = `b`.`bId`)
+				LEFT JOIN `pn_yourstyle_groups` AS `g` ON (`g`.`id` = `b`.`gId`)
+			WHERE `a`.`sId` = ?
+			GROUP BY `b`.`id`
+			ORDER BY `createTime`
+SQL;
+
+		$stmt = $this->prepare($sql);
+		$stmt->bindValue(1, $sId, \PDO::PARAM_INT);
+		$stmt->execute();
+
+		$items = $stmt->fetchAll(\PDO::FETCH_CLASS, $this->class);
+
+		if($items === false) return null;
+
+		$usersDataMap = new YourStyleTilesUsersDataMap();
+		foreach($items as &$item) {
+			$this->itemCallback($item);
+			if (count($usersDataMap->findById($item->getTId(), $user))) {
+				$item->isMy = true;
+			} else {
+				$item->isMy = false;
+			}
+		}
+		return $items;
+
+	}
+
+	public function getSetsByTile($tId, $offset, $limit) {
+
+		$sql = <<<SQL
+			SELECT DISTINCT(`sId`) as `sId`
+			FROM `pn_yourstyle_sets_tiles`
+			WHERE `tId` = ?
+			ORDER BY `sId`
+			LIMIT ?, ?
+SQL;
+
+		$stmt = $this->prepare($sql);
+		$stmt->bindValue(1, $tId, \PDO::PARAM_INT);
+		$stmt->bindValue(2, $offset, \PDO::PARAM_INT);
+		$stmt->bindValue(3, $limit, \PDO::PARAM_INT);
+		$stmt->execute();
+
+		$sets = [];
+		$dataMap = new YourStyleSetsDataMap();
+		while ($item = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+			$sets[] = $dataMap->findById($item['sId']);
+		}
+
+		return $sets;
+
+	}
+
+	public function getCountSetsByTile($tId) {
+
+		$stmt = $this->countSetsByTile;
+		$stmt->bindValue(':tId', $tId);
+		$stmt->execute();
+		$count = $stmt->fetchColumn(0);
+		$stmt->closeCursor();
+
+		return $count;
 
 	}
 

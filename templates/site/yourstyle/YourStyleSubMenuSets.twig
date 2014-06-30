@@ -5,6 +5,11 @@
 		<li {% if slim.path[3] == 'new' %}class="active"{% endif %}>
 			<a href="/yourstyle/sets/new">новые</a>
 		</li>
+		{% if slim.path[2] == 'set' %}
+			<li {% if slim.path[2] == 'set' %}class="active"{% endif %}>
+				<a href="/user/{{ currentUser.id }}/sets">сеты пользователя</a>
+			</li>
+		{% endif %}
 		<li>
 			<a href="/profile/{% if currentUser.id %}{{ currentUser.id }}{% endif %}/sets">мои сеты</a>
 		</li>

@@ -112,6 +112,79 @@ $(document).ready(function() {
 		});
 	}
 
+	/* --------- stuff's popup --------- */
+
+	$('.sfuff-others__pic').on('mouseenter', function(){
+
+		var
+			$this = $(this),
+			list = $this.closest('.stuff-others__list');
+
+		var params = {
+			'image'			: $this.find('img').attr('src'),
+			'group'			: $this.attr('data-group'),
+			'brand'			: $this.attr('data-brand'),
+			'desc'			: $this.attr('data-desc'),
+			'href'			: $this.attr('data-href'),
+			'text1'			: $this.attr('data-text1'),
+			'text2'			: $this.attr('data-text2'),
+			'tid'			: $this.attr('data-tid')
+		};
+
+		if ($this.attr('data-user') == 0) {
+			params.text1 = '';
+			params.text2 = '';
+			params.basketHref = '';
+		}
+
+		var markup = '	<div class="stuff-others__popup"> \
+					<div class="stuff-others__popup-inner"> \
+						<a href="' + params.href + '" class="stuff-others__popup-pic"> \
+							<img src="' + params.image + '" alt=""/> \
+						</a> \
+						<div class="stuff-others__popup-description"> \
+							<ul class="stuff-others__popup-prop"> \
+								<li class="stuff-others__prop-item"> \
+									<div id="tile' + params.tid + '" class="stuff-others__prop-name">' + params.text1 + '</div> \
+									<div class="stuff-others__prop-value"> \
+										<a id="tile' + params.tid + '_a" href="javascript:void(0);" onclick="' + params.basketHref + '">' + params.text2 + '</a> \
+									</div> \
+								</li> \
+								<li class="stuff-others__prop-item"> \
+									<div class="stuff-others__prop-name">Группа:</div> \
+									<div class="stuff-others__prop-value">' + params.group + '</div> \
+								</li> \
+								<li class="stuff-others__prop-item"> \
+									<div class="stuff-others__prop-name">Бренд:</div> \
+									<div class="stuff-others__prop-value"> \
+										<span>' + params.brand + '</span> \
+									</div> \
+								</li> \
+								<li class="stuff-others__prop-item"> \
+									<div class="stuff-others__prop-name">Описание:</div> \
+									<div class="stuff-others__prop-value">' + params.desc + '</div> \
+								</li> \
+							</ul> \
+						</div> \
+						<a class="stuff-others__close" href="#"></a> \
+					</div> \
+				</div>';
+
+		list.find('.stuff-others__popup').remove();
+		$this.append(markup);
+	});
+
+	$('body').on('click', '.stuff-others__close', function(e){
+		e.preventDefault();
+		$(this).closest('.stuff-others__popup').remove();
+	});
+
+	$(document).on('click', function(e){
+		if (!$(e.target).closest('.stuff-others__popup').length) {
+			$('.stuff-others__popup').remove();
+		}
+	});
+
 });
 
 
@@ -390,6 +463,7 @@ $(function(){
 			trioCount = Math.ceil(elemsLength/4); //сколько рядов
 
 		if (elems.size() < 1){
+
 			return false;
 		} else {
 

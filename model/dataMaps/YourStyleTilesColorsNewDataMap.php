@@ -12,12 +12,26 @@ class YourStyleTilesColorsNewDataMap extends DataMap {
 		$this->insertStatement = $this->prepare("INSERT INTO `pn_yourstyle_tiles_colors_new` (`color`, `tId`, `priority`)
 		    VALUES (:color, :tId, :priority)");
 		$this->deleteStatement = $this->prepare("DELETE FROM `pn_yourstyle_tiles_colors_new` WHERE `tId`=:tId");
+		$this->findOneStatement = $this->prepare("SELECT `color`, `human` FROM `pn_yourstyle_tiles_colors_new` JOIN `pn_yourstyle_tiles_colors` ON `html` = `color` WHERE `pn_yourstyle_tiles_colors_new`.`tId`=:tId");
 	}
 
 	protected function insertBindings($item) {
 		$this->insertStatement->bindValue(":color", $item->getColor());
 		$this->insertStatement->bindValue(":tId", $item->getTId());
 		$this->insertStatement->bindValue(":priority", $item->getPriority());
+	}
+
+	public function findById($tId) {
+
+		$this->findOneStatement->bindValue(':tId', $tId);
+		$this->findOneStatement->execute();
+
+		$items = $this->findOneStatement->fetchAll(\PDO::FETCH_CLASS, $this->class);
+
+		if ($items === false) return null;
+
+		return $items;
+
 	}
 
 	public function delete($tId) {

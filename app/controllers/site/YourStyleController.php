@@ -234,6 +234,14 @@ class YourStyleController extends GenericController implements ControllerInterfa
 					->getSlim()
 					->get('/tile/:tId/toMy', $profileMiddleware, [$this, 'addTileToMy']);
 
+				$this
+					->getSlim()
+					->get('/tile/:tId', $profileMiddleware, [$this, 'yourStyleTile']);
+
+				$this
+					->getSlim()
+					->get('/set/:setId', [$this, 'yourStyleSet']);
+
 		});
 
 	}
@@ -1108,6 +1116,52 @@ class YourStyleController extends GenericController implements ControllerInterfa
             }
         }
         return $filteredColors;
+
+	}
+
+	public function yourStyleSet($setId) {
+
+		$setDataMap = new YourStyleSetsDataMap;
+		$set = $setDataMap->findById($setId);
+		$userDataMap = new UserDataMap();
+		$user = $userDataMap->findById($set->getUId());
+		$tilesDataMap = new YourStyleSetsTilesDataMap();
+		$tiles = $tilesDataMap->getTilesInSet($setId, UserFactory::getCurrentUser());
+
+		$tpl = [
+			'set' => $set,
+			'user' => $user,
+			'tiles' => $tiles,
+			'currentUserId' => UserFactory::getCurrentUser()->getId(),
+		];
+		self::getTwig()
+			->display('/yourstyle/YourStyleSet.twig', $tpl);
+
+	}
+
+	public function yourStyleTile($tId) {
+
+		$dataMap = new YourStyleGroupsTilesDataMap();
+		$tile = $dataMap->getTile($tId);
+
+		$setsDataMap = new YourStyleSetsTilesDataMap;
+		$usersDataMap = new YourStyleTilesUsersDataMap();
+		$byBrandDataMap = new YourStyleGroupsTilesDataMap();
+		$colorsDataMap = new YourStyleTilesColorsNewDataMap();
+
+		$tpl = [
+			'tile' => $tile,
+			'colors' => $colorsDataMap->findById($tId),
+			'sets' => $setsDataMap->getSetsByTile($tId, 0, 12),
+			'countSets' =>$setsDataMap->getCountSetsByTile($tId),
+			'users' => $usersDataMap->getUsersByTile($tId, 0, 12),
+			'countUsers' =>$usersDataMap->getCountUsersByTile($tId),
+			'isMy' => $usersDataMap->findById($tId, UserFactory::getCurrentUser()),
+			'tilesByBrand' => $byBrandDataMap->getTilesByParams('', $tile->getBId(), '', 0, 14),
+			'countByBrand' => $byBrandDataMap->getCountByParams('', $tile->getBId(), ''),
+		];
+		self::getTwig()
+			->display('/yourstyle/YourStyleTile.twig', $tpl);
 
 	}
 
