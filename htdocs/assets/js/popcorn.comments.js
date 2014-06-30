@@ -25,6 +25,10 @@ var IM = {
         emojify.run(this.sel.smilesBar.get(0));
     },
 
+    focus: function(){
+        IM.sel.editor.focus();
+    },
+
     placeCaretAtEnd: function (el) {
         el.focus();
 
