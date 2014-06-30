@@ -1126,12 +1126,13 @@ class YourStyleController extends GenericController implements ControllerInterfa
 		$userDataMap = new UserDataMap();
 		$user = $userDataMap->findById($set->getUId());
 		$tilesDataMap = new YourStyleSetsTilesDataMap();
-		$tiles = $tilesDataMap->getTilesInSet($setId);
+		$tiles = $tilesDataMap->getTilesInSet($setId, UserFactory::getCurrentUser());
 
 		$tpl = [
 			'set' => $set,
 			'user' => $user,
 			'tiles' => $tiles,
+			'currentUserId' => UserFactory::getCurrentUser()->getId(),
 		];
 		self::getTwig()
 			->display('/yourstyle/YourStyleSet.twig', $tpl);

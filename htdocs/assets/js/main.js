@@ -121,46 +121,54 @@ $(document).ready(function() {
 			list = $this.closest('.stuff-others__list');
 
 		var params = {
-			'basketHref' 	: $this.data('basket-href'),
 			'image'			: $this.find('img').attr('src'),
-			'group'			: $this.data('group'),
-			'brand'			: $this.data('brand'),
-			'desc'			: $this.data('desc'),
-			'href'			: $this.data('href')
+			'group'			: $this.attr('data-group'),
+			'brand'			: $this.attr('data-brand'),
+			'desc'			: $this.attr('data-desc'),
+			'href'			: $this.attr('data-href'),
+			'text1'			: $this.attr('data-text1'),
+			'text2'			: $this.attr('data-text2'),
+			'tid'			: $this.attr('data-tid')
 		};
 
-		var markup = '<div class="stuff-others__popup"> \
-							<div class="stuff-others__popup-inner"> \
-								<a href="' + params.href + '" class="stuff-others__popup-pic"> \
-									<img src="' + params.image + '" alt=""/> \
-								</a> \
-							<div class="stuff-others__popup-description"> \
-								<ul class="stuff-others__popup-prop"> \
-									<li class="stuff-others__prop-item"> \
-										<div class="stuff-others__prop-name">Добавить:</div> \
-										<div class="stuff-others__prop-value"> \
-											<a href="' + params.basketHref + '">в мои вещи</a> \
-										</div> \
-									</li> \
-									<li class="stuff-others__prop-item"> \
-										<div class="stuff-others__prop-name">Группа:</div> \
-										<div class="stuff-others__prop-value">' + params.group + '</div> \
-									</li> \
-									<li class="stuff-others__prop-item"> \
-										<div class="stuff-others__prop-name">Бренд:</div> \
-										<div class="stuff-others__prop-value"> \
-											<span>' + params.brand + '</span> \
-										</div> \
-									</li> \
-									<li class="stuff-others__prop-item"> \
-										<div class="stuff-others__prop-name">Описание:</div> \
-										<div class="stuff-others__prop-value">' + params.desc + '</div> \
-									</li> \
-								</ul> \
-							</div> \
-							<a class="stuff-others__close" href="#"></a> \
+		if ($this.attr('data-user') == 0) {
+			params.text1 = '';
+			params.text2 = '';
+			params.basketHref = '';
+		}
+
+		var markup = '	<div class="stuff-others__popup"> \
+					<div class="stuff-others__popup-inner"> \
+						<a href="' + params.href + '" class="stuff-others__popup-pic"> \
+							<img src="' + params.image + '" alt=""/> \
+						</a> \
+						<div class="stuff-others__popup-description"> \
+							<ul class="stuff-others__popup-prop"> \
+								<li class="stuff-others__prop-item"> \
+									<div id="tile' + params.tid + '" class="stuff-others__prop-name">' + params.text1 + '</div> \
+									<div class="stuff-others__prop-value"> \
+										<a id="tile' + params.tid + '_a" href="javascript:void(0);" onclick="' + params.basketHref + '">' + params.text2 + '</a> \
+									</div> \
+								</li> \
+								<li class="stuff-others__prop-item"> \
+									<div class="stuff-others__prop-name">Группа:</div> \
+									<div class="stuff-others__prop-value">' + params.group + '</div> \
+								</li> \
+								<li class="stuff-others__prop-item"> \
+									<div class="stuff-others__prop-name">Бренд:</div> \
+									<div class="stuff-others__prop-value"> \
+										<span>' + params.brand + '</span> \
+									</div> \
+								</li> \
+								<li class="stuff-others__prop-item"> \
+									<div class="stuff-others__prop-name">Описание:</div> \
+									<div class="stuff-others__prop-value">' + params.desc + '</div> \
+								</li> \
+							</ul> \
 						</div> \
-					</div>';
+						<a class="stuff-others__close" href="#"></a> \
+					</div> \
+				</div>';
 
 		list.find('.stuff-others__popup').remove();
 		$this.append(markup);
@@ -176,7 +184,6 @@ $(document).ready(function() {
 			$('.stuff-others__popup').remove();
 		}
 	});
-
 
 });
 

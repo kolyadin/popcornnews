@@ -43,15 +43,28 @@
 
 				{% for tile in tiles %}
 
+					{% if tile.isMy %}
+						{% set text1 = '' %}
+						{% set text2 = 'Удалить из моих вещей' %}
+					{% else %}
+						{% set text1 = 'Добавить:' %}
+						{% set text2 = 'в мои вещи' %}
+					{% endif %}
+
 					<li class="stuff-others__item">
 						<div class="sfuff-others__pic"
-							data-basket-href="/yourstyle/tile/{{ tile.id }}/toMy"
+							id="nativetile{{ tile.tId }}"
+							data-tid="{{ tile.tId }}"
+							data-basket-href="{% if tile.isMy %}delTileFromMy{% else %}addTileToMy{% endif %}({{ tile.tId }})"
 							data-group="{{ tile.group }}"
 							data-brand="{{ tile.brand }}"
 							data-desc="{{ tile.description|slice(0, 45) }}"
-							data-href="/yourstyle/tile/{{ tile.id }}">
-
-							<img src="{{ tile.logo }}" alt=""/>
+							data-href="/yourstyle/tile/{{ tile.tId }}"
+							data-text1="{{ text1 }}"
+							data-text2="{{ text2 }}"
+							data-user="{{ currentUserId }}"
+						>
+							<img src="{{ tile.image }}" alt=""/>
 						</div>
 					</li>
 
@@ -60,5 +73,39 @@
 			</ul>
 		</div>
 	</div>
+
+	<script type="text/javascript">
+		function addTileToMy(tId) {
+			$.get('/yourstyle/tile/' + tId + '/toMy',
+				function(data) {
+					var arr = JSON.parse(data);
+					if (arr) {
+						$('#tile' + tId + '_a').attr('onclick', 'delTileFromMy(' + tId + ')');
+						$('#tile' + tId).html('');
+						$('#tile' + tId + '_a').html('Удалить из моих вещей');
+						$('#nativetile' + tId).attr('data-basket-href', 'delTileFromMy(' + tId + ')');
+						$('#nativetile' + tId).attr('data-text1', '');
+						$('#nativetile' + tId).attr('data-text2', 'Удалить из моих вещей');
+					}
+				}
+			);
+		}
+
+		function delTileFromMy(tId) {
+			$.get('/yourstyle/tile/' + tId + '/fromMy',
+				function(data) {
+					var arr = JSON.parse(data);
+					if (arr) {
+						$('#tile' + tId + '_a').attr('onclick', 'addTileToMy(' + tId + ')');
+						$('#tile' + tId).html('Добавить:');
+						$('#tile' + tId + '_a').html('в мои вещи');
+						$('#nativetile' + tId).attr('data-basket-href', 'addTileToMy(' + tId + ')');
+						$('#nativetile' + tId).attr('data-text1', 'Добавить:');
+						$('#nativetile' + tId).attr('data-text2', 'в мои вещи');
+					}
+				}
+			);
+		}
+	</script>
 
 {% endblock %}

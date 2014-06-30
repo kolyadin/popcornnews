@@ -116,10 +116,10 @@ SQL;
 
 	}
 
-	public function getTilesInSet($sId) {
+	public function getTilesInSet($sId, $user) {
 
 		$sql = <<<SQL
-			SELECT `b`.*, `c`.`title` AS `brand`, `g`.`title` AS `group`
+			SELECT `a`.*, `c`.`title` AS `brand`, `g`.`title` AS `group`
 			FROM `pn_yourstyle_sets_tiles` a
 				JOIN `pn_yourstyle_groups_tiles` AS `b` ON (`b`.`id` = `a`.`tId`)
 				LEFT JOIN `pn_yourstyle_tiles_brands` AS `c` ON (`c`.`id` = `b`.`bId`)
@@ -133,22 +133,20 @@ SQL;
 		$stmt->bindValue(1, $sId, \PDO::PARAM_INT);
 		$stmt->execute();
 
-//		$items = $stmt->fetchAll(\PDO::FETCH_CLASS, $this->class);
-//
-//		if($items === false) return null;
-//
-//		foreach($items as &$item) {
-//			$this->itemCallback($item);
-//		}
-//		return $items;
+		$items = $stmt->fetchAll(\PDO::FETCH_CLASS, $this->class);
 
-		$tiles = [];
-		while ($item = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-			$item['logo'] = YourStyleFactory::getWwwUploadTilesPath($item['gId'], $item['image']);
-			$tiles[] = $item;
+		if($items === false) return null;
+
+		$usersDataMap = new YourStyleTilesUsersDataMap();
+		foreach($items as &$item) {
+			$this->itemCallback($item);
+			if (count($usersDataMap->findById($item->getTId(), $user))) {
+				$item->isMy = true;
+			} else {
+				$item->isMy = false;
+			}
 		}
-
-		return $tiles;
+		return $items;
 
 	}
 
