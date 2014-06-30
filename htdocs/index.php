@@ -32,10 +32,13 @@ if (\popcorn\lib\Config::getMode() != 'production') {
 	printf('<div style="margin:0 auto;padding:20px 0 30px 0;"><iframe width="100%%" height="1000" src="/xhprof_html/index.php?run=%s&source=%s"/></div>', $run_id, $namespace);
 }
 
-function echo_arr($a) {
+function echo_arr($a, $die = false) {
 	echo '<pre>';
 	print_r($a);
 	echo '</pre>';
+	if (!$die) {
+		die();
+	}
 }
 
 function run_time_logger($file_name, $mode, $text) {
