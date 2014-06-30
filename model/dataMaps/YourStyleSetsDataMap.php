@@ -203,7 +203,7 @@ SQL;
 				GROUP BY s.id
 				HAVING votes >= 0
 			) as r
-				INNER JOIN popkorn_users as u ON (r.uid = u.id)
+				INNER JOIN pn_users as u ON (r.uid = u.id)
 SQL;
 
 		$stmt = $this->prepare($sql);
