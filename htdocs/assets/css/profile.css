@@ -1,0 +1,80 @@
+/* --------- profile css --------- */
+.profile-data__last-visit {
+  font-size: 12px;
+  line-height: 14px;
+  color: #acacac;
+}
+.profile-data__online-indicator {
+  display: inline-block;
+  border-radius: 50%;
+  width: 5px;
+  height: 5px;
+  background-color: #42a035;
+  margin-bottom: 2px;
+}
+.profile-data__online {
+  font-size: 12px;
+  line-height: 14px;
+  color: #42a035;
+}
+.profile-data__options {
+  border-bottom: 1px solid #e5e5e5;
+}
+.profile-data__options-item {
+  border-top: 1px solid #e5e5e5;
+}
+.profile-data__link {
+  font-size: 18px;
+  color: #f70080;
+  font-weight: bold;
+  text-decoration: none;
+  line-height: 30px;
+  display: block;
+  background-position: 110px center;
+  background-repeat: no-repeat;
+  width: 100%;
+}
+.profile-data__options_extras {
+  border-color: transparent;
+}
+.profile-data__options_extras .profile-data__options-item {
+  border-top: 0 none;
+  border-bottom: 1px solid #e5e5e5;
+}
+.profile-data__options_extras .profile-data__link {
+  color: #000000;
+  font-size: 13px;
+}
+.profile-data__options_extras .profile-data__link_big {
+  font-size: 18px;
+}
+.profile-data__options-item_add .profile-data__link {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyBpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBXaW5kb3dzIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjBFN0U0RTAxRkI5MDExRTM5NTVGRTZDMTU3RUVCQzAzIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjBFN0U0RTAyRkI5MDExRTM5NTVGRTZDMTU3RUVCQzAzIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MEU3RTRERkZGQjkwMTFFMzk1NUZFNkMxNTdFRUJDMDMiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MEU3RTRFMDBGQjkwMTFFMzk1NUZFNkMxNTdFRUJDMDMiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4tt5dtAAABaElEQVR42mRSPUsDQRDdieEwEhTEQjgsDsRA5Lr8ADFoY5sqINgGImj8GQZUEi2sxIDgL7CwFRUJWhwIgUAgEjkQP4pAQG93fbPZg0MXHjPMvDc7M7uktRZ8dLGegVvRSmxpTb5SiCkKEGvBb07d10bMIxao1boLcwWCD4FQWgzgh/DzSlEGtgu7Pv2406NoZd9Bsg0BV/2GX5y8rd1wtWHhwAPxCYIZ2A5sIaUkVZUUvoxIwA9iMp9se7eH+B3ngJz8oWoapE3br4DNij9HRsKxOaElldMI5OMArh39F9DA5KUpmkvZ6wxURP778pEXk8PFRgaxDZOXY7DgISGaQJ+lRPU1YNYW4/Y6LLhM3gKUE4LSmCyEXUqLBadAYMkfwEUsAPEapJBbwQwB/KZ5uFev4WLgc+x5e+Gl+pwcujt34mLYQ9D2lj4rfYq/Rt89drApfA3zsvN4bX7EN6SHwFnuq2I2+CvAAFFKD7Xj8wMaAAAAAElFTkSuQmCC);
+}
+.profile-data__options-item_message .profile-data__link {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyBpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBXaW5kb3dzIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjg4QkRCQzFGRkI5MDExRTM5NDA2Q0E3RjhBMkJFNDdEIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjg4QkRCQzIwRkI5MDExRTM5NDA2Q0E3RjhBMkJFNDdEIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6ODhCREJDMURGQjkwMTFFMzk0MDZDQTdGOEEyQkU0N0QiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6ODhCREJDMUVGQjkwMTFFMzk0MDZDQTdGOEEyQkU0N0QiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz6QJrsHAAAAxUlEQVR42oRQuw0CMQyNkVvgRoCGmiHYA1q2oGaAowQ2YQtgClJD7OAkTu6jCE6y/Pz8nuMz+M3xZYxpjH7eg4RkVswJM0dsMYtLM4qTiVmxGqRuMDeLMDTVzJQ47l4wGEkPZdowBxMUccBIBEMhddNY6z6P9IG6QCeOeXROSOrtSeUHq3x6gfqCipi7i6F7T2w4V23/ONUPDBbdB5ZCrMf7a97KuXeCL6K5ruz+Jif1P+M5b8+PWXvI9V9DiPv0tMj4K8AAz9kvkUzdLgkAAAAASUVORK5CYII=);
+}
+.profile-data__options-item_view .profile-data__link {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyBpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBXaW5kb3dzIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjU2ODRENTk3RkI5MTExRTNCQUYxOTA3RjAzOUNEODVFIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjU2ODRENTk4RkI5MTExRTNCQUYxOTA3RjAzOUNEODVFIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6NTY4NEQ1OTVGQjkxMTFFM0JBRjE5MDdGMDM5Q0Q4NUUiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6NTY4NEQ1OTZGQjkxMTFFM0JBRjE5MDdGMDM5Q0Q4NUUiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz5nnc9RAAAAq0lEQVR42mL4//8/Ay7806bnP4zNxIAD/LDq+//3NyPDV9P+/yA+I0g1Ovhu0ff/319Ghn//GBjANBCzoCsCmfDvHyNcAUix8NV8RhSFn437/yMrANGiN/IYQXJwhR8NJgAVMSFZx8AgfhuiCK7wve5EJOsgCiXv5TIi28byVnvif2QFIA3SD3IY0d3O8ucXI1wBSLHsY0xFEIW/mSCmARXKP81mxBWuAAEGAK7Kf5qHRyvaAAAAAElFTkSuQmCC);
+}
+.profile-data__description {
+  font-size: 10px;
+  line-height: 12px;
+  color: #acacac;
+  margin-bottom: 6px;
+}
+.profile-data__description-link {
+  color: #f70080;
+  text-decoration: none;
+}
+.profile-data__avatar {
+  margin-bottom: 15px;
+}
+.profile-data__avatar img {
+  max-width: 140px;
+  max-height: 125px;
+  display: block;
+}
+.profile-data__info {
+  margin-bottom: 20px;
+}
