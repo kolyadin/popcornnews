@@ -7,6 +7,7 @@ use popcorn\app\controllers\GenericController;
 use popcorn\model\dataMaps\MessageDataMap;
 use popcorn\model\dataMaps\UserDataMap;
 use popcorn\model\dataMaps\UserDataMapPaginator;
+use popcorn\model\dataMaps\YourStyleSetsDataMap;
 use popcorn\model\exceptions\NotAuthorizedException;
 use popcorn\model\persons\PersonFactory;
 use popcorn\model\dataMaps\PersonDataMap;
@@ -137,6 +138,10 @@ class ProfileController extends GenericController implements ControllerInterface
 					->getSlim()
 					->get('/friends(/page:pageId)', [$this, 'friendsPage'])
 					->conditions(['pageId' => '\d+']);
+
+				$this
+					->getSlim()
+					->get('/sets', [$this, 'setsPage']);
 
 
 			});
@@ -413,6 +418,21 @@ class ProfileController extends GenericController implements ControllerInterface
 
 	public static function siteUsers() {
 
+
+	}
+
+	public static function setsPage($profileId) {
+
+		$profile = UserFactory::getUser($profileId, ['with' => UserDataMap::WITH_ALL]);
+
+		$setsDataMap = new YourStyleSetsDataMap();
+		$sets = $setsDataMap->getUserSets($profile);
+
+		self::getTwig()
+			->display('/profile/ProfileSets.twig', [
+				'profile'   => $profile,
+				'sets' => $sets,
+			]);
 
 	}
 
