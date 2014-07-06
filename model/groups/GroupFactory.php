@@ -12,49 +12,57 @@ class GroupFactory {
 
 //region Fields
 
-    /**
-     * @var \popcorn\model\dataMaps\GroupDataMap
-     */
-    private static $dataMap;
+	/**
+	 * @var \popcorn\model\dataMaps\GroupDataMap
+	 */
+	private static $dataMap;
 
 //endregion
 
-    /**
-     */
-    private static function checkDataMap() {
-        if(is_null(self::$dataMap)) {
-            self::$dataMap = new GroupDataMap();
-        }
-    }
+	/**
+	 */
+	private static function checkDataMap() {
+		if (is_null(self::$dataMap)) {
+			self::$dataMap = new GroupDataMap();
+		}
+	}
 
-    /**
-     * @param \popcorn\model\groups\Group $item
-     */
-    public static function save($item) {
-        self::checkDataMap();
-        self::$dataMap->save($item);
-    }
+	/**
+	 * @param \popcorn\model\groups\Group $item
+	 */
+	public static function save($item) {
+		self::checkDataMap();
+		self::$dataMap->save($item);
+	}
 
-    /**
-     * @param int $id
-     *
-     * @return \popcorn\model\groups\Group
-     */
-    public static function get($id) {
-        self::checkDataMap();
+	/**
+	 * @param int $id
+	 *
+	 * @return \popcorn\model\groups\Group
+	 */
+	public static function get($id) {
+		self::checkDataMap();
 
-        return self::$dataMap->findById($id);
-    }
+		return self::$dataMap->findById($id);
+	}
 
-    /**
-     * @param int $id
-     *
-     * @return bool
-     */
-    public static function delete($id) {
-        self::checkDataMap();
+	/**
+	 * @param int $id
+	 *
+	 * @return bool
+	 */
+	public static function delete($id) {
+		self::checkDataMap();
 
-        return self::$dataMap->delete($id);
-    }
+		return self::$dataMap->delete($id);
+	}
+
+	/**
+	 * @return GroupDataMap
+	 */
+	public static function dataMapProxy(){
+		self::checkDataMap();
+		return self::$dataMap;
+	}
 
 }

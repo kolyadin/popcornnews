@@ -8,6 +8,7 @@ use popcorn\lib\PDOHelper;
 use popcorn\model\content\ImageFactory;
 use popcorn\model\exceptions\ajax\VotingNotAllowException;
 use popcorn\model\persons\Person;
+use popcorn\model\system\users\UserFactory;
 use popcorn\model\voting\VotingFactory;
 
 class PersonDataMap extends DataMap {
@@ -217,8 +218,9 @@ class PersonDataMap extends DataMap {
 	 */
 	public function isVotingAllow(Person $person, $category) {
 
-		$stmt = $this->pdo->prepare('SELECT count(*) FROM pn_persons_voting WHERE checksum = :checksum AND personId = :personId AND category = :category AND (:nowTime - votedAt) <= :restrictTime');
-		$stmt->bindValue(':checksum', $this->checksum, \PDO::PARAM_STR);
+
+		$stmt = $this->prepare('SELECT count(*) FROM pn_persons_voting WHERE checksum = :checksum AND personId = :personId AND category = :category AND (:nowTime - votedAt) <= :restrictTime');
+		$stmt->bindValue(':checksum', UserFactory::getHeadersChecksum(), \PDO::PARAM_STR);
 		$stmt->bindValue(':personId', $person->getId(), \PDO::PARAM_INT);
 		$stmt->bindValue(':category', $category, \PDO::PARAM_STR);
 		$stmt->bindValue(':nowTime', time(), \PDO::PARAM_INT);

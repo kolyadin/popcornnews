@@ -24,11 +24,7 @@
 				{% include '/users/UserRows.twig' with {'profiles' : users} %}
 			</table>
 
-			{{ html.paginator(
-				 paginator.pages
-				,paginator.active
-				,'/community/group/' ~ group.id ~ '/members/page%u'
-			) }}
+			{{ html.paginator(paginator.pages,paginator.active,'/community/group/' ~ group.id ~ '/members/page%u') }}
 		{% else %}
 			<br/><p><strong>В этой группе пока нет участников</strong></p>
 		{% endif %}

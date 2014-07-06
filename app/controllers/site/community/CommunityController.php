@@ -17,7 +17,10 @@ use popcorn\model\exceptions\NotAuthorizedException;
 use popcorn\model\groups\Group;
 use popcorn\model\groups\GroupFactory;
 use popcorn\model\groups\Topic;
+use popcorn\model\persons\PersonFactory;
+use popcorn\model\system\users\User;
 use popcorn\model\system\users\UserFactory;
+use popcorn\model\tags\Tag;
 use popcorn\model\tags\TagFactory;
 use Slim\Route;
 
@@ -27,7 +30,9 @@ use Slim\Route;
  */
 class CommunityController extends GenericController implements ControllerInterface {
 
-	static private $groupId = null;
+	const GROUPS_PER_PAGE = 10;
+
+	static protected $groupId = null;
 
 	public function registerIf() {
 		$request = $this->getSlim()->request;
@@ -41,29 +46,34 @@ class CommunityController extends GenericController implements ControllerInterfa
 
 	public function getRoutes() {
 
-		$authorizedOnly = function (Route $route) {
-			if (!UserFactory::getCurrentUser()->getId() > 0) {
-				$this->getSlim()->error(new NotAuthorizedException());
-			}
-		};
-
 		$this
 			->getSlim()
 			->get('/community/groups', [$this, 'communityFrontPage']);
 
 		$this
 			->getSlim()
-			->get('/community/groups/new', [$this, 'groupsNew']);
+			->get('/community/groups/new(/page:page)', function ($page = null) {
+				if ($page == 1) {
+					$this
+						->getSlim()
+						->redirect('/community/groups/new', 301);
+				}
+
+				$this->groupsNew($page);
+			})
+			->conditions([
+				'page' => '[1-9][0-9]*'
+			]);
 
 		$this
 			->getSlim()
-			->map('/community/groups/create', $authorizedOnly, [$this, 'createGroup'])
+			->map('/community/groups/create', 'popcorn\\lib\\Middleware::authorizationNeeded', [$this, 'createGroup'])
 			->via('GET', 'POST');
 
 
 		$groupExists = function (Route $route) {
 
-			$group = GroupFactory::get((int)$route->getParam('groupId'));
+			$group = GroupFactory::get($route->getParam('groupId'));
 
 			if (is_null($group)) {
 				$this->getSlim()->notFound();
@@ -74,7 +84,7 @@ class CommunityController extends GenericController implements ControllerInterfa
 
 		$this
 			->getSlim()
-			->group('/community/group/:groupId', $groupExists, function () use ($authorizedOnly) {
+			->group('/community/group/:groupId', $groupExists, function () {
 
 				$this
 					->getSlim()
@@ -82,7 +92,7 @@ class CommunityController extends GenericController implements ControllerInterfa
 
 				$this
 					->getSlim()
-					->get('/edit', $authorizedOnly, [$this, 'groupEdit']);
+					->get('/edit', 'popcorn\\lib\\Middleware::authorizationNeeded', [$this, 'groupEdit']);
 
 				$this
 					->getSlim()
@@ -100,12 +110,12 @@ class CommunityController extends GenericController implements ControllerInterfa
 
 				$this
 					->getSlim()
-					->map('/topic_create', $authorizedOnly, [$this, 'topicCreate'])
+					->map('/topic_create', 'popcorn\\lib\\Middleware::authorizationNeeded', [$this, 'topicCreate'])
 					->via('GET', 'POST');
 
 				$this
 					->getSlim()
-					->map('/poll_create', $authorizedOnly, [$this, 'pollCreate'])
+					->map('/poll_create', 'popcorn\\lib\\Middleware::authorizationNeeded', [$this, 'pollCreate'])
 					->via('GET', 'POST');
 
 				$this
@@ -147,10 +157,10 @@ class CommunityController extends GenericController implements ControllerInterfa
 
 		$dataMapHelper = new DataMapHelper();
 		$dataMapHelper->setRelationship([
-			'popcorn\\model\\dataMaps\\TopicDataMap' => TopicDataMap::WITH_NONE | TopicDataMap::WITH_OWNER | TopicDataMap::WITH_LAST_COMMENT,
+			'popcorn\\model\\dataMaps\\TopicDataMap'        => TopicDataMap::WITH_NONE | TopicDataMap::WITH_OWNER | TopicDataMap::WITH_LAST_COMMENT,
 			'popcorn\\model\\dataMaps\\TopicCommentDataMap' => TopicCommentDataMap::WITH_NONE,
-			'popcorn\\model\\dataMaps\\GroupDataMap' => GroupDataMap::WITH_NONE,
-			'popcorn\\model\\dataMaps\\UserDataMap' => UserDataMap::WITH_NONE | UserDataMap::WITH_AVATAR
+			'popcorn\\model\\dataMaps\\GroupDataMap'        => GroupDataMap::WITH_NONE,
+			'popcorn\\model\\dataMaps\\UserDataMap'         => UserDataMap::WITH_NONE | UserDataMap::WITH_AVATAR
 		]);
 
 
@@ -163,8 +173,8 @@ class CommunityController extends GenericController implements ControllerInterfa
 		$this
 			->getTwig()
 			->display('/community/group/topic/Topic.twig', [
-				'group' => $group,
-				'topic' => $topic,
+				'group'        => $group,
+				'topic'        => $topic,
 				'commentsTree' => $commentsTree
 			]);
 	}
@@ -184,6 +194,7 @@ class CommunityController extends GenericController implements ControllerInterfa
 	public function createGroupPost() {
 
 		$req = $this->getSlim()->request;
+
 
 		//Создаем группу
 		$group = new Group();
@@ -209,7 +220,17 @@ class CommunityController extends GenericController implements ControllerInterfa
 
 			if (count($tagsId)) {
 				foreach ($tagsId as $tagId) {
-					$tag = TagFactory::get($tagId);
+
+					list ($tagType, $entityId) = explode('-', $tagId);
+
+					switch ($tagType) {
+						case Tag::PERSON:
+							$tag = PersonFactory::getPerson($entityId);
+							break;
+						case Tag::EVENT:
+							$tag = TagFactory::get($entityId);
+							break;
+					}
 
 					$group->addTag($tag);
 				}
@@ -257,7 +278,7 @@ class CommunityController extends GenericController implements ControllerInterfa
 
 	public function topicCreatePOST() {
 
-		$req = $this->getSlim()->request();
+		$req = $this->getSlim()->request;
 
 		$type = $req->post('type');
 		$groupId = (int)$req->post('groupId');
@@ -267,15 +288,15 @@ class CommunityController extends GenericController implements ControllerInterfa
 		$group = GroupFactory::get($groupId);
 
 		if (!($group instanceof Group)) {
-			throw new \EmptyContentException('Неверная группа');
+			throw new \Exception('Неверная группа');
 		}
 
 		if (strlen($name) < 3) {
-			throw new \EmptyContentException('Название темы должно быть задано');
+			throw new \Exception('Название темы должно быть задано');
 		}
 
 		if (strlen($content) < 3) {
-			throw new \EmptyContentException('Описание темы должно быть задано');
+			throw new \Exception('Описание темы должно быть задано');
 		}
 
 		$topic = new Topic();
@@ -289,8 +310,9 @@ class CommunityController extends GenericController implements ControllerInterfa
 		$dataMap = new TopicDataMap();
 		$dataMap->save($topic);
 
-		$this->getSlim()->redirect(sprintf('/community/group/%1$u/topic/%1$u'
-			, $topic->getId()
+		$this->getSlim()->redirect(sprintf('/community/group/%u/topic/%u',
+			$group->getId(),
+			$topic->getId()
 		));
 
 	}
@@ -324,17 +346,22 @@ class CommunityController extends GenericController implements ControllerInterfa
 
 	}
 
-	public function groupsNew() {
+	public function groupsNew($page) {
 
-		$dataMap = new GroupDataMap();
-		$groups = $dataMap->getNewGroups();
+		if (is_null($page)) {
+			$page = 1;
+		}
 
-//		print '<pre>'.print_r($groups,true).'</pre>';
+		$groups = GroupFactory::dataMapProxy()->getNewGroups([], ($page - 1) * self::GROUPS_PER_PAGE, self::GROUPS_PER_PAGE, $totalFound);
 
 		$this
 			->getTwig()
 			->display('/community/GroupsNew.twig', [
-				'groups' => $groups
+				'groups'    => $groups,
+				'paginator' => [
+					'pages'  => ceil($totalFound / self::GROUPS_PER_PAGE),
+					'active' => $page
+				]
 			]);
 
 	}
@@ -394,7 +421,7 @@ class CommunityController extends GenericController implements ControllerInterfa
 		$this
 			->getTwig()
 			->display('/community/group/Group.twig', [
-				'group' => $group,
+				'group'       => $group,
 				'userInGroup' => $userInGroup
 			]);
 
@@ -415,7 +442,7 @@ class CommunityController extends GenericController implements ControllerInterfa
 		$dataMapHelper = new DataMapHelper();
 		$dataMapHelper->setRelationship([
 			'popcorn\\model\\dataMaps\\TopicDataMap' => TopicDataMap::WITH_NONE | TopicDataMap::WITH_OWNER | TopicDataMap::WITH_LAST_COMMENT,
-			'popcorn\\model\\dataMaps\\UserDataMap' => UserDataMap::WITH_NONE | UserDataMap::WITH_AVATAR
+			'popcorn\\model\\dataMaps\\UserDataMap'  => UserDataMap::WITH_NONE | UserDataMap::WITH_AVATAR
 		]);
 
 		{
@@ -429,10 +456,10 @@ class CommunityController extends GenericController implements ControllerInterfa
 		$this
 			->getTwig()
 			->display('/community/group/topic/Topics.twig', [
-				'group' => $group,
-				'topics' => $topics,
+				'group'     => $group,
+				'topics'    => $topics,
 				'paginator' => [
-					'pages' => $paginator['pages'],
+					'pages'  => $paginator['pages'],
 					'active' => $page
 				]
 			]);
@@ -454,7 +481,7 @@ class CommunityController extends GenericController implements ControllerInterfa
 		$dataMapHelper = new DataMapHelper();
 		$dataMapHelper->setRelationship([
 			'popcorn\\model\\dataMaps\\GroupMembersDataMap' => GroupMembersDataMap::WITH_NONE | GroupMembersDataMap::WITH_USER,
-			'popcorn\\model\\dataMaps\\UserDataMap' => UserDataMap::WITH_NONE | UserDataMap::WITH_INFO | UserDataMap::WITH_AVATAR
+			'popcorn\\model\\dataMaps\\UserDataMap'         => UserDataMap::WITH_NONE | UserDataMap::WITH_INFO | UserDataMap::WITH_AVATAR
 		]);
 
 		{
@@ -478,10 +505,10 @@ class CommunityController extends GenericController implements ControllerInterfa
 		$this
 			->getTwig()
 			->display('/community/group/Members.twig', [
-				'group' => $group,
-				'users' => $users,
+				'group'     => $group,
+				'users'     => $users,
 				'paginator' => [
-					'pages' => $paginator['pages'],
+					'pages'  => $paginator['pages'],
 					'active' => $page
 				]
 			]);

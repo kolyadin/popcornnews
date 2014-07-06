@@ -70,7 +70,7 @@ class Import2 extends Command {
 			$this->pdo->query('select t_vote.*,t_post.pole34 firstPerson,t_post.pole35 secondPerson from popcornnews.popcornnews_news_votes t_vote join popcornnews.popconnews_goods_ t_post on (t_post.id = t_vote.nid)');
 
 		$this->stmtInsertFashionBattleVoting =
-			$this->pdo->prepare('insert into pn_news_fashion_battle_voting set checksum = :checksum, votedAt = :votedAt, newsId = :newsId, `option` = :option');
+			$this->pdo->prepare('insert into pn_news_fashion_battle_voting set votedAt = :votedAt, userId=:userId, newsId = :newsId, `option` = :option');
 	}
 
 	protected function configure() {
@@ -176,10 +176,10 @@ class Import2 extends Command {
 			if ($table['vote1'] > 0) {
 				for ($i = 1; $i <= $table['vote1']; $i++) {
 					$this->stmtInsertFashionBattleVoting->execute([
-						':checksum' => md5(microtime(1)),
-						':votedAt'  => null,
-						':newsId'   => $table['nid'],
-						':option'   => 1
+						':votedAt' => null,
+						':userId'  => $table['uid'],
+						':newsId'  => $table['nid'],
+						':option'  => 1
 					]);
 				}
 
@@ -188,10 +188,10 @@ class Import2 extends Command {
 			if ($table['vote2'] > 0) {
 				for ($i = 1; $i <= $table['vote2']; $i++) {
 					$this->stmtInsertFashionBattleVoting->execute([
-						':checksum' => md5(microtime(1)),
-						':votedAt'  => null,
-						':newsId'   => $table['nid'],
-						':option'   => 2
+						':votedAt' => null,
+						':userId'  => $table['uid'],
+						':newsId'  => $table['nid'],
+						':option'  => 2
 					]);
 				}
 			}
@@ -217,33 +217,35 @@ class Import2 extends Command {
 
 		while ($table = $this->stmtFindPosts->fetch(\PDO::FETCH_ASSOC)) {
 
-			$output->writeln("\t<info>Новость #{$table['id']}");
+			$output->writeln("\t<info>Новость #{$table['id']}</info>");
 
 			//region Пробуем скачать основное фото новости
 			try {
 				$url = sprintf('http://www.popcornnews.ru/upload1/%s', $table['pole5']);
 
-				$output->write("\t\t<comment>Попытка скачать главное фото $url");
+				$output->write("\t\t<comment>Скачиваю главное фото $url</comment>");
 
 				$mainImage = ImageFactory::createFromUrl($url);
 
+				$output->write(' <info>удачно</info>');
+
 				{
-					$output->write("\t\t<info>Генерим мелкую фотку поиска</info>");
 					$mainImage->getThumb('110x');
+					$output->write(' <info>110x</info>');
 				}
 
 				{
-					$output->write("\t\t<info>Генерим основную фотку</info>");
 					$mainImage->getThumb('590x');
+					$output->write(' <info>590x</info>');
 				}
 
 				$this->stmtInsertPost->bindValue(':mainImageId', $mainImage->getId());
 
-				$output->writeln(" готово</comment>");
+				$output->writeln(" <info>готово</info>");
 
 			} catch (Exception $e) {
 				$this->stmtInsertPost->bindValue(':mainImageId', 0);
-				$output->write(" неудачно</comment>");
+				$output->write(" <error>неудачно</error>");
 				continue;
 			}
 			//endregion
@@ -262,7 +264,7 @@ class Import2 extends Command {
 				try {
 					$url = sprintf('http://www.popcornnews.ru%s', str_replace('/upload/', '/upload1/', $remotePhoto['filepath']));
 
-					$output->write("\t\t<comment>Пытаемся скачать $url");
+					$output->write("\t\t<comment>Пытаемся скачать $url</comment>");
 
 					$image = ImageFactory::createFromUrl($url);
 					$image->setTitle($remotePhoto['name']);
@@ -276,22 +278,22 @@ class Import2 extends Command {
 						':seq'     => $remotePhoto['seq']
 					]);
 
-					$output->writeln(" готово</comment>");
+					$output->write(' <info>удачно</info>');
 
 					{
-						$output->write("\t\t<info>Генерим фотку 200x для админки");
 						$image->getThumb('200x'); //Мелкая фотка для админки (все-равно понадобится)
-						$output->writeln(" готово</info>");
+						$output->write(" <info>200x</info>");
 					}
 
 					{
-						$output->write("\t\t<info>Генерим фотку 620x для новостей");
 						$image->getThumb('620x'); //Фотка в подробной новости
-						$output->writeln(" готово</info>");
+						$output->write(" <info>620x</info>");
 					}
+
+					$output->writeln(' <info>готово</info>');
 
 				} catch (Exception $e) {
-					$output->write(" неудачно</comment>\n");
+					$output->writeln("<error>неудачно</error>");
 					continue;
 				}
 
@@ -381,13 +383,13 @@ class Import2 extends Command {
 			$output->writeln('<comment> готово</comment>');
 		}
 
-		{
+		/*{
 			$output->write('<info>Связывание статистики fashion battle</info>');
 
 			$this->connectPostsWithFashionBattles();
 
 			$output->writeln('<comment> готово</comment>');
-		}
+		}*/
 
 		{
 			$output->write('<info>Обновление количества просмотров новостей</info>');

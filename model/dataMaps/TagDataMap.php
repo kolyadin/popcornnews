@@ -81,6 +81,16 @@ class TagDataMap extends DataMap {
 
 	}
 
+	/**
+	 * @param $searchString
+	 * @return Tag[]
+	 */
+	public function searchTags($searchString) {
+
+		return $this->fetchAll('SELECT * FROM pn_tags WHERE name LIKE :name AND type = 1', [':name' => "%$searchString%"]);
+
+	}
+
 	public function findPublicTagsByName($name) {
 
 		$foundTags = $this->fetchAll('SELECT * FROM pn_tags WHERE name LIKE :name AND type = 0 order by name asc', [':name' => "%$name%"]);
@@ -102,8 +112,8 @@ class TagDataMap extends DataMap {
 			->query(implode(' | ', $query), $name)
 			->in('personsIndex')
 			->weights([
-				'name' => 70,
-				'genitiveName' => 30,
+				'name'              => 70,
+				'genitiveName'      => 30,
 				'prepositionalName' => 30
 			])
 			->fetch(['popcorn\model\persons\PersonFactory', 'getPerson'])

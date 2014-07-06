@@ -71,4 +71,15 @@ class TagFactory {
 
         return self::$dataMap->delete($id);
     }
+
+
+	/**
+	 * @param $searchString
+	 * @return Tag[]
+	 */
+	public static function searchTags($searchString) {
+		self::checkDataMap();
+
+		return self::$dataMap->searchTags($searchString);
+	}
 }

@@ -43,7 +43,7 @@ var PostFB = {
 
         setTimeout(function () {
             $vote.tooltipster('hide');
-        }, 2000);
+        }, 5000);
     },
     doVote: function (option, obj) {
 

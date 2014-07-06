@@ -230,12 +230,6 @@ class Group extends Model {
 	 * @throws \popcorn\model\exceptions\SaveFirstException
 	 */
 	public function addMember(User $user) {
-		if (is_null($user->getId())) {
-			throw new SaveFirstException();
-		}
-		if (array_search($user->getId(), $this->members) !== false) {
-			throw new \InvalidArgumentException('Member exists');
-		}
 
 //		$this->setMembersCount($this->getMembersCount() + 1);
 
@@ -291,20 +285,14 @@ class Group extends Model {
 	}
 
 	/**
-	 * @param Tag $tag
-	 *
-	 * @throws \InvalidArgumentException
-	 * @throws \popcorn\model\exceptions\SaveFirstException
+	 * @param popcorn\\model\\persons\\Person | popcorn\\model\\tags\\Tag | popcorn\\model\\posts\\Movie $entity
 	 */
-	public function addTag(Tag $tag) {
-		if (is_null($tag->getId())) {
-			throw new SaveFirstException();
-		}
-		if (array_search($tag, $this->tags) !== false) {
-			throw new \InvalidArgumentException('Tag exists');
-		}
+	public function addTag($tag) {
 		$this->tags[] = $tag;
+		$this->changed();
 	}
+
+
 
 	/**
 	 * @return int

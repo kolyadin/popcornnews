@@ -5,8 +5,10 @@ namespace popcorn\model\dataMaps;
 use popcorn\model\content\ImageFactory;
 use popcorn\model\exceptions\SaveFirstException;
 use popcorn\model\groups\Group;
+use popcorn\model\persons\Person;
 use popcorn\model\system\users\UserFactory;
 use popcorn\model\content\Album;
+use popcorn\model\tags\Tag;
 
 /**
  * Class GroupDataMap
@@ -39,15 +41,15 @@ class GroupDataMap extends DataMap {
 	 */
 	private $getAlbumsStatement;
 
+	private $modifier;
+
 	/**
 	 */
-	public function __construct(DataMapHelper $helper = null) {
-
-		if ($helper instanceof DataMapHelper) {
-			DataMap::setHelper($helper);
-		}
+	public function __construct($modifier = self::WITH_NONE) {
 
 		parent::__construct();
+
+		$this->modifier = $modifier;
 
 		$this->groupMembers = new GroupMembersDataMap();
 
@@ -60,7 +62,7 @@ class GroupDataMap extends DataMap {
 		$this->findOneStatement = $this->prepare("SELECT * FROM pn_groups WHERE id=:id");
 
 		$this->cleanTagsStatement = $this->prepare("DELETE FROM pn_groups_tags WHERE groupId = :id");
-		$this->insertTagsStatement = $this->prepare("INSERT INTO pn_groups_tags (groupId, tagId) VALUES (:groupId, :tagId)");
+		$this->insertTagsStatement = $this->prepare("INSERT INTO pn_groups_tags (groupId, type, entityId) VALUES (:groupId, :type, :entityId)");
 		$this->getTagsStatement = $this->prepare("SELECT t.* FROM pn_groups_tags AS l
         INNER JOIN pn_tags AS t ON (l.tagId = t.id)
         WHERE l.groupId = :id");
@@ -113,7 +115,7 @@ class GroupDataMap extends DataMap {
 	 * @return Group
 	 */
 	protected function prepareItem($item) {
-		$this->groupMembers->save($item->getMembers());
+//		$this->groupMembers->save($item->getMembers());
 
 		return parent::prepareItem($item);
 	}
@@ -131,13 +133,11 @@ class GroupDataMap extends DataMap {
 
 		parent::itemCallback($item);
 
-		$modifier = $this->getModifier($this, $modifier);
-
-		if ($modifier & self::WITH_OWNER) {
+		if ($this->modifier & self::WITH_OWNER) {
 			$item->setOwner(UserFactory::getUser($item->getOwner()));
 		}
 
-		if ($modifier & self::WITH_TAGS) {
+		if ($this->modifier & self::WITH_TAGS) {
 			$item->setTags($this->getTags($item->getId()));
 		}
 
@@ -150,6 +150,13 @@ class GroupDataMap extends DataMap {
 //		if ($modifier & self::WITH_MEMBERS) {
 //			$item->setMembers($this->getMembers($item->getId()));
 //		}
+	}
+
+	/**
+	 * @param \popcorn\model\groups\Group $item
+	 */
+	protected function onInsert($item) {
+
 	}
 
 	/**
@@ -172,11 +179,23 @@ class GroupDataMap extends DataMap {
 		if (count($item->getTags()) > 0) {
 			$this->insertTagsStatement->bindValue(':groupId', $item->getId());
 			$tags = $item->getTags();
+
 			foreach ($tags as $tag) {
 				if (is_null($tag->getId())) {
 					throw new SaveFirstException();
 				}
-				$this->insertTagsStatement->bindValue(':tagId', $tag->getId());
+
+				if ($tag instanceof Person) {
+					$person = $tag;
+
+					$this->insertTagsStatement->bindValue(':type', Tag::PERSON);
+					$this->insertTagsStatement->bindValue(':entityId', $person->getId());
+
+				} elseif ($tag instanceof Tag) {
+					$this->insertTagsStatement->bindValue(':type', $tag->getType());
+					$this->insertTagsStatement->bindValue(':entityId', $tag->getId());
+				}
+
 				$this->insertTagsStatement->execute();
 			}
 		}
@@ -193,8 +212,6 @@ class GroupDataMap extends DataMap {
 			}
 		}
 
-
-		print '<pre>'.print_r($item->get,true).'</pre>';
 
 		/*
 		if ($item->getMembersCount() > 0) {
@@ -288,10 +305,27 @@ class GroupDataMap extends DataMap {
 		return $items;
 	}
 
-	public function getNewGroups() {
+	public function getNewGroups(array $options = [], $from = 0, $count = -1, &$totalFound = -1) {
 
-		return $this->fetchAll('SELECT * FROM pn_groups ORDER BY id DESC');
+		$options = array_merge([
+			'orderBy' => [
+				'createTime' => 'desc'
+			]
+		], $options);
 
+		$sql = 'SELECT %s FROM pn_groups WHERE 1=1';
+
+		if ($totalFound != -1) {
+			$stmt = $this->prepare(sprintf($sql, 'count(*)'));
+			$stmt->execute();
+
+			$totalFound = $stmt->fetchColumn();
+		}
+
+		$sql .= $this->getOrderString($options['orderBy']);
+		$sql .= $this->getLimitString($from, $count);
+
+		return $this->fetchAll(sprintf($sql, '*'));
 	}
 
 }

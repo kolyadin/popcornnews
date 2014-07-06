@@ -50,12 +50,12 @@ class Topic extends Model {
 	/**
 	 * @var int
 	 */
-	private $votesUp;
+	private $votesUp = 0;
 
 	/**
 	 * @var int
 	 */
-	private $votesDown;
+	private $votesDown = 0;
 
 	/**
 	 * @var int

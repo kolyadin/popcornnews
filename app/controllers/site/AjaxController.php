@@ -52,6 +52,8 @@ use popcorn\model\system\users\UserFactory;
 use popcorn\lib\MailHelper;
 use popcorn\model\exceptions\AjaxException;
 use popcorn\lib\PDOHelper;
+use popcorn\model\tags\Tag;
+use popcorn\model\tags\TagFactory;
 use popcorn\model\voting\UpDownVoting;
 use popcorn\model\persons\Person;
 use popcorn\model\groups\Group;
@@ -900,7 +902,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 				throw new NotAuthorizedException();
 			}
 
-			$action = PersonFactory::unsubscribeFan(PersonFactory::getPerson($personId),$currentUser);
+			$action = PersonFactory::unsubscribeFan(PersonFactory::getPerson($personId), $currentUser);
 
 			if ($action) {
 				$this->getApp()->exitWithJsonSuccessMessage();
@@ -915,23 +917,38 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 	public function communityTags() {
 
-		$term = $this->getSlim()->request()->get('term');
+		$term = $this->getSlim()->request->get('term');
 
-		$dataMap = new TagDataMap();
-		$results = $dataMap->findPublicTagsByName($term);
+		$persons = PersonFactory::searchPersons($term, null, $totalFound);
 
 		$out = [];
 
-		foreach ($results as $model) {
-			$out[] = [
-				'id'   => $model->getId(),
-				'name' => $model->getName()
-			];
+		if (count($persons)) {
+			foreach ($persons as $person) {
+				$out[] = [
+					'id'   => Tag::PERSON.'-'.$person->getId(),
+					'name' => $person->getName()
+				];
+			}
 		}
 
-		$this->getApp()->exitWithJsonSuccessMessage([
-			'tags' => $out
-		]);
+		$tags = TagFactory::searchTags($term);
+
+		if (count($tags)) {
+			foreach ($tags as $tag) {
+				$out[] = [
+					'id'   => $tag->getType().'-'.$tag->getId(),
+					'name' => $tag->getName()
+				];
+			}
+
+		}
+
+		$this
+			->getApp()
+			->exitWithJson('success', [
+				'tags' => $out
+			]);
 
 	}
 
@@ -1003,15 +1020,16 @@ class AjaxController extends GenericController implements ControllerInterface {
 			$category = $request->post('category');
 		}
 
+		$person = PersonFactory::getPerson($personId);
+
 		$personDataMap = new PersonDataMap();
-		$person = $personDataMap->findById($personId);
 
 		try {
 			if ($personDataMap->isVotingAllow($person, $category)) {
 
 				$stmt = PDOHelper::getPDO()->prepare('INSERT INTO pn_persons_voting SET checksum = :checksum, votedAt = :votedAt, personId = :personId, category = :category, rating = :rating');
 				$stmt->execute([
-					':checksum' => $personDataMap->getChecksum(),
+					':checksum' => UserFactory::getHeadersChecksum(),
 					':votedAt'  => time(),
 					':personId' => $person->getId(),
 					':category' => $category,
@@ -1375,6 +1393,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 				date("d.m.Y", strtotime(sprintf('%dW%02d-7', $year, $week))),
 			));
 		}
+
 		return $aMonthWeeks;
 
 	}
