@@ -27,11 +27,11 @@ class Group extends Model {
 	/**
 	 * @var \DateTime
 	 */
-	private $createTime;
+	private $createdAt;
 	/**
 	 * @var \DateTime
 	 */
-	private $editTime;
+	private $editedAt;
 	/**
 	 * @var bool
 	 */
@@ -91,8 +91,28 @@ class Group extends Model {
 	/**
 	 * @return string
 	 */
-	public function getDescription() {
-		return $this->description;
+	public function getDescription($length = null) {
+
+		if ($length){
+			$description = $this->description;
+
+			$output = wordwrap(strip_tags($description), $length);
+			$lines = explode("\n", $output);
+			$output = $lines[0];
+
+			$output = rtrim($output, '.') . '.';
+
+			if (count($lines) > 1) {
+				$output = $output . rtrim($output, '.') . '...';
+			}
+
+			return $output;
+		}else{
+			return $this->description;
+		}
+
+
+
 	}
 
 	/**
@@ -106,31 +126,30 @@ class Group extends Model {
 	/**
 	 * @return \DateTime
 	 */
-	public function getCreateTime() {
-		return $this->createTime;
+	public function getCreatedAt() {
+		return $this->createdAt;
 	}
 
 	/**
-	 * @param \DateTime $createTime
+	 * @param $createdAt
 	 *
-	 * @throws \RuntimeException
 	 */
-	public function setCreateTime($createTime) {
-		$this->createTime = $createTime;
+	public function setCreatedAt($createdAt) {
+		$this->createdAt = $createdAt;
 	}
 
 	/**
 	 * @return \DateTime
 	 */
-	public function getEditTime() {
-		return $this->editTime;
+	public function getEditedAt() {
+		return $this->editedAt;
 	}
 
 	/**
 	 * @param \DateTime $editTime
 	 */
-	public function setEditTime($editTime) {
-		$this->editTime = $editTime;
+	public function setEditedAt($editTime) {
+		$this->editedAt = $editTime;
 	}
 
 	/**

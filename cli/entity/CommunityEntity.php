@@ -9,7 +9,8 @@ class CommunityEntity {
     static public function getCommands() {
 
         return [
-            new command\community\UpdateCounters()
+            new command\community\UpdateCounters(),
+			new command\community\Import()
         ];
 
     }

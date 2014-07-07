@@ -30,7 +30,7 @@ use Slim\Route;
  */
 class CommunityController extends GenericController implements ControllerInterface {
 
-	const GROUPS_PER_PAGE = 10;
+	const GROUPS_PER_PAGE = 15;
 
 	static protected $groupId = null;
 

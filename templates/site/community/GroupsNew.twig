@@ -20,12 +20,14 @@
 						{% if group.poster.id %}
 							{% set photo = group.poster.thumb('130x') %}
 							<a href="/community/group/{{ group.id }}"><img src="{{ photo.url }}" alt="{{ group.title|e }}" width="130"></a>
+						{% else %}
+							<div style="width:300px;">&nbsp;</div>
 						{% endif %}
 
 					</div>
 					<div class="b-community-item__content">
 						<h4><a href="/community/group/{{ group.id }}">{{ group.title|e }}</a></h4>
-						<p>{{ group.description|e }}</p>
+						<p>{{ group.description(200)|e }}</p>
 						<div class="b-community-item__tags"></div>
 						<div class="b-community-item__stat">
 							<span class="b-community-item__stat-members">3203 участника</span>

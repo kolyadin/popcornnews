@@ -116,6 +116,8 @@ class GroupDataMap extends DataMap {
 	 */
 	protected function prepareItem($item) {
 //		$this->groupMembers->save($item->getMembers());
+		$item->setCreatedAt(\DateTime::createFromFormat('U', $item->getCreatedAt()));
+		$item->setEditedAt(\DateTime::createFromFormat('U', $item->getEditedAt()));
 
 		return parent::prepareItem($item);
 	}
@@ -126,8 +128,6 @@ class GroupDataMap extends DataMap {
 	 * @param int $modifier
 	 */
 	protected function itemCallback($item, $modifier = self::WITH_ALL) {
-		$item->setCreateTime(new \DateTime($item->getCreateTime()));
-		$item->setEditTime(new \DateTime($item->getEditTime()));
 
 		$item->setPoster(ImageFactory::getImage($item->getPoster()));
 
@@ -309,7 +309,7 @@ class GroupDataMap extends DataMap {
 
 		$options = array_merge([
 			'orderBy' => [
-				'createTime' => 'desc'
+				'createdAt' => 'desc'
 			]
 		], $options);
 
