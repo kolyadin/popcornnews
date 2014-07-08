@@ -31,6 +31,7 @@ use Slim\Route;
 class CommunityController extends GenericController implements ControllerInterface {
 
 	const GROUPS_PER_PAGE = 15;
+	const MEMBERS_PER_PAGE = 15;
 
 	static protected $groupId = null;
 
@@ -64,6 +65,18 @@ class CommunityController extends GenericController implements ControllerInterfa
 			->conditions([
 				'page' => '[1-9][0-9]*'
 			]);
+
+		$this
+			->getSlim()
+			->get('/community/groups/top', function () {
+				$this->groupsTop();
+			});
+
+		$this
+			->getSlim()
+			->get('/community/groups/rules', function () {
+				$this->getTwig()->display('/community/Rules.twig');
+			});
 
 		$this
 			->getSlim()
@@ -145,9 +158,27 @@ class CommunityController extends GenericController implements ControllerInterfa
 
 	public function communityFrontPage() {
 
+		$topGroups = GroupFactory::dataMapProxy()
+			->getGroups([
+				'orderBy' => [
+					'membersCount' => 'desc',
+					'createdAt'    => 'asc'
+				]
+			], 0, 5);
+
+		$newGroups = GroupFactory::dataMapProxy()
+			->getGroups([
+				'orderBy' => [
+					'createdAt' => 'desc'
+				]
+			], 0, 5);
+
 		$this
 			->getTwig()
-			->display('/community/CommunityFrontPage.twig');
+			->display('/community/CommunityFrontPage.twig', [
+				'topGroups' => $topGroups,
+				'newGroups' => $newGroups
+			]);
 	}
 
 
@@ -207,8 +238,8 @@ class CommunityController extends GenericController implements ControllerInterfa
 
 		$group->setOwner(UserFactory::getCurrentUser());
 
-		$group->setCreateTime(new \DateTime('now'));
-		$group->setEditTime(new \DateTime('now'));
+		$group->setCreatedAt(new \DateTime('now'));
+		$group->setEditedAt(new \DateTime('now'));
 		$group->setTitle($req->post('name'));
 		$group->setDescription($req->post('content'));
 		$group->setPrivate(
@@ -237,11 +268,9 @@ class CommunityController extends GenericController implements ControllerInterfa
 			}
 		}
 
-		//При создании группы, создатель автоматически становится участником этой группы
-		$group->addMember(UserFactory::getCurrentUser());
-
 		GroupFactory::save($group);
-
+		//При создании группы, создатель автоматически становится участником этой группы
+		GroupFactory::addMember($group, UserFactory::getCurrentUser());
 
 		$this->getSlim()->redirect(sprintf('/community/group/%u', $group->getId()));
 	}
@@ -352,7 +381,7 @@ class CommunityController extends GenericController implements ControllerInterfa
 			$page = 1;
 		}
 
-		$groups = GroupFactory::dataMapProxy()->getNewGroups([], ($page - 1) * self::GROUPS_PER_PAGE, self::GROUPS_PER_PAGE, $totalFound);
+		$groups = GroupFactory::dataMapProxy()->getGroups([], ($page - 1) * self::GROUPS_PER_PAGE, self::GROUPS_PER_PAGE, $totalFound);
 
 		$this
 			->getTwig()
@@ -366,15 +395,40 @@ class CommunityController extends GenericController implements ControllerInterfa
 
 	}
 
+	public function groupsTop() {
+
+		$groups = GroupFactory::dataMapProxy()
+			->getGroups([
+				'orderBy' => [
+					'membersCount' => 'desc',
+					'createdAt'    => 'asc'
+				]
+			], 0, self::GROUPS_PER_PAGE, $totalFound);
+
+		$this
+			->getTwig()
+			->display('/community/GroupsTop.twig', [
+				'groups' => $groups
+			]);
+
+	}
+
 
 	public function group() {
 
 		$group = GroupFactory::get(self::$groupId);
 
-		$membersDataMap = new GroupMembersDataMap();
+		/** @var \popcorn\model\groups\GroupMembers $member */
+		$member = GroupFactory::getMemberStatus($group, UserFactory::getCurrentUser());
 
-		$userInGroup = $membersDataMap->memberExists($group, UserFactory::getCurrentUser()) ? true : false;
-
+		if (!$member) {
+			$this->getTwig()->addGlobal('memberStatus', 'guest');
+		} //Приватная группа, ждет подтверждения
+		elseif ($member->getRequest() == 'y' && $member->getConfirm() == 'n') {
+			$this->getTwig()->addGlobal('memberStatus', 'needConfirm');
+		} elseif ($member->getRequest() == 'y' && $member->getConfirm() == 'y') {
+			$this->getTwig()->addGlobal('memberStatus', 'member');
+		}
 
 		try {
 
@@ -421,8 +475,7 @@ class CommunityController extends GenericController implements ControllerInterfa
 		$this
 			->getTwig()
 			->display('/community/group/Group.twig', [
-				'group'       => $group,
-				'userInGroup' => $userInGroup
+				'group' => $group
 			]);
 
 	}
@@ -478,28 +531,17 @@ class CommunityController extends GenericController implements ControllerInterfa
 
 		$group = GroupFactory::get(self::$groupId);
 
-		$dataMapHelper = new DataMapHelper();
-		$dataMapHelper->setRelationship([
-			'popcorn\\model\\dataMaps\\GroupMembersDataMap' => GroupMembersDataMap::WITH_NONE | GroupMembersDataMap::WITH_USER,
-			'popcorn\\model\\dataMaps\\UserDataMap'         => UserDataMap::WITH_NONE | UserDataMap::WITH_INFO | UserDataMap::WITH_AVATAR
-		]);
-
-		{
-			$onPage = 50;
-			$paginator = [($page - 1) * $onPage, $onPage];
-		}
-
-		$membersDataMap = new GroupMembersDataMap($dataMapHelper);
-		$groupMembers = $membersDataMap->getMembers($group, $paginator);
-
-		if (!$groupMembers) {
-			$this->getSlim()->notFound();
-		}
+		$members = GroupFactory::getMembers($group,
+			['with' => GroupMembersDataMap::WITH_USER],
+			($page - 1) * self::MEMBERS_PER_PAGE,
+			self::MEMBERS_PER_PAGE,
+			$totalFound
+		);
 
 		$users = [];
 
-		foreach ($groupMembers as $row) {
-			$users[] = $row->getUser();
+		foreach ($members as $member) {
+			$users[] = $member->getUser();
 		}
 
 		$this
@@ -508,7 +550,7 @@ class CommunityController extends GenericController implements ControllerInterfa
 				'group'     => $group,
 				'users'     => $users,
 				'paginator' => [
-					'pages'  => $paginator['pages'],
+					'pages'  => ceil($totalFound / self::GROUPS_PER_PAGE),
 					'active' => $page
 				]
 			]);

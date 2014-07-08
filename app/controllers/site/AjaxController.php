@@ -35,6 +35,8 @@ use popcorn\model\exceptions\ajax\AlreadyRatedException;
 use popcorn\model\exceptions\ajax\VotingNotAllowException;
 use popcorn\model\exceptions\Exception;
 use popcorn\model\exceptions\NotAuthorizedException;
+use popcorn\model\groups\GroupFactory;
+use popcorn\model\groups\GroupMembers;
 use popcorn\model\groups\Topic;
 use popcorn\model\persons\facts\FactFactory;
 use popcorn\model\persons\Kid;
@@ -926,7 +928,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 		if (count($persons)) {
 			foreach ($persons as $person) {
 				$out[] = [
-					'id'   => Tag::PERSON.'-'.$person->getId(),
+					'id'   => Tag::PERSON . '-' . $person->getId(),
 					'name' => $person->getName()
 				];
 			}
@@ -937,7 +939,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 		if (count($tags)) {
 			foreach ($tags as $tag) {
 				$out[] = [
-					'id'   => $tag->getType().'-'.$tag->getId(),
+					'id'   => $tag->getType() . '-' . $tag->getId(),
 					'name' => $tag->getName()
 				];
 			}
@@ -960,21 +962,38 @@ class AjaxController extends GenericController implements ControllerInterface {
 				throw new NotAuthorizedException();
 			}
 
-			$groupId = $this->getSlim()->request()->post('groupId');
-			$securityCode = $this->getSlim()->request()->post('securityCode');
+			$groupId = $this->getSlim()->request->post('groupId');
+			$securityCode = $this->getSlim()->request->post('securityCode');
 
 			if ($currentUser->getSecurityCode() != $securityCode) {
 				throw new NotAuthorizedException();
 			}
 
-			$dataMap = new GroupDataMap();
-			/** @var Group $group */
-			$group = $dataMap->findById($groupId);
+			$group = GroupFactory::get($groupId);
 
-			$membersDataMap = new GroupMembersDataMap();
-			$membersDataMap->addMember($group, $currentUser);
+			if ($group->isPrivate()) {
+				$member = new GroupMembers();
+				$member->setGroup($group);
+				$member->setUser($currentUser);
+				$member->setJoinTime(new \DateTime());
+				$member->setConfirm('n');
+				$member->setRequest('y');
 
-			$this->getApp()->exitWithJsonSuccessMessage();
+				(new GroupMembersDataMap())->save($member);
+			} else {
+				$member = new GroupMembers();
+				$member->setGroup($group);
+				$member->setUser($currentUser);
+				$member->setJoinTime(new \DateTime());
+				$member->setConfirm('y');
+				$member->setRequest('y');
+
+				(new GroupMembersDataMap())->save($member);
+			}
+
+			$this
+				->getApp()
+				->exitWithJson('success');
 
 		} catch (Exception $e) {
 			$e->exitWithJsonException();
@@ -989,12 +1008,17 @@ class AjaxController extends GenericController implements ControllerInterface {
 				throw new NotAuthorizedException();
 			}
 
-			$groupId = $this->getSlim()->request()->post('groupId');
-			$securityCode = $this->getSlim()->request()->post('securityCode');
+			$groupId = $this->getSlim()->request->post('groupId');
+			$securityCode = $this->getSlim()->request->post('securityCode');
+
+			$group = GroupFactory::get($groupId);
 
 			if ($currentUser->getSecurityCode() != $securityCode) {
 				throw new NotAuthorizedException();
 			}
+
+			(new GroupMembersDataMap())->removeMember($group,$currentUser);
+
 			/*
 
 			$group = GroupFactory::get($groupId);

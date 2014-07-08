@@ -14,21 +14,59 @@
 		<h3 class="b-community-header">популярные группы</h3>
 
 		<ul class="b-community-groups">
-			<li class="b-community-item">
-				<div class="b-community-item__image">
-					<img src="http://v1.popcorn-news.ru/k/community/130/upload/community/groups/avatars/i92xh52d8q.jpg" alt="">
-				</div>
-				<div class="b-community-item__content">
-					<h4><a href="#">Самые красивые актеры и певцы</a></h4>
-					<p>Обсуждение самых красивых мужчин - актеров и певцов.</p>
-					<div class="b-community-item__tags"></div>
-					<div class="b-community-item__stat">
-						<span class="b-community-item__stat-members">3203 участника</span>
-						<span class="b-community-item__stat-date">Создано 5 февраля 2014</span>
+			{% for group in topGroups %}
+				<li class="b-community-item">
+					<div class="b-community-item__image">
+
+						{% if group.poster.id %}
+							{% set photo = group.poster.thumb('130x') %}
+							<a href="/community/group/{{ group.id }}"><img src="{{ photo.url }}" alt="{{ group.title|e }}" width="130"></a>
+						{% else %}
+							<div style="width:300px;">&nbsp;</div>
+						{% endif %}
+
 					</div>
-				</div>
-				<div class="clearfix"></div>
-			</li>
+					<div class="b-community-item__content">
+						<h4><a href="/community/group/{{ group.id }}">{{ group.title|e }}</a></h4>
+						<p>{{ group.description(200)|e }}</p>
+						<div class="b-community-item__tags"></div>
+						<div class="b-community-item__stat">
+							<span class="b-community-item__stat-members">{{ group.membersCount|ruNumber(['нет участников','%u участник','%u участника','%u участников']) }}</span>
+							<span class="b-community-item__stat-date">Создано {{ group.createdAt|ruDate('j f2 Y') }}</span>
+						</div>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+			{% endfor %}
+		</ul>
+
+		<h3 class="b-community-header">новые группы</h3>
+
+		<ul class="b-community-groups">
+			{% for group in newGroups %}
+				<li class="b-community-item">
+					<div class="b-community-item__image">
+
+						{% if group.poster.id %}
+							{% set photo = group.poster.thumb('130x') %}
+							<a href="/community/group/{{ group.id }}"><img src="{{ photo.url }}" alt="{{ group.title|e }}" width="130"></a>
+						{% else %}
+							<div style="width:300px;">&nbsp;</div>
+						{% endif %}
+
+					</div>
+					<div class="b-community-item__content">
+						<h4><a href="/community/group/{{ group.id }}">{{ group.title|e }}</a></h4>
+						<p>{{ group.description(200)|e }}</p>
+						<div class="b-community-item__tags"></div>
+						<div class="b-community-item__stat">
+							<span class="b-community-item__stat-members">{{ group.membersCount|ruNumber(['нет участников','%u участник','%u участника','%u участников']) }}</span>
+							<span class="b-community-item__stat-date">Создано {{ group.createdAt|ruDate('j f2 Y') }}</span>
+						</div>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+			{% endfor %}
 		</ul>
 	</div>
 

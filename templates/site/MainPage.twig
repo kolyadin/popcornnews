@@ -238,45 +238,21 @@
 					<div class="b-freeze-frame__rubrics-title-cont">
 						<div class="b-freeze-frame__groups-rubrics-title b-rubrics-title b-rubrics-title_s18">группы
 						</div>
-						<span class="b-freeze-frame__rubrics-counter b-counter">889</span>
-						<a href="#" class="b-freeze-frame__rubrics-create-button b-create-button"><b>+</b>создать</a>
+						<span class="b-freeze-frame__rubrics-counter b-counter">{{ groupsCount }}</span>
+						<a href="/community/groups/create" class="b-freeze-frame__rubrics-create-button b-create-button"><b>+</b>создать</a>
 					</div>
 					<div class="b-grid__g2 b-grid__a">
 						<ul class="b-freeze-frame__list">
-							<li class="b-freeze-frame__item"><a href="#"
-							                                    class="b-freeze-frame__link b-freeze-frame__link_color1">Harry
-									Potter</a></li>
-							<li class="b-freeze-frame__item"><a href="#"
-							                                    class="b-freeze-frame__link b-freeze-frame__link_color3">Jared
-									Leto</a></li>
-							<li class="b-freeze-frame__item"><a href="#"
-							                                    class="b-freeze-frame__link b-freeze-frame__link_color6">Kristen
-									Stewart</a></li>
-							<li class="b-freeze-frame__item"><a href="#"
-							                                    class="b-freeze-frame__link b-freeze-frame__link_color8">Nina
-									Dobrev</a></li>
-							<li class="b-freeze-frame__item"><a href="#"
-							                                    class="b-freeze-frame__link b-freeze-frame__link_color3">Taylor
-									Lautner</a></li>
-							<li class="b-freeze-frame__item"><a href="#"
-							                                    class="b-freeze-frame__link b-freeze-frame__link_color2">The
-									Best Vampire and Jared Leto</a></li>
+							{% for group in groups[:10] %}
+								<li class="b-freeze-frame__item"><a href="/community/group/{{ group.id }}" class="b-freeze-frame__link b-freeze-frame__link_color1">{{ group.title|e }}</a></li>
+							{% endfor %}
 						</ul>
 					</div>
 					<div class="b-grid__g2 b-grid__z">
 						<ul class="b-freeze-frame__list">
-							<li class="b-freeze-frame__item"><a href="#"
-							                                    class="b-freeze-frame__link b-freeze-frame__link_color1">The
-									Vampire Diaries</a></li>
-							<li class="b-freeze-frame__item"><a href="#"
-							                                    class="b-freeze-frame__link b-freeze-frame__link_color3">Twilight</a>
-							</li>
-							<li class="b-freeze-frame__item"><a href="#"
-							                                    class="b-freeze-frame__link b-freeze-frame__link_color5">СЕРИАЛЫ
-									2000-х ГОДОВ</a></li>
-							<li class="b-freeze-frame__item"><a href="#"
-							                                    class="b-freeze-frame__link b-freeze-frame__link_color3">Самые
-									красивые актеры и певцы</a></li>
+							{% for group in groups[10:10] %}
+								<li class="b-freeze-frame__item"><a href="/community/group/{{ group.id }}" class="b-freeze-frame__link b-freeze-frame__link_color1">{{ group.title|e }}</a></li>
+							{% endfor %}
 						</ul>
 					</div>
 				</section>

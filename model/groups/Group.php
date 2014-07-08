@@ -150,13 +150,14 @@ class Group extends Model {
 	 */
 	public function setEditedAt($editTime) {
 		$this->editedAt = $editTime;
+		$this->changed();
 	}
 
 	/**
 	 * @return bool
 	 */
 	public function isPrivate() {
-		return $this->private;
+		return $this->private == 1 ? true : false;
 	}
 
 	/**

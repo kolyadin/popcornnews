@@ -5989,6 +5989,11 @@ a.pink:hover,
   font-weight: bold;
   border-bottom: 1px dotted #ee2c90;
 }
+.b-faq .faqList span {
+  font-size: 15px;
+  font-weight: bold;
+  color: #ee2c90;
+}
 .b-contacts h5 {
   margin: 20px 0;
 }

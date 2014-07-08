@@ -55,7 +55,7 @@ class GroupDataMap extends DataMap {
 
 		$this->class = 'popcorn\\model\\groups\\Group';
 		$this->insertStatement =
-			$this->prepare("INSERT INTO `pn_groups` (title, description, createTime, editTime, private, owner, poster) VALUES (:title, :description, :createTime, :editTime, :private, :owner, :poster)");
+			$this->prepare("INSERT INTO `pn_groups` (title, description, createdAt, editedAt, private, owner, poster) VALUES (:title, :description, :createdAt, :editedAt, :private, :owner, :poster)");
 		$this->updateStatement =
 			$this->prepare("UPDATE pn_groups SET title=:title, description=:description, private=:private, poster=:poster WHERE id=:id");
 		$this->deleteStatement = $this->prepare("DELETE FROM pn_groups WHERE id=:id");
@@ -88,8 +88,8 @@ class GroupDataMap extends DataMap {
 
 		$this->insertStatement->bindValue(':title', $item->getTitle());
 		$this->insertStatement->bindValue(':description', $item->getDescription());
-		$this->insertStatement->bindValue(':createTime', $item->getCreateTime()->format('Y-m-d H:i:s'));
-		$this->insertStatement->bindValue(':editTime', $item->getEditTime()->format('Y-m-d H:i:s'));
+		$this->insertStatement->bindValue(':createdAt', $item->getCreatedAt()->getTimestamp());
+		$this->insertStatement->bindValue(':editedAt', $item->getEditedAt()->getTimestamp());
 		$this->insertStatement->bindValue(':private', $item->isPrivate());
 		$this->insertStatement->bindValue(':owner', $item->getOwner()->getId());
 		$this->insertStatement->bindValue(':poster', $item->getPoster()->getId());
@@ -116,8 +116,9 @@ class GroupDataMap extends DataMap {
 	 */
 	protected function prepareItem($item) {
 //		$this->groupMembers->save($item->getMembers());
-		$item->setCreatedAt(\DateTime::createFromFormat('U', $item->getCreatedAt()));
-		$item->setEditedAt(\DateTime::createFromFormat('U', $item->getEditedAt()));
+
+		$item->setCreatedAt($item->getCreatedAt());
+		$item->setEditedAt($item->getEditedAt());
 
 		return parent::prepareItem($item);
 	}
@@ -305,7 +306,7 @@ class GroupDataMap extends DataMap {
 		return $items;
 	}
 
-	public function getNewGroups(array $options = [], $from = 0, $count = -1, &$totalFound = -1) {
+	public function getGroups(array $options = [], $from = 0, $count = -1, &$totalFound = -1) {
 
 		$options = array_merge([
 			'orderBy' => [

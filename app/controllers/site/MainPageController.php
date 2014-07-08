@@ -8,6 +8,7 @@ use popcorn\model\dataMaps\DataMapHelper;
 use popcorn\model\dataMaps\NewsPostDataMap;
 use popcorn\model\dataMaps\PersonDataMap;
 use popcorn\model\dataMaps\TagDataMap;
+use popcorn\model\groups\GroupFactory;
 use popcorn\model\persons\KidFactory;
 use popcorn\model\posts\NewsPost;
 use popcorn\model\posts\PostFactory;
@@ -32,6 +33,7 @@ class MainPageController extends GenericController implements ControllerInterfac
 
 		$this->buildPersons();
 		$this->buildTags();
+		$this->buildGroups();
 		$this->buildTopPosts();
 		$this->buildLastPosts();
 		$this->buildRandomKid();
@@ -50,10 +52,10 @@ class MainPageController extends GenericController implements ControllerInterfac
 	}
 
 	private function buildFashionBattle() {
-		$post = PostFactory::findByTag(72409,[
-			'with' => NewsPostDataMap::WITH_MAIN_IMAGE,
+		$post = PostFactory::findByTag(72409, [
+			'with'   => NewsPostDataMap::WITH_MAIN_IMAGE,
 			'status' => NewsPost::STATUS_PUBLISHED,
-		],0,1)[0];
+		], 0, 1)[0];
 		$this->twigData['fashionBattle'] = $post;
 	}
 
@@ -75,7 +77,7 @@ class MainPageController extends GenericController implements ControllerInterfac
 	}
 
 	private function buildTopPosts() {
-		$topPosts = PostFactory::getTopPosts(0,10);
+		$topPosts = PostFactory::getTopPosts(0, 10);
 		$this->twigData['topPosts'] = $topPosts;
 	}
 
@@ -91,7 +93,7 @@ class MainPageController extends GenericController implements ControllerInterfac
 
 		foreach ($persons as &$person) {
 			$color = ceil(($person['newsCount'] * 7) / $personMax['newsCount']);
-			$color = 7 - $color ? : 1;
+			$color = 7 - $color ?: 1;
 
 			$person['color'] = $color;
 		}
@@ -114,11 +116,29 @@ class MainPageController extends GenericController implements ControllerInterfac
 
 		foreach ($tags as &$tag) {
 			$color = ceil(($tag['overall'] * 7) / $tagMax['overall']);
-			$color = 7 - $color ? : 1;
+			$color = 7 - $color ?: 1;
 
 			$tag['color'] = $color;
 		}
 
 		$this->twigData['tags'] = $tags;
+	}
+
+	private function buildGroups() {
+
+		$groups = GroupFactory::dataMapProxy()
+			->getGroups([
+				'orderBy' => [
+					'membersCount' => 'desc',
+					'createdAt'    => 'asc'
+				]
+			], 0, 20, $totalFound);
+
+		usort($groups, function ($a, $b) {
+			return strcmp($a->getTitle(), $b->getTitle());
+		});
+
+		$this->twigData['groups'] = $groups;
+		$this->twigData['groupsCount'] = $totalFound;
 	}
 }

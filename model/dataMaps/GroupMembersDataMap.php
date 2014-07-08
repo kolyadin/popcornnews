@@ -17,12 +17,14 @@ class GroupMembersDataMap extends DataMap {
 
 	const WITH_ALL = 7;
 
-	public function __construct(DataMapHelper $helper = null) {
+	private $modifier;
 
-		if ($helper instanceof DataMapHelper) {
-			DataMap::setHelper($helper);
-		}
+	public function __construct($modifier = self::WITH_NONE) {
+
 		parent::__construct();
+
+		$this->modifier = $modifier;
+
 		$this->class = "popcorn\\model\\groups\\GroupMembers";
 		$this->insertStatement =
 			$this->prepare("INSERT INTO pn_groups_members (`group`, user, joinTime, confirm, request) VALUES (:group, :user, :joinTime, :confirm, :request)");
@@ -60,51 +62,72 @@ class GroupMembersDataMap extends DataMap {
 	 * @param \popcorn\model\groups\GroupMembers $item
 	 * @param int $modifier
 	 */
-	protected function itemCallback($item, $modifier = self::WITH_ALL) {
+	protected function itemCallback($item) {
 
 		parent::itemCallback($item);
 
-		$modifier = $this->getModifier($this, $modifier);
-
-		if ($modifier & self::WITH_USER) {
+		if ($this->modifier & self::WITH_USER) {
 			$item->setUser(UserFactory::getUser($item->getUser()));
 		}
 
-		if ($modifier & self::WITH_GROUP) {
+		if ($this->modifier & self::WITH_GROUP) {
 			$item->setGroup(GroupFactory::get($item->getGroup()));
 		}
 	}
 
 	/**
-	 * @param Group $group
-	 * @return int
+	 * @param \popcorn\model\groups\GroupMembers $item
 	 */
-	public function getMembersCount(Group $group) {
-		$stmt = $this->prepare('SELECT count(*) FROM pn_groups_members WHERE `group` = :group');
-		$stmt->execute([':group' => $group->getId()]);
+	protected function onSave($item) {
 
-		return $stmt->fetchColumn();
+		$this->updateMembersCount($item->getGroup());
+
+	}
+
+	private function updateMembersCount(Group $group) {
+
+		$this
+			->prepare('UPDATE pn_groups SET membersCount = (SELECT count(*) FROM pn_groups_members WHERE `group` = :groupId AND confirm = "y") WHERE id = :groupId')
+			->execute([
+				':groupId' => $group->getId()
+			]);
+
 	}
 
 	/**
 	 * @param Group $group
+	 * @param array $options
+	 * @param int $from
+	 * @param int $count
+	 * @param int $totalFound
 	 *
-	 * @param array $paginator
 	 * @return GroupMembers[]
 	 */
-	public function getMembers(Group $group, array &$paginator) {
+	public function getMembers(Group $group, array $options = [], $from = 0, $count = -1, &$totalFound = -1) {
 
-		$sql = 'SELECT * FROM pn_groups_members WHERE `group` = :group';
+		$options = array_merge([
+			'orderBy' => [
+				'joinTime' => 'desc'
+			]
+		], $options);
 
-		$sql .= $this->getLimitString($paginator[0], $paginator[1]);
+		$sql = 'SELECT * FROM pn_groups_members WHERE `group` = :group AND confirm = "y" AND request = "y"';
 
-		$totalFound = $this->getMembersCount($group);
+		$binds = [
+			':group' => $group->getId()
+		];
 
-		$paginator['overall'] = $totalFound;
-		$paginator['pages'] = ceil($totalFound / $paginator[1]);
+		if ($totalFound != -1) {
+			$stmt = $this->prepare(sprintf($sql, 'count(*)'));
+			$stmt->execute($binds);
 
-		return $this->fetchAll($sql, [':group' => $group->getId()]);
+			$totalFound = $stmt->fetchColumn();
+		}
 
+		$sql .= $this->getOrderString($options['orderBy']);
+		$sql .= $this->getLimitString($from, $count);
+
+		return $this->fetchAll($sql, $binds);
 	}
 
 	/**
@@ -116,7 +139,7 @@ class GroupMembersDataMap extends DataMap {
 
 		$member = $this->fetchAll('SELECT * FROM pn_groups_members WHERE `group` = :group AND user = :user LIMIT 1', [
 			':group' => $group->getId(),
-			':user' => $user->getId()
+			':user'  => $user->getId()
 		]);
 
 		if (isset($member[0])) {
@@ -124,6 +147,15 @@ class GroupMembersDataMap extends DataMap {
 		}
 
 		return false;
+	}
+
+	public function memberStatus(Group $group, User $user) {
+
+		return $this->fetchOne('SELECT * FROM pn_groups_members WHERE `group` = :group AND user = :user LIMIT 1', [
+			':group' => $group->getId(),
+			':user'  => $user->getId()
+		]);
+
 	}
 
 	/**
@@ -138,10 +170,8 @@ class GroupMembersDataMap extends DataMap {
 		$member = $this->memberExists($group, $user);
 
 		if ($member) {
-			throw new Exception('Пользователь уже состоит в группе',1);
+			throw new Exception('Пользователь уже состоит в группе', 1);
 		}
-
-		$dataMap = new GroupMembersDataMap();
 
 		$member = new GroupMembers();
 		$member->setGroup($group);
@@ -150,7 +180,7 @@ class GroupMembersDataMap extends DataMap {
 		$member->setConfirm('y');
 		$member->setRequest('y');
 
-		$dataMap->save($member);
+		$this->save($member);
 
 	}
 
@@ -169,7 +199,14 @@ class GroupMembersDataMap extends DataMap {
 			throw new Exception('Пользователя нет в группе');
 		}
 
-		$dataMap = new GroupMembersDataMap();
-		$dataMap->delete($member->getId());
+		$this
+			->prepare('DELETE FROM pn_groups_members WHERE `group` = :groupId AND user = :userId')
+			->execute([
+				':groupId' => $group->getId(),
+				':userId' => $user->getId()
+			]);
+
+		$this->updateMembersCount($group);
+
 	}
 }

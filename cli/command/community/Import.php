@@ -91,6 +91,8 @@ class Import extends Command {
 				try {
 					$image = ImageFactory::createFromUrl(sprintf('http://www.popcornnews.ru/upload1/community/groups/avatars/%s', $table['image']));
 					$poster = $image->getId();
+
+//					$image->getThumb('130x');
 				} catch (FileNotFoundException $e) {
 					$poster = 0;
 				}
@@ -104,7 +106,7 @@ class Import extends Command {
 
 			$this->stmtInsertGroup->execute([
 				':id'           => $table['id'],
-				':title'        => $table['title'],
+				':title'        => trim(strip_tags(html_entity_decode($table['title']))),
 				':description'  => $table['description'],
 				':createdAt'    => $table['createtime'],
 				':editedAt'     => $table['edittime'],

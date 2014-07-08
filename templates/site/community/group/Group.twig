@@ -16,15 +16,8 @@
 				var handler = function(response){
 					if (response.status == 'success'){
 
-						location.href = '/community/group/{{ group.id }}/members';
+						location.href = '/community/group/{{ group.id }}';
 
-						{#$('.b-fan-box').hide('drop',function(){#}
-							{#$(this).html('<p class="system-message"><strong>Вы фан!</strong><br/>Поздравляем вас ! Вы вступили в группу.</p>').show('slide',function(){#}
-								{#setTimeout(function(){#}
-									{#location.href = '/persons/{{ person.urlName }}/fans/new#'+response.userId;#}
-								{#},1000);#}
-							{#});#}
-						{#});#}
 					}
 				};
 
@@ -33,7 +26,20 @@
 
 			$('a[data-action=group-exit]').on('click',function(){
 
+				var params = {
+					securityCode: '{{ currentUser.getSecurityCode }}',
+					groupId: {{ group.id }}
+				};
 
+				var handler = function(response){
+					if (response.status == 'success'){
+
+						location.href = '/community/group/{{ group.id }}';
+
+					}
+				};
+
+				$.post('/ajax/group/exit',params,handler,'json');
 
 			});
 		});
@@ -83,11 +89,15 @@
 
 		<div class="b-group-info-footer">
 
-			{% if userInGroup %}
+			{% if memberStatus == 'member' %}
 				<div class="b-group-button-exit">
 					<a href="#" data-action="group-exit">Покинуть группу</a>
 				</div>
-			{% else %}
+			{% elseif memberStatus == 'needConfirm' %}
+				<div class="b-group-button-exit">
+					<a href="#" data-action="group-exit">Ожидание подтверждения</a>
+				</div>
+			{% elseif memberStatus == 'guest' %}
 				<div class="b-group-button-join">
 					<a href="#" data-action="group-join">Вступить в группу</a>
 				</div>
@@ -98,7 +108,7 @@
 			</div>
 
 			<div class="b-group-owner">
-				{{ group.createTime|ruDateFriendly }}
+				{{ group.createdAt|ruDateFriendly }}
 				<a href="/profile/{{ group.owner.id }}">{{ group.owner.nick|e }}</a>
 			</div>
 		</div>

@@ -3,6 +3,8 @@
 namespace popcorn\model\groups;
 
 use popcorn\model\dataMaps\GroupDataMap;
+use popcorn\model\dataMaps\GroupMembersDataMap;
+use popcorn\model\system\users\User;
 
 /**
  * Class GroupFactory
@@ -60,9 +62,38 @@ class GroupFactory {
 	/**
 	 * @return GroupDataMap
 	 */
-	public static function dataMapProxy(){
+	public static function dataMapProxy() {
 		self::checkDataMap();
+
 		return self::$dataMap;
+	}
+
+	/**
+	 * @param Group $group
+	 * @param array $options
+	 * @param int $from
+	 * @param int $count
+	 * @param int $totalFound
+	 * @return GroupMembers[]
+	 */
+	public static function getMembers(Group $group, array $options = [], $from = 0, $count = -1, &$totalFound = -1) {
+
+		$options = array_merge([
+			'with' => GroupMembersDataMap::WITH_NONE
+		], $options);
+
+		return (new GroupMembersDataMap($options['with']))
+			->getMembers($group, $options, $from, $count, $totalFound);
+	}
+
+	public static function addMember(Group $group, User $user) {
+		(new GroupMembersDataMap())->addMember($group, $user);
+	}
+
+	public static function getMemberStatus(Group $group, User $user) {
+
+		return (new GroupMembersDataMap())->memberStatus($group, $user);
+
 	}
 
 }
