@@ -14,6 +14,10 @@ if  slim.path[3] == 'persons' or
    (slim.path[3] == 'persons' and slim.path[4] == 'manage')
 %} {% set tab3Active = 1 %} {% endif %}
 
+{% if slim.path[3] == 'sets' %}
+	{% set tab6Active = 1 %}
+{% endif %}
+
 {% if app.request.path starts with '/profile/' ~ profile.id ~ '/guestbook' %}
 	{% set tab5Active = 1 %}
 {% endif %}
@@ -49,7 +53,7 @@ if  slim.path[3] == 'persons' or
 	<li>
 		<a title="" href="/profile/{{ profile.id }}/community/groups">группы</a>
 	</li>
-	<li>
+	<li {% if tab6Active == 1 %} class="active"{% endif %}>
 		<a title="" href="/profile/{{ profile.id }}/sets">your.style</a>
 	</li>
 </ul>
@@ -103,10 +107,32 @@ if  slim.path[3] == 'persons' or
             </li>
         </ul>
     {% endif %}
+
 {% endif %}
 
+{% if tab6Active == 1 %}
 
+	<ul class="b-sub-menu clearfix">
+		<li class="b-sub-menu__item">
+			<a class="b-sub-menu__link" href="/yourstyle/sets">популярные</a>
+		</li>
+		<li class="b-sub-menu__item">
+			<a class="b-sub-menu__link" href="/yourstyle/sets/new">новые</a>
+		</li>
 
+		{% if currentUser.id != profile.id %}
 
+			<li class="b-sub-menu__item b-sub-menu__item_active">
+				<a class="b-sub-menu__link" href="/profile/{{ profile.id }}/">сеты пользователя</a>
+			</li>
+
+		{% endif %}
+
+		<li class="b-sub-menu__item {% if currentUser.id == profile.id %}b-sub-menu__item_active{% endif %}">
+			<a class="b-sub-menu__link" href="/profile/{{ profile.id }}/sets">мои сеты</a>
+		</li>
+
+	</ul>
+{% endif %}
 
 {% endspaceless %}
