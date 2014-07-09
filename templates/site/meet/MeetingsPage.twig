@@ -128,7 +128,7 @@
 					<p class="text" data-default-text="Всего {{ textDefault }}">Всего {{ textDefault }}</p>
 				</div>
 				<div class="under">
-					<p><a href="/meet/{{ meeting.id }}#comments"><strong>{{ meeting.comments|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) }}</strong></a></p>
+					<p><a href="/meet/{{ meeting.id }}#comments"><strong>{{ meeting.commentsCount|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) }}</strong></a></p>
 					<p><a href="/meet/{{ meeting.id }}#new-comment">Написать комментарий</a></p>
 				</div>
 			</div>
