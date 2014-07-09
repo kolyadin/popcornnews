@@ -688,6 +688,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 					$fb->setSecondOptionVotes($fb->getSecondOptionVotes() + 1);
 				}
 
+
 				FashionBattleFactory::doVoting($currentUser, $fb, $option);
 				FashionBattleFactory::save($fb);
 
