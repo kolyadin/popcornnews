@@ -1,8 +1,6 @@
 {% import '/Mixins.twig' as html %}
 
-{% spaceless %}
 {% for profile in profiles %}
-
 
     {% if num is not null %}
         {% set currentNum = num+loop.index0 %}
@@ -27,4 +25,3 @@
         <td><span class="rating rating-{{ profile.rating.rank }}">{{ profile.rating.points|number_format(0,'',' ') }}</span></td>
     </tr>
 {% endfor %}
-{% endspaceless %}

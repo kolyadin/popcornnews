@@ -126,6 +126,8 @@ class Config {
 			throw new Exception;
 		}
 
+		print '<pre>'.print_r(self::$cfg,true).'</pre>';
+
 		return self::$cfg['Info'];
 	}
 

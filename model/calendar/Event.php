@@ -19,6 +19,8 @@ class Event extends Model {
 	 */
 	private $title;
 
+	private $poster = 0;
+
 	/**
 	 * @var \DateTime
 	 * @export
@@ -69,6 +71,20 @@ class Event extends Model {
 	public function setCreatedAt($createdAt) {
 		$this->createdAt = $createdAt;
 		$this->changed();
+	}
+
+	/**
+	 * @return \popcorn\model\content\Image
+	 */
+	public function getPoster() {
+		return $this->poster;
+	}
+
+	/**
+	 * @param \popcorn\model\content\Image $poster
+	 */
+	public function setPoster($poster) {
+		$this->poster = $poster;
 	}
 
 	/**

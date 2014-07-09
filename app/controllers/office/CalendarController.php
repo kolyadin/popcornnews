@@ -109,6 +109,8 @@ class CalendarController extends GenericController implements ControllerInterfac
 		$event->setCreatedAt(new \DateTime('now'));
 		$event->setEventDate(new \DateTime($data['eventDate']));
 		$event->setTitle($data['title']);
+		$poster = ImageFactory::getImage($this->getSlim()->request->post('mainImageId'));
+		$event->setPoster($poster);
 		$event->setPlace($data['place']);
 		$event->setContent($data['content']);
 

@@ -2,6 +2,8 @@
 
 namespace popcorn\model\calendar;
 
+use popcorn\model\content\Image;
+use popcorn\model\content\ImageFactory;
 use popcorn\model\dataMaps\DataMap;
 
 class EventDataMap extends DataMap {
@@ -17,11 +19,11 @@ class EventDataMap extends DataMap {
 	private function initStatements() {
 		$this->insertStatement =
 			$this->prepare("INSERT INTO pn_calendar_events
-			(title, createdAt, eventDate, place, content)
+			(title, poster, createdAt, eventDate, place, content)
 				VALUES
-			(:title, :createdAt, :eventDate, :place, :content)");
+			(:title, :poster, :createdAt, :eventDate, :place, :content)");
 		$this->updateStatement =
-			$this->prepare("UPDATE pn_calendar_events SET title=:title, createdAt=:createdAt, eventDate=:eventDate, place=:place, content=:content WHERE id=:id");
+			$this->prepare("UPDATE pn_calendar_events SET title=:title, poster=:poster, createdAt=:createdAt, eventDate=:eventDate, place=:place, content=:content WHERE id=:id");
 		$this->deleteStatement = $this->prepare("DELETE FROM pn_calendar_events WHERE id=:id");
 		$this->findOneStatement = $this->prepare("SELECT * FROM pn_calendar_events WHERE id=:id");
 	}
@@ -30,7 +32,9 @@ class EventDataMap extends DataMap {
 	 * @param \popcorn\model\calendar\Event $item
 	 */
 	protected function insertBindings($item) {
+
 		$this->insertStatement->bindValue(":title", $item->getTitle());
+		$this->insertStatement->bindValue(":poster", $item->getPoster()->getId());
 		$this->insertStatement->bindValue(":createdAt", $item->getCreatedAt()->getTimestamp());
 		$this->insertStatement->bindValue(":eventDate", $item->getEventDate()->getTimestamp());
 		$this->insertStatement->bindValue(":place", $item->getPlace());
@@ -43,6 +47,7 @@ class EventDataMap extends DataMap {
 	 */
 	protected function updateBindings($item) {
 		$this->updateStatement->bindValue(":title", $item->getTitle());
+		$this->updateStatement->bindValue(":poster", $item->getPoster()->getId());
 		$this->updateStatement->bindValue(":createdAt", $item->getCreatedAt()->getTimestamp());
 		$this->updateStatement->bindValue(":eventDate", $item->getEventDate()->getTimestamp());
 		$this->updateStatement->bindValue(":place", $item->getPlace());
@@ -68,6 +73,10 @@ class EventDataMap extends DataMap {
 		parent::itemCallback($item);
 
 		$item->setEventDate((new \DateTime())->setTimestamp($item->getEventDate()));
+
+		if (!is_object($item->getPoster())) {
+			$item->setPoster(ImageFactory::getImage($item->getPoster()));
+		}
 	}
 
 	/**

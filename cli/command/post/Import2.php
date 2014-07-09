@@ -252,7 +252,7 @@ class Import2 extends Command {
 
 
 			//region Ищем фотографии новости и пытаемся их скачать
-			$stmt = $this->pdo->prepare('SELECT * FROM popcornnews.popcornnews_news_images WHERE news_id = :newsId');
+			$stmt = $this->pdo->prepare('SELECT * FROM popcornnews.popcornnews_news_images WHERE news_id = :newsId LIMIT 0');
 			$stmt->execute([
 				':newsId' => $table['id']
 			]);

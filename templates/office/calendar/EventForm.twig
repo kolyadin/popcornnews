@@ -1,6 +1,238 @@
 {% extends '/Generic.twig' %}
 
+
 {% block BodyEnd %}
+
+	{% raw %}
+	<script id="tmpl-main-image-box" type="x-tmpl-mustache">
+		<div class="note note-info">
+			<p><strong>Размеры (ширина)</strong>:<br/>
+			* Страница события - 620px<br/>
+		</div>
+		<div class="well well-lg">
+			<input type="hidden" name="mainImageId" value="{{ mainImageId }}" />
+
+			{{ #sizeAlert }}
+				<div class="alert alert-danger">
+					<p><i class="fa fa-times"></i>&nbsp;<strong>Ширина загруженного изображения меньше 620px</strong>.
+					<p><i class="fa fa-times"></i>&nbsp;<strong>Функция "обрезания" недоступна</strong>.
+					<p>Использование этой фотографии может привести к ужасному виду на страницах сайта.
+					<p>Лучше всего найти фотку большего размера.
+				</div>
+			{{ /sizeAlert }}
+
+			<div style="float:left;margin-right:20px;">
+				<a href="{{ url }}" data-full-width="{{ width }}" class="thumbnail" id="main-image-preview"><img src="{{ thumbUrl }}" width="300"/></a>
+			</div>
+
+			<p>
+				Размер: <strong>{{ width }}x{{ height }}</strong>
+				{{ #sizeAlert }}
+					<i class="fa fa-times" style="color:red;"></i>
+				{{ /sizeAlert }}
+				{{ ^sizeAlert }}
+					<i class="fa fa-check" style="color:green;"></i>
+				{{ /sizeAlert }}
+			</p>
+			<p><input type="button" class="btn btn-danger" data-action="remove-main-image" value="выбрать другое фото" /></p>
+			{{ ^sizeAlert }}
+				<p><input type="button" class="btn btn-info" data-action="crop-main-image" value="обрезать" /></p>
+			{{ /sizeAlert }}
+			<div style="clear:both;"></div>
+		</div>
+	</script>
+
+
+	{% endraw %}
+
+
+	<script type="text/javascript">
+
+		$(function(){
+
+			var jcropApi;
+
+			var resetMainImage = function(params){
+
+				if (params.width < 620){
+					params['sizeAlert'] = 1;
+				}
+
+				var $html = Mustache.render($('#tmpl-main-image-box').html(),params);
+
+				var $id = $('#main-image-uploader');
+
+				var $parent = $id.closest('.col-md-9').find('.help-block');
+				$parent.html($html);
+
+				$id.hide();
+			};
+
+			//Показываем фотку с возможностью обрезания
+			$('body').on('click','input[data-action=crop-main-image]',function(){
+
+				var $imagePreview = $('#main-image-preview');
+
+				var $fullSrc = $imagePreview.attr('href');
+				var $fullWidth = $imagePreview.attr('data-full-width');
+
+				$('#modal-crop .modal-body .main-image-crop').html(sprintf('<img src="%s" id="main-image-crop" />',$fullSrc));
+
+				var handlerWriteCoords = function(c){
+					$('#modal-crop input[name=cropCoords]').val(sprintf('%u,%u,%u,%u,%u,%u', c.x, c.y, c.x2, c.y2, c.w, c.h));
+				};
+
+				$('#main-image-crop').Jcrop({
+					boxWidth: 560,
+					aspectRatio: 62/40,
+					minSize: [620,0],
+					setSelect: [0,0,620,0],
+					onSelect: handlerWriteCoords,
+					onChange: handlerWriteCoords,
+					bgOpacity: 0.2
+				},function(){
+					jcropApi = this;
+					$('#modal-crop').modal('show');
+				});
+
+
+			});
+
+			//Подтверждение обрезания
+			$('button[data-action=confirm-crop]').on('click',function(){
+
+				var params = {
+					'imageId': $('input[name=mainImageId]').val(),
+					'coords': $('#modal-crop input[name=cropCoords]').val()
+				};
+
+				var handler = function(response){
+
+					var params = {
+						mainImageId: response.id,
+						width: response.width,
+						height: response.height,
+						thumbUrl: response.url,
+						url: response.url
+					};
+
+					resetMainImage(params);
+
+					$('form[name=form-edit]').prepend('<input type="hidden" name="cropped" value="1" />');
+
+					$('#modal-crop').modal('hide');
+				};
+
+				$.post('/office/ajax/crop',params,handler,'json');
+			});
+
+			$('button[data-action=jcrop-select-all-width]').on('click',function(){
+
+				var $width = $('#main-image-preview').attr('data-full-width');
+
+				jcropApi.setOptions({aspectRatio: 62/40});
+				jcropApi.setSelect([0,0,$width,0]);
+
+			});
+
+			$('button[data-action=jcrop-select-default]').on('click',function(){
+
+				jcropApi.setOptions({aspectRatio: 62/40});
+				jcropApi.setSelect([0,0,620,0]);
+
+			});
+
+			//Событие на кнопку "выбрать другое фото" у основного фото
+			$('body').on('click','input[data-action=remove-main-image]',function(){
+				$(this).closest('.col-md-9').find('.help-block').html('');
+
+				$('#main-image-uploader').show().click();
+			});
+
+
+
+			//Основное изображение
+			var uploaderMainImage = new plupload.Uploader({
+				runtimes: 'html5,flash,silverlight,html4',
+				browse_button: 'main-image-uploader',
+				max_file_size: '10mb',
+				unique_names: true,
+				max_file_count: 1,
+				multi_selection: false,
+				multi: false,
+
+				multipart_params : {
+					'resize' : '300x'
+				},
+
+				url: "/office/ajax/upload-attach",
+
+				flash_swf_url: '/office/assets/plugins/plupload-2.1.1/js/Moxie.swf',
+				silverlight_xap_url: '/office/assets/plugins/plupload-2.1.1/js/Moxie.xap',
+
+				filters: [
+					{title: "Фотографии", extensions: "jpg,jpeg,gif,png"}
+				],
+
+				init: {
+					PostInit: function () {
+
+					},
+					UploadComplete: function (up, files) {
+
+					},
+					BeforeUpload: function (up, file) {
+						$('#main-image-uploader').closest('.col-md-9').find('.help-block').html('Ждите...');
+					},
+
+					FilesAdded: function (up, files) {
+						up.start();
+					},
+					FileUploaded: function (upldir, file, object) {
+
+						var data = $.parseJSON(object.response);
+
+						var params = {
+							mainImageId: data.id,
+							width: data.width,
+							height: data.height,
+							thumbUrl: data.thumb.url,
+							url: data.url
+						};
+
+						resetMainImage(params);
+
+					},
+
+					UploadProgress: function (up, file) {
+
+					},
+
+					Error: function (up, err) {
+
+					}
+				}
+
+			});
+			uploaderMainImage.init();
+
+
+			{% if event.poster.id %}
+
+				resetMainImage({
+					mainImageId: {{ event.poster.id }},
+					width: {{ event.poster.width }},
+					height: {{ event.poster.height }},
+					thumbUrl: '{{ event.poster.url }}',
+					url: '{{ event.poster.url }}'
+				});
+
+			{% endif %}
+
+
+		});
+
+	</script>
 
 	<script type="text/javascript">
 		$(function () {
@@ -23,7 +255,8 @@
 				language: 'ru',
 				format: 'dd.mm.yyyy hh:ii',
 				autoclose: true,
-				minuteStep: 1
+				minuteStep: 1,
+				weekStart: 1
 			});
 		});
 	</script>
@@ -70,6 +303,27 @@
 
 {% block PageContent %}
 
+	<div class="modal fade" id="modal-crop" role="basic" aria-hidden="true" data-backdrop="static">
+		<input name="cropCoords" type="hidden"/>
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="main-image-crop">
+
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-info" aria-hidden="true" data-action="jcrop-select-all-width">Подогнать под ширину</button>
+					<button class="btn btn-info" aria-hidden="true" data-action="jcrop-select-default">Выбрать минимальный &quot;кусок&quot;</button>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Отмена</button>
+					<button class="btn btn-success" data-action="confirm-crop">Сделать обрезание&nbsp;<i class="fa fa-check"></i></button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<form class="form-horizontal form-row-seperated" method="post" enctype="multipart/form-data" name="form-edit">
 		{% if event %}
 			<input type="hidden" name="eventId" value="{{ event.id }}"/>
@@ -107,6 +361,15 @@
 
 						<div class="col-md-9">
 							<input class="form-control" name="title" required="true" type="text" value="{{ event.title|e }}"/>
+							<span class="help-block"></span>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="control-label col-md-3">Основное фото: <span class="required">*</span></label>
+
+						<div class="col-md-9">
+							<input type="button" class="btn btn-info" id="main-image-uploader" value="загрузить фото"/>
 							<span class="help-block"></span>
 						</div>
 					</div>

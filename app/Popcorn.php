@@ -56,10 +56,10 @@ class Popcorn extends Application {
 
 			$detectDevice = new \Mobile_Detect();
 
-			if ($detectDevice->isMobile() && !$mobileVersionOff) {
-				header('Location:' . Config::getInfo()['mobileVersionUrl']);
-				die;
-			}
+//			if ($detectDevice->isMobile() && !$mobileVersionOff) {
+//				header('Location:' . Config::getInfo()['mobileVersionUrl']);
+//				die;
+//			}
 		}
 
 		$currentUser = $this->getUser();

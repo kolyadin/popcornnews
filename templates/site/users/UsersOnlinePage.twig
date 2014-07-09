@@ -61,7 +61,6 @@
 
 	    {% include '/users/UsersMenu.twig' %}
 
-
 	    {% if onlineUsers|length %}
 		    <table class="b-users-table__full" id="users">
 			    {% include '/users/UserRows.twig' with {'profiles' : onlineUsers} %}

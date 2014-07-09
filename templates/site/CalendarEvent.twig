@@ -1,0 +1,93 @@
+{% extends '/GenericInner.twig' %}
+
+{% block head %}
+
+	<title>{{ event.title|e }} - Календарь - popcornnews</title>
+
+	<script type="text/javascript">
+
+		$(function () {
+
+		});
+
+	</script>
+
+
+{% endblock %}
+
+{% block content %}
+
+	<div class="b-grid__g8">
+		<article data-entity-id="{{ post.id }}" class="b-single-article" style="overflow: hidden;">
+			<section class="b-single-article__content clearfix">
+
+				<h1 class="b-single-article__title b-rubrics-title b-rubrics-title_s48">Календарь</h1>
+
+				<h1 class="b-single-article__title">
+					{{ event.title|e }}
+				</h1>
+				<div class="b-text">
+
+					{% if event.poster.id > 0 %}
+
+						{% set mainPhoto = event.poster.thumb('620x') %}
+
+						<img src="{{ mainPhoto.url }}" width="{{ mainPhoto.width }}" height="{{ mainPhoto.height }}" alt="">
+
+					{% endif %}
+
+					{% if event.place %}
+						<p>{{ event.place }}</p>
+					{% endif %}
+
+
+
+					<p>{{ event.content }}</p>
+
+				</div>
+			</section>
+
+
+		</article>
+
+
+		<!--
+		<section class="b-photo-articles b-inside__photo-articles clearfix">
+			<div class="b-photo-articles__title-cont b-grid__g8 b-grid__a">
+				<h1 class="b-photo-articles__title b-rubrics-title b-rubrics-title_s24">Фото-статьи</h1>
+				<span class="b-photo-articles__counter b-counter">5941</span>
+			</div>
+			<div class="b-grid__g4 b-grid__a">
+				<a href="#" class="b-photo-articles__photo-cont"><img src="./img/content/large_front.jpg" alt=""></a>
+
+				<div class="b-photo-articles__photo-count">3 фотографии</div>
+				<h2 class="b-photo-articles__news-title"><a href="#">Голлисвудский роман Николь Кидман и Тома Круза</a>
+				</h2>
+			</div>
+			<div class="b-grid__g4 b-grid__z">
+				<a href="#" class="b-photo-articles__photo-cont"><img src="./img/content/large_front.jpg" alt=""></a>
+
+				<div class="b-photo-articles__photo-count">17 фотографий</div>
+				<h2 class="b-photo-articles__news-title"><a href="#">Миллионы Тэйлор Свифт</a></h2>
+			</div>
+			<div class="clear"></div>
+			<div class="b-grid__g4 b-grid__a">
+				<a href="#" class="b-photo-articles__photo-cont"><img src="./img/content/large_front.jpg" alt=""></a>
+
+				<div class="b-photo-articles__photo-count">67 фотографий</div>
+				<h2 class="b-photo-articles__news-title"><a href="#">Эволюция тела Майкла Фелпса</a></h2>
+			</div>
+			<div class="b-grid__g4 b-grid__z">
+				<a href="#" class="b-photo-articles__photo-cont"><img src="./img/content/large_front.jpg" alt=""></a>
+
+				<div class="b-photo-articles__photo-count">3 фотографии</div>
+				<h2 class="b-photo-articles__news-title"><a href="#">Голлисвудский роман Николь Кидман и Тома Круза</a>
+				</h2>
+			</div>
+		</section>
+		-->
+
+
+	</div>
+
+{% endblock %}

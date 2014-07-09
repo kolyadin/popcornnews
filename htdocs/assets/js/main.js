@@ -215,12 +215,23 @@ var eventCalendar = (function() {
 
 
 	return {
+
 		/**
 		 * Инициализация календаря
 		 */
-		initCalendar: function() {
-			currentYear = new Date().getFullYear();
-			currentMonth = new Date().getMonth();
+		initCalendar: function(year,month) {
+            if (year){
+                currentYear = year;
+            }else{
+                currentYear = new Date().getFullYear();
+            }
+
+            if (month){
+                currentMonth = month-1;
+            }else{
+                currentMonth = new Date().getMonth();
+            }
+
 
 			eventCalendar.calendarConstructor();
 			eventCalendar.changeMonth(currentMonth);
@@ -418,7 +429,7 @@ var eventCalendar = (function() {
 			var nextMonthName = monthNames[nextMonth][0],
 				prevMonthName = monthNames[prevMonth][0];
 
-			$('.b-calendar__nav__now').text(currentMonthName);
+			$('.b-calendar__nav__now').html(currentMonthName + '&nbsp;<small>' + currentYear + '</small>');
 			$('.b-calendar__nav__btn_prev .b-calendar__nav__btn-name').text(prevMonthName);
 			$('.b-calendar__nav__btn_next .b-calendar__nav__btn-name').text(nextMonthName);
 		},
@@ -444,13 +455,6 @@ var eventCalendar = (function() {
 		}
 	}
 })();
-
-$(function() {
-	eventCalendar.initCalendar();
-
-
-
-});
 
 
 /* archive_one.html js height fix */

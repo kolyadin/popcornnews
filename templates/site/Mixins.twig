@@ -33,7 +33,7 @@
 	<div class="user-info__ava-nick-rating">
 		{% if options.hideAvatar != true %}
 	        {% if profile.avatar.id %}
-	            {% set src = profile.avatar.url('profileSmall') %}
+	            {% set src = profile.avatar.thumb('32x').url %}
 	        {% else %}
 	            {% set src = '/assets/img/no-photo/small.png' %}
 	        {% endif %}

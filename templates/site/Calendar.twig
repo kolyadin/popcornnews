@@ -2,11 +2,17 @@
 {% import '/Mixins.twig' as html %}
 
 {% block head %}
-	<title>Календарь - popcornnews</title>
+	<title>Календарь - {{ ruMonth ~ ' ' ~ year }} - popcornnews</title>
 {% endblock %}
 
 
 {% block content %}
+
+	<script type="text/javascript">
+		$(function() {
+			eventCalendar.initCalendar({{ year }},{{ month }});
+		});
+	</script>
 
 	<div class="b-grid__g8">
 		<article class="b-single-article">
@@ -14,7 +20,7 @@
 				<h1 class="b-single-article__title b-rubrics-title b-rubrics-title_s48">Календарь</h1>
 
 
-				<section class="b-calendar__menu b-inside__menu">
+				{#<section class="b-calendar__menu b-inside__menu">
 					<ul class="b-inside__menu-firstlist">
 						<li class="active">
 							<a href="#">все события</a>
@@ -26,16 +32,17 @@
 							<a href="#">события</a>
 						</li>
 					</ul>
-				</section>
+				</section>#}
+
 
 				<section class="b-calendar">
 					<section class="b-calendar__nav">
-						<a class="b-calendar__nav__btn b-calendar__nav__btn_prev" href="/calendar/06.2014">
+						<a class="b-calendar__nav__btn b-calendar__nav__btn_prev" href="/calendar/{{ "%02u.%04u"|format(prevMonth|date('m'),prevMonth|date('Y')) }}">
 							<span class="b-calendar__nav__btn-icon b-firm-grad"><</span>
 							<span class="b-calendar__nav__btn-name"></span>
 						</a>
 						<div class="b-calendar__nav__now"></div>
-						<a class="b-calendar__nav__btn b-calendar__nav__btn_next" href="#">
+						<a class="b-calendar__nav__btn b-calendar__nav__btn_next" href="/calendar/{{ "%02u.%04u"|format(nextMonth|date('m'),nextMonth|date('Y')) }}">
 							<span class="b-calendar__nav__btn-name"></span>
 							<span class="b-calendar__nav__btn-icon b-firm-grad">></span>
 						</a>
@@ -48,7 +55,7 @@
 								'day': {{ day }},
 								'list': [
 									{% for event in dates %}
-										{'img': '/img/content/calendar_img.jpg', 'place': '12.00, стадион Петровский', 'name': '<a href="#">{{ event.title|e }}</a>'}{% if not loop.last %},{% endif %}
+										{'img': '{{ event.poster.thumb('60x') }}', 'place': '{{ event.place|e }}', 'name': '<a href="/calendar/{{ event.id }}">{{ event.title|e }}</a>'}{% if not loop.last %},{% endif %}
 									{% endfor %}
 								]
 							}{% if not loop.last %},{% endif %}
