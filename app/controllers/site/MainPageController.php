@@ -48,6 +48,7 @@ class MainPageController extends GenericController implements ControllerInterfac
 
 	private function buildStopShot() {
 		$post = PostFactory::getStopShot();
+
 		$this->twigData['stopShots'] = $post;
 	}
 

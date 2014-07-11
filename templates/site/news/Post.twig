@@ -96,11 +96,15 @@
 
 			{# Фотки, приложенные к новости #}
 			{% if post.images|length > 0 %}
-				<section class="b-single-article__attach-images" style="margin-bottom: 22px;" >
+				<section class="b-single-article__attach-images" >
 					{% for image in post.images %}
 						{% set photo = image.thumb('620x') %}
-						<img src="{{ photo.url }}" height="{{ photo.height }}" width="{{ photo.width }}"  alt="{{ photo.title|e }}" />
-						<p>{{ image.description|e }}</p>
+
+						<div{% if image.description %} class="with-border" {% endif %}>
+							<img src="{{ photo.url }}" height="{{ photo.height }}" width="{{ photo.width }}"  alt="{{ image.title|e }}" title="{{ image.title|e }}" />
+							<p>{{ image.description|e }}</p>
+						</div>
+
 					{% endfor %}
 				</section>
 			{% endif %}

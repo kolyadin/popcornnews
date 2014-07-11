@@ -79,8 +79,7 @@
 					<h3 class="b-top-corn__large-news-lead">{{ topPost.announceFriendly(100) }}</h3>
 
 					<div class="b-top-corn__large-news-comments b-comments-status b-comments-status_large">
-						<a href="/news/{{ topPost.id }}#comments"
-						   class="b-comments-status__num">{{ topPost.comments }}</a>
+						<a href="/news/{{ topPost.id }}#comments" class="b-comments-status__num">{{ topPost.comments }}</a>
 
 						<div class="b-comments-status__title">ком-<br/>мента-<br/>риев</div>
 					</div>
@@ -119,8 +118,7 @@
 
 				<li class="b-grid__g2">
 					<a href="/news/{{ post.id }}" title="{{ post.name|e }}" class="b-column-news__head">
-						<img src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}"
-						     alt="{{ post.name|e }}"/>
+						<img src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}" alt="{{ post.name|e }}"/>
 					</a>
 
 					<div class="b-column-news__body">

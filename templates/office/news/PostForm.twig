@@ -294,8 +294,8 @@
 						imageId: {{ image.id }},
 						url: '{{ image.url }}',
 						thumbUrl: '{{ image.thumb('200x').url }}',
-						title: '{{ image.title|e }}',
-						caption: '{{ image.description|e }}'
+						title: '{{ image.title|e('js') }}',
+						caption: '{{ image.description|e('js') }}'
 					});
 
 				{% endfor %}
@@ -501,7 +501,7 @@
 						var data = [];
 
 						{% for tag in tags.articles %}
-							  data.push({'id': {{ tag.id }}, 'text': '{{ tag.name|e }}'});
+							  data.push({'id': {{ tag.id }}, 'text': '{{ tag.name|e('js') }}'});
 						{% endfor %}
 
 						callback(data);
@@ -520,7 +520,7 @@
 					var data = [];
 
 					{% for tag in tags.events %}
-						data.push({'id': {{ tag.id }}, 'text': '{{ tag.name|e }}'});
+						data.push({'id': {{ tag.id }}, 'text': '{{ tag.name|e('js') }}'});
 					{% endfor %}
 
 					callback(data);
@@ -552,7 +552,7 @@
 					var data = [];
 
 					{% for person in tags.persons %}
-						data.push({'id': {{ person.id }}, 'text': '{{ person.name|e }}'});
+						data.push({'id': {{ person.id }}, 'text': '{{ person.name|e('js') }}'});
 					{% endfor %}
 
 					callback(data);

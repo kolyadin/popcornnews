@@ -221,9 +221,7 @@ class AjaxController extends GenericController implements ControllerInterface {
 			])
 			->run(function ($postId) {
 				return PostFactory::getPost($postId, [
-					'itemCallback' => [
-						'popcorn\\model\\dataMaps\\NewsPostDataMap' => NewsPostDataMap::WITH_NONE
-					]
+					'with' => NewsPostDataMap::WITH_NONE
 				]);
 			}, $newsTotalFound);
 
@@ -531,10 +529,11 @@ class AjaxController extends GenericController implements ControllerInterface {
 
 	public function kidsVote() {
 
-		$kidId = $this->getSlim()->request()->post('entityId');
+		$kidId = $this->getSlim()->request()->post('kidId');
 		$vote = $this->getSlim()->request()->post('vote');
 
 		$kid = KidFactory::get($kidId);
+
 
 		$upDownDataMap = new UpDownDataMap();
 

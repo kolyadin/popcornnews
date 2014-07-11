@@ -1399,6 +1399,19 @@ h1 {
   padding-bottom: 28px;
   border-bottom: 5px #e5e5e5 solid;
 }
+.b-single-article__attach-images {
+  margin-bottom: 22px;
+}
+.b-single-article__attach-images .with-border {
+  background-color: #d3d3d3;
+}
+.b-single-article__attach-images p {
+  font-size: 13px;
+  line-height: 16px;
+  padding: 5px;
+  margin-bottom: 15px;
+  text-align: center;
+}
 .b-single-article__content {
   margin-bottom: 22px;
 }
@@ -6184,7 +6197,8 @@ a.pink:hover,
   width: 100px;
 }
 .b-kids h1 span,
-b.b-register h1 span {
+b.b-register h1 span,
+.b-meets h1 span {
   color: #b2b2b2;
   display: block;
   font-size: 18px;

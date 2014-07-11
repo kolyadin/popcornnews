@@ -127,7 +127,7 @@ class ImportComments extends Command {
 
 			$imagesCount = 0;
 
-			if (isset($matches[1]) && count($matches[1])) {
+			/*if (isset($matches[1]) && count($matches[1])) {
 				foreach ($matches[1] as $imageUrl) {
 					try {
 						$output->write("\t<comment>Пытаемся скачать $imageUrl</comment>");
@@ -151,7 +151,7 @@ class ImportComments extends Command {
 						continue;
 					}
 				}
-			}
+			}*/
 
 			$content = preg_replace('@\[img\].+\[\/img\]@iU', '', $content);
 			$content = trim($content);
