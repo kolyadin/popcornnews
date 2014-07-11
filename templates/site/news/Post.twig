@@ -117,8 +117,12 @@
 
 			<section class="b-large-news__info">
 				<a href="/news/{{ post.id }}#comments" class="b-large-news__comments b-comments-status">
-					<span class="b-comments-status__title">Комментариев:</span>
-					<span class="b-comments-status__num">{{ post.comments }}</span>
+					{% if post.comments > 0 %}
+						<span class="b-comments-status__title">Комментариев:</span>
+						<span class="b-comments-status__num">{{ post.comments }}</span>
+					{% else %}
+						<span class="b-comments-status__title">нет комментарий</span>
+					{% endif %}
 				</a>
 
 				<span class="b-single-article__views-title">Просмотров: {{ post.views|number_format(0,'',' ') }}</span>
