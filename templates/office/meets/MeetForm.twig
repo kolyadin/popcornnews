@@ -1,0 +1,286 @@
+{% extends '/Generic.twig' %}
+
+{% block HeadEnd %}
+
+	<style type="text/css">
+		.ui-state-highlight { height: 45px; border: 3px dashed #aaa; background: #ccc; }
+	</style>
+
+{% endblock %}
+
+{% block BodyEnd %}
+
+	<script type="text/javascript">
+
+		$(function(){
+
+			$('input[data-action=btn-find-person]').on('click',function(){
+				$(this).closest('.thumbnail').find('.finder').removeClass('hide').end().find('.choose').addClass('hide');
+			});
+
+			$('input[data-action=btn-custom-person]').on('click',function(){
+				$(this).closest('.thumbnail').find('.custom').removeClass('hide').end().find('.choose').addClass('hide');
+			});
+
+			$('input[data-id=first-person]').select2({
+				width: '200px',
+				multiple: false,
+				placeholder: "Начни вводить имя персоны...",
+				initSelection: function (element, callback) {
+					{% if meet.firstPerson.id %}
+
+						var data = [];
+						data.push({'id': {{ meet.firstPerson.id }}, 'text': '{{ meet.firstPerson.name|e }}'});
+						callback(data[0]);
+
+					{% endif %}
+				},
+				ajax: {
+					url: '/office/ajax/post/persons',
+					dataType: 'json',
+					data: function (term) {
+						return {
+							term: term
+						};
+					},
+					results: function (data) {
+						return {
+							results: data.persons
+						};
+					}
+				}
+			});
+
+			$('input[data-id=second-person]').select2({
+				width: '200px',
+				multiple: false,
+				placeholder: "Начни вводить имя персоны...",
+				initSelection: function (element, callback) {
+					{% if meet.secondPerson.id %}
+						var data = [];
+						data.push({'id': {{ meet.secondPerson.id }}, 'text': '{{ meet.secondPerson.name|e }}'});
+						callback(data[0]);
+					{% endif %}
+				},
+				ajax: {
+					url: '/office/ajax/post/persons',
+					dataType: 'json',
+					data: function (term) {
+						return {
+							term: term
+						};
+					},
+					results: function (data) {
+						return {
+							results: data.persons
+						};
+					}
+				}
+			});
+
+
+		});
+
+	</script>
+
+{% endblock %}
+
+{% block PageTop %}
+
+	{% if meet.id %}
+		<h3 class="page-title">
+			&quot;{{ meet.title|e }}&quot;
+			<small>Пара</small>
+		</h3>
+	{% else %}
+		<h3 class="page-title">
+			Добавление пары
+		</h3>
+	{% endif %}
+
+	<ul class="page-breadcrumb breadcrumb">
+		<li>
+			<i class="fa fa-home"></i>
+			<a href="/office">Консоль</a>
+			<i class="fa fa-angle-right"></i>
+		</li>
+		<li>
+			<a href="/office/meets">Пары</a>
+			<i class="fa fa-angle-right"></i>
+		</li>
+		{% if meet.id %}
+			<li>
+				<a href="/office/meet{{ meet.id }}">{{ meet.title|e }}</a>
+			</li>
+		{% else %}
+			<li>
+				<a href="/office/meet_create">Добавление пары</a>
+			</li>
+		{% endif %}
+	</ul>
+
+	{{ parent() }}
+
+{% endblock %}
+
+{% block PageContent %}
+
+	<form class="form-horizontal form-row-seperated" method="post" enctype="multipart/form-data" name="form-edit">
+		{% if meet.id %}
+			<input type="hidden" name="meetId" value="{{ meet.id }}"/>
+		{% endif %}
+
+		<div class="form-body">
+
+			{% if app.request.get('status') == 'updated' %}
+				<div class="alert alert-success">
+					<i class="fa fa-check"></i>
+					<strong>Пара обновлена</strong>
+				</div>
+			{% endif %}
+
+			{% if app.request.get('status') == 'created' %}
+				<div class="alert alert-success">
+					<i class="fa fa-check"></i>
+					<strong>Пара добавлена</strong>
+				</div>
+			{% endif %}
+
+			<div class="portlet">
+				<div class="portlet-title">
+					<div class="caption">
+						<i class="fa fa-reorder"></i>Персоны
+					</div>
+					<div class="tools">
+						<a href="javascript:;" class="collapse"></a>
+					</div>
+				</div>
+				<div class="portlet-body">
+
+					<div class="col-md-2">&nbsp;</div>
+					<div class="col-md-9">
+
+						{% if meet %}
+
+							<div style="float:left;text-align: right;padding:20px;" class="thumbnail first-person">
+								<p><strong>Первая персона</strong></p>
+
+								<div class="box">
+
+									{% if meet.firstPerson.id %}
+										<input class="form-control" type="text" name="firstPerson" data-action="find-person" data-id="first-person" placeholder="Начни набирать имя персоны..." value="{{ meet.firstPerson.id }}"/>
+									{% else %}
+										<input class="form-control" type="text" name="firstPersonCustom" placeholder="Напиши любое имя" value="{{ name1|e }}"/>
+									{% endif %}
+
+									<div class="clearfix"></div>
+								</div>
+							</div>
+							<div style="float:left;margin:70px 20px 0 20px;">
+								<i class="fa fa-plus"></i>
+							</div>
+							<div style="float:left;padding: 20px;" class="thumbnail second-person">
+								<p><strong>Вторая персона</strong></p>
+
+								<div class="box">
+
+									{% if meet.secondPerson.id %}
+										<input class="form-control" type="text" name="secondPerson" data-action="find-person" data-id="second-person" placeholder="Начни набирать имя персоны..." value="{{ meet.secondPerson.id }}"/>
+									{% else %}
+										<input class="form-control" type="text" name="secondPersonCustom" placeholder="Напиши любое имя" value="{{ name2|e }}"/>
+									{% endif %}
+
+								</div>
+							</div>
+
+						{% else %}
+
+							<div style="float:left;text-align: right;padding:20px;" class="thumbnail first-person">
+								<p><strong>Первая персона</strong></p>
+
+								<div class="box">
+									<div class="hide finder">
+										<input type="hidden" name="firstPerson" data-action="find-person" data-id="first-person" placeholder="Начни набирать имя персоны..."/>
+									</div>
+									<div class="hide custom">
+										<input class="form-control" type="text" name="firstPersonCustom" placeholder="Напиши любое имя"/>
+									</div>
+
+									<div class="choose">
+										<p><input class="btn btn-info" type="button" value="Выбрать из существующих" data-action="btn-find-person"/></p>
+										<p><input class="btn btn-info" type="button" value="Указать вручную" data-action="btn-custom-person"/></p>
+									</div>
+									<div class="clearfix"></div>
+								</div>
+							</div>
+							<div style="float:left;margin:70px 20px 0 20px;">
+								<i class="fa fa-plus"></i>
+							</div>
+							<div style="float:left;padding: 20px;" class="thumbnail second-person">
+								<p><strong>Вторая персона</strong></p>
+
+								<div class="box">
+									<div class="hide finder">
+										<input class="form-control" type="text" name="secondPerson" data-action="find-person" data-id="second-person" placeholder="Начни набирать имя персоны..."/>
+									</div>
+									<div class="hide custom">
+										<input class="form-control" type="text" name="secondPersonCustom" placeholder="Напиши любое имя"/>
+									</div>
+
+									<div class="choose">
+										<p><input class="btn btn-info" type="button" value="Выбрать из существующих" data-action="btn-find-person"/></p>
+										<p><input class="btn btn-info" type="button" value="Указать вручную" data-action="btn-custom-person"/></p>
+									</div>
+								</div>
+							</div>
+
+						{% endif %}
+
+						<div class="clearfix"></div>
+					</div>
+					<div class="clearfix"></div>
+
+				</div>
+			</div>
+
+			<div class="portlet">
+				<div class="portlet-title">
+					<div class="caption">
+						<i class="fa fa-reorder"></i>Главное
+					</div>
+					<div class="tools">
+						<a href="javascript:;" class="collapse"></a>
+					</div>
+				</div>
+				<div class="portlet-body">
+					<div class="form-group">
+						<label class="control-label col-md-3">Описание пары:</label>
+
+						<div class="col-md-9">
+							<textarea class="form-control ckeditor" name="description" cols="30" rows="10">{{ meet.description|e }}</textarea>
+							<span class="help-block"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="form-actions right">
+
+			{% if meet %}
+
+				<button class="btn btn-m btn-danger" type="button" data-action="poll-remove">Удалить пару</button>
+				<button class="btn btn-m btn-success" type="submit">Обновить пару&nbsp;<i class="fa fa-check"></i></button>
+
+			{% else %}
+
+				{#<button class="btn btn-m btn-info" type="button" data-action="submit-just-save">Создать опрос</button>#}
+				<button class="btn btn-m btn-success" type="submit">Добавить пару&nbsp;<i class="fa fa-check"></i></button>
+
+			{% endif %}
+
+		</div>
+	</form>
+
+{% endblock %}

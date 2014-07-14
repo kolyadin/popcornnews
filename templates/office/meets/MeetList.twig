@@ -1,0 +1,190 @@
+{% extends '/Generic.twig' %}
+
+{% import '/Mixins.twig' as html %}
+
+{% block HeadEnd %}
+
+	<style type="text/css">
+		.table-items a {
+			font-size: 13px;
+		}
+
+		.table-items .item-link a {
+			font-size: 13px;
+			height:auto;
+			width:auto;
+			white-space:pre-wrap;
+			text-align: left;
+		}
+
+		.table-items .item-date {
+			white-space: nowrap;
+			font-size: 13px;
+		}
+
+		.table-items .stat .progress {
+			margin-bottom: 5px;
+		}
+
+		.table-items .stat .progress-bar strong {
+			padding-left: 5px;
+		}
+
+		.table-items .stat .label {
+			margin-right: 5px;
+		}
+	</style>
+
+{% endblock %}
+
+{% block BodyEnd %}
+
+	<script type="text/javascript">
+		$(function () {
+
+			var removeMeetCandidateId = null;
+
+			$('button[data-action=confirm-remove]').on('click', function () {
+
+				var params = {
+					entityId: removeMeetCandidateId
+				};
+
+				var handler = function(response){
+
+					if (response.status == 'success'){
+
+						var $tr = $('tr[data-meet-id='+removeMeetCandidateId+']');
+
+						$('#modal-remove').modal('hide');
+					}
+				};
+
+				$.post('/office/ajax/meet/remove',params,handler,'json');
+
+			});
+
+			$('a[data-action=remove-meet]').on('click', function () {
+				removeMeetCandidateId = $(this).closest('tr').attr('data-meet-id');
+			});
+		});
+	</script>
+
+	<script type="text/javascript">
+		$(function () {
+			$('#spinner-comments-count').spinner({value:0, step: 1, min: 0, max: 200});
+		})
+	</script>
+
+{% endblock %}
+
+{% block PageTop %}
+
+	<h3 class="page-title">
+		Пары
+		<small>просмотр сводной информации</small>
+	</h3>
+
+	<ul class="page-breadcrumb breadcrumb">
+		<li>
+			<i class="fa fa-home"></i>
+			<a href="/office">Консоль</a>
+			<i class="fa fa-angle-right"></i>
+		</li>
+		<li>
+			<a href="/office/meets">Пары</a>
+			<i class="fa"></i>
+		</li>
+	</ul>
+
+{% endblock %}
+
+{% block PageContent %}
+
+	<div id="modal-remove" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1"
+	     aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+					<h4 class="modal-title">Вы ТОЧНО хотите удалить пару?</h4>
+				</div>
+				<div class="modal-body">
+					<p><strong>Удаление пары приведет к</strong>:</p>
+					<ul>
+						<li>удалению комментариев</li>
+					</ul>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Отмена</button>
+					<button class="btn btn-danger" data-dismiss="modal" data-action="confirm-remove">Подтверждаю
+						удаление
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{% if meets|length %}
+
+		<div class="nav-pagination">
+			<a class="btn btn-success" href="/office/meet_create"><i class="fa fa-plus"></i>добавить пару</a>
+			{{ html.paginator(paginator.pages,paginator.active,'/office/meets/page%u') }}
+			<div class="clearfix"></div>
+		</div>
+
+		<div class="table-responsive">
+			<table class="table table-hover table-items">
+				<thead>
+					<tr>
+						<th></th>
+						<th style="white-space:nowrap;"><span class="label label-default">Пара</span></th>
+						<th style="white-space:nowrap;"><span class="label label-default">Описание</span></th>
+						<th style="white-space:nowrap;"><span class="label label-default">ЗА</span></th>
+						<th style="white-space:nowrap;"><span class="label label-default">ПРОТИВ</span></th>
+						<th style="white-space:nowrap;"><span class="label label-default"></span></th>
+					</tr>
+				</thead>
+				<tbody>
+
+				{% for meet in meets %}
+
+					<tr data-meet-id="{{ meet.id }}">
+						<td style="white-space: nowrap;">
+							<a class="btn btn-default btn-xs tooltips" data-original-title="Редактировать пару"
+							   data-placement="top" href="/office/meet{{ meet.id }}"><i class="fa fa-edit"></i></a>
+							<a class="btn btn-danger btn-xs tooltips" data-original-title="Удалить пару"
+							   data-placement="top" role="button" data-toggle="modal" data-action="remove-meet"
+							   href="#modal-remove"><i class="fa fa-trash-o"></i></a>
+						</td>
+						<td class="item-date">{{ meet.title }}</td>
+						<td class="item-date">{{ meet.description|slice(0, 50) }}</td>
+						<td>{{ meet.votesUp }}</td>
+						<td>{{ meet.votesDown }}</td>
+						<td><a class="btn btn-info tooltips" data-original-title="{{ meet.commentsCount|ruNumber(['нет комментариев','%u комментарий','%u комментария','%u комментариев']) }}" href="/office/meet{{ meet.id }}/comments">{{ meet.commentsCount }}</a></td>
+					</tr>
+
+				{% endfor %}
+
+				</tbody>
+			</table>
+		</div>
+
+		<div class="nav-pagination">
+			<a class="btn btn-success" href="/office/meet_create"><i class="fa fa-plus"></i>добавить пару</a>
+			{{ html.paginator(paginator.pages,paginator.active,'/office/meets/page%u') }}
+			<div class="clearfix"></div>
+		</div>
+
+	{% else %}
+
+		<div class="note note-info">
+			<h4 class="note-heading">Пока не добавлено ни одной пары</h4>
+			<p>
+				<a class="btn btn-success" href="/office/meet_create">Добавить пару</a>
+			</p>
+		</div>
+
+	{% endif %}
+
+{% endblock %}

@@ -84,4 +84,12 @@ class MeetingFactory {
         self::save($meeting);
         return $meeting;
     }
+
+	public static function getMeets(array $options = [], $from = 0, $count = 10, &$totalFound = 0) {
+
+		$dataMap = new MeetingDataMap();
+		return $dataMap->findByLimit($options, $from, $count, $totalFound);
+
+	}
+
 }

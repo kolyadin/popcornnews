@@ -11,6 +11,7 @@ use popcorn\app\controllers\office\person\PersonFactController;
 use popcorn\app\controllers\office\PhotoArticleController;
 use popcorn\app\controllers\office\PollController;
 use popcorn\app\controllers\office\PostController;
+use popcorn\app\controllers\office\MeetController;
 use popcorn\app\controllers\office\person\PersonController;
 use popcorn\lib\Config;
 
@@ -38,6 +39,7 @@ class OfficeApp extends Application {
 
 		$this->registerController(new KidController());
 		$this->registerController(new PollController());
+		$this->registerController(new MeetController());
 
 	}
 
