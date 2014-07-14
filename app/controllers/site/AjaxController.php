@@ -628,10 +628,9 @@ class AjaxController extends GenericController implements ControllerInterface {
 		$upDownDataMap = new UpDownDataMap();
 
 		try {
-			if ($upDownDataMap->isAllow($_SERVER['REMOTE_ADDR'], $meet)) {
+			if ($upDownDataMap->isAllow($meet)) {
 
 				$voting = new UpDownVoting();
-				$voting->setIp($_SERVER['REMOTE_ADDR']);
 				$voting->setVotedAt(new \DateTime());
 				$voting->setEntity(get_class(new Meeting()));
 				$voting->setEntityId($meetId);
