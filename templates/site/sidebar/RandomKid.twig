@@ -1,0 +1,11 @@
+<div class="b-grid__g4 b-grid__a b-grid__z clearfix b-side__vertical-margin b-side__vertical-margin_30">
+	<section class="b-star-childrens">
+
+		{% set photo = kid.photo.thumb('270x') %}
+
+		<a href="/kid/{{ kid.id }}" class="b-star-childrens__link">
+			<img src="{{ photo.url }}" alt="{{ kid.name|e }}" class="b-star-childrens__img">
+			<div class="b-star-childrens__news-title">звёздные дети: {{ kid.name|e }}</div>
+		</a>
+	</section>
+</div>

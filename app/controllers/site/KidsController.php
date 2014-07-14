@@ -54,12 +54,7 @@ class KidsController extends GenericController implements ControllerInterface {
 
 	public function kidsPage($page = 1) {
 
-		$dataMapHelper = new DataMapHelper();
-		$dataMapHelper->setRelationship([
-			'popcorn\\model\\dataMaps\\KidDataMap' => KidDataMap::WITH_PHOTO
-		]);
-
-		$kidDataMap = new KidDataMap($dataMapHelper);
+		$kidDataMap = new KidDataMap();
 
 		$onPage = 10;
 		$paginator = [($page - 1) * $onPage, $onPage];

@@ -16,13 +16,13 @@ class KidDataMap extends DataMap {
 	const WITH_PARENTS = 4;
 	const WITH_ALL = 7;
 
-	public function __construct(DataMapHelper $helper = null) {
+	private $modifier;
 
-		if ($helper instanceof DataMapHelper) {
-			DataMap::setHelper($helper);
-		}
+	public function __construct($modifier = self::WITH_PHOTO) {
 
 		parent::__construct();
+
+		$this->modifier = $modifier;
 
 		$this->class = "popcorn\\model\\persons\\Kid";
 		$this->insertStatement =
@@ -120,15 +120,13 @@ class KidDataMap extends DataMap {
 	 * @param Kid $item
 	 * @param int $modifier
 	 */
-	protected function itemCallback($item, $modifier = self::WITH_PHOTO) {
+	protected function itemCallback($item) {
 
-		$modifier = $this->getModifier($this, $modifier);
-
-		if ($modifier & self::WITH_PHOTO) {
+		if ($this->modifier & self::WITH_PHOTO) {
 			$item->setPhoto(ImageFactory::getImage($item->getPhoto()));
 		}
 
-		if ($modifier & self::WITH_PARENTS) {
+		if ($this->modifier & self::WITH_PARENTS) {
 
 			if ((int)$item->getFirstParent() > 0) {
 				$item->setFirstParent(PersonFactory::getPerson($item->getFirstParent()));

@@ -19,7 +19,7 @@
 				</p>
 				<div class="b-large-news__info">
 					<a href="/news/{{ post.id }}#comments" class="b-large-news__comments b-comments-status">
-						<span class="b-comments-status__title">{{ post.comments|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) }}</span>
+						<span class="b-comments-status__title">{{ post.comments|ruNumber(['нет комментариев','%u комментарий','%u комментария','%u комментариев']) }}</span>
 					</a>
 
 					<span class="b-single-article__views-title">Просмотров: {{ post.views|number_format(0,'',' ') }}</span>

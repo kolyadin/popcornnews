@@ -11,6 +11,7 @@ use popcorn\model\dataMaps\TagDataMap;
 use popcorn\model\groups\GroupFactory;
 use popcorn\model\persons\KidFactory;
 use popcorn\model\posts\NewsPost;
+use popcorn\model\posts\photoArticle\PhotoArticleFactory;
 use popcorn\model\posts\PostFactory;
 
 /**
@@ -39,10 +40,23 @@ class MainPageController extends GenericController implements ControllerInterfac
 		$this->buildRandomKid();
 		$this->buildStopShot();
 		$this->buildFashionBattle();
+		$this->buildPhotoArticles();
 
 		$this->twigData['showSidebar'] = false;
 
 		$this->getTwig()->display('/MainPage.twig', $this->twigData);
+
+	}
+
+	/**
+	 *
+	 */
+	private function buildPhotoArticles() {
+
+		$posts = PhotoArticleFactory::getPhotoArticles([], 0, 3, $totalFound);
+
+		$this->twigData['photoArticles'] = $posts;
+		$this->twigData['photoArticlesCount'] = $totalFound;
 
 	}
 

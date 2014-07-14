@@ -96,8 +96,7 @@
 					<div class="b-top-corn__short-news-container {% if loop.first %} b-top-corn__short-news-container_first {% endif %}">
 						<h2 class="b-top-corn__short-news-title"><a href="/news/{{ post.id }}" title="{{ post.name|e }}">{{ post.name|e }}</a></h2>
 						<a href="#" class="b-top-corn__short-news-comments b-comments-status">
-							<span class="b-comments-status__num">{{ post.comments }}</span>
-							<span class="b-comments-status__title">комменария</span>
+							<span class="b-comments-status__title">{{ post.comments|ruNumber(['нет комментариев','%u комментарий','%u комментария','%u комментариев']) }}</span>
 						</a>
 					</div>
 				</li>
@@ -107,9 +106,7 @@
 		</ul>
 	</section>
 
-	<section class="b-full-width-advert b-grid__g12 clearfix">
-		<a href="#"><img src="/assets/img/content/large_advert.jpg" alt=""/></a>
-	</section>
+	{% include '/adv/940x200.twig' %}
 
 	<section class="b-center-column clearfix">
 		<ul class="b-column-news">
@@ -127,8 +124,7 @@
 						<p class="b-column-news__text">{{ post.announceFriendly(100) }}</p>
 						<a href="/news/{{ post.id }}#comments" title="{{ post.name|e }}"
 						   class="b-column-news__comments b-comments-status">
-							<span class="b-comments-status__num">{{ post.comments }}</span>
-							<span class="b-comments-status__title">{{ post.comments|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) }}</span>
+							<span class="b-comments-status__title">{{ post.comments|ruNumber(['нет комментариев','%u комментарий','%u комментария','%u комментариев']) }}</span>
 						</a>
 					</div>
 				</li>
@@ -260,29 +256,24 @@
 	</section>
 
 	<section class="b-photo-articles clearfix">
-		<div class="b-photo-articles__title-cont b-grid__g12">
+		<div class="b-photo-articles__title-cont-big b-grid__g12">
 			<h1 class="b-photo-articles__title b-rubrics-title b-rubrics-title_s24">Фото-статьи</h1>
-			<span class="b-photo-articles__counter b-counter">5941</span>
+			<span class="b-photo-articles__counter b-counter">{{ photoArticlesCount }}</span>
 		</div>
 
-		<div class="b-grid__g4">
-			<a href="#" class="b-photo-articles__photo-cont"><img src="/assets/img/content/large_front.jpg" alt=""/></a>
+		{% for post in photoArticles %}
 
-			<div class="b-photo-articles__photo-count">3 фотографии</div>
-			<h2 class="b-photo-articles__news-title"><a href="#">Голлисвудский роман Николь Кидман и Тома Круза</a></h2>
-		</div>
-		<div class="b-grid__g4">
-			<a href="#" class="b-photo-articles__photo-cont"><img src="/assets/img/content/large_front.jpg" alt=""/></a>
+			{% set photo = post.mainImage.thumb('300x') %}
 
-			<div class="b-photo-articles__photo-count">17 фотографий</div>
-			<h2 class="b-photo-articles__news-title"><a href="#">Миллионы Тэйлор Свифт</a></h2>
-		</div>
-		<div class="b-grid__g4">
-			<a href="#" class="b-photo-articles__photo-cont"><img src="/assets/img/content/large_front.jpg" alt=""/></a>
+			<div class="b-grid__g4">
+				<a href="/photo-article/{{ post.id }}" class="b-photo-articles__photo-cont-big"><img src="{{ photo.url }}" alt="{{ post.name|e }}"/></a>
 
-			<div class="b-photo-articles__photo-count">67 фотографий</div>
-			<h2 class="b-photo-articles__news-title"><a href="#">Эволюция тела Майкла Фелпса</a></h2>
-		</div>
+				<div class="b-photo-articles__photo-count">{{ post.imagesCount|ruNumber(['','%u фотография','%u фотографии','%u фотографий']) }}</div>
+				<h2 class="b-photo-articles__news-title"><a href="/photo-article/{{ post.id }}">{{ post.name|e }}</a></h2>
+			</div>
+
+		{% endfor %}
+
 
 	</section>
 
@@ -306,13 +297,11 @@
 						</a>
 
 						<div class="b-column-news__body">
-							<h2 class="b-column-news__title"><a href="/news/{{ post.id }}"
-							                                    title="{{ post.name|e }}">{{ post.name|e }}</a></h2>
+							<h2 class="b-column-news__title"><a href="/news/{{ post.id }}" title="{{ post.name|e }}">{{ post.name|e }}</a></h2>
 
 							<p class="b-column-news__text">{{ post.announceFriendly(200) }}</p>
 							<a href="/news/{{ post.id }}#comments" class="b-column-news__comments b-comments-status">
-								<span class="b-comments-status__num">{{ post.comments }}</span>
-								<span class="b-comments-status__title">{{ post.comments|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) }}</span>
+								<span class="b-comments-status__title">{{ post.comments|ruNumber(['нет комментариев','%u комментарий','%u комментария','%u комментариев']) }}</span>
 							</a>
 						</div>
 					</li>
@@ -340,8 +329,7 @@
 
 							<p class="b-column-news__text">{{ post.announceFriendly(200) }}</p>
 							<a href="/news/{{ post.id }}#comments" class="b-column-news__comments b-comments-status">
-								<span class="b-comments-status__num">{{ post.comments }}</span>
-								<span class="b-comments-status__title">{{ post.comments|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) }}</span>
+								<span class="b-comments-status__title">{{ post.comments|ruNumber(['нет комментариев','%u комментарий','%u комментария','%u комментариев']) }}</span>
 							</a>
 						</div>
 					</li>
@@ -413,8 +401,7 @@
 						<p class="b-column-news__text">{{ post.announceFriendly(100) }}</p>
 						<a href="/news/{{ post.id }}#comments" title="{{ post.name|e }}"
 						   class="b-column-news__comments b-comments-status">
-							<span class="b-comments-status__num">{{ post.comments }}</span>
-							<span class="b-comments-status__title">{{ post.comments|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) }}</span>
+							<span class="b-comments-status__title">{{ post.comments|ruNumber(['нет комментариев','%u комментарий','%u комментария','%u комментариев']) }}</span>
 						</a>
 					</div>
 				</li>
@@ -433,9 +420,9 @@
 		<div class="b-grid__g4">
 			<div class="b-conversation__top">
 				<div class="b-conversation__user-counter">
-					<div class="b-conversation__user-count">462</div>
-					<div class="b-conversation__user-title">пользователя</div>
-					<a href="#" class="b-conversation__user-online b-firm-grad">online</a>
+					<div class="b-conversation__user-count">{{ onlineUsersCount }}</div>
+					<div class="b-conversation__user-title">{{ onlineUsersCount|ruNumber(['никого нет','пользователь','пользователя','пользователей']) }}</div>
+					<a href="/users/online" class="b-conversation__user-online b-firm-grad">online</a>
 				</div>
 			</div>
 			<div class="b-conversation__about-rubrics-title b-rubrics-title b-rubrics-title_s24">обсуждения звёзд</div>

@@ -42,14 +42,8 @@
             </div>
         </section>
     </div>
-    <div class="b-grid__g4 b-grid__a b-grid__z clearfix b-side__vertical-margin b-side__vertical-margin_30">
-        <section class="b-star-childrens">
-            <a href="#" class="b-star-childrens__link">
-                <img src="#" alt="" class="b-star-childrens__img">
-                <div class="b-star-childrens__news-title">звёздные дети: Лилли Роуз Мэлоди Депп</div>
-            </a>
-        </section>
-    </div>
+
+	{% include '/sidebar/RandomKid.twig' with {kid:sidebar.randomKid} only %}
 
     <div class="b-grid__g4 b-grid__a b-grid__z clearfix b-side__gray-line b-side__vertical-margin_30"></div>
 
@@ -57,6 +51,7 @@
 	    {% include '/Poll.twig' %}
     </section>
 
+	{#
     <section class="b-grid__g4 b-grid__a b-grid__z clearfix b-side__vertical-margin">
         <div class="b-conversation__about-rubrics-title b-rubrics-title b-rubrics-title_s18">обсуждения звёзд</div>
         <ul class="b-conversation__about-list">
@@ -82,4 +77,5 @@
             </li>
         </ul>
     </section>
+	#}
 </aside>

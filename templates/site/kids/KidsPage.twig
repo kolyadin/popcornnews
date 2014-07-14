@@ -111,8 +111,8 @@
 					    <p class="text" data-default-text="Всего {{ textDefault }}">Всего {{ textDefault }}</p>
 				    </div>
 				    <div class="under">
-					    <p><a href="/kid/{{ kid.id }}#comments"><strong>{{ kid.comments|ruNumber(['нет комментарий','%u комментарий','%u комментария','%u комментариев']) }}</strong></a></p>
-					    <p><a href="/kid/{{ kid.id }}#new-comment">Написать комментарий</a></p>
+					    <p><a href="/kid/{{ kid.id }}#comments"><strong>{{ kid.comments|ruNumber(['нет комментариев','%u комментарий','%u комментария','%u комментариев']) }}</strong></a></p>
+					    <p><a href="/kid/{{ kid.id }}#new-comment">написать комментарий</a></p>
 				    </div>
 			    </div>
 			    <div class="desc">
@@ -128,13 +128,7 @@
 
 	    {% endfor %}
 
-	    {{
-		    html.paginator(
-			     paginator.pages
-			    ,paginator.active
-			    ,'/kids/page%u'
-		    )
-	    }}
+	    {{ html.paginator(paginator.pages,paginator.active,'/kids/page%u') }}
 
     </div>
 

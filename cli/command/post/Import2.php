@@ -340,7 +340,7 @@ class Import2 extends Command {
 
 		$this->init();
 
-		{
+		/*{
 			$output->write('<info>Чистим таблицы</info>');
 
 			PDOHelper::truncate([
@@ -357,7 +357,7 @@ class Import2 extends Command {
 			$this->insertPosts($input, $output);
 
 			$output->writeln('<comment>Готово</comment>');
-		}
+		}*/
 
 		{
 			$output->write('<info>Добавление рубрик</info>');

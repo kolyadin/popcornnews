@@ -5,6 +5,7 @@ use popcorn\app\controllers\ControllerInterface;
 use popcorn\app\controllers\GenericController;
 use popcorn\model\dataMaps\PersonDataMap;
 use popcorn\model\dataMaps\TagDataMap;
+use popcorn\model\persons\KidFactory;
 use popcorn\model\poll\PollDataMap;
 use popcorn\model\posts\photoArticle\PhotoArticleFactory;
 
@@ -23,6 +24,7 @@ class SidebarController extends GenericController implements ControllerInterface
 	public function build() {
 		$this->buildTags();
 		$this->buildPersons();
+		$this->buildRandomKid();
 		$this->buildPhotoArticle();
 		$this->buildPoll();
 
@@ -36,6 +38,11 @@ class SidebarController extends GenericController implements ControllerInterface
 
 		$this->twigData['photoArticle'] = $post;
 		$this->twigData['photoArticleCount'] = $totalFound;
+	}
+
+	public function buildRandomKid() {
+		$kid = KidFactory::getRandomKid();
+		$this->twigData['randomKid'] = $kid;
 	}
 
 	/**
