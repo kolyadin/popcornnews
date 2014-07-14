@@ -73,4 +73,20 @@ class MeetingDataMap extends DataMap {
 		return $items;
     }
 
+	public function findByLimit(array $options = [], $from = 0, $count = -1, &$totalFound = 0) {
+
+		$sql = 'SELECT %s FROM pn_meetings';
+
+		$stmt = $this->prepare(sprintf($sql, 'count(*)'));
+		$stmt->execute();
+
+		$totalFound = $stmt->fetchColumn();
+
+		$sql .= $this->getOrderString($options['orderBy']);
+		$sql .= $this->getLimitString($from, $count);
+
+		return $this->fetchAll(sprintf($sql, '*'));
+
+	}
+
 }

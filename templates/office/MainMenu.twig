@@ -129,3 +129,24 @@
 		</li>
 	</ul>
 </li>
+
+
+<li class="{% if app.request.path starts with '/office/meet' %}active{% endif %}">
+	<a href="javascript:;">
+		<i class="fa fa-cogs"></i>
+		<span class="title">Пары</span>
+		<span class="arrow open"></span>
+	</a>
+	<ul class="sub-menu">
+		<li class="{% if app.request.path == '/office/meet_create' %}active{% endif %}">
+			<a href="/office/meet_create">
+				Создать новую
+			</a>
+		</li>
+		<li class="{% if app.request.path == '/office/meets' %}active{% endif %}">
+			<a href="/office/meets">
+				Просмотреть все
+			</a>
+		</li>
+	</ul>
+</li>
