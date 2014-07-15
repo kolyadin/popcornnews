@@ -52,6 +52,15 @@ class MeetController extends GenericController implements ControllerInterface {
 			])
 			->via('GET', 'POST');
 
+		$this
+			->getSlim()
+			->map('/meet:meetId/remove', [$this, 'meetRemove'])
+			->conditions([
+				':postId' => '[1-9][0-9]*'
+			])
+			->via('GET', 'POST');
+
+
 	}
 
 	public function meets($page = null) {
@@ -133,8 +142,8 @@ class MeetController extends GenericController implements ControllerInterface {
 			$meet->setFirstPerson($person1);
 			$name1 = $person1->getName();
 		} else {
-			$meet->setFirstPerson('');
 			$name1 = $request->post('firstPersonCustom');
+			$meet->setFirstPerson($name1);
 		}
 
 		$secondPerson = $request->post('secondPerson');
@@ -143,8 +152,8 @@ class MeetController extends GenericController implements ControllerInterface {
 			$meet->setSecondPerson($person2);
 			$name2 = $person2->getName();
 		} else {
-			$meet->setSecondPerson('');
 			$name2 = $request->post('secondPersonCustom');
+			$meet->setSecondPerson($name2);
 		}
 
 		$meet->setTitle($name1 . ' и ' . $name2);
@@ -160,6 +169,28 @@ class MeetController extends GenericController implements ControllerInterface {
 		} else {
 			$this->getSlim()->redirect(sprintf('/office/meet%u?status=created', $meet->getId()));
 		}
+
+	}
+
+	public function meetRemove($meetId) {
+
+		$request = $this->getSlim()->request;
+
+		$meet = MeetingFactory::get($meetId);
+
+		if (!$meet) {
+			$this->getSlim()->notFound();
+		}
+
+		if ($request->getMethod() == 'POST') {
+			MeetingFactory::delete($meet->getId());
+			$this->getSlim()->redirect('/office/meets');
+		}
+
+
+		$this->getTwig()->display('meets/MeetRemove.twig', [
+			'meet' => $meet
+		]);
 
 	}
 

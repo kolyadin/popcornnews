@@ -276,7 +276,7 @@
 
 			{% if meet %}
 
-				<button class="btn btn-m btn-danger" type="button" data-action="poll-remove">Удалить пару</button>
+				<a href="/office/meet{{ meet.id }}/remove" class="btn btn-m btn-danger">Удалить пару</a>
 				<button class="btn btn-m btn-success" type="submit">Обновить пару&nbsp;<i class="fa fa-check"></i></button>
 
 			{% else %}

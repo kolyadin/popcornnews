@@ -41,37 +41,6 @@
 
 	<script type="text/javascript">
 		$(function () {
-
-			var removeMeetCandidateId = null;
-
-			$('button[data-action=confirm-remove]').on('click', function () {
-
-				var params = {
-					entityId: removeMeetCandidateId
-				};
-
-				var handler = function(response){
-
-					if (response.status == 'success'){
-
-						var $tr = $('tr[data-meet-id='+removeMeetCandidateId+']');
-
-						$('#modal-remove').modal('hide');
-					}
-				};
-
-				$.post('/office/ajax/meet/remove',params,handler,'json');
-
-			});
-
-			$('a[data-action=remove-meet]').on('click', function () {
-				removeMeetCandidateId = $(this).closest('tr').attr('data-meet-id');
-			});
-		});
-	</script>
-
-	<script type="text/javascript">
-		$(function () {
 			$('#spinner-comments-count').spinner({value:0, step: 1, min: 0, max: 200});
 		})
 	</script>
@@ -100,30 +69,6 @@
 {% endblock %}
 
 {% block PageContent %}
-
-	<div id="modal-remove" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1"
-	     aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-					<h4 class="modal-title">Вы ТОЧНО хотите удалить пару?</h4>
-				</div>
-				<div class="modal-body">
-					<p><strong>Удаление пары приведет к</strong>:</p>
-					<ul>
-						<li>удалению комментариев</li>
-					</ul>
-				</div>
-				<div class="modal-footer">
-					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Отмена</button>
-					<button class="btn btn-danger" data-dismiss="modal" data-action="confirm-remove">Подтверждаю
-						удаление
-					</button>
-				</div>
-			</div>
-		</div>
-	</div>
 
 	{% if meets|length %}
 
@@ -155,7 +100,7 @@
 							   data-placement="top" href="/office/meet{{ meet.id }}"><i class="fa fa-edit"></i></a>
 							<a class="btn btn-danger btn-xs tooltips" data-original-title="Удалить пару"
 							   data-placement="top" role="button" data-toggle="modal" data-action="remove-meet"
-							   href="#modal-remove"><i class="fa fa-trash-o"></i></a>
+							   href="/office/meet{{ meet.id }}/remove"><i class="fa fa-trash-o"></i></a>
 						</td>
 						<td class="item-date">{{ meet.title }}</td>
 						<td class="item-date">{{ meet.description|slice(0, 50) }}</td>

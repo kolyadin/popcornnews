@@ -48,10 +48,6 @@ class AjaxController extends GenericController implements ControllerInterface {
 			->getSlim()
 			->post('/ajax/crop', [$this, 'crop']);
 
-		$this
-			->getSlim()
-			->post('/ajax/meet/remove', [$this, 'removeMeet']);
-
 	}
 
 	public function removeEntity($entity) {
@@ -296,19 +292,6 @@ class AjaxController extends GenericController implements ControllerInterface {
 			]);
 
 		}
-
-	}
-
-	public function removeMeet() {
-//run_time_logger('aaaaaa', 2, 1);
-//die();
-//		$this->getApp()->exitWithJsonSuccessMessage([
-//			'dfgsdf' => 'asdfsdfsd',
-//		]);
-//
-//echo_arr($this->getSlim()->request->post);
-		//$imageId = $this->getSlim()->request->post('');
-
 
 	}
 

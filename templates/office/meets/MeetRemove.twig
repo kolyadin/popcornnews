@@ -1,0 +1,34 @@
+{% extends '/Generic.twig' %}
+
+{% block BodyEnd %}
+
+
+{% endblock %}
+
+{% block PageContent %}
+
+	<h3 class="page-title">
+		Подтвердите удаление
+		<small>Пара</small>
+	</h3>
+
+	<form method="post" action="/office/meet{{ meet.id }}/remove">
+		<input type="hidden" name="meetId" value="{{ meet.id }}"/>
+
+		<div class="note note-danger">
+			<h4>Пара <a class="btn btn-default" href="/office/meet{{ meet.id }}">{{ meet.title|e }}</a></h4>
+
+			<p><strong>Удаление приведет к:</strong></p>
+			<p>
+				<ul>
+					<li>удалению комментариев</li>
+				</ul>
+			</p>
+			<p style="text-align: right;">
+				<a class="btn btn-info" href="/office/meets">Вернуться к списку пар</a>
+				<input type="submit" class="btn btn-danger" value="Подтверждаю удаление"/>
+			</p>
+		</div>
+	</form>
+
+{% endblock %}

@@ -5,6 +5,7 @@ namespace popcorn\model\dataMaps;
 use popcorn\model\persons\Meeting;
 use popcorn\model\persons\PersonFactory;
 use popcorn\model\voting\VotingFactory;
+use popcorn\model\persons\Person;
 
 class MeetingDataMap extends DataMap {
 
@@ -28,8 +29,18 @@ class MeetingDataMap extends DataMap {
      * @param Meeting $item
      */
     protected function insertBindings($item) {
-        $this->insertStatement->bindValue(":firstPerson", $item->getFirstPerson()->getId());
-        $this->insertStatement->bindValue(":secondPerson", $item->getSecondPerson()->getId());
+		if ($item->getFirstPerson() instanceof Person) {
+			$this->insertStatement->bindValue(":firstPerson", $item->getFirstPerson()->getId());
+		} else {
+			$this->insertStatement->bindValue(":firstPerson", 0);
+		}
+
+		if ($item->getSecondPerson() instanceof Person) {
+			$this->insertStatement->bindValue(":secondPerson", $item->getSecondPerson()->getId());
+		} else {
+			$this->insertStatement->bindValue(":secondPerson", 0);
+		}
+
         $this->insertStatement->bindValue(":title", $item->getTitle());
         $this->insertStatement->bindValue(":description", $item->getDescription());
 		$this->insertStatement->bindValue(":votesUp", $item->getVotesUp());
@@ -41,22 +52,24 @@ class MeetingDataMap extends DataMap {
      * @param Meeting $item
      */
     protected function updateBindings($item) {
-        $this->updateStatement->bindValue(":firstPerson", $item->getFirstPerson()->getId());
-        $this->updateStatement->bindValue(":secondPerson", $item->getSecondPerson()->getId());
-        $this->updateStatement->bindValue(":title", $item->getTitle());
+		if ($item->getFirstPerson() instanceof Person) {
+			$this->updateStatement->bindValue(":firstPerson", $item->getFirstPerson()->getId());
+		} else {
+			$this->updateStatement->bindValue(":firstPerson", 0);
+		}
+
+		if ($item->getSecondPerson() instanceof Person) {
+			$this->updateStatement->bindValue(":secondPerson", $item->getSecondPerson()->getId());
+		} else {
+			$this->updateStatement->bindValue(":secondPerson", 0);
+		}
+
+		$this->updateStatement->bindValue(":title", $item->getTitle());
         $this->updateStatement->bindValue(":description", $item->getDescription());
         $this->updateStatement->bindValue(":id", $item->getId());
 		$this->updateStatement->bindValue(":votesUp", $item->getVotesUp());
 		$this->updateStatement->bindValue(":votesDown", $item->getVotesDown());
 		$this->updateStatement->bindValue(":commentsCount", $item->getCommentsCount());
-    }
-
-    /**
-     * @param Meeting $item
-     */
-    protected function onInsert($item) {
-        parent::onInsert($item);
-        $item->setVoting(VotingFactory::createUpDownVoting($item->getId()));
     }
 
     /**
