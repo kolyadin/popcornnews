@@ -12,7 +12,7 @@ class YourStyleTilesColorsNewDataMap extends DataMap {
 		$this->insertStatement = $this->prepare("INSERT INTO `pn_yourstyle_tiles_colors_new` (`color`, `tId`, `priority`)
 		    VALUES (:color, :tId, :priority)");
 		$this->deleteStatement = $this->prepare("DELETE FROM `pn_yourstyle_tiles_colors_new` WHERE `tId`=:tId");
-		$this->findOneStatement = $this->prepare("SELECT `color`, `human` FROM `pn_yourstyle_tiles_colors_new` JOIN `pn_yourstyle_tiles_colors` ON `html` = `color` WHERE `pn_yourstyle_tiles_colors_new`.`tId`=:tId");
+		$this->findOneStatement = $this->prepare("SELECT DISTINCT `color`, `human` FROM `pn_yourstyle_tiles_colors_new` JOIN `pn_yourstyle_tiles_colors` ON `html` = `color` WHERE `pn_yourstyle_tiles_colors_new`.`tId`=:tId");
 	}
 
 	protected function insertBindings($item) {
