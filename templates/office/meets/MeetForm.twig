@@ -27,6 +27,7 @@
 				multiple: false,
 				placeholder: "Начни вводить имя персоны...",
 				initSelection: function (element, callback) {
+
 					{% if meet.firstPerson.id %}
 
 						var data = [];
@@ -34,6 +35,7 @@
 						callback(data[0]);
 
 					{% endif %}
+
 				},
 				ajax: {
 					url: '/office/ajax/post/persons',
@@ -56,11 +58,15 @@
 				multiple: false,
 				placeholder: "Начни вводить имя персоны...",
 				initSelection: function (element, callback) {
+
 					{% if meet.secondPerson.id %}
+
 						var data = [];
 						data.push({'id': {{ meet.secondPerson.id }}, 'text': '{{ meet.secondPerson.name|e }}'});
 						callback(data[0]);
+
 					{% endif %}
+
 				},
 				ajax: {
 					url: '/office/ajax/post/persons',

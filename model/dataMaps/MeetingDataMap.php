@@ -19,7 +19,7 @@ class MeetingDataMap extends DataMap {
         $this->insertStatement = $this->prepare("
             INSERT INTO pn_meetings (firstPerson, secondPerson, title, description, votesUp, votesDown, commentsCount)
             VALUES (:firstPerson, :secondPerson, :title, :description, :votesUp, :votesDown, :commentsCount)");
-        $this->updateStatement = $this->prepare("UPDATE pn_meetings SET title=:title, description=:description, votesUp=:votesUp, votesDown=:votesDown, commentsCount=:commentsCount WHERE id=:id");
+        $this->updateStatement = $this->prepare("UPDATE pn_meetings SET firstPerson=:firstPerson, secondPerson=:secondPerson, title=:title, description=:description, votesUp=:votesUp, votesDown=:votesDown, commentsCount=:commentsCount WHERE id=:id");
         $this->deleteStatement = $this->prepare("DELETE FROM pn_meetings WHERE id=:id");
         $this->findOneStatement = $this->prepare("SELECT * FROM pn_meetings WHERE id=:id");
     }
@@ -41,6 +41,8 @@ class MeetingDataMap extends DataMap {
      * @param Meeting $item
      */
     protected function updateBindings($item) {
+        $this->updateStatement->bindValue(":firstPerson", $item->getFirstPerson()->getId());
+        $this->updateStatement->bindValue(":secondPerson", $item->getSecondPerson()->getId());
         $this->updateStatement->bindValue(":title", $item->getTitle());
         $this->updateStatement->bindValue(":description", $item->getDescription());
         $this->updateStatement->bindValue(":id", $item->getId());

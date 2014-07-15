@@ -117,8 +117,14 @@ class MeetController extends GenericController implements ControllerInterface {
 
 		if ($meetId > 0) {
 			$meet = MeetingFactory::get($meetId);
+			$votesUp = $meet->getVotesUp();
+			$votesDown = $meet->getVotesDown();
+			$comCnt = $meet->getCommentsCount();
 		} else {
 			$meet = new Meeting();
+			$votesUp = 0;
+			$votesDown = 0;
+			$comCnt = 0;
 		}
 
 		$firstPerson = $request->post('firstPerson');
@@ -131,11 +137,11 @@ class MeetController extends GenericController implements ControllerInterface {
 			$name1 = $request->post('firstPersonCustom');
 		}
 
-		$secondPerson = $request->post('firstPerson');
+		$secondPerson = $request->post('secondPerson');
 		if ($secondPerson) {
 			$person2 = PersonFactory::getPerson($secondPerson);
 			$meet->setSecondPerson($person2);
-			$name2 = $person1->getName();
+			$name2 = $person2->getName();
 		} else {
 			$meet->setSecondPerson('');
 			$name2 = $request->post('secondPersonCustom');
@@ -144,10 +150,9 @@ class MeetController extends GenericController implements ControllerInterface {
 		$meet->setTitle($name1 . ' и ' . $name2);
 
 		$meet->setDescription($request->post('description'));
-		$meet->setVotesUp(0);
-		$meet->setVotesDown(0);
-		$meet->setCommentsCount(0);
-		echo_arr($meet);
+		$meet->setVotesUp($votesUp);
+		$meet->setVotesDown($votesDown);
+		$meet->setCommentsCount($comCnt);
 		MeetingFactory::save($meet);
 
 		if ($meetId) {
