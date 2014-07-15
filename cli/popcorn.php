@@ -12,6 +12,7 @@ use popcorn\cli\entity\PostEntity;
 use popcorn\cli\entity\SystemEntity;
 use popcorn\cli\entity\TagEntity;
 use popcorn\cli\entity\UserEntity;
+use popcorn\cli\entity\MeetEntity;
 use popcorn\lib\ImageGenerator;
 use Symfony\Component\Console\Application;
 
@@ -59,5 +60,6 @@ $cliApp->addCommands(GeneratorEntity::getCommands());
 $cliApp->addCommands(KidEntity::getCommands());
 $cliApp->addCommands(CommunityEntity::getCommands());
 $cliApp->addCommands(PollEntity::getCommands());
+$cliApp->addCommands(MeetEntity::getCommands());
 
 $cliApp->run();
