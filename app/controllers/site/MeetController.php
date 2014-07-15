@@ -55,11 +55,17 @@ class MeetController extends GenericController implements ControllerInterface {
 		$dataMap = new MeetCommentDataMap();
 		$commentsTree = $dataMap->getAllComments($meetId);
 
+		$commentsHtml = $this
+			->getTwig()
+			->render('/comments/Comments.twig', [
+				'comments' => $commentsTree
+			]);
+
 		$this
 			->getTwig()
 			->display('/meet/MeetingPage.twig', [
 				'meet' => $meet,
-				'commentsTree' => $commentsTree
+				'comments' => $commentsHtml
 			]);
 	}
 }
