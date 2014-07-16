@@ -39,19 +39,19 @@ class MeetController extends GenericController implements ControllerInterface {
 		]);
 
 		$onPage = 12;
-		$dataMap = new MeetingDataMap($dataMapHelper);
-		$meetings = $dataMap->find(($pageId - 1) * $onPage, $onPage);
+		$meetings = MeetingFactory::getMeets(['orderBy' => ['id' => 'asc']], ($pageId - 1) * $onPage, $onPage, $totalFound);
 
 		$this
 			->getTwig()
 			->display('/meet/MeetingsPage.twig', [
 				'meetings' => $meetings,
 				'paginator' => [
-					'pages'  => 1, ///need to fixing
+					'pages'  => ceil($totalFound / $onPage),
 					'active' => $pageId
 				]
+			]
+		);
 
-			]);
 	}
 
 	public function meetingPage($meetId) {

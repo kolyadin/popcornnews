@@ -58,11 +58,11 @@ class ImportComments extends Command {
 				  :deleted, :level, :imagesCount
 				)");
 
-//		$this->stmtInsertImage =
-//			$this->pdo->prepare("
-//				INSERT INTO pn_comments_kids_images (commentId, imageId)
-//				VALUES (:commentId, :imageId)
-//			");
+		$this->stmtInsertImage =
+			$this->pdo->prepare("
+				INSERT INTO pn_comments_meetings_images (commentId, imageId)
+				VALUES (:commentId, :imageId)
+			");
 
 	}
 
@@ -131,6 +131,32 @@ class ImportComments extends Command {
 
 			$imagesCount = 0;
 
+			if (isset($matches[1]) && count($matches[1])) {
+				foreach ($matches[1] as $imageUrl) {
+					try {
+						$output->write("\t<comment>Пытаемся скачать $imageUrl</comment>");
+
+						$image = ImageFactory::createFromUrl($imageUrl);
+
+						$this->stmtInsertImage->bindValue(':commentId', $item['id']);
+						$this->stmtInsertImage->bindValue(':imageId', $image->getId());
+						$this->stmtInsertImage->execute();
+
+						$imagesCount++;
+
+						$output->write(" <info>готово</info>");
+
+						$image->getThumb('x100');
+						$output->writeln(" <info>преобразовано</info>");
+
+					} catch (FileNotFoundException $e) {
+						$output->writeln(" <error>неудачно</error>");
+
+						continue;
+					}
+				}
+			}
+
 			$content = preg_replace('@\[img\].+\[\/img\]@iU', '', $content);
 			$content = trim($content);
 
@@ -184,6 +210,7 @@ class ImportComments extends Command {
 
 		$output->writeln('<info>Импорт комментарий пар...</info>');
 		$this->importComments($input, $output);
+		$this->tablePnCommentsMeetingsVote($input, $output);
 		$output->writeln("<info>Импорт завершен</info>");
 
 		$output->write('<info>Строим структуру комментариев...');
@@ -195,4 +222,28 @@ class ImportComments extends Command {
 		$output->writeln(" готово</info>");
 
 	}
+
+	protected function tablePnCommentsMeetingsVote(InputInterface $input, OutputInterface $output, $limit = false) {
+
+		$output->writeln(date('Y-m-d H:i', time()) . ' <info>Таблица pn_comments_meetings_vote</info>');
+		if ($limit) {
+			$limit = ' LIMIT ' . $limit;
+		}
+		$sql = 'SELECT * FROM `popcornnews`.`pn_comments_meet_vote`' . $limit;
+		$stmt = $this->pdo->prepare($sql);
+		$stmt->execute();
+		while($item = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+			$stmt2 = $this->pdo->prepare("
+				INSERT INTO pn_comments_meetings_vote
+				SET `commentId` = :commentId, `userId` = :userId"
+			);
+			$stmt2->execute([
+				':commentId' => $item['comment_id'],
+				':userId' => $item['user_id'],
+			]);
+		}
+		$output->writeln(date('Y-m-d H:i', time()) . ' <comment> готово</comment>');
+
+	}
+
 }

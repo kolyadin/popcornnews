@@ -14,6 +14,20 @@
 
 		$(function(){
 
+			$('#postDate1').datetimepicker({
+				language: 'ru',
+				format: 'dd.mm.yyyy hh:ii',
+				autoclose: true,
+				minuteStep: 1
+			});
+
+			$('#postDate2').datetimepicker({
+				language: 'ru',
+				format: 'dd.mm.yyyy hh:ii',
+				autoclose: true,
+				minuteStep: 1
+			});
+
 			$('input[data-action=btn-find-person]').on('click',function(){
 				$(this).closest('.thumbnail').find('.finder').removeClass('hide').end().find('.choose').addClass('hide');
 			});
@@ -161,6 +175,7 @@
 						<a href="javascript:;" class="collapse"></a>
 					</div>
 				</div>
+
 				<div class="portlet-body">
 
 					<div class="col-md-2">&nbsp;</div>
@@ -177,6 +192,12 @@
 										<input class="form-control" type="text" name="firstPerson" data-action="find-person" data-id="first-person" placeholder="Начни набирать имя персоны..." value="{{ meet.firstPerson.id }}"/>
 									{% else %}
 										<input class="form-control" type="text" name="firstPersonCustom" placeholder="Напиши любое имя" value="{{ name1|e }}"/>
+
+										<div style="margin: 10px;">Дата рождения</div>
+										<div class="col-md-9">
+											<input class="form-control" style="width:150px;float:left;margin-right: 10px;" id="postDate1" name="date1" required="true" type="text" value="{{ meet.date1|date('d.m.Y H:i') }}"/>
+											<span class="help-block"></span>
+										</div>
 									{% endif %}
 
 									<div class="clearfix"></div>
@@ -194,6 +215,12 @@
 										<input class="form-control" type="text" name="secondPerson" data-action="find-person" data-id="second-person" placeholder="Начни набирать имя персоны..." value="{{ meet.secondPerson.id }}"/>
 									{% else %}
 										<input class="form-control" type="text" name="secondPersonCustom" placeholder="Напиши любое имя" value="{{ name2|e }}"/>
+
+										<div style="margin: 10px;">Дата рождения</div>
+										<div class="col-md-9">
+											<input class="form-control" style="width:150px;float:left;margin-right: 10px;" id="postDate2" name="date2" required="true" type="text" value="{{ meet.date2|date('d.m.Y H:i') }}"/>
+											<span class="help-block"></span>
+										</div>
 									{% endif %}
 
 								</div>
@@ -210,6 +237,12 @@
 									</div>
 									<div class="hide custom">
 										<input class="form-control" type="text" name="firstPersonCustom" placeholder="Напиши любое имя"/>
+
+										<div style="margin: 10px;">Дата рождения</div>
+										<div class="col-md-9">
+											<input class="form-control" style="width:150px;float:left;margin-right: 10px;" id="postDate1" name="date1" required="true" type="text" value="{{ 'now'|date('d.m.Y H:i') }}"/>
+											<span class="help-block"></span>
+										</div>
 									</div>
 
 									<div class="choose">
@@ -231,6 +264,12 @@
 									</div>
 									<div class="hide custom">
 										<input class="form-control" type="text" name="secondPersonCustom" placeholder="Напиши любое имя"/>
+
+										<div style="margin: 10px;">Дата рождения</div>
+										<div class="col-md-9">
+											<input class="form-control" style="width:150px;float:left;margin-right: 10px;" id="postDate2" name="date2" required="true" type="text" value="{{ 'now'|date('d.m.Y H:i') }}"/>
+											<span class="help-block"></span>
+										</div>
 									</div>
 
 									<div class="choose">
@@ -245,7 +284,6 @@
 						<div class="clearfix"></div>
 					</div>
 					<div class="clearfix"></div>
-
 				</div>
 			</div>
 

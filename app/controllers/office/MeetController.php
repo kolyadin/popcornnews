@@ -123,6 +123,8 @@ class MeetController extends GenericController implements ControllerInterface {
 		$request = $this->getSlim()->request;
 
 		$meetId = $request->post('meetId');
+		$date1 = $request->post('date1');
+		$date2 = $request->post('date2');
 
 		if ($meetId > 0) {
 			$meet = MeetingFactory::get($meetId);
@@ -141,9 +143,12 @@ class MeetController extends GenericController implements ControllerInterface {
 			$person1 = PersonFactory::getPerson($firstPerson);
 			$meet->setFirstPerson($person1);
 			$name1 = $person1->getName();
+			$meet->setDate1(0);
 		} else {
 			$name1 = $request->post('firstPersonCustom');
 			$meet->setFirstPerson($name1);
+			$date1 = strtotime($date1);
+			$meet->setDate1($date1);
 		}
 
 		$secondPerson = $request->post('secondPerson');
@@ -151,9 +156,12 @@ class MeetController extends GenericController implements ControllerInterface {
 			$person2 = PersonFactory::getPerson($secondPerson);
 			$meet->setSecondPerson($person2);
 			$name2 = $person2->getName();
+			$meet->setDate2(0);
 		} else {
 			$name2 = $request->post('secondPersonCustom');
 			$meet->setSecondPerson($name2);
+			$date2 = strtotime($date2);
+			$meet->setDate2($date2);
 		}
 
 		$meet->setTitle($name1 . ' и ' . $name2);
