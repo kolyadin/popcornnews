@@ -151,9 +151,9 @@ class PersonFanFicsController extends PersonController implements ControllerInte
 
 		$fanfics = FanFicFactory::getFanFicsByPerson($person, [], ($page - 1) * self::FANFICS_PER_PAGE, self::FANFICS_PER_PAGE, $totalFound);
 
-		if (!count($fanfics)) {
-			$this->getSlim()->notFound();
-		}
+//		if (!count($fanfics)) {
+//			$this->getSlim()->notFound();
+//		}
 
 		$this
 			->getTwig()
