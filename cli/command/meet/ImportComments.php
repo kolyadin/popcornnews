@@ -60,7 +60,7 @@ class ImportComments extends Command {
 
 //		$this->stmtInsertImage =
 //			$this->pdo->prepare("
-//				INSERT INTO pn_comments_kids_images (commentId, imageId)
+//				INSERT INTO pn_comments_meetings_images (commentId, imageId)
 //				VALUES (:commentId, :imageId)
 //			");
 
