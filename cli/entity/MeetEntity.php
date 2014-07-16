@@ -10,6 +10,7 @@ class MeetEntity {
 
         return [
 			new command\meet\Import(),
+			new command\meet\ImportComments(),
         ];
 
     }

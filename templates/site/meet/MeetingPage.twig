@@ -119,17 +119,27 @@
 				{% set photoSecond = '' %}
 			{% endif %}
 
+			{% set age1 = meet.firstPerson.birthDate|ruAge %}
+			{% if age1 == 1 %}
+				{% set age1 = meet.date1|ruAge %}
+			{% endif %}
+
+			{% set age2 = meet.secondPerson.birthDate|ruAge %}
+			{% if age2 == 1 %}
+				{% set age2 = meet.date2|ruAge %}
+			{% endif %}
+
 			<div class="meet" data-meet-id="{{ meet.id }}">
 				<h2><a href="/meet/{{ meet.id }}">{{ meet.title|e }}</a></h2>
 				<div class="pics">
 					<ul class="b-column-news">
                 	                	<li class="b-grid__g13">
 							<a href="/meet/{{ meet.id }}"><img src="{{ photoFirst.url }}" alt="{{ meet.name|e }}" width="{{ photoFirst.width }}" height="{{ photoFirst.height }}"/></a>
-                                			<div>{{ meet.firstPerson.birthDate|ruAge }}</div>
+                                			<div>{{ age1 }}</div>
 				        	</li>
 					        <li class="b-grid__g13">
 							<a href="/meet/{{ meet.id }}"><img src="{{ photoSecond.url }}" alt="{{ meet.name|e }}" width="{{ photoSecond.width }}" height="{{ photoSecond.height }}"/></a>
-                	                		<div>{{ meet.secondPerson.birthDate|ruAge }}</div>
+                	                		<div>{{ age2 }}</div>
 						</li>
 					</ul>
 				</div>

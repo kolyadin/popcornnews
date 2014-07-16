@@ -65,6 +65,16 @@ class Meeting extends Model {
 	 */
 	private $commentsCount;
 
+	/**
+     * @var \DateTime
+     */
+	private $date1;
+
+	/**
+     * @var \DateTime
+     */
+	private $date2;
+
 	//endregion
 
     //region Getters
@@ -123,6 +133,20 @@ class Meeting extends Model {
 	public function getCommentsCount(){
 		return $this->commentsCount;
 	}
+
+	/**
+     * @return \DateTime
+     */
+	public function getDate1() {
+        return $this->date1;
+    }
+
+	/**
+     * @return \DateTime
+     */
+	public function getDate2() {
+        return $this->date2;
+    }
 
     //endregion
 
@@ -188,6 +212,22 @@ class Meeting extends Model {
 		$this->commentsCount = $commentsCount;
 	}
 
-//endregion
+	/**
+     * @param \DateTime
+     */
+	public function setDate1($date1) {
+        $this->date1 = $date1;
+        $this->changed();
+    }
+
+	/**
+     * @param \DateTime
+     */
+	public function setDate2($date2) {
+        $this->date2 = $date2;
+        $this->changed();
+    }
+
+	//endregion
 
 }

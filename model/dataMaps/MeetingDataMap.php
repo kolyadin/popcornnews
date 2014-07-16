@@ -18,9 +18,10 @@ class MeetingDataMap extends DataMap {
         parent::__construct();
         $this->class = "popcorn\\model\\persons\\Meeting";
         $this->insertStatement = $this->prepare("
-            INSERT INTO pn_meetings (firstPerson, secondPerson, title, description, votesUp, votesDown, commentsCount)
-            VALUES (:firstPerson, :secondPerson, :title, :description, :votesUp, :votesDown, :commentsCount)");
-        $this->updateStatement = $this->prepare("UPDATE pn_meetings SET firstPerson=:firstPerson, secondPerson=:secondPerson, title=:title, description=:description, votesUp=:votesUp, votesDown=:votesDown, commentsCount=:commentsCount WHERE id=:id");
+            INSERT INTO pn_meetings (firstPerson, secondPerson, title, description, votesUp, votesDown, commentsCount, date1, date2)
+            VALUES (:firstPerson, :secondPerson, :title, :description, :votesUp, :votesDown, :commentsCount, :date1, :date2)");
+        $this->updateStatement = $this->prepare("UPDATE pn_meetings SET firstPerson=:firstPerson, secondPerson=:secondPerson,
+				title=:title, description=:description, votesUp=:votesUp, votesDown=:votesDown, commentsCount=:commentsCount, date1=:date1, date2=:date2 WHERE id=:id");
         $this->deleteStatement = $this->prepare("DELETE FROM pn_meetings WHERE id=:id");
         $this->findOneStatement = $this->prepare("SELECT * FROM pn_meetings WHERE id=:id");
     }
@@ -46,6 +47,8 @@ class MeetingDataMap extends DataMap {
 		$this->insertStatement->bindValue(":votesUp", $item->getVotesUp());
 		$this->insertStatement->bindValue(":votesDown", $item->getVotesDown());
 		$this->insertStatement->bindValue(":commentsCount", $item->getCommentsCount());
+		$this->insertStatement->bindValue(":date1", $item->getDate1());
+		$this->insertStatement->bindValue(":date2", $item->getDate2());
     }
 
     /**
@@ -70,6 +73,8 @@ class MeetingDataMap extends DataMap {
 		$this->updateStatement->bindValue(":votesUp", $item->getVotesUp());
 		$this->updateStatement->bindValue(":votesDown", $item->getVotesDown());
 		$this->updateStatement->bindValue(":commentsCount", $item->getCommentsCount());
+		$this->updateStatement->bindValue(":date1", $item->getDate1());
+		$this->updateStatement->bindValue(":date2", $item->getDate2());
     }
 
     /**
