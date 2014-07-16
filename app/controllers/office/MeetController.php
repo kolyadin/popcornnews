@@ -52,6 +52,15 @@ class MeetController extends GenericController implements ControllerInterface {
 			])
 			->via('GET', 'POST');
 
+		$this
+			->getSlim()
+			->map('/meet:meetId/remove', [$this, 'meetRemove'])
+			->conditions([
+				':postId' => '[1-9][0-9]*'
+			])
+			->via('GET', 'POST');
+
+
 	}
 
 	public function meets($page = null) {
@@ -117,8 +126,14 @@ class MeetController extends GenericController implements ControllerInterface {
 
 		if ($meetId > 0) {
 			$meet = MeetingFactory::get($meetId);
+			$votesUp = $meet->getVotesUp();
+			$votesDown = $meet->getVotesDown();
+			$comCnt = $meet->getCommentsCount();
 		} else {
 			$meet = new Meeting();
+			$votesUp = 0;
+			$votesDown = 0;
+			$comCnt = 0;
 		}
 
 		$firstPerson = $request->post('firstPerson');
@@ -127,27 +142,26 @@ class MeetController extends GenericController implements ControllerInterface {
 			$meet->setFirstPerson($person1);
 			$name1 = $person1->getName();
 		} else {
-			$meet->setFirstPerson('');
 			$name1 = $request->post('firstPersonCustom');
+			$meet->setFirstPerson($name1);
 		}
 
-		$secondPerson = $request->post('firstPerson');
+		$secondPerson = $request->post('secondPerson');
 		if ($secondPerson) {
 			$person2 = PersonFactory::getPerson($secondPerson);
 			$meet->setSecondPerson($person2);
-			$name2 = $person1->getName();
+			$name2 = $person2->getName();
 		} else {
-			$meet->setSecondPerson('');
 			$name2 = $request->post('secondPersonCustom');
+			$meet->setSecondPerson($name2);
 		}
 
 		$meet->setTitle($name1 . ' и ' . $name2);
 
 		$meet->setDescription($request->post('description'));
-		$meet->setVotesUp(0);
-		$meet->setVotesDown(0);
-		$meet->setCommentsCount(0);
-		echo_arr($meet);
+		$meet->setVotesUp($votesUp);
+		$meet->setVotesDown($votesDown);
+		$meet->setCommentsCount($comCnt);
 		MeetingFactory::save($meet);
 
 		if ($meetId) {
@@ -155,6 +169,28 @@ class MeetController extends GenericController implements ControllerInterface {
 		} else {
 			$this->getSlim()->redirect(sprintf('/office/meet%u?status=created', $meet->getId()));
 		}
+
+	}
+
+	public function meetRemove($meetId) {
+
+		$request = $this->getSlim()->request;
+
+		$meet = MeetingFactory::get($meetId);
+
+		if (!$meet) {
+			$this->getSlim()->notFound();
+		}
+
+		if ($request->getMethod() == 'POST') {
+			MeetingFactory::delete($meet->getId());
+			$this->getSlim()->redirect('/office/meets');
+		}
+
+
+		$this->getTwig()->display('meets/MeetRemove.twig', [
+			'meet' => $meet
+		]);
 
 	}
 

@@ -10,9 +10,9 @@ class MeetCommentDataMap extends CommentDataMap {
 	private $stmtUpdateMeetCommentsCount;
 
 	public function __construct() {
+
 		parent::__construct();
 
-		$this->class = "popcorn\\model\\comments\\MeetComment";
 	}
 
 	protected function initStatements() {

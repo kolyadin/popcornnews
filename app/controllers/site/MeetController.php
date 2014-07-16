@@ -31,20 +31,26 @@ class MeetController extends GenericController implements ControllerInterface {
 			->conditions(['pageId' => '\d+']);
 	}
 
-	public function meetingsPage($currentPage = 1) {
+	public function meetingsPage($pageId = 1) {
 
 		$dataMapHelper = new DataMapHelper();
 		$dataMapHelper->setRelationship([
 			'popcorn\\model\\dataMaps\\PersonDataMap' => PersonDataMap::WITH_NONE | PersonDataMap::WITH_PHOTO
 		]);
 
+		$onPage = 12;
 		$dataMap = new MeetingDataMap($dataMapHelper);
-		$meetings = $dataMap->find(0, 12);
+		$meetings = $dataMap->find(($pageId - 1) * $onPage, $onPage);
 
 		$this
 			->getTwig()
 			->display('/meet/MeetingsPage.twig', [
-				'meetings' => $meetings
+				'meetings' => $meetings,
+				'paginator' => [
+					'pages'  => 1, ///need to fixing
+					'active' => $pageId
+				]
+
 			]);
 	}
 
@@ -55,11 +61,17 @@ class MeetController extends GenericController implements ControllerInterface {
 		$dataMap = new MeetCommentDataMap();
 		$commentsTree = $dataMap->getAllComments($meetId);
 
+		$commentsHtml = $this
+			->getTwig()
+			->render('/comments/Comments.twig', [
+				'comments' => $commentsTree
+			]);
+
 		$this
 			->getTwig()
 			->display('/meet/MeetingPage.twig', [
 				'meet' => $meet,
-				'commentsTree' => $commentsTree
+				'comments' => $commentsHtml
 			]);
 	}
 }

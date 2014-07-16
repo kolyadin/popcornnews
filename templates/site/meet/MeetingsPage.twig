@@ -105,16 +105,27 @@
 			{% set photoSecond = '' %}
 		{% endif %}
 
+		{% set age1 = meeting.firstPerson.birthDate|ruAge %}
+		{% if age1 == 1 %}
+			{% set age1 = meeting.date1|ruAge %}
+		{% endif %}
+
+		{% set age2 = meeting.secondPerson.birthDate|ruAge %}
+		{% if age2 == 1 %}
+			{% set age2 = meeting.date2|ruAge %}
+		{% endif %}
+
 		<div class="meet" data-meet-id="{{ meeting.id }}">
 			<h2><a href="/meet/{{ meeting.id }}">{{ meeting.title|e }}</a></h2>
 			<div class="pics">
 				<ul class="b-column-news">
                     <li class="b-grid__g13">
-						<a href="/meet/{{ meeting.id }}"><img src="{{ photoFirst.url }}" alt="{{ meeting.name|e }}" width="{{ photoFirst.width }}" height="{{ photoFirst.height }}"/></a>                                		<div>{{ meeting.firstPerson.birthDate|ruAge }}</div>
+						<a href="/meet/{{ meeting.id }}"><img src="{{ photoFirst.url }}" alt="{{ meeting.name|e }}" width="{{ photoFirst.width }}" height="{{ photoFirst.height }}"/></a>                                		
+			<div>{{ age1 }}</div>
 			        </li>
 			        <li class="b-grid__g13">
 						<a href="/meet/{{ meeting.id }}"><img src="{{ photoSecond.url }}" alt="{{ meeting.name|e }}" width="{{ photoSecond.width }}" height="{{ photoSecond.height }}"/></a>
-                        <div>{{ meeting.secondPerson.birthDate|ruAge }}</div>
+                        <div>{{ age2 }}</div>
 					</li>
 				</ul>
 			</div>
@@ -139,6 +150,8 @@
 	{% endfor %}
 
 	{% endspaceless %}
+
+	{{ html.paginator(paginator.pages,paginator.active,'/meet/page%u') }}
 
 </div>
 

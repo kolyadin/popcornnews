@@ -5,6 +5,7 @@ namespace popcorn\model\dataMaps;
 use popcorn\model\persons\Meeting;
 use popcorn\model\persons\PersonFactory;
 use popcorn\model\voting\VotingFactory;
+use popcorn\model\persons\Person;
 
 class MeetingDataMap extends DataMap {
 
@@ -17,9 +18,10 @@ class MeetingDataMap extends DataMap {
         parent::__construct();
         $this->class = "popcorn\\model\\persons\\Meeting";
         $this->insertStatement = $this->prepare("
-            INSERT INTO pn_meetings (firstPerson, secondPerson, title, description, votesUp, votesDown, commentsCount)
-            VALUES (:firstPerson, :secondPerson, :title, :description, :votesUp, :votesDown, :commentsCount)");
-        $this->updateStatement = $this->prepare("UPDATE pn_meetings SET title=:title, description=:description, votesUp=:votesUp, votesDown=:votesDown, commentsCount=:commentsCount WHERE id=:id");
+            INSERT INTO pn_meetings (firstPerson, secondPerson, title, description, votesUp, votesDown, commentsCount, date1, date2)
+            VALUES (:firstPerson, :secondPerson, :title, :description, :votesUp, :votesDown, :commentsCount, :date1, :date2)");
+        $this->updateStatement = $this->prepare("UPDATE pn_meetings SET firstPerson=:firstPerson, secondPerson=:secondPerson,
+				title=:title, description=:description, votesUp=:votesUp, votesDown=:votesDown, commentsCount=:commentsCount, date1=:date1, date2=:date2 WHERE id=:id");
         $this->deleteStatement = $this->prepare("DELETE FROM pn_meetings WHERE id=:id");
         $this->findOneStatement = $this->prepare("SELECT * FROM pn_meetings WHERE id=:id");
     }
@@ -28,33 +30,51 @@ class MeetingDataMap extends DataMap {
      * @param Meeting $item
      */
     protected function insertBindings($item) {
-        $this->insertStatement->bindValue(":firstPerson", $item->getFirstPerson()->getId());
-        $this->insertStatement->bindValue(":secondPerson", $item->getSecondPerson()->getId());
+		if ($item->getFirstPerson() instanceof Person) {
+			$this->insertStatement->bindValue(":firstPerson", $item->getFirstPerson()->getId());
+		} else {
+			$this->insertStatement->bindValue(":firstPerson", 0);
+		}
+
+		if ($item->getSecondPerson() instanceof Person) {
+			$this->insertStatement->bindValue(":secondPerson", $item->getSecondPerson()->getId());
+		} else {
+			$this->insertStatement->bindValue(":secondPerson", 0);
+		}
+
         $this->insertStatement->bindValue(":title", $item->getTitle());
         $this->insertStatement->bindValue(":description", $item->getDescription());
 		$this->insertStatement->bindValue(":votesUp", $item->getVotesUp());
 		$this->insertStatement->bindValue(":votesDown", $item->getVotesDown());
 		$this->insertStatement->bindValue(":commentsCount", $item->getCommentsCount());
+		$this->insertStatement->bindValue(":date1", $item->getDate1());
+		$this->insertStatement->bindValue(":date2", $item->getDate2());
     }
 
     /**
      * @param Meeting $item
      */
     protected function updateBindings($item) {
-        $this->updateStatement->bindValue(":title", $item->getTitle());
+		if ($item->getFirstPerson() instanceof Person) {
+			$this->updateStatement->bindValue(":firstPerson", $item->getFirstPerson()->getId());
+		} else {
+			$this->updateStatement->bindValue(":firstPerson", 0);
+		}
+
+		if ($item->getSecondPerson() instanceof Person) {
+			$this->updateStatement->bindValue(":secondPerson", $item->getSecondPerson()->getId());
+		} else {
+			$this->updateStatement->bindValue(":secondPerson", 0);
+		}
+
+		$this->updateStatement->bindValue(":title", $item->getTitle());
         $this->updateStatement->bindValue(":description", $item->getDescription());
         $this->updateStatement->bindValue(":id", $item->getId());
 		$this->updateStatement->bindValue(":votesUp", $item->getVotesUp());
 		$this->updateStatement->bindValue(":votesDown", $item->getVotesDown());
 		$this->updateStatement->bindValue(":commentsCount", $item->getCommentsCount());
-    }
-
-    /**
-     * @param Meeting $item
-     */
-    protected function onInsert($item) {
-        parent::onInsert($item);
-        $item->setVoting(VotingFactory::createUpDownVoting($item->getId()));
+		$this->updateStatement->bindValue(":date1", $item->getDate1());
+		$this->updateStatement->bindValue(":date2", $item->getDate2());
     }
 
     /**
