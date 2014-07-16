@@ -212,6 +212,7 @@ class ImportComments extends Command {
 			$output->writeln('<info>Импорт комментарий детей...</info>');
 
 			$this->importComments($input, $output);
+			$this->tablePnCommentsKidsVote($input, $output);
 
 			$output->writeln("<info>Импорт завершен</info>");
 		}
@@ -232,4 +233,28 @@ class ImportComments extends Command {
 			$output->writeln(" готово</info>");
 		}
 	}
+
+	protected function tablePnCommentsKidsVote(InputInterface $input, OutputInterface $output, $limit = false) {
+
+		$output->writeln(date('Y-m-d H:i', time()) . ' <info>Таблица pn_comments_kids_vote</info>');
+		if ($limit) {
+			$limit = ' LIMIT ' . $limit;
+		}
+		$sql = 'SELECT * FROM `popcornnews`.`pn_comments_kids_vote`' . $limit;
+		$stmt = $this->pdo->prepare($sql);
+		$stmt->execute();
+		while($item = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+			$stmt2 = $this->pdo->prepare("
+				INSERT INTO pn_comments_kids_vote
+				SET `commentId` = :commentId, `userId` = :userId"
+			);
+			$stmt2->execute([
+				':commentId' => $item['comment_id'],
+				':userId' => $item['user_id'],
+			]);
+		}
+		$output->writeln(date('Y-m-d H:i', time()) . ' <comment> готово</comment>');
+
+	}
+
 }
