@@ -10,17 +10,78 @@
 
 	<title>Фанфики о {{ person.prepositionalName|e }} - {{ paginatorTitle }}popcornnews</title>
 
-	<script type="text/javascript" src="/assets/js/jquery.upDownVoting.js"></script>
 	<script type="text/javascript">
-
 		$(function(){
-			$.upDownVoting({
-				element: '.fanfic',
-				id: 'data-fanfic-id',
-				url: '/ajax/fanfic/vote'
+			$('a[data-action=vote-up],a[data-action=vote-down]').on('click',function(){
+
+				var fanficParent = $(this).closest('.fanfic');
+				var textDefault = fanficParent.find('.text').attr('data-default-text');
+
+				var action = $(this).attr('data-action');
+				var fanficId  = fanficParent.attr('data-fanfic-id');
+
+				var params = {
+					'fanficId' : fanficId,
+					'vote'  : action
+				};
+
+				var handler = function(response){
+
+					if (response.status == 'success'){
+
+						fanficParent.find('.b-right-stats .col, .b-right-stats .text').animate({ opacity: 0 },'fast',function(){
+
+							fanficParent.find('.col').text(response.points);
+
+							if (action == 'vote-up'){
+								fanficParent.find('.btn_minus').addClass('btn_disable');
+							}else if (action == 'vote-down'){
+								fanficParent.find('.btn_plus').addClass('btn_disable');
+							}
+
+							fanficParent
+								.find('.text')
+								.text('Спасибо, ваш голос принят!')
+								.animate({ opacity: 1 },'fast',function(){
+									$this = $(this);
+									setTimeout(function(){
+										$this.text(response.pointsOverall);
+									},2000);
+								})
+							;
+
+							$(this).animate({ opacity: 1 },'fast');
+						});
+
+					}else{
+
+						fanficParent.find('.b-right-stats .text').animate({ opacity: 0 },'fast',function(){
+
+							fanficParent.find('.text').html(response.exception.message);
+
+							$(this).animate({ opacity: 1 },'fast',function(){
+
+								setTimeout(function(){
+									fanficParent.find('.text').animate({ opacity: 0 },'fast',function(){
+										$(this).html(textDefault);
+
+										$(this).animate({ opacity: 1 },'fast');
+									});
+								},2000);
+
+
+							});
+						});
+					}
+
+				};
+
+				$.post('/ajax/fanfics/vote',params,handler,'json');
+
+				return false;
+
 			});
 		});
-
 	</script>
 
 {% endblock %}
@@ -62,9 +123,6 @@
 
 						<p class="text" data-default-text="{{ textDefault }}">{{ textDefault }}</p>
 					</div>
-					{#<div class="under">#}
-						{#<p><a href="/kid/{{ kid.id }}#new-comment"><strong>Удалить обсуждение</strong></a></p>#}
-					{#</div>#}
 				</div>
 			</div>
 

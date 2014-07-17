@@ -19,6 +19,9 @@ use popcorn\model\dataMaps\comments\FanFicCommentDataMap;
 use popcorn\model\dataMaps\GroupDataMap;
 use popcorn\model\dataMaps\GroupMembersDataMap;
 
+use popcorn\model\persons\fanfics\FanFic;
+use popcorn\model\persons\fanfics\FanFicFactory;
+
 use popcorn\model\dataMaps\comments\KidCommentDataMap;
 use popcorn\model\dataMaps\comments\NewsCommentDataMap;
 use popcorn\model\dataMaps\comments\PhotoArticleCommentDataMap;
@@ -157,6 +160,10 @@ class AjaxController extends GenericController implements ControllerInterface {
 		$this
 			->getSlim()
 			->post('/ajax/meetings/vote', [$this, 'meetingsVote']);
+
+		$this
+			->getSlim()
+			->post('/ajax/fanfics/vote', [$this, 'fanficsVote']);
 
 		$this
 			->getSlim()
@@ -530,6 +537,10 @@ class AjaxController extends GenericController implements ControllerInterface {
 	public function kidsVote() {
 
 		$kidId = $this->getSlim()->request()->post('kidId');
+		if (empty($kidId)) {
+			$kidId = $this->getSlim()->request()->post('entityId');
+		}
+
 		$vote = $this->getSlim()->request()->post('vote');
 
 		$kid = KidFactory::get($kidId);
@@ -660,6 +671,52 @@ class AjaxController extends GenericController implements ControllerInterface {
 			$e->exitWithJsonException();
 		}
 
+
+	}
+
+	public function fanficsVote() {
+
+		$fanficId = $this->getSlim()->request()->post('fanficId');
+		if (empty($fanficId)) {
+			$fanficId = $this->getSlim()->request()->post('entityId');
+		}
+		$vote = $this->getSlim()->request()->post('vote');
+
+		$fanfic = FanFicFactory::getFanFic($fanficId);
+
+		$upDownDataMap = new UpDownDataMap();
+
+		try {
+			if ($upDownDataMap->isAllow($fanfic)) {
+
+				$voting = new UpDownVoting();
+				$voting->setVotedAt(new \DateTime());
+				$voting->setEntity(get_class(new Fanfic()));
+				$voting->setEntityId($fanficId);
+
+				if ($vote == 'vote-up') {
+					$voting->setVote(UpDownVoting::Up);
+					$fanfic->setVotesUp($fanfic->getVotesUp() + 1);
+				} elseif ($vote == 'vote-down') {
+					$voting->setVote(UpDownVoting::Down);
+					$fanfic->setVotesDown($fanfic->getVotesDown() + 1);
+				}
+
+				$upDownDataMap->save($voting);
+
+				FanFicFactory::saveFanFic($fanfic);
+
+				$pointsOverall = sprintf('Всего %s', RuHelper::ruNumber($fanfic->getVotesOverall(), ['нет голосов', '%u голос', '%u голоса', '%u голосов']));
+
+				$this->getApp()->exitWithJsonSuccessMessage([
+					'points'        => $fanfic->getVotes(),
+					'pointsOverall' => $pointsOverall
+				]);
+
+			}
+		} catch (AjaxException $e) {
+			$e->exitWithJsonException();
+		}
 
 	}
 

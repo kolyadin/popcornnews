@@ -22,10 +22,17 @@
 	<script type="text/javascript">
 
 		$(function(){
-			$.upDownVoting({
+			IM.init({
+				entity: 'fanfics',
+				entityId: {{ fanfic.id }}
+			});
+
+			IM.generateEmoji();
+
+			upDownVoting.init({
 				element: '.fanfic',
 				id: 'data-fanfic-id',
-				url: '/ajax/fanfic/vote'
+				url: '/ajax/fanfics/vote'
 			});
 		});
 
