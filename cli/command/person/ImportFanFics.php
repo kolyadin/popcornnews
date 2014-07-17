@@ -136,6 +136,7 @@ class ImportFanFics extends Command {
 				$content = preg_replace('!(http|ftp|scp)(s)?:\/\/[a-zA-Z0-9.?%&_/]+!', "[url=\\0]\\0[/url]", $content); //Формируем BB-ссылки
 				$content = preg_replace('!\<strong\>(.+)\<\/strong\>!', "[b]\\1[/b]", $content);
 				$content = preg_replace('!(\<br\>|\<br\s*/\s*\>)!', "\n", $content);
+				$content = str_replace("\n", '<br />' . "\n", $content);
 			}
 
 			$this->stmtInsertFanFic->execute([
