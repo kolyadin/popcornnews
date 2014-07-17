@@ -1,0 +1,35 @@
+{% extends '/Generic.twig' %}
+
+{% block BodyEnd %}
+
+
+{% endblock %}
+
+{% block PageContent %}
+
+	<h3 class="page-title">
+		Подтвердите удаление
+		<small>Фанфик {{ fanfic.title|e }}</small>
+	</h3>
+
+	<form method="post" action="/office/person{{ personId }}/fanfic{{ fanfic.id }}/remove">
+		<input type="hidden" name="fanficId" value="{{ fanfic.id }}"/>
+		<input type="hidden" name="personId" value="{{ personId }}"/>
+
+		<blockquote>{{ fanfic.title|e }}</blockquote>
+
+		<div class="note note-danger">
+			<p><strong>Удаление приведет к:</strong></p>
+			<p>
+				<ul>
+					<li>удалению статистики голосов за этот фанфик</li>
+				</ul>
+			</p>
+			<p style="text-align: right;">
+				<a class="btn btn-info" href="/office/person{{ personId }}/fanfics">Вернуться к списку фанфиков {{ person.prepositionalName|e }}</a>
+				<input type="submit" class="btn btn-danger" value="Подтверждаю удаление"/>
+			</p>
+		</div>
+	</form>
+
+{% endblock %}

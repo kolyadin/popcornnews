@@ -1,0 +1,122 @@
+{% extends '/Generic.twig' %}
+
+{% block HeadEnd %}
+
+	<style type="text/css">
+		.ui-state-highlight { height: 45px; border: 3px dashed #aaa; background: #ccc; }
+	</style>
+
+{% endblock %}
+
+{% block BodyEnd %}
+
+{% endblock %}
+
+{% block PageTop %}
+
+	{% if fanfic.id %}
+		<h3 class="page-title">
+			&quot;{{ fanfic.title|e }}&quot;
+			<small>Фанфик</small>
+		</h3>
+	{% else %}
+		<h3 class="page-title">
+			Добавление фанфика
+		</h3>
+	{% endif %}
+
+	<ul class="page-breadcrumb breadcrumb">
+		<li>
+			<i class="fa fa-home"></i>
+			<a href="/office">Консоль</a>
+			<i class="fa fa-angle-right"></i>
+		</li>
+		<li>
+			<a href="/office/person{{ personId }}/fanfics">Фанфики</a>
+			<i class="fa fa-angle-right"></i>
+		</li>
+		{% if fanfic.id %}
+			<li>
+				<a href="/office/person{{ personId }}/fanfic{{ fanfic.id }}">{{ fanfic.title|e }}</a>
+			</li>
+		{% endif %}
+	</ul>
+
+	{{ parent() }}
+
+{% endblock %}
+
+{% block PageContent %}
+
+	<form class="form-horizontal form-row-seperated" method="post" enctype="multipart/form-data" name="form-edit">
+		<input type="hidden" name="fanficId" value="{{ fanfic.id }}"/>
+		<input type="hidden" name="personId" value="{{ personId }}"/>
+
+		<div class="form-body">
+
+			{% if app.request.get('status') == 'updated' %}
+				<div class="alert alert-success">
+					<i class="fa fa-check"></i>
+					<strong>Фанфик обновлен</strong>
+				</div>
+			{% endif %}
+
+			<div class="portlet">
+				<div class="portlet-title">
+					<div class="caption">
+						<i class="fa fa-reorder"></i>Главное
+					</div>
+					<div class="tools">
+						<a href="javascript:;" class="collapse"></a>
+					</div>
+				</div>
+				<div class="portlet-body">
+					<div class="form-group last">
+						<label class="control-label col-md-2">Заголовок: <span class="required">*</span></label>
+
+						<div class="col-md-10">
+							<input class="form-control" name="title" required="true" type="text" value="{{ fanfic.title|e }}"/>
+							<span class="help-block"></span>
+						</div>
+					</div>
+					<div class="form-group last">
+						<label class="control-label col-md-2">Анонс: <span class="required">*</span></label>
+
+						<div class="col-md-10">
+							<input class="form-control" name="announce" required="true" type="text" value="{{ fanfic.announce|e }}"/>
+							<span class="help-block"></span>
+						</div>
+					</div>
+				</div>
+				<div class="portlet-body">
+					<div class="form-group">
+						<label class="control-label col-md-2">Содержимое:</label>
+
+						<div class="col-md-10">
+							<textarea class="form-control ckeditor" name="content" cols="30" rows="10">{{ fanfic.content|e }}</textarea>
+							<span class="help-block"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="form-actions right">
+
+			{% if fanfic %}
+
+				<a href="/office/person{{ personId }}/fanfic{{ fanfic.id }}/remove" class="btn btn-m btn-danger">Удалить фанфик</a>
+				<button class="btn btn-m btn-success" type="submit">Обновить фанфик&nbsp;<i class="fa fa-check"></i></button>
+
+			{% else %}
+
+				{#<button class="btn btn-m btn-info" type="button" data-action="submit-just-save">Создать опрос</button>#}
+				<button class="btn btn-m btn-success" type="submit">Добавить фанфик&nbsp;<i class="fa fa-check"></i></button>
+
+			{% endif %}
+
+		</div>
+	</form>
+
+{% endblock %}

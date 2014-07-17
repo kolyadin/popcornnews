@@ -8,6 +8,7 @@ use popcorn\app\controllers\office\AjaxController;
 use popcorn\app\controllers\office\CalendarController;
 use popcorn\app\controllers\office\KidController;
 use popcorn\app\controllers\office\person\PersonFactController;
+use popcorn\app\controllers\office\person\PersonFanficController;
 use popcorn\app\controllers\office\PhotoArticleController;
 use popcorn\app\controllers\office\PollController;
 use popcorn\app\controllers\office\PostController;
@@ -36,6 +37,7 @@ class OfficeApp extends Application {
 
 		$this->registerController(new PersonController());
 		$this->registerController(new PersonFactController());
+		$this->registerController(new PersonFanficController());
 
 		$this->registerController(new KidController());
 		$this->registerController(new PollController());

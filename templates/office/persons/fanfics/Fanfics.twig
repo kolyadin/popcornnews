@@ -1,0 +1,150 @@
+{% extends '/persons/PersonGeneric.twig' %}
+{% import '/Mixins.twig' as html %}
+
+{% block HeadEnd %}
+
+	<style type="text/css">
+
+		.table-items a {
+			font-size: 13px;
+		}
+
+		.table-items .stat .progress {
+			margin-bottom: 5px;
+		}
+
+		.table-items .stat .progress-bar strong {
+			padding-left: 5px;
+		}
+
+		.table-items .stat .label {
+			margin-right: 5px;
+		}
+	</style>
+
+{% endblock %}
+
+{% block BodyEnd %}
+
+	{% if app.flash.fanficRemoved %}
+		<script type="text/javascript">
+			$(function () {
+				setTimeout(function(){
+					location.href = '/office/person{{ person.id }}/fanfics';
+				},3000);
+			});
+		</script>
+	{% endif %}
+
+{% endblock %}
+
+{% block PageTop %}
+
+	{% if person %}
+		<h3 class="page-title">
+			&quot;{{ person.name|e }} ({{ person.englishName|e }})&quot;
+			<small>фанфики</small>
+		</h3>
+	{% else %}
+		<h3 class="page-title">
+			Создание персоны
+		</h3>
+	{% endif %}
+
+	<ul class="page-breadcrumb breadcrumb">
+		<li>
+			<i class="fa fa-home"></i>
+			<a href="/office">Консоль</a>
+			<i class="fa fa-angle-right"></i>
+		</li>
+		<li>
+			<a href="/office/persons">Персоны</a>
+			<i class="fa fa-angle-right"></i>
+		</li>
+		<li>
+			<a href="/office/person{{ person.id }}">{{ person.name|e }}</a>
+			<i class="fa fa-angle-right"></i>
+		</li>
+		<li>
+			<a href="/office/person{{ person.id }}/fanfics">Фанфики</a>
+		</li>
+	</ul>
+
+	{{ parent() }}
+
+{% endblock %}
+
+{% block PageContent %}
+
+	{% if app.flash.fanficRemoved %}
+
+		<div class="note note-success">
+			<p><strong>Фанфик удален</strong>, сейчас ты вернешься к списку фанфиков {{ person.prepositionalName|e }}</p>
+			<p><a class="btn btn-info" href="/office/person{{ person.id }}/fanfics">вернуться к списку фанфиков</a></p>
+		</div>
+
+	{% else %}
+
+		{% if fanfics|length %}
+
+			<div style="text-align: right;">
+				{{ html.paginator(paginator.pages,paginator.active,'/office/person' ~ person.id ~ '/fanfics/page%u') }}
+			</div>
+
+			<div class="clearfix"></div>
+
+			<div class="table-responsive">
+				<table class="table table-hover table-items">
+					<thead>
+					<tr>
+						<th></th>
+						<th style="white-space: nowrap;">Дата добавления</th>
+						<th>Фанфик</th>
+						<th>ЗА</th>
+						<th>ПРОТИВ</th>
+						<th>Статус</th>
+						<th style="white-space:nowrap;"><span class="label label-default"></span></th>
+					</tr>
+					</thead>
+					<tbody>
+
+					{% for fanfic in fanfics %}
+
+						<tr>
+							<td style="white-space: nowrap;">
+								<a class="btn btn-default btn-xs tooltips" data-original-title="Редактировать"
+								data-placement="top" href="/office/person{{ person.id }}/fanfic{{ fanfic.id }}"><i class="fa fa-edit"></i></a>
+								<a class="btn btn-danger btn-xs tooltips" data-original-title="Удалить фанфик"
+								   data-placement="top" href="/office/person{{ person.id }}/fanfic{{ fanfic.id }}/remove"><i class="fa fa-trash-o"></i></a>
+							</td>
+							<td>{{ fanfic.createdAt|date('d.m.Y H:i') }}</td>
+							<td style="">{{ fanfic.title|slice(0, 50)|e }}</td>
+							<td>{{ fanfic.votesUp }}</td>
+							<td>{{ fanfic.votesDown }}</td>
+							<td>{{ fanfic.status }}</td>
+						<td><a class="btn btn-info tooltips" data-original-title="{{ fanfic.comments|ruNumber(['нет комментариев','%u комментарий','%u комментария','%u комментариев']) }}" href="#">{{ fanfic.comments }}</a></td>
+						</tr>
+
+					{% endfor %}
+
+					</tbody>
+				</table>
+			</div>
+
+			<div style="text-align: right;">
+				{{ html.paginator(paginator.pages,paginator.active,'/office/person' ~ person.id ~ '/fanfics/page%u') }}
+			</div>
+
+			<div class="clearfix"></div>
+
+		{% else %}
+
+			<div class="note note-info">
+				<h4 class="note-heading">Нет добавленных фанфиков</h4>
+			</div>
+
+		{% endif %}
+
+	{% endif %}
+
+{% endblock %}
