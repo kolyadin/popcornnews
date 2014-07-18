@@ -129,14 +129,19 @@ class PersonFanFicsController extends PersonController implements ControllerInte
 			$this->getSlim()->notFound();
 		}
 
-		$comments = FanFicFactory::getComments($fanfic);
+		$commentsTree = FanFicFactory::getComments($fanfic);
+		$commentsHtml = $this
+			->getTwig()
+			->render('/comments/Comments.twig', [
+				'comments' => $commentsTree
+			]);
 
 		$this
 			->getTwig()
 			->display('/person/fanfics/PersonFanFic.twig', [
 				'person'   => $person,
 				'fanfic'   => $fanfic,
-				'comments' => $comments
+				'comments' => $commentsHtml
 			]);
 
 	}

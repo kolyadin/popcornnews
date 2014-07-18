@@ -10,9 +10,9 @@ class FanFicCommentDataMap extends CommentDataMap {
 	private $stmtUpdateFanFicCommentsCount;
 
 	public function __construct() {
+
 		parent::__construct();
 
-		$this->class = "popcorn\\model\\comments\\FanFicComment";
 	}
 
 	protected function initStatements() {

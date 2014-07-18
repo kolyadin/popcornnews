@@ -8,7 +8,6 @@ use popcorn\lib\SphinxHelper;
 
 use popcorn\model\comments\Comment;
 use popcorn\model\comments\CommentFactory;
-use popcorn\model\comments\FanFicComment;
 use popcorn\model\comments\KidComment;
 use popcorn\model\comments\MeetComment;
 use popcorn\model\comments\NewsPostComment;
