@@ -22,6 +22,7 @@ use popcorn\model\system\users\GuestUser;
 use popcorn\model\system\users\UserFactory;
 use popcorn\model\persons\fanfics\FanFicFactory;
 use popcorn\model\persons\facts\FactFactory;
+use popcorn\model\dataMaps\YourStyleSetsDataMap;
 use Slim\Route;
 
 /**
@@ -108,6 +109,10 @@ class PersonController extends GenericController implements ControllerInterface 
 
 			$slim->get('/photo', [$this, 'personPhoto']);
 
+			$slim
+				->get('/sets(/page:page)', [$this, 'personSets'])
+				->conditions(array('page' => '\d+'));
+
 		});
 
 	}
@@ -179,6 +184,9 @@ class PersonController extends GenericController implements ControllerInterface 
 		//facts
 		$lastFacts = FactFactory::getFactsByPerson($person, [], 0, 2);
 
+		//sets
+		$setsDataMap = new YourStyleSetsDataMap();
+
 		$this
 			->getTwig()
 			->display('/person/PersonPage.twig', [
@@ -197,6 +205,8 @@ class PersonController extends GenericController implements ControllerInterface 
 				'fanficUser'		 => UserFactory::getUser($lastFanfic->getUserId()),
 				'lastFacts'			 => $lastFacts,
 				'factsCount'		 => FactFactory::getCountByPerson($person),
+				'setsCount'			 => $setsDataMap->getCountSetsByPersons($person->getId()),
+				'sets'				 => $setsDataMap->getSetsByPersons($person->getId(), 0, 5, 3),
 			]);
 	}
 
@@ -305,6 +315,29 @@ class PersonController extends GenericController implements ControllerInterface 
 					'active' => $page
 				]
 			]);
+	}
+
+	public function personSets($personName, $page = 1) {
+
+		$person = PersonFactory::getPerson(self::$personId, ['with' => PersonDataMap::WITH_NONE]);
+
+		$onPage = 20;
+
+		$setsDataMap = new YourStyleSetsDataMap();
+		$sets = $setsDataMap->getSetsByPersons($person->getId(), ($page - 1) * $onPage, $onPage, 2);
+
+		$this
+			->getTwig()
+			->display('/person/PersonSets.twig', [
+				'person' => $person,
+				'sets' => $sets,
+				'paginator' => [
+					'pages'  => ceil($setsDataMap->getCountSetsByPersons($person->getId()) / $onPage),
+					'active' => $page
+				]
+			]
+		);
+
 	}
 
 }
