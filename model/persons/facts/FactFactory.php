@@ -83,4 +83,13 @@ class FactFactory {
 
 		self::$dataMap->addVote($fact, $user, $category, $vote);
 	}
+
+	public static function getCountByPerson(Person $person) {
+
+		self::checkDataMap();
+
+		return self::$dataMap->getCount($person->getId());
+
+	}
+
 }

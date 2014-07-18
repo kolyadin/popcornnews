@@ -28,6 +28,7 @@ class FactDataMap extends DataMap {
 			UPDATE pn_persons_facts SET fact=:fact,personId=:personId,createdAt=:createdAt,userId=:userId,trustRating=:trustRating,voteRating=:voteRating WHERE id=:id");
 		$this->deleteStatement = $this->prepare("DELETE FROM pn_persons_facts WHERE id=:id");
 		$this->findOneStatement = $this->prepare("SELECT * FROM pn_persons_facts WHERE id=:id");
+		$this->countByPerson = $this->prepare("SELECT COUNT(*) FROM `pn_persons_facts` WHERE `personId` = :personId");
 	}
 
 	/**
@@ -181,4 +182,17 @@ class FactDataMap extends DataMap {
 		]);
 
 	}
+
+	public function getCount($personId) {
+
+		$stmt = $this->countByPerson;
+		$stmt->bindValue(':personId', $personId);
+		$stmt->execute();
+		$count = $stmt->fetchColumn(0);
+		$stmt->closeCursor();
+
+		return $count;
+
+	}
+
 }

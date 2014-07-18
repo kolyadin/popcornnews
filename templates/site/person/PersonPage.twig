@@ -289,7 +289,7 @@
 						<a rel="nofollow" href="/persons/{{ person.urlName }}/fanfics">фанфики</a>
 					</h1>
                                                             <span class="b-person__fanfik__counter b-counter b-counter-section">
-                                                                <a rel="nofollow" href="#">{{ fanficsCount }}</a>
+                                                                <a rel="nofollow" href="/persons/{{ person.urlName }}/fanfics">{{ fanficsCount }}</a>
                                                             </span>
 				</div>
 				<ul class="b-person__fanfik__list b-list">
@@ -315,26 +315,25 @@
 			<section class="b-person__facts">
 				<div class="b-person__facts__title-cont">
 					<h1 class="b-person__facts__title b-rubrics-title b-rubrics-title_s24">
-						<a rel="nofollow" href="#">факт?</a>
+						<a rel="nofollow" href="/persons/{{ person.urlName }}/facts">факт?</a>
 					</h1>
                                                             <span class="b-person__facts__counter b-counter b-counter-section">
-                                                                <a rel="nofollow" href="#">51</a>
+                                                                <a rel="nofollow" href="/persons/{{ person.urlName }}/facts">{{ factsCount }}</a>
                                                             </span>
 				</div>
 				<ul class="b-person__facts__list b-list">
-					<li class="b-person__facts__item">
-						<p class="b-person__facts__text"><a href="#">Джаред-вегетaрианец</a></p>
 
-						<p class="b-person__facts__likes"><b>80%</b> верят <b>100%</b> нравится</p>
-					</li>
-					<li class="b-person__facts__item">
-						<p class="b-person__facts__text"><a href="#">Первым инструментом,на котором играл Джаред -пиано
-								в его старом доме</a></p>
+					{% for lastFact in lastFacts %}
 
-						<p class="b-person__facts__likes"><b>80%</b> верят <b>100%</b> нравится</p>
-					</li>
+						<li class="b-person__facts__item">
+							<p class="b-person__facts__text"><a href="/persons/{{ person.urlName }}/facts">{{ lastFact.fact }}</a></p>
+							<p class="b-person__facts__likes"><b>{{ lastFact.trustRating }}</b> верят <b>{{ lastFact.voteRating }}</b> нравится</p>
+						</li>
+
+					{% endfor %}
+
 				</ul>
-				<p class="b-person__fans-my-city b-person__more-link">Есть факты? <a href="#">Присылай!</a></p>
+				<p class="b-person__fans-my-city b-person__more-link">Есть факты? <a href="/persons/{{ person.urlName }}/facts/post">Присылай!</a></p>
 			</section>
 		</div>
 	</section>

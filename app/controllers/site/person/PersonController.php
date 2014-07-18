@@ -21,6 +21,7 @@ use popcorn\model\posts\PostFactory;
 use popcorn\model\system\users\GuestUser;
 use popcorn\model\system\users\UserFactory;
 use popcorn\model\persons\fanfics\FanFicFactory;
+use popcorn\model\persons\facts\FactFactory;
 use Slim\Route;
 
 /**
@@ -175,6 +176,9 @@ class PersonController extends GenericController implements ControllerInterface 
 		$lastFanfic = FanFicFactory::getFanFicsByPerson($person, [], 0, 1);
 		$lastFanfic = $lastFanfic[0];
 
+		//facts
+		$lastFacts = FactFactory::getFactsByPerson($person, [], 0, 2);
+
 		$this
 			->getTwig()
 			->display('/person/PersonPage.twig', [
@@ -191,6 +195,8 @@ class PersonController extends GenericController implements ControllerInterface 
 				'lastFanfic'         => $lastFanfic,
 				'fanficsCount'		 => FanFicFactory::getCountByPerson($person),
 				'fanficUser'		 => UserFactory::getUser($lastFanfic->getUserId()),
+				'lastFacts'			 => $lastFacts,
+				'factsCount'		 => FactFactory::getCountByPerson($person),
 			]);
 	}
 
