@@ -200,7 +200,8 @@ class PersonFanFicsController extends PersonController implements ControllerInte
 		$photo = 0;
 
 		$fanfic = new FanFic();
-		$fanfic->setCreatedAt(new \DateTime('now'));
+		//$fanfic->setCreatedAt(new \DateTime('now'));
+		$fanfic->setCreatedAt(time());
 		$fanfic->setUserId(UserFactory::getCurrentUser()->getId());
 		$fanfic->setPersonId($person->getId());
 		$fanfic->setStatus(FanFic::STATUS_ACTIVE);
