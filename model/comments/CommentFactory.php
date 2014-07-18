@@ -6,6 +6,7 @@ use popcorn\model\dataMaps\comments\GuestBookCommentDataMap;
 use popcorn\model\dataMaps\comments\KidCommentDataMap;
 use popcorn\model\dataMaps\comments\NewsCommentDataMap;
 use popcorn\model\dataMaps\comments\FanFicCommentDataMap;
+use popcorn\model\dataMaps\comments\MeetCommentDataMap;
 use popcorn\model\system\users\User;
 use popcorn\model\system\users\UserFactory;
 
@@ -25,6 +26,8 @@ class CommentFactory {
 			self::$dataMap = new GuestBookCommentDataMap();
 		} elseif ($entity == 'fanfics') {
 			self::$dataMap = new FanFicCommentDataMap();
+		} elseif ($entity == 'meets') {
+			self::$dataMap = new MeetCommentDataMap();
 		}
 	}
 
