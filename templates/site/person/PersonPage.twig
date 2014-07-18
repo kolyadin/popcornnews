@@ -367,17 +367,22 @@
 	<section class="b-person__simple-gallery b-person__sets">
 		<div class="b-person__sets__title-cont b-grid__g8 b-grid__a">
 			<h1 class="b-person__sets__title b-rubrics-title b-rubrics-title_s24">
-				<a rel="nofollow" href="#">сеты</a>
+				<a rel="nofollow" href="/persons/{{ person.urlName }}/sets">сеты</a>
 			</h1>
-			<span class="b-person__sets__counter b-counter b-counter-section"><a rel="nofollow" href="#">1960</a></span>
+			<span class="b-person__sets__counter b-counter b-counter-section"><a rel="nofollow" href="/persons/{{ person.urlName }}/sets">{{ setsCount }}</a></span>
 		</div>
 		<ul class="b-person__simple-gallery__list clearfix">
-			<li>
-				<a href="#"><img alt="" src="./img/content/set1.png"></a>
-			</li>
-			<li>
-				<a href="#"><img alt="" src="./img/content/set2.png"></a>
-			</li>
+
+			{% for set in sets %}
+
+				<li>
+					<a href="/yourstyle/set/{{ set.id }}">
+						<img src="{{ set.image }}" alt=""/>
+					</a>
+				</li>
+
+			{% endfor %}
+
 		</ul>
 	</section>
 

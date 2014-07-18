@@ -162,7 +162,7 @@ SQL;
 			$params['noParent'] = 1;
 			$params['size'] = '274x274';
 			foreach($items as $key => &$item) {
-				if ($imgMode == 1 && $key) {
+				if ($imgMode == 3 || ($imgMode == 1 && $key)) {
 					$params['size'] = '110x110';
 				}
 				$this->itemCallback($item, $params);
