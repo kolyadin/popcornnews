@@ -30,7 +30,7 @@ class FanFicCommentDataMap extends CommentDataMap {
 	protected function onInsert($item) {
 		parent::onInsert($item);
 
-		$this->updateCommentsCount($item->getFanFicId());
+		$this->updateCommentsCount($item->getId());
 	}
 
 	protected function onRemove($fanficId) {

@@ -5,6 +5,7 @@ namespace popcorn\model\comments;
 use popcorn\model\dataMaps\comments\GuestBookCommentDataMap;
 use popcorn\model\dataMaps\comments\KidCommentDataMap;
 use popcorn\model\dataMaps\comments\NewsCommentDataMap;
+use popcorn\model\dataMaps\comments\FanFicCommentDataMap;
 use popcorn\model\system\users\User;
 use popcorn\model\system\users\UserFactory;
 
@@ -22,6 +23,8 @@ class CommentFactory {
 			self::$dataMap = new NewsCommentDataMap();
 		} elseif ($entity == 'guestbook') {
 			self::$dataMap = new GuestBookCommentDataMap();
+		} elseif ($entity == 'fanfics') {
+			self::$dataMap = new FanFicCommentDataMap();
 		}
 	}
 
