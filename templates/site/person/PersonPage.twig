@@ -286,30 +286,28 @@
 			<section class="b-person__fanfik">
 				<div class="b-person__fanfik__title-cont">
 					<h1 class="b-person__fanfik__title b-rubrics-title b-rubrics-title_s24">
-						<a rel="nofollow" href="#">фанфики</a>
+						<a rel="nofollow" href="/persons/{{ person.urlName }}/fanfics">фанфики</a>
 					</h1>
                                                             <span class="b-person__fanfik__counter b-counter b-counter-section">
-                                                                <a rel="nofollow" href="#">8</a>
+                                                                <a rel="nofollow" href="#">{{ fanficsCount }}</a>
                                                             </span>
 				</div>
 				<ul class="b-person__fanfik__list b-list">
 					<li>
 						<p>
-							<a href="#">Пролог. Наконец я возвращаюсь домой, надеюсь, когда я приеду, домой мама с папой
-								будут дома. Ах да я не представилась, меня зовут Катарина или просто Кети и я дочь Лары
-								Крофт и Кертиса Треннта.</a>
-							<span class="b-list__counter">(38)</span>
+							<a href="/persons/{{ person.urlName }}/fanfics/{{ lastFanfic.id }}">{{ lastFanfic.announce }}</a>
+							<span class="b-list__counter">({{ lastFanfic.comments }})</span>
 						</p>
 
 						<div class="b-inline-rating b-person__fanfik__rating">
-							<span class="b-inline-rating__text">Понравилось? </span>
+{#							<span class="b-inline-rating__text">Понравилось? </span>
 							<span class="b-inline-rating__yes">Да</span>
-							<span class="b-inline-rating__no">Нет</span>
+							<span class="b-inline-rating__no">Нет</span>#}
 						</div>
 						<div class="b-person__fanfik__autor">
 							Автор:
-							<a href="#" rel="nofollow" class="b-person__fanfik__autor-name">[~PAINKILLER GIRL~]</a>
-							, 2010 июня 07, 00:58
+							<a href="/profile/{{  lastFanfic.userId }}" rel="nofollow" class="b-person__fanfik__autor-name">{{ fanficUser.nick }}</a>
+							, {{ lastFanfic.createdAt|ruDateFriendly }}
 						</div>
 					</li>
 				</ul>

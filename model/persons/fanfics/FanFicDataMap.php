@@ -29,6 +29,7 @@ class FanFicDataMap extends DataMap {
 			 photo=:photo, title=:title, announce=:announce, views=:views, comments=:comments, votesUp=:votesUp, votesDown=:votesDown WHERE id=:id");
 		$this->deleteStatement = $this->prepare("DELETE FROM pn_persons_fanfics WHERE id=:id");
 		$this->findOneStatement = $this->prepare("SELECT * FROM pn_persons_fanfics WHERE id=:id");
+		$this->countByPerson = $this->prepare("SELECT COUNT(*) FROM `pn_persons_fanfics` WHERE `personId` = :personId");
 	}
 
 	/**
@@ -178,6 +179,18 @@ class FanFicDataMap extends DataMap {
 		$sql .= $this->getLimitString($from, $count);
 
 		return $this->fetchAll(sprintf($sql, '*'), $binds);
+	}
+
+	public function getCount($personId) {
+
+		$stmt = $this->countByPerson;
+		$stmt->bindValue(':personId', $personId);
+		$stmt->execute();
+		$count = $stmt->fetchColumn(0);
+		$stmt->closeCursor();
+
+		return $count;
+
 	}
 
 }

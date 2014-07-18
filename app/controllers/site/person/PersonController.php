@@ -20,6 +20,7 @@ use popcorn\model\posts\photoArticle\PhotoArticleFactory;
 use popcorn\model\posts\PostFactory;
 use popcorn\model\system\users\GuestUser;
 use popcorn\model\system\users\UserFactory;
+use popcorn\model\persons\fanfics\FanFicFactory;
 use Slim\Route;
 
 /**
@@ -170,6 +171,10 @@ class PersonController extends GenericController implements ControllerInterface 
 		//Фильмография
 		$filmography = PersonFactory::getFilmography($person, 0, 7, $filmographyCount);
 
+		//last fanfic
+		$lastFanfic = FanFicFactory::getFanFicsByPerson($person, [], 0, 1);
+		$lastFanfic = $lastFanfic[0];
+
 		$this
 			->getTwig()
 			->display('/person/PersonPage.twig', [
@@ -182,7 +187,10 @@ class PersonController extends GenericController implements ControllerInterface 
 				'fansTotal'          => $fans['paginator']['overall'],
 				'links'              => $links,
 				'filmography'        => $filmography,
-				'filmographyTotal'   => $filmographyCount
+				'filmographyTotal'   => $filmographyCount,
+				'lastFanfic'         => $lastFanfic,
+				'fanficsCount'		 => FanFicFactory::getCountByPerson($person),
+				'fanficUser'		 => UserFactory::getUser($lastFanfic->getUserId()),
 			]);
 	}
 

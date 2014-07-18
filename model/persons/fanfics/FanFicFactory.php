@@ -72,4 +72,12 @@ class FanFicFactory {
 
 		return $dataMap->getAllComments($fanfic->getId());
 	}
+
+	public static function getCountByPerson(Person $person) {
+
+		self::checkDataMap();
+
+		return self::$dataMap->getCount($person->getId());
+
+	}
 }
